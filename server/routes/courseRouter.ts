@@ -1,5 +1,5 @@
 import express from "express";
-import {find, getFiles, upload} from "../controllers/course";
+import {find, getFiles, upload} from "../controllers/courseCtrl";
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
-import express from "express";
-import {find, getRatings, rate} from "../controllers/professor";
+import * as express from "express";
+import {find, getRatings, rate} from "../controllers/professorCtrl";
 
 const router = express.Router();
 

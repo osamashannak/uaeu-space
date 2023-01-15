@@ -1,32 +1,13 @@
-import { Document, model, Schema } from "mongoose";
+import mongoose from "mongoose";
 
-export type TCourse = {
-    email: string;
-    password: string;
-    avatar: string;
-};
+const courseSchema = new mongoose.Schema(
+    {
+            courseId: {type: String, required: true},
+            name: String,
+            short: String,
+            number: Number,
+            files: {approved: [Buffer], review: [Buffer]}
+    }
+);
 
-export interface IUser extends TCourse, Document {}
-
-const courseSchema: Schema = new Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    avatar: {
-        type: String,
-    },
-    date: {
-        type: Date,
-        default: Date.now,
-    },
-});
-
-const User = model<IUser>("Course", courseSchema);
-
-export default User;
+export const CourseModel = mongoose.model("course", courseSchema);

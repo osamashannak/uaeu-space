@@ -1,7 +1,9 @@
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 
 
 export const rate = async (req: Request, res: Response) => {
+    const body = req.body;
+
     /**
      * TODO uploading file to the mongodb db
      * expected para:

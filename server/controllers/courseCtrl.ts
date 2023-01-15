@@ -1,7 +1,10 @@
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 
 
 export const upload = async (req: Request, res: Response) => {
+    const body = req.body;
+
+    const courseId = body.courseId;
     /**
      * TODO uploading file to the mongodb db
      * expected para:
