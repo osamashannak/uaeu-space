@@ -6,9 +6,10 @@ import Course from "./components/Course";
 import Professor from "./components/Professor";
 import underline from "./assests/underline.svg";
 import spiralArrow from "./assests/fun-arrow.svg";
+import About from "./components/About";
 
 
-function App() {
+const App = () => {
     return (
         <><>
             <div id="nav-bar">
@@ -33,6 +34,7 @@ function App() {
                     <Route path="/home" element={<Home/>}/>
                     <Route path="/course" element={<Course/>}/>
                     <Route path="/professor" element={<Professor/>}/>
+                    <Route path="/about" element={<About/>}/>
                 </Routes>
             </BrowserRouter></>
             <div id="footer">
