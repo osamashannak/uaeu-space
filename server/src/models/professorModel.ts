@@ -10,3 +10,5 @@ const professorSchema = new mongoose.Schema(
 );
 
 export const ProfessorModel = mongoose.model("professor", professorSchema);
+
+ProfessorModel.createCollection().then();

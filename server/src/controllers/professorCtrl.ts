@@ -37,11 +37,10 @@ export const find = async (req: Request, res: Response) => {
     let results: any[] | string;
 
     if (body.type == FindRequestType.Autocomplete) {
-        const find = await ProfessorModel.aggregate([
-                {$search: {autocomplete: {query: body.value, path: "name"}}},
-                {$limit: 5}
-            ]
-        );
+        const regex = new RegExp(`${req.body.value}`, 'i');
+        const find = await ProfessorModel.find({
+            name: regex
+        }).limit(5);
 
         const found: any[] = [];
 
