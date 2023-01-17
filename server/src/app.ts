@@ -10,6 +10,8 @@ import setMongo from "./mongo";
 
 const app = express();
 
+setMongo().then(r => console.log('Connected to MongoDB'));
+
 app.use(cors());
 app.use(express.json());
 
