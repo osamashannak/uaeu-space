@@ -1,5 +1,7 @@
 //import SearchBox from "./SearchBox";
 
+import CourseSearchBox from "./SearchBox";
+
 interface BoxProps {
     title: string,
     descriptions: string,
@@ -14,7 +16,7 @@ const Box = (props: BoxProps) => {
                 <p className={"box-title"}>{props.title}</p>
                 <p className={"box-description"}>{props.descriptions}</p>
             </div>
-            {/*<SearchBox id={props.id}/>*/}
+            {<CourseSearchBox />}
         </div>
     );
 

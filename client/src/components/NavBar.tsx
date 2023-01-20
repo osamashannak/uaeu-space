@@ -7,7 +7,6 @@ const NavBar = () => {
             <Link className={"title"} to={"/"}>📚 UAEU Resources.</Link>
             <div>
                 <ul>
-                    <Link to={"/about"} className={"nav-choice"}>About this site</Link>
                     <Link to={"/"} className={"nav-choice change-locale"}>عربي</Link>
                 </ul>
             </div>

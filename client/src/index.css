@@ -21,9 +21,9 @@ NavBar DATA HERE
     justify-content: space-between;
     padding: 2rem;
     background-color: #4C89EE;
-    -webkit-box-shadow: 0 8px 6px -6px #999;
-    -moz-box-shadow: 0 8px 6px -6px #999;
-    box-shadow: 0 8px 6px -6px #999;
+    -webkit-box-shadow: 0 2px 4px -1px rgba(0,0,0,0.25);
+    -moz-box-shadow: 0 2px 4px -1px rgba(0,0,0,0.25);
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,0.25);
 }
 
 .nav-choice {
@@ -62,11 +62,12 @@ Home DATA
 }
 
 .help-us {
-    background-color: #E5F6FD;
+    background-color: rgba(1, 67, 97, 0.01);
     font-weight: 200;
     font-size: 1.5rem;
     border-radius: 8px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+    color: #007fff;
+    border: 1px solid #007fff;
     padding: 1.5rem;
     width: 70%;
     margin-bottom: 4rem;
@@ -137,17 +138,59 @@ SearchBox DATA
     background: url("assests/search-rounded.svg") center / contain no-repeat;
 }
 
+.datalist {
+    padding: 0;
+    margin-top: 0;
+    position: absolute;
+    background-color: white;
+    width: 25.5rem;
+    max-height: 20rem;
+    overflow-x: hidden;
+    outline: 0;
+    transition: opacity .1s ease;
+    border-radius: 0 0 .28571429rem .28571429rem;
+    box-shadow: 0 2px 3px 0 rgba(34,36,38,.15);
+    border-color: #96c8da;
+    border-top-width: 0;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+}
+
+.datalist-option{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    cursor: pointer;
+    text-align: left;
+    border-style: none;
+    line-height: 1em;
+    color: rgba(0,0,0,.87);
+    font-size: 1rem;
+    text-transform: none;
+    font-weight: 200;
+    box-shadow: none;
+    padding: .8rem 1.1rem;
+    white-space: normal;
+    word-wrap: normal;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.course-name {
+    font-weight: 400;
+    margin-top: 1rem;
+    font-size: 1.2rem;
+}
+
 /**
 Footer DATA
  */
 
 .footer {
-    margin-left: 3rem;
-    margin-right: 3rem;
+    margin: 3rem;
     font-size: 1.2rem;
     display: flex;
     justify-content: space-between;
-    margin-top: 10%;
 }
 
 .foot-link {
