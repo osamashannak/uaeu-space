@@ -1,38 +1,21 @@
 import {useCombobox} from "downshift";
 import {useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {DatalistContent, getCourseFilter, getProfFilter, SearchBoxProps} from "../utils/SearchBox";
+import {useTranslation} from "react-i18next";
+import {namespaces} from "../i18n";
 
-const CourseSearchBox = () => {
-    const courses = [
-        {tag: 'Harper Lee', name: 'To Kill a Mockingbird'},
-        {tag: 'Lev Tolstoy', name: 'War and Peace'},
-        {tag: 'Fyodor Dostoyevsy', name: 'The Idiot'},
-        {tag: 'Oscar Wilde', name: 'A Picture of Dorian Gray'},
-        {tag: 'George Orwell', name: '1984'},
-        {tag: 'Jane Austen', name: 'Pride and Prejudice'},
-        {tag: 'Marcus Aurelius', name: 'Meditations'},
-        {tag: 'Fyodor Dostoevsky', name: 'The Brothers Karamazov'},
-        {tag: 'Lev Tolstoy', name: 'Anna Karenina'},
-        {tag: 'Fyodor Dostoevsky', name: 'Crime and Punishment'},
-    ]
 
-    const getCourseFilter = (inputValue: string) => {
-        return (courses: { tag: string; name: string; }) => {
-            return (
-                !inputValue ||
-                courses.tag.toLowerCase().includes(inputValue) ||
-                courses.name.toLowerCase().includes(inputValue)
-            )
-        }
-    }
+const SearchBoxElement = (props: SearchBoxProps) => {
 
     const SearchBox = () => {
-        const [items, setItems] = useState([] as typeof courses)
+
+        const nav = useNavigate();
+        const [items, setItems] = useState<DatalistContent[]>([]);
+        const {t, i18n} = useTranslation(namespaces.pages.home);
 
         const {
             isOpen,
-            getToggleButtonProps,
-            getLabelProps,
             getMenuProps,
             getInputProps,
             highlightedIndex,
@@ -45,33 +28,50 @@ const CourseSearchBox = () => {
                     setItems([]);
                     return;
                 }
-                setItems(courses.filter(getCourseFilter(inputValue!)).slice(0,5));
+                props.type === "course" ?
+                    setItems(props.datalist.filter(getCourseFilter(inputValue!)).slice(0, 5)) :
+                    setItems(props.datalist.filter(getProfFilter(inputValue!)).slice(0, 5));
             },
-            items
+            items,
+            itemToString(item) {
+                return item ? item.name : "";
+            },
+            onSelectedItemChange: ({selectedItem: newSelectedItem}) => {
+                if (!newSelectedItem) return;
+                if ('email' in newSelectedItem) {
+                    nav(`/professor/${newSelectedItem.email}`);
+                } else {
+                    nav(`/course/${newSelectedItem.tag}`);
+
+                }
+            }
         })
 
         return (
             <div>
 
                 <label className={"icon-label"}>
-                    <input placeholder={"Search course name"} className={"search-bar"} {...getInputProps()}/>
+                    <input placeholder={t(`${props.type}_box.search_placeholder`)}
+                           className={"search-bar"} {...getInputProps()}/>
                 </label>
 
-                <ul className={"datalist"} {...getMenuProps()}>
-                    {isOpen &&
-                        items.map((item, index) => (
-                            <li
-                                className={"datalist-option"}
-                                key={`${item.tag}${index}`}
-                                {...getItemProps({item, index})}
-                            >
-                                <span>{item.tag}</span>
-                                <span className={"course-name"}>{item.name}</span>
-                            </li>))
-                    }
-                </ul>
+                <div className={"parent-datalist"}>
+                    <ul className={"datalist"} {...getMenuProps()}>
+                        {isOpen &&
+                            items.map((item, index) => (
+                                <li
+                                    className={`datalist-option ${(highlightedIndex === index && ' bg-blue-option')}`}
+                                    key={`${item.name}${index}`}
+                                    {...getItemProps({item, index})}
+                                >
+                                    <span>{'tag' in item && item.tag}</span>
+                                    <span className={"course-name"}>{item.name}</span>
+                                </li>))
+                        }
+                    </ul>
+                </div>
 
-                <p><Link className={"help-course"} to={'/report'}>I can't find my course!</Link></p>
+                <p><Link className={"help-course"} to={'/report'}>{t(`${props.type}_box.not_found`)}</Link></p>
 
             </div>
         )
@@ -81,4 +81,4 @@ const CourseSearchBox = () => {
     return <SearchBox/>;
 }
 
-export default CourseSearchBox;
+export default SearchBoxElement;

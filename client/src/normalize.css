@@ -4,6 +4,7 @@
 ::after {
     box-sizing: border-box;
 }
+
 :root {
     --code-color: darkred;
     --code-bg-color: #aaaaaa;
@@ -28,7 +29,9 @@ pre {
     border-radius: 7px;
 }
 
-::-webkit-scrollbar-corner { background: rgba(0,0,0,0.5); }
+::-webkit-scrollbar-corner {
+    background: rgba(0, 0, 0, 0.5);
+}
 
 * {
     scrollbar-width: thin;
@@ -50,6 +53,8 @@ pre {
     border-radius: 20px;
     border: 3px solid var(--scroll-bar-bg-color);
 }
+
+
 * {
     margin: 0;
 }

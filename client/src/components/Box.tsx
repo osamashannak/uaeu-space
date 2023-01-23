@@ -1,11 +1,10 @@
-//import SearchBox from "./SearchBox";
-
-import CourseSearchBox from "./SearchBox";
+import SearchBoxElement from "./SearchBox";
+import {SearchBoxProps} from "../utils/SearchBox";
 
 interface BoxProps {
     title: string,
     descriptions: string,
-    id: string
+    searchBoxProps: SearchBoxProps
 }
 
 const Box = (props: BoxProps) => {
@@ -16,7 +15,11 @@ const Box = (props: BoxProps) => {
                 <p className={"box-title"}>{props.title}</p>
                 <p className={"box-description"}>{props.descriptions}</p>
             </div>
-            {<CourseSearchBox />}
+
+            {props.searchBoxProps.type === 'course' ?
+                <SearchBoxElement type={props.searchBoxProps.type} datalist={props.searchBoxProps.datalist}/> :
+                <SearchBoxElement type={props.searchBoxProps.type} datalist={props.searchBoxProps.datalist}/>
+            }
         </div>
     );
 

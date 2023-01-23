@@ -1,29 +1,51 @@
 import Box from "../components/Box";
-
+import {ReactComponent as InfoSVG} from "../assests/information-variant.svg";
+import {Link} from "react-router-dom";
+import datalist from "../assests/datalist.json"
+import {useTranslation} from "react-i18next";
+import {namespaces} from "../i18n";
 
 const Home = () => {
+
+    const {t, i18n} = useTranslation(namespaces.pages.home);
 
     return (
         <div className={"home"}>
             <div className={"help-us"}>
-                <p className={"alert"}>💜 Your contribution is highly appreciated!</p>
-                <p>Uploading materials and rating professors will help students like you succeed in the university.</p>
+                <p className={"alert"}>{t("alert.title")}</p>
+                <p>{t("alert.description")}</p>
             </div>
             <div className={"boxes"}>
                 <Box
-                    title={"Study Materials ✨"}
-                    descriptions={"Share and find materials you need to help you succeed in your courses."}
-                    id={"course"}/>
+                    title={t("course_box.title")}
+                    descriptions={t("course_box.description")}
+                    searchBoxProps={{
+                        type: "course",
+                        datalist: datalist.courses
+                    }}/>
                 <Box
-                    title={"Rate a Professor ⭐"}
-                    descriptions={"Learn about your professor from other students and rate their performance."}
-                    id={"professor"}/>
+                    title={t("professor_box.title")}
+                    descriptions={t("professor_box.description")}
+                    searchBoxProps={{
+                        type: "professor",
+                        datalist: [{name: "computer science", email: "test@gmail.com"}]
+                    }}/>
             </div>
-            <div>
-                <p>What is UAEU Resources?</p>
-                <p>UAEU Resources is a multi-purpose platform for UAEU students to prepare them during their
-                    studies. You can find and share materials for courses that are taken by the university's students.</p>
-                <p></p>
+            <div className={"info"}>
+                <p className={"info-title"}><InfoSVG/> {t("info.title")}</p>
+                <li className={"info-description"}>
+                    {t("info.paragraph1")}
+                </li>
+                <li className={"info-description"}>
+                    {t("info.paragraph2")} <Link className={"foot-link"} to={"/report"}>
+                    {t("info.paragraph2_reportit")}</Link>
+                </li>
+                <li className={"info-description"}>
+                    {t("info.paragraph3")} <a target="_blank"
+                                              rel="noreferrer"
+                                              className={"foot-link"}
+                                              href="https://github.com/Am4nso/uaeu-resources">GitHub</a>. {t("info.paragraph3_welcome")}
+                </li>
             </div>
 
         </div>
