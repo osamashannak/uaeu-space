@@ -1,7 +1,12 @@
 import {Request, Response} from 'express';
-import {ProfessorModel} from "../models/ProfessorModel";
-import {FindRequestBody, FindRequestType} from "./Interface";
+import {AppDataSource} from "../orm/data-source";
+import {Professor} from "../orm/entity/Professor";
+import {Equal} from "typeorm";
 
+
+type ProfessorFindBody = {
+    email: string
+}
 
 export const rate = async (req: Request, res: Response) => {
     const body = req.body;
@@ -14,47 +19,36 @@ export const rate = async (req: Request, res: Response) => {
      */
 }
 
-export const getRatings = async (req: Request, res: Response) => {
-    /**
-     * TODO get all files (approved) that are stored in the db for set course
-     * expected para:
-     * courseId
-     */
-}
+export const getRating = async (req: Request, res: Response) => {
 
-export const find = async (req: Request, res: Response) => {
-    const body: FindRequestBody = req.body;
+    const body: ProfessorFindBody = req.body;
 
-    let results: any[] | string;
 
-    if (body.type == FindRequestType.AUTOCOMPLETE) {
-        const regex = new RegExp(`${req.body.value}`, 'i');
-        const find = await ProfessorModel.find({
-            name: regex
-        }).limit(5);
+    const professor = await AppDataSource.getRepository(Professor).findOne({where: {email: Equal(body.email)}, relations: ["reviews"]});
 
-        const found: any[] = [];
 
-        find.forEach(doc => {
-            found.push(doc.name);
-        })
-
-        results = found;
-    } else if (body.type == FindRequestType.KNOWN) {
-        const find = await ProfessorModel.findOne({
-            name: body.value
-        });
-
-        if (find == null) {
-            res.status(401).json({error: "name not found."});
-            return;
-        }
-
-        results = find.profId;
-    } else {
-        res.status(401).json({error: "type does not exist."});
+    if (professor === null) {
+        res.status(404).json({error: "ProfessorBlock not found."});
         return;
     }
 
-    res.status(200).json({"results": results});
+    res.status(200).json({reviews: professor.reviews || []});
+
+}
+
+export const find = async (req: Request, res: Response) => {
+
+    const params = req.query;
+
+    console.log(params)
+
+    const professor = await AppDataSource.getRepository(Professor).findOne({where: {email: Equal(params.email!.toString())}, relations: ["reviews"]});
+
+    if (professor === null) {
+        res.status(404).json({error: "ProfessorBlock not found."});
+        return;
+    }
+
+    res.status(200).json({professor: professor});
+
 }

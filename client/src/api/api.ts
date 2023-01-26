@@ -1,17 +1,28 @@
 import axios from 'axios';
+import qs from 'qs';
 
-export default {
-    getData: () =>
-        axios({
-            'method': 'GET',
-            'url': 'https://example.com/query',
-            'headers': {
-                'content-type': 'application/octet-stream',
-                'x-rapidapi-host': 'example.com',
-                'x-rapidapi-key': process.env.RAPIDAPI_KEY
+export const getProfessor = async (professorEmail: string) => {
+    let response;
+
+    try {
+        response = await axios({
+            method: "get",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            'params': {
-                'search': 'parameter',
-            },
+            url: "http://localhost:4000/api/professor",
+            params: {
+                'email': professorEmail
+            }
         })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.data.professor;
+}
+
+
+export const getReviews = async (email: string) => {
+
 }

@@ -8,6 +8,7 @@ import Course from "./pages/Course";
 import {useTranslation} from "react-i18next";
 import ErrorPage from "./error-page.";
 import Professor from "./pages/Professor";
+import Rate from "./pages/Rate";
 
 const App = () => {
     const {t, i18n} = useTranslation();
@@ -20,6 +21,7 @@ const App = () => {
                 <Route errorElement={<ErrorPage/>} path={"/"} element={<Home/>}/>
                 <Route path={"/course/:tag"} element={<Course/>}/>
                 <Route path={"/professor/:email"} element={<Professor/>}/>
+                <Route path={"/professor/:email/rate"} element={<Rate/>}/>
             </Routes>
             <Footer/>
         </BrowserRouter>

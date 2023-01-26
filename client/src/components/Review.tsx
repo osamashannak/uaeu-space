@@ -1,31 +1,28 @@
-import {ReactComponent as FulLStar} from "../assests/star.svg";
+import {dateHumanize, ratingToIcon, ReviewProps} from "../utils/Professor";
+import {useTranslation} from "react-i18next";
+import {namespaces} from "../i18n";
 
-const Review = () => {
+const Review = (props: ReviewProps) => {
+    const {t, i18n} = useTranslation(namespaces.pages.professor);
+
     return (
         <div className={"review"}>
             <div className={"review-info"}>
-                <p className={"reviewer"}>Anonymous</p>
-                <p className={"recommendation"}>Not recommended</p>
+                <p className={"reviewer"}>{props.author}</p>
+                <p className={"recommendation"}>{props.positive ? t("recommend",) : t("not_recommend")}</p>
             </div>
             <div className={"review-body"}>
-                <div className={"review-comment"}>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-                    Aenean
-                    commodo ligula eget dolor.
-                    Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur
-                    ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.
-                    Nulla
-                    consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate.
-                </div>
+                <div className={"review-comment"}>{props.comment}</div>
                 <div className={"review-scores"}>
-                    <p className={"cat"}>Quality: <span className={"stars"}>
-                                <FulLStar/><FulLStar/><FulLStar/><FulLStar/><FulLStar/>
+                    <p className={"cat"}>{t("quality")}: <span className={"stars"}>
+                                {ratingToIcon(props.quality)}
                             </span></p>
-                    <p className={"cat"}> Difficulty: <span className={"stars"}>
-                                <FulLStar/><FulLStar/><FulLStar/><FulLStar/><FulLStar/>
+                    <p className={"cat"}> {t("difficulty")}: <span className={"stars"}>
+                                {ratingToIcon(props.difficulty)}
                             </span></p>
                 </div>
             </div>
-            <p>May 15, 2021</p>
+            <p>{dateHumanize(props.created_at, i18n.language)}</p>
         </div>
     );
 }

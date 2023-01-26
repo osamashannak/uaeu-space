@@ -236,7 +236,7 @@ SearchBox DATA
 }
 
 /**
-Professor DATA
+ProfessorBlock DATA
  */
 
 .prof-info-page {
@@ -290,6 +290,20 @@ Professor DATA
     color: black;
     font-weight: 400;
     font-size: 1rem;
+}
+
+.review-button {
+    font-size: 1rem;
+    padding: 0.5rem;
+    background-color: transparent;
+    cursor: pointer;
+    margin-top: 1rem;
+    border: 2px solid #007fff;
+    color: #007fff;
+}
+
+.review-button:hover {
+    background-color: rgba(0, 127, 255, 0.1);
 }
 
 .stars {

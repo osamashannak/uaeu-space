@@ -9,6 +9,8 @@
     "rootDir": ".",
     "forceConsistentCasingInFileNames": true,
     "useUnknownInCatchVariables": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
   }
 }
