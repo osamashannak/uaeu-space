@@ -1,7 +1,6 @@
 import Box from "../components/Box";
 import {ReactComponent as InfoSVG} from "../assests/information-variant.svg";
 import {Link} from "react-router-dom";
-import datalist from "../assests/datalist.json"
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
 
@@ -20,15 +19,13 @@ const Home = () => {
                     title={t("course_box.title")}
                     descriptions={t("course_box.description")}
                     searchBoxProps={{
-                        type: "course",
-                        datalist: datalist.courses
+                        type: "course"
                     }}/>
                 <Box
                     title={t("professor_box.title")}
                     descriptions={t("professor_box.description")}
                     searchBoxProps={{
-                        type: "professor",
-                        datalist: [{name: "computer science", email: "test@gmail.com"}]
+                        type: "professor"
                     }}/>
             </div>
             <div className={"info"}>

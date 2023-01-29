@@ -1,5 +1,5 @@
 import axios from 'axios';
-import qs from 'qs';
+import {IReview} from "../utils/Professor";
 
 export const getProfessor = async (professorEmail: string) => {
     let response;
@@ -7,10 +7,7 @@ export const getProfessor = async (professorEmail: string) => {
     try {
         response = await axios({
             method: "get",
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            url: "http://localhost:4000/api/professor",
+            url: "http://192.168.1.17:4000/api/professor",
             params: {
                 'email': professorEmail
             }
@@ -22,7 +19,52 @@ export const getProfessor = async (professorEmail: string) => {
     return response.data.professor;
 }
 
+// TODO remove port
+export const getCoursesList = async () => {
+    let response;
 
-export const getReviews = async (email: string) => {
+    try {
+        response = await axios({
+            method: "get",
+            url: "http://192.168.1.17:4000/api/course/all"
+        })
+    } catch (error) {
+        return undefined;
+    }
 
+    return response.data.courses;
+}
+
+export const getProfessorsList = async () => {
+    let response;
+
+    try {
+        response = await axios({
+            method: "get",
+            url: "http://192.168.1.17:4000/api/professor/all"
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.data.professors;
+}
+
+export const postReview = async (review: IReview, email: string) => {
+    let response;
+
+    try {
+        response = await axios({
+            method: "post",
+            url: "http://192.168.1.17:4000/api/professor/rate",
+            data: {
+                review: review,
+                professor: email
+            }
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.data.result === "success";
 }

@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, Column, OneToMany} from "typeorm"
+import {Column, Entity, OneToMany, PrimaryColumn} from "typeorm"
 import {Review} from "./Review";
 
 @Entity()
@@ -11,7 +11,7 @@ export class Professor {
     name!: string
 
     @Column()
-    department!: string
+    college!: string
 
     @OneToMany(() => Review, review => review.professor)
     reviews!: Review[];

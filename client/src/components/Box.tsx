@@ -17,8 +17,8 @@ const Box = (props: BoxProps) => {
             </div>
 
             {props.searchBoxProps.type === 'course' ?
-                <SearchBoxElement type={props.searchBoxProps.type} datalist={props.searchBoxProps.datalist}/> :
-                <SearchBoxElement type={props.searchBoxProps.type} datalist={props.searchBoxProps.datalist}/>
+                <SearchBoxElement type={props.searchBoxProps.type}/> :
+                <SearchBoxElement type={props.searchBoxProps.type}/>
             }
         </div>
     );

@@ -3,5 +3,24 @@
   "difficulty": "Difficulty",
   "comments": "Comments",
   "recommend": "Recommend",
-  "not_recommend": "Not recommended"
+  "not_recommend": "Not recommended",
+  "new_review": {
+    "submit": "Submit",
+    "title": "Write a Comment",
+    "name": "Name (optional)",
+    "comment": "Comment (max. 350)",
+    "score": "Score",
+    "positive": "I recommend",
+    "negative": "I don't recommend",
+    "status": {
+      "no_reviews": "There are no comments.",
+      "submitted": "You have submitted a comment.",
+      "submitting": "Submitting"
+    },
+    "error": {
+      "missing": "Please fill out this field.",
+      "incorrect_number": "Please write a number between 1 and 5.",
+      "not_selected": "Please select one of these options."
+    }
+  }
 }

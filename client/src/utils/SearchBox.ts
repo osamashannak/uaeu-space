@@ -1,42 +1,31 @@
-export interface ProfDataList {
+export interface ProfData {
     name: string,
     email: string
 }
 
-export interface CourseDataList {
+export interface CourseData {
     tag: string,
     name: string
 }
 
-export type DatalistContent = CourseDataList | ProfDataList;
+export type DatalistContent = CourseData | ProfData;
 
 export interface CourseSearchBoxProps {
     type: "course",
-    datalist: CourseDataList[],
 }
 
 export interface ProfSearchBoxProps {
     type: "professor",
-    datalist: ProfDataList[],
 }
 
 export type SearchBoxProps = ProfSearchBoxProps | CourseSearchBoxProps;
 
-export const getCourseFilter = (inputValue: string) => {
-    return (courses: CourseDataList) => {
+export const getFilter = (inputValue: string, type: "professor" | "course") => {
+    return (courses: any) => {
         return (
             !inputValue ||
-            courses.tag.toLowerCase().includes(inputValue.toLowerCase()) ||
-            courses.name.toLowerCase().includes(inputValue.toLowerCase())
-        )
-    }
-}
-
-export const getProfFilter = (inputValue: string) => {
-    return (professors: ProfDataList) => {
-        return (
-            !inputValue ||
-            professors.name.toLowerCase().includes(inputValue.toLowerCase())
+            courses.name.toLowerCase().includes(inputValue.toLowerCase()) ||
+            (type === "course" ? courses.tag.toLowerCase().includes(inputValue.toLowerCase()) : false)
         )
     }
 }

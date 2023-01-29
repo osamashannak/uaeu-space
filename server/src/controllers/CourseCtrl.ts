@@ -1,4 +1,6 @@
 import {Request, Response} from 'express';
+import {AppDataSource} from "../orm/data-source";
+import {Course} from "../orm/entity/Course";
 
 
 export const upload = async (req: Request, res: Response) => {
@@ -22,4 +24,14 @@ export const getFiles = async (req: Request, res: Response) => {
 }
 
 export const find = async (req: Request, res: Response) => {
+
+}
+
+
+export const getAll = async (req: Request, res: Response) => {
+
+    const courses = await AppDataSource.getRepository(Course).find({select: {name: true, tag: true}});
+
+    res.status(200).json({courses: courses});
+
 }

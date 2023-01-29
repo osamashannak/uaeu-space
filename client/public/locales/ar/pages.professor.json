@@ -3,5 +3,24 @@
   "difficulty": "صعوبة",
   "comments": "تعليقات",
   "recommend": "انصح",
-  "not_recommend": "لا أنصح"
+  "not_recommend": "لا أنصح",
+  "new_review": {
+    "submit": "إرسال",
+    "title": "أكتب تعليقا",
+    "name": "الاسم: (اختياري)",
+    "comment": "التعليق (بحد أقصى 350)",
+    "score": "تقييم",
+    "positive": "انصح",
+    "negative": "لا انصح",
+    "status": {
+      "no_reviews": "لا توجد تعليقات.",
+      "submitted": "لقد قمت بنشر تعليق.",
+      "submitting": "الإرسال قيد التقدم"
+    },
+    "error": {
+      "missing": "الرجاء ملء هذه الخانة.",
+      "incorrect_number": "الرجاء كتابة رقم بين 1 و 5.",
+      "not_selected": "الرجاء تحديد أحد هذه الخيارات."
+    }
+  }
 }

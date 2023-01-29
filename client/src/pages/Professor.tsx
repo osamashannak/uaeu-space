@@ -1,42 +1,81 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {IProfessor} from "../utils/Professor";
+import {IProfessor, IReview} from "../utils/Professor";
 import {getProfessor} from "../api/api";
-import ProfessorNotFound from "../components/ProfessorNotFound";
-import ProfessorBlock from "../components/ProfessorBlock";
+import {useTranslation} from "react-i18next";
+import {namespaces} from "../i18n";
+import ReviewSection from "../components/ReviewSection";
+import {ReactComponent as Loading} from "../assests/bubble-loading.svg";
+import ReviewForm from "../components/ReviewForm";
 
 const Professor = () => {
 
     const {email} = useParams();
-
-    const [professor, setProfessor] = useState<IProfessor>();
+    const [professor, setProfessor] = useState<IProfessor | null>();
+    const [score, setScore] = useState<number>(0);
+    const {t, i18n} = useTranslation(namespaces.pages.professor);
+    const [isFetching, setIsFetching] = useState(true);
 
     useEffect(() => {
 
-        if (!email) return;
+        if (!email) {
+            setIsFetching(false);
+            return;
+        }
 
-        getProfessor(email).then(prof => {
-            if (!prof) return;
-
-            setProfessor(prof);
+        const professor = getProfessor(email).then(professor => {
+            setProfessor(professor);
+            if (professor && professor.reviews.length > 0) {
+                let allScore = 0;
+                professor.reviews.forEach((review: IReview) => {
+                    allScore += review.score;
+                });
+                setScore(allScore / professor.reviews.length)
+            }
         })
 
-        window.scrollTo({top: 0, left: 0});
+        setIsFetching(false);
+    }, []);
 
-    }, [])
+    if (isFetching) {
+        return (
+            <div className={"professor"}>
+                <div className={"prof-info-page prof-info-head"}>
+                    <p>Loading <Loading/></p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!professor) {
+        return (
+            <div className={"professor"}>
+                <div className={"prof-info-page prof-info-head"}>
+                    <p>Professor Not Found 404</p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className={"professor"}>
-
             <div className={"prof-info-page"}>
+                <div className={"prof-info-head"}>
+                    <div className={"prof-info"}>
+                        <p className={"prof-name"}>{professor.name}</p>
+                        <p className={"department"}>{professor.college}</p>
+                    </div>
 
-                {professor ? <ProfessorBlock {...professor}/> : <ProfessorNotFound/>}
-
+                    <div className={"prof-overall"}>
+                        <p className={"overall-score"}>{parseFloat(score.toFixed(1))}<span
+                            className={"score-out-of"}>/5</span></p>
+                    </div>
+                </div>
+                <ReviewSection reviews={professor.reviews}/>
+                <ReviewForm email={email!}/>
             </div>
-
-
         </div>
-    )
+    );
 }
 
 export default Professor;

@@ -1,4 +1,4 @@
-import {Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne} from "typeorm"
+import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm"
 import {Professor} from "./Professor";
 
 @Entity()
@@ -14,10 +14,10 @@ export class Review {
     author!: string
 
     @Column()
-    quality!: number
+    score!: number
 
     @Column()
-    difficulty!: number
+    positive!: boolean;
 
     @Column()
     comment!: string

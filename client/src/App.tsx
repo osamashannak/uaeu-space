@@ -6,9 +6,9 @@ import Home from "./pages/Home";
 import Footer from "./components/Footer";
 import Course from "./pages/Course";
 import {useTranslation} from "react-i18next";
-import ErrorPage from "./error-page.";
 import Professor from "./pages/Professor";
 import Rate from "./pages/Rate";
+import {ReactComponent as Loading} from "./assests/bubble-loading.svg";
 
 const App = () => {
     const {t, i18n} = useTranslation();
@@ -17,12 +17,14 @@ const App = () => {
     return (
         <BrowserRouter>
             <NavBar/>
-            <Routes>
-                <Route errorElement={<ErrorPage/>} path={"/"} element={<Home/>}/>
-                <Route path={"/course/:tag"} element={<Course/>}/>
-                <Route path={"/professor/:email"} element={<Professor/>}/>
-                <Route path={"/professor/:email/rate"} element={<Rate/>}/>
-            </Routes>
+            <React.Suspense fallback={<Loading/>}>
+                <Routes>
+                    <Route path={"/"} element={<Home/>}/>
+                    <Route path={"/course/:tag"} element={<Course/>}/>
+                    <Route path={"/professor/:email"} element={<Professor/>}/>
+                    <Route path={"/professor/:email/rate"} element={<Rate/>}/>
+
+                </Routes> </React.Suspense>
             <Footer/>
         </BrowserRouter>
     );

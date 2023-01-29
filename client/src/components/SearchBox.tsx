@@ -1,9 +1,10 @@
 import {useCombobox} from "downshift";
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {DatalistContent, getCourseFilter, getProfFilter, SearchBoxProps} from "../utils/SearchBox";
+import {DatalistContent, getFilter, SearchBoxProps} from "../utils/SearchBox";
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
+import {getCoursesList, getProfessorsList} from "../api/api";
 
 
 const SearchBoxElement = (props: SearchBoxProps) => {
@@ -12,6 +13,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
 
         const nav = useNavigate();
         const [items, setItems] = useState<DatalistContent[]>([]);
+        const [allItems, setAllItems] = useState<DatalistContent[]>([]);
         const {t, i18n} = useTranslation(namespaces.pages.home);
 
         const {
@@ -23,14 +25,25 @@ const SearchBoxElement = (props: SearchBoxProps) => {
             selectedItem,
             inputValue
         } = useCombobox({
-            onInputValueChange({inputValue}) {
+            async onInputValueChange({inputValue}) {
+
                 if (!inputValue) {
                     setItems([]);
                     return;
                 }
-                props.type === "course" ?
-                    setItems(props.datalist.filter(getCourseFilter(inputValue!)).slice(0, 5)) :
-                    setItems(props.datalist.filter(getProfFilter(inputValue!)).slice(0, 5));
+
+                if (!allItems.length) {
+                    setItems([{name: "Loading...", tag: ""}]);
+
+                    const courseList = props.type === "course" ? await getCoursesList() : await getProfessorsList();
+
+                    setAllItems(courseList);
+                    setItems(courseList.filter(getFilter(inputValue, props.type)).slice(0, 5));
+                    return;
+                }
+
+                setItems(allItems.filter(getFilter(inputValue, props.type)).slice(0, 5) || [""]);
+
             },
             items,
             itemToString(item) {
@@ -59,14 +72,17 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                     <ul className={"datalist"} {...getMenuProps()}>
                         {isOpen &&
                             items.map((item, index) => (
-                                <li
-                                    className={`datalist-option ${(highlightedIndex === index && ' bg-blue-option')}`}
-                                    key={`${item.name}${index}`}
-                                    {...getItemProps({item, index})}
-                                >
+                                <li className={`datalist-option ${highlightedIndex === index && ' bg-blue-option'}`}
+                                    key={`${item.name}${index}`} {...getItemProps({
+                                    item,
+                                    index,
+                                    disabled: item.name === "Loading..."
+                                })}>
+
                                     <span>{'tag' in item && item.tag}</span>
                                     <span className={"course-name"}>{item.name}</span>
-                                </li>))
+                                </li>
+                            ))
                         }
                     </ul>
                 </div>
