@@ -3,9 +3,9 @@ import {ReactComponent as HalfStar} from "../assests/star-half.svg";
 import {ReactComponent as EmptyStar} from "../assests/star-outline.svg";
 import {formatDistance} from 'date-fns'
 import {ar, enUS} from 'date-fns/locale'
+import {ProfData} from "./SearchBox";
 
-export interface IProfessor {
-    name: string,
+export interface IProfessor extends ProfData{
     college: string,
     reviews: IReview[]
 }
@@ -28,7 +28,7 @@ export const ratingToIcon = (rating: number) => {
     for (i = rating; i >= 1; i--)
         output.push(<FullStar/>);
 
-    if (i == .5) output.push(<HalfStar/>);
+    if (i === .5) output.push(<HalfStar/>);
 
 
     for (let i = (5 - rating); i >= 1; i--)
@@ -36,13 +36,4 @@ export const ratingToIcon = (rating: number) => {
 
     return output;
 
-}
-
-
-export const dateHumanize = (date: string, language: string) => {
-    return formatDistance(new Date(date), Date.now(), {
-        includeSeconds: true,
-        locale: language == "en" ? enUS : ar,
-        addSuffix: true
-    });
 }

@@ -236,7 +236,7 @@ SearchBox DATA
 }
 
 /**
-ProfessorBlock DATA
+Professor DATA
  */
 
 .prof-info-page {
@@ -362,15 +362,37 @@ ProfessorBlock DATA
     line-height: 2rem;
 }
 
-.cat {
-    display: flex;
-    justify-content: space-between;
-}
-
 .review-comment {
     max-width: 80%;
 }
 
+.review-rating {
+    display: flex;
+    gap: 2rem;
+}
+
+
+.rating-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.review-rating-button {
+    cursor: pointer;
+
+}
+
+.review-rating-button:hover {
+    color: #007fff;
+}
+
+
+.review-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
 
 .new-review {
     margin-top: 3rem;
@@ -440,6 +462,40 @@ ProfessorBlock DATA
 }
 
 /**
+Course DATA
+ */
+
+.course-info-page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    max-width: 70rem;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 5px 15px 0;
+    border-radius: 6px;
+    padding: 3rem;
+    background-color: white;
+    margin: auto;
+}
+
+.course-header {
+}
+
+.course-page-tag {
+    font-weight: 600;
+    font-size: 3rem;
+}
+
+.course-page-title {
+    font-size: 2rem;
+}
+
+.files-table {
+    margin-top: 3rem;
+    text-align: left;
+}
+
+/**
 Footer DATA
  */
 .footer {
@@ -450,5 +506,6 @@ Footer DATA
 }
 
 .foot-link {
+    text-decoration-thickness: 1px;
     color: black;
 }

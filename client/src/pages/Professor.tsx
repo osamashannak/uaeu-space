@@ -23,16 +23,21 @@ const Professor = () => {
             return;
         }
 
-        const professor = getProfessor(email).then(professor => {
+        const hasViewed = localStorage.getItem(`${email}-exist`);
+
+        getProfessor(email, hasViewed ?? undefined).then(professor => {
             setProfessor(professor);
-            if (professor && professor.reviews.length > 0) {
-                let allScore = 0;
-                professor.reviews.forEach((review: IReview) => {
-                    allScore += review.score;
-                });
-                setScore(allScore / professor.reviews.length)
+            if (professor) {
+                localStorage.setItem(`${email}-exist`, 'true');
+                if (professor.reviews.length > 0) {
+                    let allScore = 0;
+                    professor.reviews.forEach((review: IReview) => {
+                        allScore += review.score;
+                    });
+                    setScore(allScore / professor.reviews.length);
+                }
             }
-        })
+        });
 
         setIsFetching(false);
     }, []);

@@ -1,6 +1,9 @@
-import {dateHumanize, IReview, ratingToIcon} from "../utils/Professor";
+import {IReview, ratingToIcon} from "../utils/Professor";
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
+import {dateHumanize} from "../utils/Global";
+import LikeDislike from "./LikeDislike";
+
 
 const Review = (props: IReview) => {
     const {t, i18n} = useTranslation(namespaces.pages.professor);
@@ -19,8 +22,10 @@ const Review = (props: IReview) => {
                     <span className={"stars"}>{ratingToIcon(props.score)}</span>
                 </div>
             </div>
-
-            <p>{dateHumanize(props.created_at, i18n.language)}</p>
+            <div className={"review-footer"}>
+                <p>{dateHumanize(props.created_at, i18n.language)}</p>
+                <LikeDislike/>
+            </div>
 
         </div>
     );

@@ -16,6 +16,9 @@ export class File {
     @Column()
     type!: string;
 
+    @Column()
+    size!: number;
+
     @CreateDateColumn()
     created_at!: Date;
 

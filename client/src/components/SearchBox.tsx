@@ -35,10 +35,12 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                 if (!allItems.length) {
                     setItems([{name: "Loading...", tag: ""}]);
 
-                    const courseList = props.type === "course" ? await getCoursesList() : await getProfessorsList();
+                    const datalist = props.type === "course" ? await getCoursesList() : await getProfessorsList();
 
-                    setAllItems(courseList);
-                    setItems(courseList.filter(getFilter(inputValue, props.type)).slice(0, 5));
+                    if (!datalist) return;
+
+                    setAllItems(datalist);
+                    setItems((datalist as DatalistContent[]).filter(getFilter(inputValue, props.type)).slice(0, 5));
                     return;
                 }
 

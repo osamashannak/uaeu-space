@@ -41,7 +41,7 @@ const Home = () => {
                     {t("info.paragraph3")} <a target="_blank"
                                               rel="noreferrer"
                                               className={"foot-link"}
-                                              href="https://github.com/Am4nso/uaeu-resources">GitHub</a>. {t("info.paragraph3_welcome")}
+                                              href="https://github.com/Am4nso/uaeu-resources">GitHub</a>.
                 </li>
             </div>
 

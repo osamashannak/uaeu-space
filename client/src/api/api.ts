@@ -1,38 +1,42 @@
 import axios from 'axios';
-import {IReview} from "../utils/Professor";
+import {IProfessor, IReview} from "../utils/Professor";
+import {ICourse} from "../utils/Course";
 
-export const getProfessor = async (professorEmail: string) => {
+
+const HOST = "http://localhost:4000";
+
+export const getProfessor = async (professorEmail: string, unique?: string) => {
     let response;
 
     try {
         response = await axios({
             method: "get",
-            url: "http://192.168.1.17:4000/api/professor",
+            url: HOST+"/api/professor",
             params: {
-                'email': professorEmail
+                email: professorEmail,
+                unique: unique
             }
         })
     } catch (error) {
         return undefined;
     }
 
-    return response.data.professor;
+    return response.data.professor as IProfessor;
 }
 
-// TODO remove port
 export const getCoursesList = async () => {
     let response;
 
     try {
         response = await axios({
             method: "get",
-            url: "http://192.168.1.17:4000/api/course/all"
+            url: HOST+"/api/course/all"
         })
     } catch (error) {
         return undefined;
     }
 
-    return response.data.courses;
+    return response.data.courses as ICourse[];
 }
 
 export const getProfessorsList = async () => {
@@ -41,22 +45,21 @@ export const getProfessorsList = async () => {
     try {
         response = await axios({
             method: "get",
-            url: "http://192.168.1.17:4000/api/professor/all"
+            url: HOST+"/api/professor/all"
         })
     } catch (error) {
         return undefined;
     }
 
-    return response.data.professors;
+    return response.data.professors as IProfessor[];
 }
-
 export const postReview = async (review: IReview, email: string) => {
     let response;
 
     try {
         response = await axios({
             method: "post",
-            url: "http://192.168.1.17:4000/api/professor/rate",
+            url: HOST+"/api/professor/rate",
             data: {
                 review: review,
                 professor: email
@@ -67,4 +70,23 @@ export const postReview = async (review: IReview, email: string) => {
     }
 
     return response.data.result === "success";
+}
+
+export const getCourse = async (tag: string, unique?: string) => {
+    let response;
+
+    try {
+        response = await axios({
+            method: "get",
+            url: HOST+"/api/course",
+            params: {
+                tag: tag,
+                unique: unique
+            }
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.data.course as ICourse;
 }
