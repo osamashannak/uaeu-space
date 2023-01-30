@@ -13,6 +13,7 @@ const ReviewForm = (props: { email: string }) => {
     const {t, i18n} = useTranslation(namespaces.pages.professor);
 
     const [details, setDetails] = useState<IReview>({
+        id: 0,
         author: "Anonymous",
         score: 1,
         comment: "",

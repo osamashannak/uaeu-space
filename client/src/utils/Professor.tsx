@@ -1,20 +1,25 @@
 import {ReactComponent as FullStar} from "../assests/star.svg";
 import {ReactComponent as HalfStar} from "../assests/star-half.svg";
 import {ReactComponent as EmptyStar} from "../assests/star-outline.svg";
-import {formatDistance} from 'date-fns'
-import {ar, enUS} from 'date-fns/locale'
 import {ProfData} from "./SearchBox";
 
-export interface IProfessor extends ProfData{
+export interface IProfessor extends ProfData {
     college: string,
     reviews: IReview[]
 }
 
+export interface ReviewRatings {
+    request_key: string,
+    is_positive: boolean
+}
+
 export interface IReview {
+    id: number,
     author: string,
     positive: boolean,
     comment: string,
     score: number,
+    ratings?: ReviewRatings[],
     created_at: string
 }
 

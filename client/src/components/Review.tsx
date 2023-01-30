@@ -24,7 +24,7 @@ const Review = (props: IReview) => {
             </div>
             <div className={"review-footer"}>
                 <p>{dateHumanize(props.created_at, i18n.language)}</p>
-                <LikeDislike/>
+                <LikeDislike id={props.id}/>
             </div>
 
         </div>

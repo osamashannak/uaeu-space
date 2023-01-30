@@ -4,6 +4,7 @@ import {Professor} from "./entity/Professor";
 import {Review} from "./entity/Review";
 import {Course} from "./entity/Course";
 import {File} from "./entity/File";
+import {ReviewRatings} from "./entity/ReviewRatings";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -14,7 +15,7 @@ export const AppDataSource = new DataSource({
     database: "test",
     synchronize: true,
     logging: false,
-    entities: [Professor, Review, Course, File],
+    entities: [Professor, Review, Course, File, ReviewRatings],
     migrations: [],
     subscribers: [],
 })

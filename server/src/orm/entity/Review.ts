@@ -1,5 +1,6 @@
-import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm"
+import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Professor} from "./Professor";
+import {ReviewRatings} from "./ReviewRatings";
 
 @Entity()
 export class Review {
@@ -22,13 +23,9 @@ export class Review {
     @Column()
     comment!: string
 
-    @Column({default: 0})
-    likes!: number
-
-    @Column({default: 0})
-    dislikes!: number
+    @OneToMany(() => ReviewRatings, ratings => ratings.review)
+    ratings!: ReviewRatings[]
 
     @CreateDateColumn()
     created_at!: Date;
-
 }

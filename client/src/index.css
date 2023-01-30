@@ -13,6 +13,12 @@ body {
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
+@keyframes bang {
+    from {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
 
 /*
 NavBar DATA HERE
@@ -378,15 +384,30 @@ Professor DATA
     gap: 0.5rem;
 }
 
+.like-button {
+    position: relative;
+}
+
+i {
+    position: absolute;
+    display: block;
+    left: 50%;
+    top: 0;
+    width: 3px;
+    height: 8px;
+    background: red;
+    opacity: 0;
+}
+
 .review-rating-button {
     cursor: pointer;
-
 }
 
-.review-rating-button:hover {
-    color: #007fff;
+@media (hover: hover) {
+    .review-rating-button:hover {
+        color: gray;
+    }
 }
-
 
 .review-footer {
     display: flex;
