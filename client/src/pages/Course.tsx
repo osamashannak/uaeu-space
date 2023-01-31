@@ -54,10 +54,8 @@ const Course = () => {
     return (
         <div className={"course"}>
             <div className={"course-info-page"}>
-                <div className={"course-header"}>
-                    <p className={"course-page-tag"}>{course.tag}</p>
-                    <p className={"course-page-title"}>{course.name}</p>
-                </div>
+                <p className={"course-page-tag"}>{course.tag}</p>
+                <p className={"course-page-title"}>{course.name}</p>
                 <FileTable files={course.files}/>
             </div>
         </div>

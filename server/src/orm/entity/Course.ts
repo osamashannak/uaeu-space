@@ -1,5 +1,6 @@
 import {Column, DataSource, Entity, OneToMany, PrimaryColumn} from "typeorm"
 import {File} from "./File";
+import {FileRating} from "./FileRating";
 
 @Entity()
 export class Course {

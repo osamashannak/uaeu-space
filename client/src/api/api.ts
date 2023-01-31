@@ -3,7 +3,7 @@ import {IProfessor, IReview} from "../utils/Professor";
 import {ICourse} from "../utils/Course";
 
 
-const HOST = "http://192.168.1.17:4000";
+const HOST = "http://localhost:4000";
 
 export const getProfessor = async (professorEmail: string, unique?: string) => {
     let response;
@@ -97,7 +97,7 @@ export const getReviewRatings = async (reviewId: number) => {
     try {
         response = await axios({
             method: "get",
-            url: HOST + "/api/professor/review/",
+            url: HOST + "/api/professor/review/rating",
             params: {
                 reviewId: reviewId
             }
@@ -117,7 +117,7 @@ export const rateReview = async (reviewId: number, positive: boolean) => {
     try {
         response = await axios({
             method: "post",
-            url: HOST + "/api/professor/review/rate",
+            url: HOST + "/api/professor/review/rating",
             data: {
                 reviewId: reviewId,
                 positive: positive,
@@ -131,13 +131,72 @@ export const rateReview = async (reviewId: number, positive: boolean) => {
     return uuid;
 }
 
-export const removeReview = async (request_key: string) => {
+
+export const removeReviewRating = async (request_key: string) => {
     let response;
 
     try {
         response = await axios({
             method: "post",
-            url: HOST + "/api/professor/review/removerate",
+            url: HOST + "/api/professor/review/rating/remove",
+            data: {
+                request_key: request_key
+            }
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.data.result === "success";
+}
+
+export const getFileRatings = async (fileReference: string) => {
+    let response;
+
+    try {
+        response = await axios({
+            method: "get",
+            url: HOST + "/api/course/file/rating",
+            params: {
+                fileReference: fileReference
+            }
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.data;
+}
+
+export const rateFile = async (fileReference: string, positive: boolean) => {
+    const uuid = crypto.randomUUID();
+
+    let response;
+
+    try {
+        response = await axios({
+            method: "post",
+            url: HOST + "/api/course/file/rating/",
+            data: {
+                fileReference: fileReference,
+                positive: positive,
+                request_key: uuid
+            }
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return uuid;
+}
+
+export const removeFileRating = async (request_key: string) => {
+    let response;
+
+    try {
+        response = await axios({
+            method: "post",
+            url: HOST + "/api/course/file/rating/remove",
             data: {
                 request_key: request_key
             }

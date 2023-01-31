@@ -1,5 +1,6 @@
 import {CourseData} from "./SearchBox";
-
+import {ReactComponent as DocIcon} from "../assests/file-doc.svg";
+import {ReactComponent as PdfIcon} from "../assests/file-pdf.svg";
 
 export interface ICourse extends CourseData {
     files: IFile[]
@@ -30,4 +31,11 @@ export const formatBytes = (bytes: number, decimals: number = 1) => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
+
+export const fileTypeToIcon = {
+    0: <PdfIcon className={"review-icon"}/>,
+    1: "URL",
+    2: <DocIcon className={"review-icon"}/>,
+    3: "PPT"
 }

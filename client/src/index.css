@@ -150,7 +150,7 @@ SearchBox DATA
     max-width: 25rem;
     padding-left: 2.5rem;
     height: 2.5rem;
-    box-shadow: rgba(50, 50, 105, 0.5) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+    box-shadow: rgba(50, 50, 105, 0.5) 0 2px 5px 0, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
     margin-top: 2rem;
     margin-bottom: 0.5rem;
     border-radius: 6px;
@@ -372,7 +372,7 @@ Professor DATA
     max-width: 80%;
 }
 
-.review-rating {
+.ld-review-rating {
     display: flex;
     gap: 2rem;
 }
@@ -399,12 +399,12 @@ i {
     opacity: 0;
 }
 
-.review-rating-button {
+.ld-rating-button {
     cursor: pointer;
 }
 
 @media (hover: hover) {
-    .review-rating-button:hover {
+    .ld-rating-button:hover {
         color: gray;
     }
 }
@@ -499,21 +499,28 @@ Course DATA
     margin: auto;
 }
 
-.course-header {
-}
-
 .course-page-tag {
     font-weight: 600;
-    font-size: 3rem;
-}
-
-.course-page-title {
     font-size: 2rem;
 }
 
-.files-table {
+.course-page-title {
+    font-size: 1.5rem;
+}
+
+.files {
     margin-top: 3rem;
-    text-align: left;
+}
+
+.file-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+    background-color: lightgray;
+    padding: 1rem;
+    border-radius: 5px;
+    justify-content: space-between;
 }
 
 /**

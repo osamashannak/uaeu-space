@@ -1,11 +1,12 @@
-import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn} from "typeorm"
+import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn} from "typeorm"
 import {Course} from "./Course";
+import {FileRating} from "./FileRating";
 
 @Entity()
 export class File {
 
     @PrimaryColumn()
-    reference!: number;
+    reference!: string;
 
     @ManyToOne(() => Course, course => course.files)
     course!: Course;
@@ -14,12 +15,24 @@ export class File {
     name!: string;
 
     @Column()
-    type!: string;
+    type!: FileType;
 
+
+    // TODO change the size to kb
     @Column()
     size!: number;
+
+    @OneToMany(() => FileRating, ratings => ratings.file)
+    ratings!: FileRating[]
 
     @CreateDateColumn()
     created_at!: Date;
 
+}
+
+export enum FileType {
+    PDF,
+    URL,
+    DOC,
+    PPT
 }
