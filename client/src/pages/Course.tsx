@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import {getCourse} from "../api/api";
 import {ICourse} from "../utils/Course";
 import {ReactComponent as Loading} from "../assests/bubble-loading.svg";
+import FileForm from "../components/FileForm";
 
 const Course = () => {
 
@@ -57,6 +58,7 @@ const Course = () => {
                 <p className={"course-page-tag"}>{course.tag}</p>
                 <p className={"course-page-title"}>{course.name}</p>
                 <FileTable files={course.files}/>
+                <FileForm courseTag={course.tag}/>
             </div>
         </div>
     )

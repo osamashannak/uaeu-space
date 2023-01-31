@@ -67,6 +67,7 @@ export const getRating = async (req: Request, res: Response) => {
 
 export const rateReview = async (req: Request, res: Response) => {
     const body = req.body;
+    console.log(body)
 
     if (!body.reviewId || body.positive === null || !body.request_key) {
         res.status(400).json();

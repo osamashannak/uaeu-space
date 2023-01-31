@@ -7,7 +7,6 @@ import Footer from "./components/Footer";
 import Course from "./pages/Course";
 import {useTranslation} from "react-i18next";
 import Professor from "./pages/Professor";
-import Rate from "./pages/Rate";
 import {ReactComponent as Loading} from "./assests/bubble-loading.svg";
 
 const App = () => {
@@ -22,7 +21,6 @@ const App = () => {
                     <Route path={"/"} element={<Home/>}/>
                     <Route path={"/course/:tag"} element={<Course/>}/>
                     <Route path={"/professor/:email"} element={<Professor/>}/>
-                    <Route path={"/professor/:email/rate"} element={<Rate/>}/>
 
                 </Routes> </React.Suspense>
             <Footer/>

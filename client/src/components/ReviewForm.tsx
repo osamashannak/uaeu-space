@@ -49,9 +49,9 @@ const ReviewForm = (props: { email: string }) => {
             setSubmitting(false);
             return;
         }
-
         setSubmitting(null);
         localStorage.setItem(`${props.email}-prof`, 'true');
+        window.location.reload();
     }
 
     if (submitting === null) {
@@ -145,7 +145,7 @@ const ReviewForm = (props: { email: string }) => {
                             {t("new_review.negative")}
                         </label>
                     </div>
-                    <input type={"submit"} title={"Hello"} className={"new-review-button"}
+                    <input type={"submit"} title={"Submit"} className={"new-review-button"}
                            value={t("new_review.submit")!}/>
                 </div>
             </fieldset>

@@ -3,7 +3,7 @@ import {IProfessor, IReview} from "../utils/Professor";
 import {ICourse} from "../utils/Course";
 
 
-const HOST = "http://localhost:4000";
+const HOST = "http://192.168.1.17:4000";
 
 export const getProfessor = async (professorEmail: string, unique?: string) => {
     let response;
@@ -109,8 +109,21 @@ export const getReviewRatings = async (reviewId: number) => {
     return response.data;
 }
 
+function uuidv4() {
+    // @ts-ignore
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+}
+
 export const rateReview = async (reviewId: number, positive: boolean) => {
-    const uuid = crypto.randomUUID();
+    let uuid;
+    try {
+        uuid = uuidv4()
+    } catch (e) {
+        alert(e)
+    }
+
 
     let response;
 
@@ -169,7 +182,7 @@ export const getFileRatings = async (fileReference: string) => {
 }
 
 export const rateFile = async (fileReference: string, positive: boolean) => {
-    const uuid = crypto.randomUUID();
+    const uuid = uuidv4();
 
     let response;
 

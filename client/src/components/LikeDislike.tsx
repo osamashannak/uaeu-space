@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import {ReactComponent as Like} from "../assests/like.svg";
 import {ReactComponent as Dislike} from "../assests/dislike.svg";
 import {getReviewRatings, rateReview, removeReviewRating} from "../api/api";
-import {id} from "date-fns/locale";
 
 const random = (max: number) => {
     return Math.random() * max;
@@ -82,7 +81,6 @@ const LikeDislike = (props: { id: number }) => {
 
     const onLike = async () => {
         setRunning(true);
-
         // Remove Like
         if (liked) {
             await unlike();
@@ -134,11 +132,11 @@ const LikeDislike = (props: { id: number }) => {
             <span id={`like-button-${props.id}`} className={"rating-button like-button"}><Like
                 onClick={onLike}
                 style={liked ? {color: "#007fff"} : {}}
-                className={"review-rating-button"}/> {likes}</span>
+                className={"ld-rating-button"}/> {likes}</span>
             <span className={"rating-button"}><Dislike
                 onClick={onDislike}
                 style={liked === false ? {color: "#007fff"} : {}}
-                className={"review-rating-button"}/> {dislikes}</span>
+                className={"ld-rating-button"}/> {dislikes}</span>
         </div>
     )
 

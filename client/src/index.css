@@ -377,10 +377,8 @@ Professor DATA
     gap: 2rem;
 }
 
-
 .rating-button {
     display: flex;
-    align-items: center;
     gap: 0.5rem;
 }
 
@@ -520,7 +518,35 @@ Course DATA
     background-color: lightgray;
     padding: 1rem;
     border-radius: 5px;
+    align-items: baseline;
     justify-content: space-between;
+}
+
+.file-name {
+    flex: 0 1 20rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.row-entity {
+}
+
+.file-type-icon {
+    vertical-align: middle;
+    font-size: 2rem;
+}
+
+[dir="rtl"] .file-type-icon {
+    margin-left: 1rem;
+}
+
+[dir="ltr"] .file-type-icon {
+    margin-right: 1rem;
+}
+
+.file-size {
+    direction: ltr;
 }
 
 /**

@@ -130,14 +130,16 @@ const LikeDislike = (props: { fileReference: string }) => {
 
     return (
         <div className={"ld-review-rating"}>
-        <span id={`like-button-${props.fileReference}`} className={"rating-button like-button"}><Like
-            onClick={onLike}
-            style={liked ? {color: "#007fff"} : {}}
-            className={"ld-rating-button"}/> {likes}</span>
-            <span className={"rating-button"}><Dislike
-                onClick={onDislike}
-                style={liked === false ? {color: "#007fff"} : {}}
-                className={"ld-rating-button"}/> {dislikes}</span>
+            <span id={`like-button-${props.fileReference}`} className={"rating-button like-button"}>
+                <Like
+                    onClick={onLike}
+                    style={liked ? {color: "#007fff"} : {}}
+                    className={"ld-rating-button"}/> {likes}</span>
+            <span className={"rating-button"}>
+                <Dislike
+                    onClick={onDislike}
+                    style={liked === false ? {color: "#007fff"} : {}}
+                    className={"ld-rating-button"}/> {dislikes}</span>
         </div>
     )
 

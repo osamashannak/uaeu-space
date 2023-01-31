@@ -65,6 +65,7 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const rateFile = async (req: Request, res: Response) => {
     const body = req.body;
+    console.log(body)
 
     if (!body.fileReference || body.positive === null || !body.request_key) {
         res.status(400).json();

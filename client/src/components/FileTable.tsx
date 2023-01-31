@@ -1,14 +1,14 @@
-import {ReactComponent as Ellipses} from "../assests/dots-vertical.svg";
-import {useEffect} from "react";
 import {fileTypeToIcon, formatBytes, IFile} from "../utils/Course";
 import {dateHumanize} from "../utils/Global";
 import {useTranslation} from "react-i18next";
-import {namespaces} from "../i18n";
 import LikeDislike from "./FileRating";
 import {ReactComponent as BookIcon} from "../assests/menu-book-outline.svg";
+import {useState} from "react";
 
 const FileTable = (props: { files: IFile[] }) => {
+
     const {t, i18n} = useTranslation();
+    const [files, setFiles] = useState<IFile[]>(props.files);
 
     return (
         <div className={"files"}>
@@ -17,13 +17,15 @@ const FileTable = (props: { files: IFile[] }) => {
                 {
                     props.files.map((value, index) => (
                         <div className={"file-row"}>
-                            <span>
+                            <span className={"file-name"}>
                                 {fileTypeToIcon[value.type]}
                                 <a target="_blank"
+                                   style={{color: "#007fff"}}
                                    rel="noreferrer"
-                                   href={"https://google.com"}>{value.name}</a>
+                                   href={"https://google.com"}
+                                   title={value.name}>{value.name}</a>
                             </span>
-                            <p>{formatBytes(value.size)}</p>
+                            <p className={"file-size"}>{formatBytes(value.size)}</p>
                             <p>{dateHumanize(value.created_at, i18n.language)}</p>
                             <LikeDislike fileReference={value.reference}/>
                         </div>

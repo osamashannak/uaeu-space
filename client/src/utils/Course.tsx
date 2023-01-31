@@ -1,6 +1,8 @@
 import {CourseData} from "./SearchBox";
-import {ReactComponent as DocIcon} from "../assests/file-doc.svg";
-import {ReactComponent as PdfIcon} from "../assests/file-pdf.svg";
+import {ReactComponent as DocIcon} from "../assests/doc-outline.svg";
+import {ReactComponent as PdfIcon} from "../assests/pdf-outline.svg";
+import {ReactComponent as PptIcon} from "../assests/ppt-outline.svg";
+import {ReactComponent as LinkIcon} from "../assests/link-variant.svg";
 
 export interface ICourse extends CourseData {
     files: IFile[]
@@ -11,7 +13,7 @@ export interface IFile {
     name: string,
     type: FileType,
     size: number,
-    created_at: string
+    created_at: Date
 }
 
 export enum FileType {
@@ -34,8 +36,8 @@ export const formatBytes = (bytes: number, decimals: number = 1) => {
 }
 
 export const fileTypeToIcon = {
-    0: <PdfIcon className={"review-icon"}/>,
-    1: "URL",
-    2: <DocIcon className={"review-icon"}/>,
-    3: "PPT"
+    0: <PdfIcon className={"file-type-icon"}/>,
+    1: <LinkIcon className={"file-type-icon"}/>,
+    2: <DocIcon className={"file-type-icon"}/>,
+    3: <PptIcon className={"file-type-icon"}/>
 }
