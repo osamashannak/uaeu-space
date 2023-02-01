@@ -133,7 +133,7 @@ const LikeDislike = (props: { id: number }) => {
                 onClick={onLike}
                 style={liked ? {color: "#007fff"} : {}}
                 className={"ld-rating-button"}/> {likes}</span>
-            <span className={"rating-button"}><Dislike
+            <span id="dislike-button" className={"rating-button"}><Dislike
                 onClick={onDislike}
                 style={liked === false ? {color: "#007fff"} : {}}
                 className={"ld-rating-button"}/> {dislikes}</span>

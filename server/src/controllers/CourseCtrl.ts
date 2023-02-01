@@ -65,15 +65,14 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const rateFile = async (req: Request, res: Response) => {
     const body = req.body;
-    console.log(body)
 
-    if (!body.fileReference || body.positive === null || !body.request_key) {
+    if (!body.blobName || body.positive === null || !body.request_key) {
         res.status(400).json();
         return;
     }
 
     const file = await AppDataSource.getRepository(File).findOne({
-        where: {reference: Equal(body.fileReference)}
+        where: {blob_name: Equal(body.blobName)}
     });
 
     if (!file) {
@@ -119,13 +118,13 @@ export const removeFileRating = async (req: Request, res: Response) => {
 export const getFileRatings = async (req: Request, res: Response) => {
     const params = req.query;
 
-    if (!params.fileReference) {
+    if (!params.blobName) {
         res.status(400).json();
         return;
     }
 
     const file = await AppDataSource.getRepository(File).findOne({
-        where: {reference: Equal(params.fileReference as string)},
+        where: {blob_name: Equal(params.blobName as string)},
         relations: ["ratings"]
     });
 

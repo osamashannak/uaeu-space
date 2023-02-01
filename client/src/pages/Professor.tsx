@@ -37,9 +37,9 @@ const Professor = () => {
                     setScore(allScore / professor.reviews.length);
                 }
             }
+            setIsFetching(false);
         });
 
-        setIsFetching(false);
     }, []);
 
     if (isFetching) {

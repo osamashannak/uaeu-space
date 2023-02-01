@@ -568,7 +568,7 @@ Course DATA
 
 .upload-file-button {
     padding: 0.5rem;
-    cursor:pointer;
+    cursor: pointer;
     font-weight: 400;
     font-size: 0.8rem;
     border-radius: 2px;
@@ -576,6 +576,9 @@ Course DATA
     background-color: #4C89EE;
 }
 
+.upload-file-button:focus {
+    outline: auto rgb(94, 158, 214);
+}
 
 /**
 Footer DATA
