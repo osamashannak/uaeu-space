@@ -3,13 +3,14 @@ import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
 import {FormEvent, useState} from "react";
 import {ReactComponent as Loading} from "../assests/bubble-loading.svg";
-import {IFile} from "../utils/Course";
+import {FileUpload} from "../utils/Course";
 
 const FileForm = (props: { courseTag: string }) => {
 
     const {t, i18n} = useTranslation(namespaces.pages.professor);
 
-    const [details, setDetails] = useState<IFile[]>([]);
+    const [details, setDetails] = useState<File[]>([]);
+    const [update, setUpdate] = useState<boolean>(false);
 
     const [submitting, setSubmitting] = useState<boolean | null>(false);
 
@@ -43,20 +44,53 @@ const FileForm = (props: { courseTag: string }) => {
         )
     }
 
+    window.onbeforeunload = (e) => {
+        if (details.length > 0) {
+            e.returnValue = "Files are still uploading."
+        }
+    }
+
+
     return (
         <form className={"new-review"} onSubmit={handleSubmit}>
             <p><Upload/> Upload Materials</p>
             <fieldset style={{border: "none", padding: 0}}>
-                <div>
-                    <label>Upload file(s): </label>
+                <div className={"file-form-entity"}>
+                    <p className={"file-disclaimer"}>Maximum:
+
+                        <ul style={{paddingLeft: "1rem"}}>
+                            <li>5GB per file</li>
+                            <li>8 files per upload</li>
+                        </ul>
+                    </p>
+                    <span>Upload file(s): </span>
+                    <label className={"upload-file-button"} htmlFor={"file-upload"}>SELECT FILES</label>
                     <input type={"file"}
+                           title={""}
+                           hidden
+                           id={"file-upload"}
                            multiple
                            accept=".ppt,.pptx,.pdf,.doc,.docx"
                            onChange={event => {
-                               for (let file in event.target.files) {
-
+                               if (!event.target.files || details.length > 7) return;
+                               const fileDetails = details.slice();
+                               let i = 0;
+                               while (event.target.files.item(i) !== null && fileDetails.length < 8) {
+                                   fileDetails.push(event.target.files.item(i)!);
+                                   i++;
                                }
+                               setDetails(fileDetails);
+                               event.target.files = null;
                            }}/>
+                </div>
+                <div>
+                    {
+                        details.map((value, index) => (
+                            <div key={index} className={"file-preview"}>
+                                <input type={"text"} defaultValue={value.name}/>
+                            </div>
+                        ))
+                    }
                 </div>
                 <input type={"submit"} title={"Submit"} className={"new-review-button"}
                        value={t("new_review.submit")!}/>

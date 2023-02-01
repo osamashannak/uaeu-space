@@ -3,7 +3,7 @@ import {IProfessor, IReview} from "../utils/Professor";
 import {ICourse} from "../utils/Course";
 
 
-const HOST = "http://192.168.1.17:4000";
+const HOST = "http://localhost:4000";
 
 export const getProfessor = async (professorEmail: string, unique?: string) => {
     let response;

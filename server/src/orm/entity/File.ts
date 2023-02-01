@@ -6,7 +6,7 @@ import {FileRating} from "./FileRating";
 export class File {
 
     @PrimaryColumn()
-    reference!: string;
+    blob_name!: string;
 
     @ManyToOne(() => Course, course => course.files)
     course!: Course;
@@ -16,7 +16,6 @@ export class File {
 
     @Column()
     type!: FileType;
-
 
     // TODO change the size to kb
     @Column()

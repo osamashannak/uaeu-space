@@ -10,6 +10,17 @@ const FileTable = (props: { files: IFile[] }) => {
     const {t, i18n} = useTranslation();
     const [files, setFiles] = useState<IFile[]>(props.files);
 
+    if (files.length < 1) {
+        return (
+            <div className={"files"}>
+                <p className={"ratings-title"}><BookIcon className={"review-icon"}/> Materials</p>
+
+
+                <p className={"no-reviews"}>There are no materials for this course.</p>
+            </div>
+        )
+    }
+
     return (
         <div className={"files"}>
             <p className={"ratings-title"}><BookIcon className={"review-icon"}/> Materials</p>

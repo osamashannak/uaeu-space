@@ -13,7 +13,12 @@ export interface IFile {
     name: string,
     type: FileType,
     size: number,
-    created_at: Date
+    created_at: string
+}
+
+export interface FileUpload {
+    name: string,
+    file: File
 }
 
 export enum FileType {

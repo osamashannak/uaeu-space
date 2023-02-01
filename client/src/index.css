@@ -549,6 +549,34 @@ Course DATA
     direction: ltr;
 }
 
+.file-form-entity {
+    font-weight: 400;
+    margin-top: 2rem;
+}
+
+.file-disclaimer {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.file-preview {
+    margin-top: 1rem;
+    border: 1px solid black;
+    max-width: 35rem;
+    width: 100%;
+}
+
+.upload-file-button {
+    padding: 0.5rem;
+    cursor:pointer;
+    font-weight: 400;
+    font-size: 0.8rem;
+    border-radius: 2px;
+    color: white;
+    background-color: #4C89EE;
+}
+
+
 /**
 Footer DATA
  */
