@@ -3,7 +3,7 @@ import {IProfessor, IReview} from "../utils/Professor";
 import {ICourse} from "../utils/Course";
 
 
-const HOST = "http://192.168.1.17:4000";
+const HOST = "http://localhost:4000";
 
 export const getProfessor = async (professorEmail: string, unique?: string) => {
     let response;
@@ -163,7 +163,7 @@ export const removeReviewRating = async (request_key: string) => {
     return response.data.result === "success";
 }
 
-export const getFileRatings = async (fileReference: string) => {
+export const getFileRatings = async (fileId: number) => {
     let response;
 
     try {
@@ -171,7 +171,7 @@ export const getFileRatings = async (fileReference: string) => {
             method: "get",
             url: HOST + "/api/course/file/rating",
             params: {
-                fileReference: fileReference
+                id: fileId
             }
         })
     } catch (error) {
@@ -181,7 +181,7 @@ export const getFileRatings = async (fileReference: string) => {
     return response.data;
 }
 
-export const rateFile = async (fileReference: string, positive: boolean) => {
+export const rateFile = async (fileId: number, positive: boolean) => {
     const uuid = uuidv4();
 
     let response;
@@ -191,7 +191,7 @@ export const rateFile = async (fileReference: string, positive: boolean) => {
             method: "post",
             url: HOST + "/api/course/file/rating/",
             data: {
-                fileReference: fileReference,
+                fileId: fileId,
                 positive: positive,
                 request_key: uuid
             }

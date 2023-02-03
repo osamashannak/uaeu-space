@@ -2,29 +2,11 @@ import {Request, Response} from 'express';
 import {AppDataSource} from "../orm/data-source";
 import {Course} from "../orm/entity/Course";
 import {Equal, ILike} from "typeorm";
-import {File} from "../orm/entity/File";
+import {CourseFile} from "../orm/entity/CourseFile";
 import {FileRating} from "../orm/entity/FileRating";
+import {FileAccessToken} from "../orm/entity/FileAccessToken";
+import {generateToken, getFileURL} from "../azure";
 
-
-export const upload = async (req: Request, res: Response) => {
-    const body = req.body;
-
-    const courseId = body.courseId;
-    /**
-     * TODO uploading file to the mongodb db
-     * expected para:
-     * course
-     * file bin
-     */
-}
-
-export const getFiles = async (req: Request, res: Response) => {
-    /**
-     * TODO get all files (approved) that are stored in the db for set course
-     * expected para:
-     * courseId
-     */
-}
 
 export const find = async (req: Request, res: Response) => {
     const params = req.query;
@@ -71,7 +53,7 @@ export const rateFile = async (req: Request, res: Response) => {
         return;
     }
 
-    const file = await AppDataSource.getRepository(File).findOne({
+    const file = await AppDataSource.getRepository(CourseFile).findOne({
         where: {blob_name: Equal(body.blobName)}
     });
 
@@ -123,7 +105,7 @@ export const getFileRatings = async (req: Request, res: Response) => {
         return;
     }
 
-    const file = await AppDataSource.getRepository(File).findOne({
+    const file = await AppDataSource.getRepository(CourseFile).findOne({
         where: {blob_name: Equal(params.blobName as string)},
         relations: ["ratings"]
     });
@@ -142,3 +124,67 @@ export const getFileRatings = async (req: Request, res: Response) => {
 
     res.status(200).json({likes: likes, dislikes: dislikes});
 }
+
+interface UploadFilesBody {
+    files: File[]
+
+}
+
+export const uploadFiles = async (req: Request, res: Response) => {
+    // get files type
+    // get files size
+
+    const body: UploadFilesBody = req.body;
+    const address = req.socket.remoteAddress;
+
+    if (!('files' in body && !address)) {
+        res.status(401).json();
+        return;
+    }
+
+    const validFiles = []
+
+
+
+
+}
+
+export const getFile = async (req: Request, res: Response) => {
+
+    const params = req.query;
+    const address = req.socket.remoteAddress; // implement a way to make sure its available
+
+    if (!params.blobName) {
+        res.status(400).json();
+        return;
+    }
+
+    let fileAccessToken = await AppDataSource.getRepository(FileAccessToken).findOne({
+        where: {
+            client_address: address
+        }
+    });
+
+    if (!fileAccessToken || fileAccessToken.expires_on < new Date()) {
+        if (!address) {
+            res.status(401).json();
+            return
+        }
+
+        const queryParams = generateToken(address);
+
+        fileAccessToken = new FileAccessToken();
+
+        fileAccessToken.url = queryParams.toString();
+        fileAccessToken.expires_on = queryParams.expiresOn!;
+        fileAccessToken.client_address = address;
+
+        await AppDataSource.getRepository(FileAccessToken).save(fileAccessToken);
+    }
+
+    const fileUrl = getFileURL((params.blobName as string), fileAccessToken.url)
+
+    res.status(200).json({url: fileUrl})
+
+}
+

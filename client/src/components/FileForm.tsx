@@ -58,8 +58,8 @@ const FileForm = (props: { courseTag: string }) => {
                     <p className={"file-disclaimer"}>Maximum:
 
                         <ul style={{paddingLeft: "1rem"}}>
-                            <li>500 MB per file</li>
-                            <li>8 files per upload</li>
+                            <li>100 MB per file</li>
+                            <li>3 files per upload</li>
                         </ul>
                     </p>
                     <span>Upload file(s): </span>
@@ -70,15 +70,22 @@ const FileForm = (props: { courseTag: string }) => {
                            id={"file-upload"}
                            multiple
                            onChange={event => {
-                               if (!event.target.files || details.length > 7) return;
+                               if (!event.target.files || details.length > 2) return;
                                const fileDetails = details.slice();
                                let i = 0;
-                               while (event.target.files.item(i) !== null && fileDetails.length < 8) {
-                                   fileDetails.push(event.target.files.item(i)!);
+                               const skipped = [];
+                               while (event.target.files.item(i) !== null && fileDetails.length < 4) {
+                                   const file = event.target.files.item(i)!;
+                                   if (file.size > 1e+8) {
+                                       skipped.push(file.name);
+                                       continue;
+                                   }
+                                   fileDetails.push(file);
                                    i++;
                                }
                                setDetails(fileDetails);
                                event.target.files = null;
+                               alert("The following files are larger than 100 MB: \n"+skipped.join("\n"));
                            }}/>
                     <label className={"upload-file-button"} htmlFor={"file-upload"}>SELECT FILES</label>
                 </div>

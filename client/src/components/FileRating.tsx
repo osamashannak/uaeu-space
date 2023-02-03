@@ -34,7 +34,7 @@ const generateConfetti = (id: string) => {
     }, 200);
 }
 
-const LikeDislike = (props: { fileReference: string }) => {
+const LikeDislike = (props: { fileId: number }) => {
     const [liked, setLiked] = useState<boolean | null>();
     const [likes, setLikes] = useState<number>();
     const [dislikes, setDislikes] = useState<number>();
@@ -42,13 +42,13 @@ const LikeDislike = (props: { fileReference: string }) => {
     const [running, setRunning] = useState(false);
 
     useEffect(() => {
-        getFileRatings(props.fileReference).then(value => {
+        getFileRatings(props.fileId).then(value => {
             if (!value) return;
             setLikes(value.likes);
             setDislikes(value.dislikes);
         });
 
-        const hasLiked = localStorage.getItem(`${props.fileReference}-rev`);
+        const hasLiked = localStorage.getItem(`${props.fileId}-rev`);
         if (hasLiked === null) {
             setLiked(null);
             return;
@@ -57,25 +57,25 @@ const LikeDislike = (props: { fileReference: string }) => {
     });
 
     const unlike = async () => {
-        const likeKey = localStorage.getItem(`like-file-request-${props.fileReference}`);
+        const likeKey = localStorage.getItem(`like-file-request-${props.fileId}`);
 
         if (likeKey) {
             const request = await removeFileRating(likeKey);
             if (!request) return;
             console.log(likeKey)
-            localStorage.removeItem(`like-file-request-${props.fileReference}`);
-            localStorage.removeItem(`${props.fileReference}-rev`);
+            localStorage.removeItem(`like-file-request-${props.fileId}`);
+            localStorage.removeItem(`${props.fileId}-rev`);
         }
     }
 
     const unDislike = async () => {
-        const dislikeKey = localStorage.getItem(`dislike-file-request-${props.fileReference}`);
+        const dislikeKey = localStorage.getItem(`dislike-file-request-${props.fileId}`);
         if (dislikeKey) {
             const request = await removeFileRating(dislikeKey);
             if (!request) return;
 
-            localStorage.removeItem(`dislike-file-request-${props.fileReference}`);
-            localStorage.removeItem(`${props.fileReference}-rev`);
+            localStorage.removeItem(`dislike-file-request-${props.fileId}`);
+            localStorage.removeItem(`${props.fileId}-rev`);
         }
     }
 
@@ -94,15 +94,15 @@ const LikeDislike = (props: { fileReference: string }) => {
             await unDislike();
         }
 
-        const requestKey = await rateFile(props.fileReference, true);
+        const requestKey = await rateFile(props.fileId, true);
         if (!requestKey) return;
 
-        localStorage.setItem(`like-file-request-${props.fileReference}`, requestKey);
-        localStorage.setItem(`${props.fileReference}-rev`, 'true');
+        localStorage.setItem(`like-file-request-${props.fileId}`, requestKey);
+        localStorage.setItem(`${props.fileId}-rev`, 'true');
 
         setRunning(false);
 
-        generateConfetti(`like-button-${props.fileReference}`);
+        generateConfetti(`like-button-${props.fileId}`);
     }
 
     const onDislike = async () => {
@@ -119,18 +119,18 @@ const LikeDislike = (props: { fileReference: string }) => {
             await unlike();
         }
 
-        const requestKey = await rateFile(props.fileReference, false);
+        const requestKey = await rateFile(props.fileId, false);
         if (!requestKey) return;
 
         setRunning(false);
 
-        localStorage.setItem(`${props.fileReference}-rev`, 'false');
-        localStorage.setItem(`dislike-file-request-${props.fileReference}`, requestKey);
+        localStorage.setItem(`${props.fileId}-rev`, 'false');
+        localStorage.setItem(`dislike-file-request-${props.fileId}`, requestKey);
     }
 
     return (
         <div className={"ld-review-rating"}>
-            <span id={`like-button-${props.fileReference}`} className={"rating-button like-button"}>
+            <span id={`like-button-${props.fileId}`} className={"rating-button like-button"}>
                 <Like
                     onClick={onLike}
                     style={liked ? {color: "#007fff"} : {}}

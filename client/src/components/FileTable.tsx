@@ -33,12 +33,12 @@ const FileTable = (props: { files: IFile[] }) => {
                                 <a target="_blank"
                                    style={{color: "#007fff"}}
                                    rel="noreferrer"
-                                   href={"https://google.com"}
+                                   href={"http://localhost:4000/api/course/file?id=" + value.id}
                                    title={value.name}>{value.name}</a>
                             </span>
                             <p className={"file-size"}>{formatBytes(value.size)}</p>
                             <p>{dateHumanize(value.created_at, i18n.language)}</p>
-                            <LikeDislike fileReference={value.reference}/>
+                            <LikeDislike fileId={value.id}/>
                         </div>
                     ))
                 }

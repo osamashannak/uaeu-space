@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 
-import courseRouter from "./routes/courseRouter";
-import professorRouter from "./routes/professorRouter";
+import courseRouter from "./routes/CourseRouter";
+import professorRouter from "./routes/ProfessorRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
 
@@ -26,7 +26,7 @@ const main = (): void => {
         /*
                 console.log("Inserting a new user into the database...")
                 const professor = await AppDataSource.manager.getRepository(Course).findOne({where: {tag: "MATH110"}})
-                const file = new File();
+                const file = new CourseFile();
                 file.created_at = new Date();
                 file.reference = "sofmpqvjvirodfdsfdse";
                 file.course = professor!;
@@ -34,7 +34,7 @@ const main = (): void => {
                 file.size = 10000000;
                 file.type = FileType.PDF;
 
-                await AppDataSource.getRepository(File).save(file);*/
+                await AppDataSource.getRepository(CourseFile).save(file);*/
 
     }).catch(error => console.log(error))
 

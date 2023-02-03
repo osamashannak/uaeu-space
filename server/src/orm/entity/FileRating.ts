@@ -1,5 +1,5 @@
 import {Column, Entity, ManyToOne, PrimaryColumn} from "typeorm"
-import {File} from "./File";
+import {CourseFile} from "./CourseFile";
 
 @Entity()
 export class FileRating {
@@ -10,7 +10,7 @@ export class FileRating {
     @Column()
     is_positive!: boolean;
 
-    @ManyToOne(() => File, file => file.ratings)
-    file!: File
+    @ManyToOne(() => CourseFile, file => file.ratings)
+    file!: CourseFile
 
 }

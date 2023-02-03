@@ -1,6 +1,5 @@
 import {Column, DataSource, Entity, OneToMany, PrimaryColumn} from "typeorm"
-import {File} from "./File";
-import {FileRating} from "./FileRating";
+import {CourseFile} from "./CourseFile";
 
 @Entity()
 export class Course {
@@ -11,8 +10,8 @@ export class Course {
     @Column()
     name!: string;
 
-    @OneToMany(() => File, file => file.course)
-    files!: File[];
+    @OneToMany(() => CourseFile, file => file.course)
+    files!: CourseFile[];
 
     @Column({default: 0})
     views!: number;

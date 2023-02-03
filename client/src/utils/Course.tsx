@@ -9,16 +9,11 @@ export interface ICourse extends CourseData {
 }
 
 export interface IFile {
-    reference: string,
+    id: number,
     name: string,
     type: FileType,
     size: number,
     created_at: string
-}
-
-export interface FileUpload {
-    name: string,
-    file: File
 }
 
 export enum FileType {

@@ -1,11 +1,14 @@
-import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn} from "typeorm"
+import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm"
 import {Course} from "./Course";
 import {FileRating} from "./FileRating";
 
 @Entity()
-export class File {
+export class CourseFile {
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
+    id!: number;
+
+    @Column()
     blob_name!: string;
 
     @ManyToOne(() => Course, course => course.files)

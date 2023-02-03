@@ -3,9 +3,10 @@ import {DataSource} from "typeorm";
 import {Professor} from "./entity/Professor";
 import {Review} from "./entity/Review";
 import {Course} from "./entity/Course";
-import {File} from "./entity/File";
+import {CourseFile} from "./entity/CourseFile";
 import {ReviewRatings} from "./entity/ReviewRatings";
 import {FileRating} from "./entity/FileRating";
+import {FileAccessToken} from "./entity/FileAccessToken";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -16,7 +17,7 @@ export const AppDataSource = new DataSource({
     database: "test",
     synchronize: true,
     logging: false,
-    entities: [Professor, Review, Course, File, ReviewRatings, FileRating],
+    entities: [Professor, Review, Course, CourseFile, ReviewRatings, FileRating, FileAccessToken],
     migrations: [],
     subscribers: [],
 })
