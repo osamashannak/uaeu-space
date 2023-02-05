@@ -1,5 +1,6 @@
 import Box from "../components/Box";
-import {ReactComponent as InfoSVG} from "../assests/information-variant.svg";
+import {Icon} from '@iconify/react';
+import informationVariant from '@iconify/icons-mdi/information-variant';
 import {Link} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
@@ -29,7 +30,7 @@ const Home = () => {
                     }}/>
             </div>
             <div className={"info"}>
-                <p className={"info-title"}><InfoSVG/> {t("info.title")}</p>
+                <p className={"info-title"}><Icon icon={informationVariant}/> {t("info.title")}</p>
                 <li className={"info-description"}>
                     {t("info.paragraph1")}
                 </li>

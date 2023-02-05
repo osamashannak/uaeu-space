@@ -5,8 +5,12 @@ import {Equal, ILike} from "typeorm";
 import {CourseFile} from "../orm/entity/CourseFile";
 import {FileRating} from "../orm/entity/FileRating";
 import {FileAccessToken} from "../orm/entity/FileAccessToken";
-import {generateToken, getFileURL} from "../azure";
+import {generateToken, getFileURL, uploadBlob} from "../azure";
+import {promisify} from "util";
+import * as fs from "fs";
+import {compressFile} from "../utils";
 
+const unlinkAsync = promisify(fs.unlink)
 
 export const find = async (req: Request, res: Response) => {
     const params = req.query;
@@ -48,13 +52,13 @@ export const getAll = async (req: Request, res: Response) => {
 export const rateFile = async (req: Request, res: Response) => {
     const body = req.body;
 
-    if (!body.blobName || body.positive === null || !body.request_key) {
+    if (!body.id || body.positive === null || !body.request_key) {
         res.status(400).json();
         return;
     }
 
     const file = await AppDataSource.getRepository(CourseFile).findOne({
-        where: {blob_name: Equal(body.blobName)}
+        where: {id: Equal(body.id as number)}
     });
 
     if (!file) {
@@ -100,13 +104,13 @@ export const removeFileRating = async (req: Request, res: Response) => {
 export const getFileRatings = async (req: Request, res: Response) => {
     const params = req.query;
 
-    if (!params.blobName) {
+    if (!params.id) {
         res.status(400).json();
         return;
     }
 
     const file = await AppDataSource.getRepository(CourseFile).findOne({
-        where: {blob_name: Equal(params.blobName as string)},
+        where: {id: Equal(parseInt(params.id as string))},
         relations: ["ratings"]
     });
 
@@ -126,37 +130,54 @@ export const getFileRatings = async (req: Request, res: Response) => {
 }
 
 interface UploadFilesBody {
-    files: File[]
+    file: File
 
 }
 
-export const uploadFiles = async (req: Request, res: Response) => {
-    // get files type
-    // get files size
+export const uploadFile = async (req: Request, res: Response) => {
+    const file = req.file;
 
-    const body: UploadFilesBody = req.body;
-    const address = req.socket.remoteAddress;
-
-    if (!('files' in body && !address)) {
-        res.status(401).json();
+    if (!(file && req.body.tag)) {
+        res.status(400).json({error: "File type is not allowed, or it is too large."});
         return;
     }
 
-    const validFiles = []
+    const filePath = await compressFile(file.path);
 
+    if (!filePath) {
+        res.status(400).json({});
+        return;
+    }
 
+    const blobName = await uploadBlob(file.originalname, filePath, file.mimetype);
 
+    await unlinkAsync(file.path);
+
+    const courseFile = new CourseFile();
+    courseFile.course = req.body.tag;
+    courseFile.blob_name = blobName;
+    courseFile.size = file.size;
+    courseFile.name = file.originalname;
+    courseFile.type = file.mimetype;
+
+    await AppDataSource.getRepository(CourseFile).save(courseFile);
 
 }
 
 export const getFile = async (req: Request, res: Response) => {
 
     const params = req.query;
-    const address = req.socket.remoteAddress; // implement a way to make sure its available
+    //let address = requestIp.getClientIp(req);
+    let address = "176.205.83.27";
 
-    if (!params.blobName) {
+
+    if (!(params.id && address)) {
         res.status(400).json();
         return;
+    }
+
+    if (address.includes(":")) {
+        address = address.split(":").slice(-1).pop()!;
     }
 
     let fileAccessToken = await AppDataSource.getRepository(FileAccessToken).findOne({
@@ -173,6 +194,8 @@ export const getFile = async (req: Request, res: Response) => {
 
         const queryParams = generateToken(address);
 
+        console.log(queryParams)
+
         fileAccessToken = new FileAccessToken();
 
         fileAccessToken.url = queryParams.toString();
@@ -182,9 +205,21 @@ export const getFile = async (req: Request, res: Response) => {
         await AppDataSource.getRepository(FileAccessToken).save(fileAccessToken);
     }
 
-    const fileUrl = getFileURL((params.blobName as string), fileAccessToken.url)
+    let courseFile = await AppDataSource.getRepository(CourseFile).findOne({
+        where: {
+            id: Equal(parseInt(params.id as string))
+        }
+    });
 
-    res.status(200).json({url: fileUrl})
+    //if (!(courseFile && courseFile.visible)) {
+    if (!(courseFile)) {
+        res.status(404).json({});
+        return;
+    }
+
+    const fileUrl = getFileURL(courseFile.blob_name, fileAccessToken.url)
+
+    res.status(200).redirect(fileUrl);
 
 }
 

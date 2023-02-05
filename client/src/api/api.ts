@@ -3,7 +3,7 @@ import {IProfessor, IReview} from "../utils/Professor";
 import {ICourse} from "../utils/Course";
 
 
-const HOST = "http://localhost:4000";
+const HOST = "http://192.168.1.17:4000";
 
 export const getProfessor = async (professorEmail: string, unique?: string) => {
     let response;
@@ -191,7 +191,7 @@ export const rateFile = async (fileId: number, positive: boolean) => {
             method: "post",
             url: HOST + "/api/course/file/rating/",
             data: {
-                fileId: fileId,
+                id: fileId,
                 positive: positive,
                 request_key: uuid
             }
@@ -217,6 +217,32 @@ export const removeFileRating = async (request_key: string) => {
     } catch (error) {
         return undefined;
     }
+
+    return response.data.result === "success";
+}
+
+export const uploadFile = async (file: File, courseTag: string, setProgress: any) => {
+    const form = new FormData();
+    form.set("tag", courseTag);
+    form.set("file", file);
+    const response = await axios({
+        method: "post",
+        url: HOST + "/api/course/file",
+        headers: {
+            "content-type": "multipart/form-data"
+        },
+        data: form,
+        onUploadProgress: (progressEvent) => {
+            let percentComplete = Math.round(progressEvent.loaded * 100 / progressEvent.total!);
+
+            if (percentComplete > 99) {
+                setProgress(`Uploaded`);
+            } else {
+                setProgress(`Uploading... ${percentComplete}%`);
+            }
+
+        }
+    })
 
     return response.data.result === "success";
 }

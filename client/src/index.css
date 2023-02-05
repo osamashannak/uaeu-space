@@ -397,7 +397,7 @@ i {
     opacity: 0;
 }
 
-.ld-rating-button {
+.ld-rating-button, .ld-rating-section {
     cursor: pointer;
 }
 
@@ -560,10 +560,32 @@ Course DATA
 }
 
 .file-preview {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
     margin-top: 1rem;
-    border: 1px solid black;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     max-width: 35rem;
     width: 100%;
+    font-weight: 400;
+    padding: 1rem;
+}
+
+.remove-file {
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+.remove-file:hover {
+    background-color: lightgray;
+    border-radius: 10px;
+}
+
+.file-preview-name {
+    text-overflow: ellipsis;
+    flex-grow: 1;
 }
 
 .upload-file-button {

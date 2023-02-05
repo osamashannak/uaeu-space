@@ -6,14 +6,16 @@ import courseRouter from "./routes/CourseRouter";
 import professorRouter from "./routes/ProfessorRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
+import {loadAzure} from "./azure";
 
 dotenv.config();
+
 
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
+app.use(bodyParser.json({limit: "100mb"}));
 
 app.use("/api/course", courseRouter);
 app.use("/api/professor", professorRouter);
@@ -21,6 +23,8 @@ app.use("/api/professor", professorRouter);
 const port = process.env.PORT || 4000;
 
 const main = (): void => {
+
+    loadAzure().then(r => console.log("Azure client loaded."));
 
     AppDataSource.initialize().then(async () => {
         /*

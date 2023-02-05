@@ -1,8 +1,9 @@
-import {fileTypeToIcon, formatBytes, IFile} from "../utils/Course";
+import {formatBytes, getFontAwesomeIconFromMIME, IFile} from "../utils/Course";
 import {dateHumanize} from "../utils/Global";
 import {useTranslation} from "react-i18next";
 import LikeDislike from "./FileRating";
-import {ReactComponent as BookIcon} from "../assests/menu-book-outline.svg";
+import {Icon} from '@iconify/react';
+import menuBookOutline from '@iconify/icons-material-symbols/menu-book-outline';
 import {useState} from "react";
 
 const FileTable = (props: { files: IFile[] }) => {
@@ -13,8 +14,7 @@ const FileTable = (props: { files: IFile[] }) => {
     if (files.length < 1) {
         return (
             <div className={"files"}>
-                <p className={"ratings-title"}><BookIcon className={"review-icon"}/> Materials</p>
-
+                <p className={"ratings-title"}><Icon icon={menuBookOutline} className={"review-icon"}/> Materials</p>
 
                 <p className={"no-reviews"}>There are no materials for this course.</p>
             </div>
@@ -23,13 +23,13 @@ const FileTable = (props: { files: IFile[] }) => {
 
     return (
         <div className={"files"}>
-            <p className={"ratings-title"}><BookIcon className={"review-icon"}/> Materials</p>
+            <p className={"ratings-title"}><Icon icon={menuBookOutline} className={"review-icon"}/> Materials</p>
             <div>
                 {
                     props.files.map((value, index) => (
                         <div className={"file-row"}>
                             <span className={"file-name"}>
-                                {fileTypeToIcon[value.type]}
+                                {getFontAwesomeIconFromMIME(value.type)}
                                 <a target="_blank"
                                    style={{color: "#007fff"}}
                                    rel="noreferrer"

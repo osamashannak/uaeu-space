@@ -1,9 +1,10 @@
-import {ReactComponent as WriteIcon} from "../assests/write.svg";
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
 import {FormEvent, useEffect, useState} from "react";
 import {IReview} from "../utils/Professor";
-import {ReactComponent as Loading} from "../assests/bubble-loading.svg";
+import {Icon} from '@iconify/react';
+import bubbleLoading from '@iconify/icons-eos-icons/bubble-loading';
+import writeIcon from '@iconify/icons-icon-park-outline/write';
 import {postReview} from "../api/api";
 
 const a2e = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
@@ -65,14 +66,14 @@ const ReviewForm = (props: { email: string }) => {
     if (submitting) {
         return (
             <div style={{marginTop: "3rem", fontWeight: 400}}>
-                {t("new_review.status.submitted")} <Loading/>
+                {t("new_review.status.submitted")} <Icon icon={bubbleLoading}/>
             </div>
         )
     }
 
     return (
         <form className={"new-review"} onSubmit={handleSubmit}>
-            <p><WriteIcon/> {t("new_review.title")}</p>
+            <p><Icon icon={writeIcon}/> {t("new_review.title")}</p>
             <fieldset style={{border: "none", padding: 0}}>
                 <div>
                     <input maxLength={15}

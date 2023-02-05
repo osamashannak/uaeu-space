@@ -3,7 +3,8 @@ import FileTable from "../components/FileTable";
 import {useEffect, useState} from "react";
 import {getCourse} from "../api/api";
 import {ICourse} from "../utils/Course";
-import {ReactComponent as Loading} from "../assests/bubble-loading.svg";
+import {Icon} from '@iconify/react';
+import bubbleLoading from '@iconify/icons-eos-icons/bubble-loading';
 import FileForm from "../components/FileForm";
 
 const Course = () => {
@@ -27,16 +28,16 @@ const Course = () => {
             if (course) {
                 localStorage.setItem(`${tag}-exist`, 'true');
             }
+            setIsFetching(false);
         });
 
-        setIsFetching(false);
     }, [])
 
     if (isFetching) {
         return (
             <div className={"professor"}>
                 <div className={"prof-info-page prof-info-head"}>
-                    <p>Loading <Loading/></p>
+                    <p>Loading <Icon icon={bubbleLoading}/></p>
                 </div>
             </div>
         );

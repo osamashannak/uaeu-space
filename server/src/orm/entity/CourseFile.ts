@@ -1,4 +1,4 @@
-import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm"
+import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Course} from "./Course";
 import {FileRating} from "./FileRating";
 
@@ -18,11 +18,13 @@ export class CourseFile {
     name!: string;
 
     @Column()
-    type!: FileType;
+    type!: string;
 
-    // TODO change the size to kb
     @Column()
     size!: number;
+
+    @Column({default: false})
+    visible!: boolean;
 
     @OneToMany(() => FileRating, ratings => ratings.file)
     ratings!: FileRating[]
@@ -30,11 +32,4 @@ export class CourseFile {
     @CreateDateColumn()
     created_at!: Date;
 
-}
-
-export enum FileType {
-    PDF,
-    URL,
-    DOC,
-    PPT
 }

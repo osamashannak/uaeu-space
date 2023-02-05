@@ -1,5 +1,6 @@
 import Review from "./Review";
-import {ReactComponent as ReviewIcon} from "../assests/rate-review-outline-rounded.svg";
+import {Icon} from '@iconify/react';
+import rateReviewOutlineRounded from '@iconify/icons-material-symbols/rate-review-outline-rounded';
 import {useEffect, useState} from "react";
 import {IReview} from "../utils/Professor";
 import {useTranslation} from "react-i18next";
@@ -18,7 +19,8 @@ const ReviewSection = (props: { reviews: IReview[] }) => {
 
     return (
         <div className={"ratings-section"}>
-            <p className={"ratings-title"}><ReviewIcon className={"review-icon"}/> {t("comments")}</p>
+            <p className={"ratings-title"}><Icon icon={rateReviewOutlineRounded}
+                                                 className={"review-icon"}/> {t("comments")}</p>
             {
                 reviews.length > 0 ? reviews.map((review, index) => (
                     <Review key={index} {...review}/>

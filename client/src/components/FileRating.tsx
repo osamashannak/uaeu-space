@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
-import {ReactComponent as Like} from "../assests/like.svg";
-import {ReactComponent as Dislike} from "../assests/dislike.svg";
+import {Icon} from '@iconify/react';
+import likeIcon from '@iconify/icons-mdi/like';
+import dislikeIcon from '@iconify/icons-mdi/dislike';
 import {getFileRatings, rateFile, removeFileRating} from "../api/api";
 
 const random = (max: number) => {
@@ -130,16 +131,20 @@ const LikeDislike = (props: { fileId: number }) => {
 
     return (
         <div className={"ld-review-rating"}>
-            <span id={`like-button-${props.fileId}`} className={"rating-button like-button"}>
-                <Like
-                    onClick={onLike}
+            <div onClick={onLike} className={"ld-rating-section"}>
+                <span id={`like-button-${props.fileId}`} className={"rating-button like-button"}>
+                <Icon
+                    icon={likeIcon}
                     style={liked ? {color: "#007fff"} : {}}
                     className={"ld-rating-button"}/> {likes}</span>
+            </div>
+            <div onClick={onDislike} className={"ld-rating-section"}>
             <span className={"rating-button"}>
-                <Dislike
-                    onClick={onDislike}
+                <Icon
+                    icon={dislikeIcon}
                     style={liked === false ? {color: "#007fff"} : {}}
                     className={"ld-rating-button"}/> {dislikes}</span>
+            </div>
         </div>
     )
 

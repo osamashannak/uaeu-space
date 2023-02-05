@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
-import {ReactComponent as Like} from "../assests/like.svg";
-import {ReactComponent as Dislike} from "../assests/dislike.svg";
+import {Icon} from '@iconify/react';
+import likeIcon from '@iconify/icons-mdi/like';
 import {getReviewRatings, rateReview, removeReviewRating} from "../api/api";
+import dislikeIcon from "@iconify/icons-mdi/dislike";
 
 const random = (max: number) => {
     return Math.random() * max;
@@ -129,14 +130,20 @@ const LikeDislike = (props: { id: number }) => {
 
     return (
         <div className={"ld-review-rating"}>
-            <span id={`like-button-${props.id}`} className={"rating-button like-button"}><Like
-                onClick={onLike}
-                style={liked ? {color: "#007fff"} : {}}
-                className={"ld-rating-button"}/> {likes}</span>
-            <span id="dislike-button" className={"rating-button"}><Dislike
-                onClick={onDislike}
-                style={liked === false ? {color: "#007fff"} : {}}
-                className={"ld-rating-button"}/> {dislikes}</span>
+            <div onClick={onLike} className={"ld-rating-section"}>
+                <span id={`like-button-${props.id}`} className={"rating-button like-button"}>
+                <Icon
+                    icon={likeIcon}
+                    style={liked ? {color: "#007fff"} : {}}
+                    className={"ld-rating-button"}/> {likes}</span>
+            </div>
+            <div onClick={onDislike} className={"ld-rating-section"}>
+                <span id="dislike-button" className={"rating-button"}>
+                <Icon
+                    icon={dislikeIcon}
+                    style={liked === false ? {color: "#007fff"} : {}}
+                    className={"ld-rating-button"}/> {dislikes}</span>
+            </div>
         </div>
     )
 

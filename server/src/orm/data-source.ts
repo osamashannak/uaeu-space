@@ -10,11 +10,11 @@ import {FileAccessToken} from "./entity/FileAccessToken";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
-    host: process.env.PG_HOST,
+    host: process.env.POSTGRES_HOST,
     port: 5432,
-    username: "postgres",
-    password: "123",
-    database: "test",
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
     synchronize: true,
     logging: false,
     entities: [Professor, Review, Course, CourseFile, ReviewRatings, FileRating, FileAccessToken],

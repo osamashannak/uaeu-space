@@ -5,7 +5,8 @@ import {getProfessor} from "../api/api";
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
 import ReviewSection from "../components/ReviewSection";
-import {ReactComponent as Loading} from "../assests/bubble-loading.svg";
+import {Icon} from '@iconify/react';
+import bubbleLoading from '@iconify/icons-eos-icons/bubble-loading';
 import ReviewForm from "../components/ReviewForm";
 
 const Professor = () => {
@@ -46,7 +47,7 @@ const Professor = () => {
         return (
             <div className={"professor"}>
                 <div className={"prof-info-page prof-info-head"}>
-                    <p>Loading <Loading/></p>
+                    <p>Loading <Icon icon={bubbleLoading}/></p>
                 </div>
             </div>
         );
