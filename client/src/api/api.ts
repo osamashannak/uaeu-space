@@ -221,9 +221,10 @@ export const removeFileRating = async (request_key: string) => {
     return response.data.result === "success";
 }
 
-export const uploadFile = async (file: File, courseTag: string, setProgress: any) => {
+export const uploadFile = async (fileName: string, file: File, courseTag: string, setProgress: any) => {
     const form = new FormData();
     form.set("tag", courseTag);
+    form.set("name", fileName);
     form.set("file", file);
     const response = await axios({
         method: "post",

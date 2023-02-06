@@ -145,6 +145,7 @@ SearchBox DATA
  */
 
 [dir="ltr"] .search-bar {
+    background: url("assests/list-dropdown.svg") no-repeat scroll 0.9rem;
     border: 1px solid rgba(0, 0, 0, 0.20);
     width: 100%;
     max-width: 25rem;
@@ -159,6 +160,7 @@ SearchBox DATA
 }
 
 [dir="rtl"] .search-bar {
+    background: url("assests/list-dropdown.svg") no-repeat scroll right 0.9rem bottom 0.7rem;
     border: 1px solid rgba(0, 0, 0, 0.20);
     width: 100%;
     max-width: 25rem;
@@ -177,7 +179,7 @@ SearchBox DATA
     font-size: 0.8rem;
 }
 
-.icon-label {
+/*.icon-label {
     position: relative;
 }
 
@@ -188,7 +190,7 @@ SearchBox DATA
     bottom: 0;
     width: 3rem;
     background: url("assests/list-dropdown.svg") center / contain no-repeat;
-}
+}*/
 
 .parent-datalist {
     position: relative;
@@ -557,6 +559,15 @@ Course DATA
 .file-disclaimer {
     font-size: 0.8rem;
     margin-bottom: 1rem;
+}
+
+.file-upload {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
 }
 
 .file-preview {

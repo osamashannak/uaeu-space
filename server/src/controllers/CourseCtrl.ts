@@ -137,8 +137,8 @@ interface UploadFilesBody {
 export const uploadFile = async (req: Request, res: Response) => {
     const file = req.file;
 
-    if (!(file && req.body.tag)) {
-        res.status(400).json({error: "File type is not allowed, or it is too large."});
+    if (!(file && req.body.tag && req.body.name)) {
+        res.status(400).json({error: "File type is not allowed"});
         return;
     }
 
@@ -149,7 +149,7 @@ export const uploadFile = async (req: Request, res: Response) => {
         return;
     }
 
-    const blobName = await uploadBlob(file.originalname, filePath, file.mimetype);
+    const blobName = await uploadBlob(req.body.name, filePath, file.mimetype);
 
     await unlinkAsync(file.path);
 
@@ -157,7 +157,7 @@ export const uploadFile = async (req: Request, res: Response) => {
     courseFile.course = req.body.tag;
     courseFile.blob_name = blobName;
     courseFile.size = file.size;
-    courseFile.name = file.originalname;
+    courseFile.name = req.body.name;
     courseFile.type = file.mimetype;
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);

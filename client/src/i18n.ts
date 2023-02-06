@@ -2,12 +2,12 @@ import i18next, {TFunction} from "i18next";
 import {initReactI18next} from "react-i18next";
 import HttpApi from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
-import {tr} from "date-fns/locale";
 
 export const namespaces = {
     pages: {
         home: "pages.home",
-        professor: "pages.professor"
+        professor: "pages.professor",
+        course: "pages.course"
     },
     components: {
         footer: "components.footer"

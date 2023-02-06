@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-
 import courseRouter from "./routes/CourseRouter";
 import professorRouter from "./routes/ProfessorRouter";
 import bodyParser from "body-parser";

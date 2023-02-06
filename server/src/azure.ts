@@ -62,10 +62,9 @@ export const uploadBlob = async (fileName: string, filePath: string, mimeType: s
 export const generateToken = (ipAddress: string): SASQueryParameters => {
 
     const expiry = new Date();
-    //expiry.setMonth(expiry.getMonth() + 3); // three month from now (basically one semester)
-    expiry.setHours(expiry.getHours() + 2); // three month from now (basically one semester)
+    expiry.setMonth(expiry.getMonth() + 3); // three month from now (basically one semester)
+    //expiry.setHours(expiry.getHours() + 2); // two hours from now (for development)
 
-    // todo remove exclamation mark
     return generateBlobSASQueryParameters({
         expiresOn: expiry,
         ipRange: {start: ipAddress},

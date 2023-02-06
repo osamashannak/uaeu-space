@@ -4,19 +4,19 @@ import {useTranslation} from "react-i18next";
 import LikeDislike from "./FileRating";
 import {Icon} from '@iconify/react';
 import menuBookOutline from '@iconify/icons-material-symbols/menu-book-outline';
-import {useState} from "react";
+import {namespaces} from "../i18n";
 
 const FileTable = (props: { files: IFile[] }) => {
 
-    const {t, i18n} = useTranslation();
-    const [files, setFiles] = useState<IFile[]>(props.files);
+    const {t, i18n} = useTranslation(namespaces.pages.course);
 
-    if (files.length < 1) {
+    if (props.files.length < 1) {
         return (
             <div className={"files"}>
-                <p className={"ratings-title"}><Icon icon={menuBookOutline} className={"review-icon"}/> Materials</p>
+                <p className={"ratings-title"}><Icon icon={menuBookOutline} className={"review-icon"}/> {t("materials")}
+                </p>
 
-                <p className={"no-reviews"}>There are no materials for this course.</p>
+                <p className={"no-reviews"}>{t("errors.no_materials")}</p>
             </div>
         )
     }
@@ -27,7 +27,7 @@ const FileTable = (props: { files: IFile[] }) => {
             <div>
                 {
                     props.files.map((value, index) => (
-                        <div className={"file-row"}>
+                        <div key={index} className={"file-row"}>
                             <span className={"file-name"}>
                                 {getFontAwesomeIconFromMIME(value.type)}
                                 <a target="_blank"

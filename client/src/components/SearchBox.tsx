@@ -1,6 +1,6 @@
 import {useCombobox} from "downshift";
 import {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {DatalistContent, getFilter, SearchBoxProps} from "../utils/SearchBox";
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
@@ -14,7 +14,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
         const nav = useNavigate();
         const [items, setItems] = useState<DatalistContent[]>([]);
         const [allItems, setAllItems] = useState<DatalistContent[]>([]);
-        const {t, i18n} = useTranslation(namespaces.pages.home);
+        const {t} = useTranslation(namespaces.pages.home);
 
         const {
             isOpen,
@@ -22,8 +22,6 @@ const SearchBoxElement = (props: SearchBoxProps) => {
             getInputProps,
             highlightedIndex,
             getItemProps,
-            selectedItem,
-            inputValue
         } = useCombobox({
             async onInputValueChange({inputValue}) {
 
@@ -89,7 +87,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                     </ul>
                 </div>
 
-                <p><Link className={"help-course"} to={'/report'}>{t(`${props.type}_box.not_found`)}</Link></p>
+                {/*<p><Link className={"help-course"} to={'/report'}>{t(`${props.type}_box.not_found`)}</Link></p>*/}
 
             </div>
         )

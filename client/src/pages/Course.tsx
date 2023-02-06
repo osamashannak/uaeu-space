@@ -11,7 +11,6 @@ const Course = () => {
 
     const {tag} = useParams();
 
-    // const {t, i18n} = useTranslation(namespaces.pages.course);
     const [isFetching, setIsFetching] = useState(true);
     const [course, setCourse] = useState<ICourse | null>();
 
@@ -31,7 +30,7 @@ const Course = () => {
             setIsFetching(false);
         });
 
-    }, [])
+    }, [tag])
 
     if (isFetching) {
         return (

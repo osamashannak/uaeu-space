@@ -4,9 +4,8 @@ import {Icon} from '@iconify/react';
 import deleteOutlineSharp from '@iconify/icons-material-symbols/delete-outline-sharp';
 
 
-const FilePreview = (props: { courseTag: string, file: File, uploadFile: boolean, finishedUploading: any }) => {
+const FilePreview = (props: { courseTag: string, name: string, file: File, changeName: any, uploadFile: boolean, finishedUploading: any, deleteFile: any }) => {
 
-    const [name, setName] = useState("");
     const [progress, setProgress] = useState("Ready to upload");
 
     useEffect(() => {
@@ -14,14 +13,12 @@ const FilePreview = (props: { courseTag: string, file: File, uploadFile: boolean
 
             setProgress("Uploading 1%")
 
-            uploadFile(props.file, props.courseTag, setProgress).catch((error) => {
+            uploadFile(props.name, props.file, props.courseTag, setProgress).catch((error) => {
                 setProgress(error.response.data.error)
             }).finally(() => props.finishedUploading(props.file));
 
             return;
         }
-
-        setName(props.file.name);
 
     }, [props.uploadFile]);
 
@@ -29,12 +26,14 @@ const FilePreview = (props: { courseTag: string, file: File, uploadFile: boolean
     return (
         <div className={"file-preview"}>
             <Icon icon={deleteOutlineSharp} className={"remove-file"} onClick={event => {
-
+                props.deleteFile(props.file);
             }}/>
-            <input type={"text"} onChange={event => {
-                console.log(name)
-                setName(event.target.value);
-            }} className={"file-preview-name"} defaultValue={name}/>
+            <input
+                type={"text"}
+                onChange={event => {
+                    props.changeName(props.file, event.target.value);
+                }}
+                className={"file-preview-name"} defaultValue={props.name}/>
             <p style={{
                 alignSelf: "center",
                 flexShrink: 0,
