@@ -33,7 +33,7 @@ const FileTable = (props: { files: IFile[] }) => {
                                 <a target="_blank"
                                    style={{color: "#007fff"}}
                                    rel="noreferrer"
-                                   href={"http://localhost:4000/api/course/file?id=" + value.id}
+                                   href={"https://api.uaeu.space/course/file?id=" + value.id}
                                    title={value.name}>{value.name}</a>
                             </span>
                             <p className={"file-size"}>{formatBytes(value.size)}</p>

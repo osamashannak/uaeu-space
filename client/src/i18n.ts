@@ -26,7 +26,7 @@ const createI18n = (language: string): Promise<TFunction> => {
         .use(HttpApi)
         .use(LanguageDetector)
         .init({
-            debug: true,
+            debug: false,
             backend: {
                 loadPath: "/locales/{{lng}}/{{ns}}.json",
             },

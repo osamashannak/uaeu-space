@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+
 dotenv.config();
 
 import express from "express";
@@ -16,8 +17,8 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
 
-app.use("/api/course", courseRouter);
-app.use("/api/professor", professorRouter);
+app.use("/course", courseRouter);
+app.use("/professor", professorRouter);
 
 const port = process.env.PORT || 4000;
 

@@ -3,7 +3,7 @@ import {IProfessor, IReview} from "../utils/Professor";
 import {ICourse} from "../utils/Course";
 
 
-const HOST = "http://192.168.1.17:4000";
+const HOST = "https://api.uaeu.space";
 
 export const getProfessor = async (professorEmail: string, unique?: string) => {
     let response;
@@ -11,7 +11,7 @@ export const getProfessor = async (professorEmail: string, unique?: string) => {
     try {
         response = await axios({
             method: "get",
-            url: HOST + "/api/professor",
+            url: HOST + "/professor",
             params: {
                 email: professorEmail,
                 unique: unique
@@ -30,7 +30,7 @@ export const getCoursesList = async () => {
     try {
         response = await axios({
             method: "get",
-            url: HOST + "/api/course/all"
+            url: HOST + "/course/all"
         })
     } catch (error) {
         return undefined;
@@ -45,7 +45,7 @@ export const getProfessorsList = async () => {
     try {
         response = await axios({
             method: "get",
-            url: HOST + "/api/professor/all"
+            url: HOST + "/professor/all"
         })
     } catch (error) {
         return undefined;
@@ -59,7 +59,7 @@ export const postReview = async (review: IReview, email: string) => {
     try {
         response = await axios({
             method: "post",
-            url: HOST + "/api/professor/rate",
+            url: HOST + "/professor/rate",
             data: {
                 review: review,
                 professor: email
@@ -78,7 +78,7 @@ export const getCourse = async (tag: string, unique?: string) => {
     try {
         response = await axios({
             method: "get",
-            url: HOST + "/api/course",
+            url: HOST + "/course",
             params: {
                 tag: tag,
                 unique: unique
@@ -97,7 +97,7 @@ export const getReviewRatings = async (reviewId: number) => {
     try {
         response = await axios({
             method: "get",
-            url: HOST + "/api/professor/review/rating",
+            url: HOST + "/professor/review/rating",
             params: {
                 reviewId: reviewId
             }
@@ -130,7 +130,7 @@ export const rateReview = async (reviewId: number, positive: boolean) => {
     try {
         response = await axios({
             method: "post",
-            url: HOST + "/api/professor/review/rating",
+            url: HOST + "/professor/review/rating",
             data: {
                 reviewId: reviewId,
                 positive: positive,
@@ -151,7 +151,7 @@ export const removeReviewRating = async (request_key: string) => {
     try {
         response = await axios({
             method: "post",
-            url: HOST + "/api/professor/review/rating/remove",
+            url: HOST + "/professor/review/rating/remove",
             data: {
                 request_key: request_key
             }
@@ -169,7 +169,7 @@ export const getFileRatings = async (fileId: number) => {
     try {
         response = await axios({
             method: "get",
-            url: HOST + "/api/course/file/rating",
+            url: HOST + "/course/file/rating",
             params: {
                 id: fileId
             }
@@ -189,7 +189,7 @@ export const rateFile = async (fileId: number, positive: boolean) => {
     try {
         response = await axios({
             method: "post",
-            url: HOST + "/api/course/file/rating/",
+            url: HOST + "/course/file/rating/",
             data: {
                 id: fileId,
                 positive: positive,
@@ -209,7 +209,7 @@ export const removeFileRating = async (request_key: string) => {
     try {
         response = await axios({
             method: "post",
-            url: HOST + "/api/course/file/rating/remove",
+            url: HOST + "/course/file/rating/remove",
             data: {
                 request_key: request_key
             }
@@ -228,7 +228,7 @@ export const uploadFile = async (fileName: string, file: File, courseTag: string
     form.set("file", file);
     const response = await axios({
         method: "post",
-        url: HOST + "/api/course/file",
+        url: HOST + "/course/file",
         headers: {
             "content-type": "multipart/form-data"
         },
