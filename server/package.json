@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "ts-node src/app.ts",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "build": "tsc"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.12.0",

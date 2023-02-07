@@ -1,4 +1,6 @@
 import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import courseRouter from "./routes/CourseRouter";
@@ -6,8 +8,6 @@ import professorRouter from "./routes/ProfessorRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
 import {loadAzure} from "./azure";
-
-dotenv.config();
 
 
 const app = express();
