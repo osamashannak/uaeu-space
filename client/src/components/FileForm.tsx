@@ -49,6 +49,9 @@ const FileForm = (props: { courseTag: string }) => {
     }
 
     const isFinished = () => {
+        console.log(finished.length)
+
+        console.log(details.length)
         return submitting && finished.length === details.length;
     }
 
@@ -58,6 +61,45 @@ const FileForm = (props: { courseTag: string }) => {
             // todo if left before finish delete file from multer
             return t("errors.still_uploading");
         }
+    }
+
+    const onFileSelect = (event: any) => {
+        if (!event.target.files) return;
+        if (details.length > 9) {
+            alert(t("errors.reached_amount"))
+            return;
+        }
+
+        const fileDetails = details.slice();
+        let i = 0;
+        const skipped = [];
+        while (event.target.files.item(i) !== null && fileDetails.length < 10) {
+            const file = event.target.files.item(i)!;
+
+            if (file.size > (100 * 1000 * 1000)) {
+                skipped.push(file.name);
+                i++;
+                continue;
+            }
+
+            if (fileDetails.find(value => value.name === file.name)) {
+                fileDetails.push({
+                    name: `${Math.round(Math.random() * 1E4)}-${file.name}`,
+                    file: file
+                });
+            } else {
+                fileDetails.push({
+                    name: file.name,
+                    file: file
+                });
+            }
+
+            i++;
+        }
+
+        setDetails(fileDetails);
+        event.target.files = null;
+        if (skipped.length > 0) alert(t("errors.over_size") + "\n" + skipped.join("\n"));
     }
 
 
@@ -80,43 +122,14 @@ const FileForm = (props: { courseTag: string }) => {
                                className={"file-upload"}
                                id={"file-upload"}
                                multiple
-                               onChange={event => {
-                                   if (!event.target.files) return;
-                                   if (details.length > 9) {
-                                       alert(t("errors.reached_amount"))
-                                       return;
-                                   }
-
-                                   const fileDetails = details.slice();
-                                   let i = 0;
-                                   const skipped = [];
-                                   while (event.target.files.item(i) !== null && fileDetails.length < 10) {
-                                       const file = event.target.files.item(i)!;
-
-                                       if (file.size > (100 * 1000 * 1000)) {
-                                           skipped.push(file.name);
-                                           i++;
-                                           continue;
-                                       }
-
-                                       fileDetails.push({
-                                           name: file.name,
-                                           file: file
-                                       });
-                                       i++;
-                                   }
-
-                                   setDetails(fileDetails);
-                                   event.target.files = null;
-                                   if (skipped.length > 0) alert(t("errors.over_size") + "\n" + skipped.join("\n"));
-                               }}/>
+                               onChange={onFileSelect}/>
                         <label className={"upload-file-button"} htmlFor={"file-upload"}>{t("select_files")}</label>
                     </div>
                 </div>
                 <div>
                     {
                         details.map((value, index) => {
-                            return <FilePreview key={`${value.name}-${index}`} file={value.file} name={value.name}
+                            return <FilePreview key={`${value.name}`} file={value.file} name={value.name}
                                                 uploadFile={submitting}
                                                 courseTag={props.courseTag}
                                                 finishedUploading={finishedUploading} changeName={changeName}

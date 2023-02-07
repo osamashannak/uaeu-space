@@ -20,6 +20,27 @@ body {
     }
 }
 
+/**
+NotFound DATA HERE
+ */
+
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10rem 0;
+    font-size: 2rem;
+    gap: 2rem;
+}
+
+.error-button {
+    text-decoration: none;
+}
+
+.error-button:hover {
+    text-decoration: underline;
+}
+
 /*
 NavBar DATA HERE
  */

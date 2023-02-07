@@ -7,17 +7,17 @@ import deleteOutlineSharp from '@iconify/icons-material-symbols/delete-outline-s
 const FilePreview = (props: { courseTag: string, name: string, file: File, changeName: any, uploadFile: boolean, finishedUploading: any, deleteFile: any }) => {
 
     const [progress, setProgress] = useState("Ready to upload");
+    const [name, setName] = useState(props.name);
 
     useEffect(() => {
         if (props.uploadFile) {
 
             setProgress("Uploading 1%")
 
-            uploadFile(props.name, props.file, props.courseTag, setProgress).catch((error) => {
-                setProgress(error.response.data.error)
-            }).finally(() => props.finishedUploading(props.file));
+            uploadFile(name, props.file, props.courseTag, setProgress, props.finishedUploading).catch((error) => {
+                setProgress(error.response.data.error);
+            });
 
-            return;
         }
 
     }, [props.uploadFile]);
@@ -31,7 +31,8 @@ const FilePreview = (props: { courseTag: string, name: string, file: File, chang
             <input
                 type={"text"}
                 onChange={event => {
-                    props.changeName(props.file, event.target.value);
+                    setName(event.target.value)
+                    //props.changeName(props.file, event.target.value);
                 }}
                 className={"file-preview-name"} defaultValue={props.name}/>
             <p style={{

@@ -8,6 +8,7 @@ import fileTypeImage from '@iconify/icons-vscode-icons/file-type-image';
 import fileTypeAudio from '@iconify/icons-vscode-icons/file-type-audio';
 import fileTypeVideo from '@iconify/icons-vscode-icons/file-type-video';
 import defaultFile from '@iconify/icons-vscode-icons/default-file';
+import fileTypeExcel from '@iconify/icons-vscode-icons/file-type-excel';
 
 export interface ICourse extends CourseData {
     files: IFile[]
@@ -33,24 +34,6 @@ export const formatBytes = (bytes: number, decimals: number = 1) => {
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-/*const iconClasses: { [key: string]: JSX.Element } = {
-    // Media
-    "image": <Icon icon={fileTypeImage} className={"file-type-icon"}/>,
-    "audio": <Icon icon={fileTypeAudio} className={"file-type-icon"}/>,
-    "video": <Icon icon={fileTypeVideo} className={"file-type-icon"}/>,
-    // Documents
-    "application/pdf": <Icon icon={fileTypePdf2} className={"file-type-icon"}/>,
-    "application/msword": <Icon icon={fileTypeWord2} className={"file-type-icon"}/>,
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": <Icon icon={fileTypeWord2} className={"file-type-icon"}/>,
-    "application/vnd.ms-powerpoint": <Icon icon={fileTypePowerpoint2} className={"file-type-icon"}/>,
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation": <Icon icon={fileTypePowerpoint2} className={"file-type-icon"}/>,
-    // Archives
-    "application/gzip": <Icon icon={fileTypeZip} className={"file-type-icon"}/>,
-    "application/zip": <Icon icon={fileTypeZip} className={"file-type-icon"}/>,
-    "application/x-7z-compressed": <Icon icon={fileTypeZip} className={"file-type-icon"}/>,
-    "application/vnd.rar": <Icon icon={fileTypeZip} className={"file-type-icon"}/>
-};*/
-
 const iconClasses: { [key: string]: IconifyIcon } = {
     // Media
     "image": fileTypeImage,
@@ -62,6 +45,8 @@ const iconClasses: { [key: string]: IconifyIcon } = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": fileTypeWord2,
     "application/vnd.ms-powerpoint": fileTypePowerpoint2,
     "application/vnd.openxmlformats-officedocument.presentationml.presentation": fileTypePowerpoint2,
+    "application/vnd.ms-excel": fileTypeExcel,
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": fileTypeExcel,
     // Archives
     "application/gzip": fileTypeZip,
     "application/zip": fileTypeZip,

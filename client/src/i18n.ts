@@ -16,7 +16,7 @@ export const namespaces = {
 
 export const languages = {
     ar: "ar",
-    en: "en",
+    en: "en-US",
 };
 
 const createI18n = (language: string): Promise<TFunction> => {

@@ -1,5 +1,6 @@
 import {Link} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import {languages} from "../i18n";
 
 const NavBar = () => {
     const {t, i18n} = useTranslation();
@@ -15,8 +16,9 @@ const NavBar = () => {
             <Link className={"title"} to={"/"}>📚 UAEU Resources.</Link>
             <div>
                 <ul>
-                    <button onClick={changeLanguage(i18n.language === 'en' ? 'ar' : 'en')}
-                            className={"nav-choice change-locale"}>{i18n.language === 'en' ? 'عربي' : 'English'}</button>
+                    <button
+                        onClick={changeLanguage(i18n.language === languages.en ? 'ar' : 'en-US')}
+                        className={"nav-choice change-locale"}>{i18n.language === languages.en ? 'عربي' : 'English'}</button>
                 </ul>
             </div>
         </div>

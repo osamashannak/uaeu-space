@@ -221,7 +221,7 @@ export const removeFileRating = async (request_key: string) => {
     return response.data.result === "success";
 }
 
-export const uploadFile = async (fileName: string, file: File, courseTag: string, setProgress: any) => {
+export const uploadFile = async (fileName: string, file: File, courseTag: string, setProgress: any, finishedUploading: any): Promise<boolean> => {
     const form = new FormData();
     form.set("tag", courseTag);
     form.set("name", fileName);
@@ -238,6 +238,7 @@ export const uploadFile = async (fileName: string, file: File, courseTag: string
 
             if (percentComplete > 99) {
                 setProgress(`Uploaded`);
+                finishedUploading(file);
             } else {
                 setProgress(`Uploading... ${percentComplete}%`);
             }

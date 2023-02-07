@@ -152,6 +152,7 @@ export const uploadFile = async (req: Request, res: Response) => {
     const blobName = await uploadBlob(req.body.name, filePath, file.mimetype);
 
     await unlinkAsync(file.path);
+    await unlinkAsync(filePath);
 
     const courseFile = new CourseFile();
     courseFile.course = req.body.tag;

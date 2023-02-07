@@ -37,7 +37,7 @@ const FileTable = (props: { files: IFile[] }) => {
                                    title={value.name}>{value.name}</a>
                             </span>
                             <p className={"file-size"}>{formatBytes(value.size)}</p>
-                            <p>{dateHumanize(value.created_at, i18n.language)}</p>
+                            <p>{dateHumanize(value.created_at, i18n.language || window.localStorage.i18nextLng)}</p>
                             <LikeDislike fileId={value.id}/>
                         </div>
                     ))

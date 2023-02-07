@@ -19,7 +19,7 @@ const upload = multer({
     fileFilter(req, file: Express.Multer.File, cb: multer.FileFilterCallback) {
         console.log(file.mimetype + " " + file.size);
 
-        const type = file.mimetype.split('/').pop()!;
+        const type = file.mimetype.split('/')[0]!;
 
         if (!(ALLOWED_TYPES.includes(type) || ALLOWED_APPLICATION_TYPES.includes(file.mimetype))) {
             cb(null, false);
