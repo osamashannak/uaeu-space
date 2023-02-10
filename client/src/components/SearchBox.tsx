@@ -17,7 +17,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
         const {t} = useTranslation(namespaces.pages.home);
 
         const {
-            isOpen,
+            inputValue,
             getMenuProps,
             getInputProps,
             highlightedIndex,
@@ -70,7 +70,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
 
                 <div className={"parent-datalist"}>
                     <ul className={"datalist"} {...getMenuProps()}>
-                        {isOpen &&
+                        {inputValue &&
                             items.map((item, index) => (
                                 <li className={`datalist-option ${highlightedIndex === index && ' bg-blue-option'}`}
                                     key={`${item.name}${index}`} {...getItemProps({

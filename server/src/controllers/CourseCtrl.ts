@@ -5,6 +5,7 @@ import {Equal, ILike} from "typeorm";
 import {CourseFile} from "../orm/entity/CourseFile";
 import {FileRating} from "../orm/entity/FileRating";
 import {FileAccessToken} from "../orm/entity/FileAccessToken";
+import requestIp from "request-ip";
 import {generateToken, getFileURL, uploadBlob} from "../azure";
 import {promisify} from "util";
 import * as fs from "fs";
@@ -30,6 +31,8 @@ export const find = async (req: Request, res: Response) => {
         res.status(404).json({error: "Course not found."});
         return;
     }
+
+    course.files = course.files.filter(value => value.visible);
 
     if (params.unique && params.unique === "true") {
         await course.addView(AppDataSource);
@@ -168,9 +171,8 @@ export const uploadFile = async (req: Request, res: Response) => {
 export const getFile = async (req: Request, res: Response) => {
 
     const params = req.query;
-    //let address = requestIp.getClientIp(req);
-    let address = "176.205.83.27";
 
+    let address = requestIp.getClientIp(req);
 
     if (!(params.id && address)) {
         res.status(400).json();
@@ -212,8 +214,7 @@ export const getFile = async (req: Request, res: Response) => {
         }
     });
 
-    //if (!(courseFile && courseFile.visible)) {
-    if (!(courseFile)) {
+    if (!(courseFile && courseFile.visible)) {
         res.status(404).json({});
         return;
     }

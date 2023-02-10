@@ -44,7 +44,7 @@ export const getFileURL = (blobName: string, token: string) => {
 export const uploadBlob = async (fileName: string, filePath: string, mimeType: string) => {
     const blobName = getBlobName(fileName);
 
-    /*const blobClient = containerClient.getBlockBlobClient(blobName);
+    const blobClient = containerClient.getBlockBlobClient(blobName);
 
     const response = await blobClient.uploadFile(filePath, {
         blobHTTPHeaders: {
@@ -54,7 +54,7 @@ export const uploadBlob = async (fileName: string, filePath: string, mimeType: s
         }
     });
 
-    console.log(response);*/
+    console.log(response);
 
     return blobName;
 }
