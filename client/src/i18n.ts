@@ -33,7 +33,8 @@ const createI18n = (language: string): Promise<TFunction> => {
             fallbackLng: language,
             interpolation: {
                 escapeValue: false
-            }
+            },
+            supportedLngs: ['ar', 'en-US']
         });
 };
 

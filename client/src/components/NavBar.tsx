@@ -6,14 +6,13 @@ const NavBar = () => {
     const {t, i18n} = useTranslation();
 
     const changeLanguage = ((language: string) => async () => {
-            console.log("changed language to " + language)
             await i18n.changeLanguage(language);
         }
     );
 
     return (
         <div className={"nav-bar"}>
-            <Link className={"title"} to={"/"}>📚 UAEU Resources.</Link>
+            <Link className={"title"} to={"/"}>📚 UAEU Space.</Link>
             <div>
                 <ul>
                     <button
