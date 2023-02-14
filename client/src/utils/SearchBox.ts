@@ -8,7 +8,9 @@ export interface CourseData {
     name: string
 }
 
-export type DatalistContent = CourseData | ProfData;
+export type DatalistContent = {
+    item: CourseData | ProfData,
+};
 
 export interface CourseSearchBoxProps {
     type: "course",

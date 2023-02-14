@@ -5,6 +5,8 @@ import {DatalistContent, getFilter, SearchBoxProps} from "../utils/SearchBox";
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
 import {getCoursesList, getProfessorsList} from "../api/api";
+import Fuse from "fuse.js";
+import {da} from "date-fns/locale";
 
 
 const SearchBoxElement = (props: SearchBoxProps) => {
@@ -31,30 +33,63 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                 }
 
                 if (!allItems.length) {
-                    setItems([{name: "Loading...", tag: ""}]);
+                    setItems([{item: {name: "Loading...", tag: ""}}]);
 
-                    const datalist = props.type === "course" ? await getCoursesList() : await getProfessorsList();
+                    const datalist: unknown = props.type === "course" ? await getCoursesList() : await getProfessorsList();
 
                     if (!datalist) return;
 
-                    setAllItems(datalist);
-                    setItems((datalist as DatalistContent[]).filter(getFilter(inputValue, props.type)).slice(0, 5));
+                    const newDatalist: DatalistContent[] = datalist as DatalistContent[];
+
+                    let fuse;
+
+                    if ('tag' in newDatalist[0]) {
+                        fuse = new Fuse(newDatalist, {
+                            threshold: 0.4,
+                            ignoreLocation: true,
+                            keys: ['tag', 'name']
+                        })
+                    } else{
+                        fuse = new Fuse(newDatalist, {
+                            threshold: 0.4,
+                            ignoreLocation: true,
+                            keys: ['name']
+                        })
+                    }
+
+                    setAllItems(newDatalist);
+                    setItems(fuse.search(inputValue, {limit: 5}) as unknown as DatalistContent[]);
                     return;
                 }
 
-                setItems(allItems.filter(getFilter(inputValue, props.type)).slice(0, 5) || [""]);
+                let fuse;
+
+                if (props.type === "course") {
+                    fuse = new Fuse(allItems, {
+                        threshold: 0.4,
+                        ignoreLocation: true,
+                        keys: ['name', 'tag']
+                    })
+                } else {
+                    fuse = new Fuse(allItems, {
+                        threshold: 0.4,
+                        ignoreLocation: true,
+                        keys: ['name']
+                    })
+                }
+                setItems((fuse.search(inputValue, {limit: 5}) as unknown as DatalistContent[]) || [""]);
 
             },
             items,
             itemToString(item) {
-                return item ? item.name : "";
+                return item ? item.item.name : "";
             },
             onSelectedItemChange: ({selectedItem: newSelectedItem}) => {
                 if (!newSelectedItem) return;
-                if ('email' in newSelectedItem) {
-                    nav(`/professor/${newSelectedItem.email}`);
+                if ('email' in newSelectedItem.item) {
+                    nav(`/professor/${newSelectedItem.item.email}`);
                 } else {
-                    nav(`/course/${newSelectedItem.tag}`);
+                    nav(`/course/${newSelectedItem.item.tag}`);
 
                 }
             }
@@ -71,16 +106,16 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                 <div className={"parent-datalist"}>
                     <ul className={"datalist"} {...getMenuProps()}>
                         {inputValue &&
-                            items.map((item, index) => (
+                            items.map((element, index) => (
                                 <li className={`datalist-option ${highlightedIndex === index && ' bg-blue-option'}`}
-                                    key={`${item.name}${index}`} {...getItemProps({
-                                    item,
+                                    key={`${element.item.name}${index}`} {...getItemProps({
+                                    item: element.item as unknown as DatalistContent,
                                     index,
-                                    disabled: item.name === "Loading..."
+                                    disabled: element.item.name === "Loading..."
                                 })}>
 
-                                    <span>{'tag' in item && item.tag}</span>
-                                    <span className={"course-name"}>{item.name}</span>
+                                    <span>{'tag' in element.item && element.item.tag}</span>
+                                    <span className={"course-name"}>{element.item.name}</span>
                                 </li>
                             ))
                         }

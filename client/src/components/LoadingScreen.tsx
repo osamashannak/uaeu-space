@@ -2,11 +2,10 @@ const LoadingScreen = () => {
 
     return (
 
-        <img style={{
-            margin: "auto",
-            fontSize: "15rem"
-        }} src="../assests/favicon.ico" alt={"Loading..."}/>
+        <div className={"loading-background"}>
 
+            <img className={"loading-image"} src="/favicon.ico" alt={"Loading..."}/>
+        </div>
     )
 
 }

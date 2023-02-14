@@ -1,9 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;400;600&display=swap');
 
+html {
+    height: 100%;
+}
 
 body {
     background-color: #f1f2f3;
+    height: 100%;
+    margin: 0;
+}
 
+#root {
+    height: 100%;
 }
 
 .home, .course, .professor {
@@ -18,6 +26,43 @@ body {
         transform: translate3d(0, 0, 0);
         opacity: 1;
     }
+}
+
+/**
+LoadingScreen DATA HERE
+ */
+
+
+@-webkit-keyframes silver-gradient {
+    0%{background-position:0% 31%}
+    50%{background-position:100% 70%}
+    100%{background-position:0% 31%}
+}
+@-moz-keyframes silver-gradient {
+    0%{background-position:0% 31%}
+    50%{background-position:100% 70%}
+    100%{background-position:0% 31%}
+}
+@keyframes silver-gradient {
+    0%{background-position:0% 31%}
+    50%{background-position:100% 70%}
+    100%{background-position:0% 31%}
+}
+
+.loading-background {
+    display: grid;
+    place-content: center;
+    height: 100%;
+
+    background: linear-gradient(130deg, #c8c8c8, #ffffff);
+    background-size: 400% 400%;
+
+    -webkit-animation: silver-gradient 2s ease infinite;
+    -moz-animation: silver-gradient 2s ease infinite;
+    animation: silver-gradient 2s ease infinite;
+}
+
+.loading-image {
 }
 
 /**
@@ -639,7 +684,7 @@ Course DATA
 Footer DATA
  */
 .footer {
-    margin: 3rem 1rem 3rem 1rem;
+    padding: 3rem 2rem;
     font-size: 0.8rem;
     display: flex;
     justify-content: space-between;
