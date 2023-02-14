@@ -5,7 +5,7 @@ import {ICourse} from "../utils/Course";
 
 const HOST = "https://api.uaeu.space";
 
-export const getProfessor = async (professorEmail: string, unique?: string) => {
+export const getProfessor = async (professorEmail: string, viewed: boolean) => {
     let response;
 
     try {
@@ -14,7 +14,7 @@ export const getProfessor = async (professorEmail: string, unique?: string) => {
             url: HOST + "/professor",
             params: {
                 email: professorEmail,
-                unique: unique
+                viewed: viewed
             }
         })
     } catch (error) {
@@ -72,7 +72,7 @@ export const postReview = async (review: IReview, email: string) => {
     return response.data.result === "success";
 }
 
-export const getCourse = async (tag: string, unique?: string) => {
+export const getCourse = async (tag: string, viewed: boolean) => {
     let response;
 
     try {
@@ -81,7 +81,7 @@ export const getCourse = async (tag: string, unique?: string) => {
             url: HOST + "/course",
             params: {
                 tag: tag,
-                unique: unique
+                viewed: viewed
             }
         })
     } catch (error) {

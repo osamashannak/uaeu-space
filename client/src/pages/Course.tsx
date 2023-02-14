@@ -20,9 +20,9 @@ const Course = () => {
             return;
         }
 
-        const hasViewed = localStorage.getItem(`${tag}-exist`);
+        const hasViewed = localStorage.getItem(`${tag}-exist`) === 'true';
 
-        getCourse(tag, hasViewed ?? undefined).then(course => {
+        getCourse(tag, hasViewed).then(course => {
             setCourse(course);
             if (course) {
                 localStorage.setItem(`${tag}-exist`, 'true');

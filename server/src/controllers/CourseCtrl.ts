@@ -34,8 +34,10 @@ export const find = async (req: Request, res: Response) => {
 
     course.files = course.files.filter(value => value.visible);
 
-    if (params.unique && params.unique === "true") {
-        await course.addView(AppDataSource);
+    if (params.viewed && params.viewed === "false") {
+        const userRepo = AppDataSource.getRepository(Course);
+        course.views += 1;
+        await userRepo.save(course);
     }
 
     res.status(200).json({course: course});

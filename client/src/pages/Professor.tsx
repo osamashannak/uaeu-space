@@ -24,9 +24,9 @@ const Professor = () => {
             return;
         }
 
-        const hasViewed = localStorage.getItem(`${email}-exist`);
+        const hasViewed = localStorage.getItem(`${email}-exist`) === 'true';
 
-        getProfessor(email, hasViewed ?? undefined).then(professor => {
+        getProfessor(email, hasViewed).then(professor => {
             setProfessor(professor);
             if (professor) {
                 localStorage.setItem(`${email}-exist`, 'true');

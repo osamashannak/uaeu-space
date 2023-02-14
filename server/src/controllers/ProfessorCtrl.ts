@@ -4,6 +4,7 @@ import {Professor} from "../orm/entity/Professor";
 import {Equal, ILike} from "typeorm";
 import {Review} from "../orm/entity/Review";
 import {ReviewRatings} from "../orm/entity/ReviewRatings";
+import {Course} from "../orm/entity/Course";
 
 
 type ProfessorFindBody = {
@@ -167,8 +168,10 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
-    if (params.unique && params.unique === "true") {
-        await professor.addView(AppDataSource);
+    if (params.viewed && params.viewed === "false") {
+        const userRepo = AppDataSource.getRepository(Professor);
+        professor.views += 1;
+        await userRepo.save(professor);
     }
 
     res.status(200).json({professor: professor});

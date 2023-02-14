@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "./i18n";
+import LoadingScreen from "./components/LoadingScreen";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -11,7 +12,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <App/>
+        <React.Suspense fallback={<LoadingScreen/>}>
+            <App/>
+        </React.Suspense>
     </React.StrictMode>
 );
 

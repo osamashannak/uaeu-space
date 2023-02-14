@@ -13,9 +13,6 @@ const FileTable = (props: { files: IFile[] }) => {
     if (props.files.length < 1) {
         return (
             <div className={"files"}>
-                <p className={"ratings-title"}><Icon icon={menuBookOutline} className={"review-icon"}/> {t("materials")}
-                </p>
-
                 <p className={"no-reviews"}>{t("errors.no_materials")}</p>
             </div>
         )
@@ -23,11 +20,9 @@ const FileTable = (props: { files: IFile[] }) => {
 
     return (
         <div className={"files"}>
-            <p className={"ratings-title"}><Icon icon={menuBookOutline} className={"review-icon"}/> Materials</p>
-            <div>
-                {
-                    props.files.map((value, index) => (
-                        <div key={index} className={"file-row"}>
+            {
+                props.files.map((value, index) => (
+                    <div key={index} className={"file-row"}>
                             <span className={"file-name"}>
                                 {getFontAwesomeIconFromMIME(value.type)}
                                 <a target="_blank"
@@ -36,13 +31,12 @@ const FileTable = (props: { files: IFile[] }) => {
                                    href={"https://api.uaeu.space/course/file?id=" + value.id}
                                    title={value.name}>{value.name}</a>
                             </span>
-                            <p className={"file-size"}>{formatBytes(value.size)}</p>
-                            <p>{dateHumanize(value.created_at, i18n.language || window.localStorage.i18nextLng)}</p>
-                            <LikeDislike fileId={value.id}/>
-                        </div>
-                    ))
-                }
-            </div>
+                        <p className={"file-size"}>{formatBytes(value.size)}</p>
+                        <p>{dateHumanize(value.created_at, i18n.language || window.localStorage.i18nextLng)}</p>
+                        <LikeDislike fileId={value.id}/>
+                    </div>
+                ))
+            }
         </div>
     );
 

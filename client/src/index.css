@@ -54,6 +54,7 @@ NavBar DATA HERE
     -webkit-box-shadow: 0 8px 6px -6px #999;
     -moz-box-shadow: 0 8px 6px -6px #999;
     box-shadow: 0 8px 6px -6px #999;
+    direction: ltr;
 }
 
 .title {
@@ -437,7 +438,7 @@ i {
 }
 
 .new-review {
-    margin-top: 3rem;
+    margin-top: 8rem;
     font-weight: 600;
 }
 
