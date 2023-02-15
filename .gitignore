@@ -2,5 +2,6 @@
 /server/.idea/
 /client/.idea/
 /server/.env
+/server/dist/
 .idea
 /server/tmp/*

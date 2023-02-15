@@ -1,6 +1,7 @@
 import Box from "../components/Box";
 import {Icon} from '@iconify/react';
 import informationVariant from '@iconify/icons-mdi/information-variant';
+import instagramIcon from '@iconify/icons-skill-icons/instagram';
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
 
@@ -13,6 +14,13 @@ const Home = () => {
             <div className={"help-us"}>
                 <p className={"alert"}>{t("alert.title")}</p>
                 <p>{t("alert.description")}</p>
+            </div>
+            <div className={"help-us"} style={{fontWeight: 400, maxWidth: '25rem'}}>
+                <p><Icon icon={instagramIcon}/> Follow <a href="https://instagram.com/uaeu.space" style={{
+                    textDecoration: 'none',
+                    color: 'darkblue',
+
+                }}>@uaeu.space</a> on Instagram!</p>
             </div>
             <div className={"boxes"}>
                 <Box
