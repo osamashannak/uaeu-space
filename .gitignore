@@ -1,7 +1,8 @@
 /server/node_modules/
 /server/.idea/
 /client/.idea/
+/client/build/
 /server/.env
-/server/dist/
 .idea
-/server/tmp/*
+/server/tmp/
+/server/dist/

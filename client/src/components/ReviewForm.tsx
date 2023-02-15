@@ -93,6 +93,10 @@ const ReviewForm = (props: { email: string }) => {
                           }}
                           className={"new-review-field new-review-comment"}
                           placeholder={t("new_review.comment")!}/>
+                <div style={{color: 'darkred', fontWeight: 400, fontSize: "0.8rem"}}>
+                    <p>{t("warning.line1")}</p>
+                    <p>{t("warning.line2")}</p>
+                </div>
                 <div>
                     <div className={"new-review-score"}>
                         <label>{t("new_review.score")}: </label>

@@ -144,6 +144,10 @@ const FileForm = (props: { courseTag: string }) => {
                     </div>)
                 }
 
+                <div style={{marginTop: "1rem", color: 'darkred', fontWeight: 400, fontSize: "0.8rem"}}>
+                    <p>{t("warning")}</p>
+                </div>
+
                 <input hidden={submitting} type={"submit"} title={t("submit")!} className={"new-review-button"}
                        value={t("submit")!}/>
 

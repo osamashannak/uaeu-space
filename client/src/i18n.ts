@@ -6,8 +6,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 export const namespaces = {
     pages: {
         home: "pages.home",
-        professor: "pages.professor",
-        course: "pages.course"
+        professor: "pages.professor1",
+        course: "pages.course1"
     },
     components: {
         footer: "components.footer"
@@ -19,6 +19,7 @@ export const languages = {
     en: "en-US",
 };
 
+
 const createI18n = (language: string): Promise<TFunction> => {
     const i18n = i18next.createInstance().use(initReactI18next);
 
@@ -28,7 +29,7 @@ const createI18n = (language: string): Promise<TFunction> => {
         .init({
             debug: false,
             backend: {
-                loadPath: "/locales/{{lng}}/{{ns}}.json",
+                loadPath: "/locales/{{lng}}/{{ns}}.json"
             },
             fallbackLng: language,
             interpolation: {
