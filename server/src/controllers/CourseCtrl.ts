@@ -154,8 +154,10 @@ export const uploadFile = async (req: Request, res: Response) => {
         return;
     }
 
+
     const blobName = await uploadBlob(req.body.name, filePath, file.mimetype);
 
+    console.log([blobName, req.body.tag]);
     await unlinkAsync(file.path);
     await unlinkAsync(filePath);
 
@@ -167,6 +169,13 @@ export const uploadFile = async (req: Request, res: Response) => {
     courseFile.type = file.mimetype;
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);
+
+    fs.writeFile('today.txt', `${[blobName, req.body.tag]}\n`, {flag: 'w+'}, err => {
+        if (err) {
+            console.error(err);
+        }
+        // file written successfully
+    });
 
 }
 

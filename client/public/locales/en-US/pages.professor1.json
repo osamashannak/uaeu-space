@@ -22,5 +22,9 @@
       "incorrect_number": "Please write a number between 1 and 5.",
       "not_selected": "Please select one of these options."
     }
+  },
+  "warning": {
+    "line1": "Keep your comment polite and respectful.",
+    "line2": "Comments with abusive language will be removed."
   }
 }

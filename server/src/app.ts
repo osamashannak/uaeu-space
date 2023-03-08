@@ -9,6 +9,7 @@ import professorRouter from "./routes/ProfessorRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
 import {loadAzure} from "./azure";
+import {CourseFile} from "./orm/entity/CourseFile";
 
 
 const app = express();
@@ -27,18 +28,10 @@ const main = (): void => {
     loadAzure().then(r => console.log("Azure client loaded."));
 
     AppDataSource.initialize().then(async () => {
-        /*
-                console.log("Inserting a new user into the database...")
-                const professor = await AppDataSource.manager.getRepository(Course).findOne({where: {tag: "MATH110"}})
-                const file = new CourseFile();
-                file.created_at = new Date();
-                file.reference = "sofmpqvjvirodfdsfdse";
-                file.course = professor!;
-                file.name = "practice-test-study-01.pdf"
-                file.size = 10000000;
-                file.type = FileType.PDF;
 
-                await AppDataSource.getRepository(CourseFile).save(file);*/
+        /*console.log("Inserting a new user into the database...")
+        const files = await AppDataSource.manager.getRepository(CourseFile).find({relations: ['course']});
+        console.log(files)*/
 
     }).catch(error => console.log(error))
 

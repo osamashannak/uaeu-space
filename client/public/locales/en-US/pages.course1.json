@@ -17,5 +17,6 @@
     "no_files": "You need to select files to upload first."
   },
   "thank_you": "Thank you.",
-  "confirmation": "Uploaded files will be shown here after being reviewed."
+  "confirmation": "Uploaded files will be shown here after being reviewed.",
+  "warning": "Illegal materials including those that don't follow the university's rules are not allowed."
 }
