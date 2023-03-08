@@ -27,7 +27,7 @@ const FileTable = (props: { files: IFile[] }) => {
                                 {getFontAwesomeIconFromMIME(value.type)}
                                 <a target="_blank"
                                    style={{color: "#007fff"}}
-                                   rel="noreferrer"
+                                   rel="noreferrer nofollow"
                                    href={"https://api.uaeu.space/course/file?id=" + value.id}
                                    title={value.name}>{value.name}</a>
                             </span>
