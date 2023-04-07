@@ -134,11 +134,6 @@ export const getFileRatings = async (req: Request, res: Response) => {
     res.status(200).json({likes: likes, dislikes: dislikes});
 }
 
-interface UploadFilesBody {
-    file: File
-
-}
-
 export const uploadFile = async (req: Request, res: Response) => {
     const file = req.file;
 
@@ -170,7 +165,7 @@ export const uploadFile = async (req: Request, res: Response) => {
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);
 
-    fs.writeFile('today.txt', `${[blobName, req.body.tag]}\n`, {flag: 'w+'}, err => {
+    fs.writeFile('today.txt', `${[blobName, req.body.tag]}\n`, {flag: 'a'}, err => {
         if (err) {
             console.error(err);
         }
@@ -229,6 +224,10 @@ export const getFile = async (req: Request, res: Response) => {
         res.status(404).json({});
         return;
     }
+
+    courseFile.downloads += 1;
+
+    await AppDataSource.getRepository(CourseFile).save(courseFile);
 
     const fileUrl = getFileURL(courseFile.blob_name, fileAccessToken.url)
 

@@ -8,6 +8,7 @@ import ReviewSection from "../components/ReviewSection";
 import {Icon} from '@iconify/react';
 import bubbleLoading from '@iconify/icons-eos-icons/bubble-loading';
 import ReviewForm from "../components/ReviewForm";
+import {Helmet} from "react-helmet";
 
 const Professor = () => {
 
@@ -46,6 +47,10 @@ const Professor = () => {
     if (isFetching) {
         return (
             <div className={"professor"}>
+                <Helmet>
+                    <meta name="description"
+                          content={`Rate a professor or learn from other students about their performance. .`}/>
+                </Helmet>
                 <div className={"prof-info-page prof-info-head"}>
                     <p>Loading <Icon icon={bubbleLoading}/></p>
                 </div>
@@ -56,6 +61,10 @@ const Professor = () => {
     if (!professor) {
         return (
             <div className={"professor"}>
+                <Helmet>
+                    <meta name="description"
+                          content={`Rate a professor or learn from other students about their performance. .`}/>
+                </Helmet>
                 <div className={"prof-info-page prof-info-head"}>
                     <p>Professor Not Found 404</p>
                 </div>
@@ -65,6 +74,11 @@ const Professor = () => {
 
     return (
         <div className={"professor"}>
+            <Helmet>
+                <title>{professor.name}</title>
+                <meta name="description"
+                      content={`Rate ${professor.name} or learn from other students about their performance. .`}/>
+            </Helmet>
             <div className={"prof-info-page"}>
                 <div className={"prof-info-head"}>
                     <div className={"prof-info"}>

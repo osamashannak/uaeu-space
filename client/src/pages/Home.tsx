@@ -4,6 +4,7 @@ import informationVariant from '@iconify/icons-mdi/information-variant';
 import instagramIcon from '@iconify/icons-skill-icons/instagram';
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
+import {Helmet} from "react-helmet";
 
 const Home = () => {
 
@@ -11,6 +12,7 @@ const Home = () => {
 
     return (
         <div className={"home"}>
+
             <div className={"help-us"}>
                 <p className={"alert"}>{t("alert.title")}</p>
                 <p>{t("alert.description")}</p>

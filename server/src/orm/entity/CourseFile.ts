@@ -26,8 +26,11 @@ export class CourseFile {
     @Column({default: false})
     visible!: boolean;
 
+    @Column({default: 0})
+    downloads!: number;
+
     @OneToMany(() => FileRating, ratings => ratings.file)
-    ratings!: FileRating[]
+    ratings!: FileRating[];
 
     @CreateDateColumn()
     created_at!: Date;

@@ -34,19 +34,39 @@ LoadingScreen DATA HERE
 
 
 @-webkit-keyframes silver-gradient {
-    0%{background-position:0% 31%}
-    50%{background-position:100% 70%}
-    100%{background-position:0% 31%}
+    0% {
+        background-position: 0% 31%
+    }
+    50% {
+        background-position: 100% 70%
+    }
+    100% {
+        background-position: 0% 31%
+    }
 }
+
 @-moz-keyframes silver-gradient {
-    0%{background-position:0% 31%}
-    50%{background-position:100% 70%}
-    100%{background-position:0% 31%}
+    0% {
+        background-position: 0% 31%
+    }
+    50% {
+        background-position: 100% 70%
+    }
+    100% {
+        background-position: 0% 31%
+    }
 }
+
 @keyframes silver-gradient {
-    0%{background-position:0% 31%}
-    50%{background-position:100% 70%}
-    100%{background-position:0% 31%}
+    0% {
+        background-position: 0% 31%
+    }
+    50% {
+        background-position: 100% 70%
+    }
+    100% {
+        background-position: 0% 31%
+    }
 }
 
 .loading-background {
@@ -143,6 +163,7 @@ Home DATA
     display: flex;
     flex-wrap: wrap;
     gap: 50px;
+    margin-top: 5rem;
     justify-content: space-evenly;
 }
 
@@ -163,8 +184,8 @@ Home DATA
 }
 
 .info {
-    margin-top: 5rem;
-    margin-bottom: 5rem;
+    margin-top: 10rem;
+    margin-bottom: 10rem;
 }
 
 .info-title {

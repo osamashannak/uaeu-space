@@ -6,6 +6,7 @@ import {ICourse} from "../utils/Course";
 import {Icon} from '@iconify/react';
 import bubbleLoading from '@iconify/icons-eos-icons/bubble-loading';
 import FileForm from "../components/FileForm";
+import {Helmet} from "react-helmet";
 
 const Course = () => {
 
@@ -35,6 +36,11 @@ const Course = () => {
     if (isFetching) {
         return (
             <div className={"professor"}>
+                <Helmet>
+                    <meta name="description"
+                          content={`Download and upload learning material to help students at UAEU.`}/>
+                </Helmet>
+
                 <div className={"prof-info-page prof-info-head"}>
                     <p>Loading <Icon icon={bubbleLoading}/></p>
                 </div>
@@ -45,6 +51,10 @@ const Course = () => {
     if (!course) {
         return (
             <div className={"course"}>
+                <Helmet>
+                    <meta name="description"
+                          content={`Download and upload learning material to help students at UAEU.`}/>
+                </Helmet>
                 <div className={"course-info-page"}>
                     <p>Course Not Found 404</p>
                 </div>
@@ -54,6 +64,13 @@ const Course = () => {
 
     return (
         <div className={"course"}>
+
+            <Helmet>
+                <title>{course.tag}</title>
+                <meta name="description"
+                      content={`Download and upload learning material for ${course.name} to help students at UAEU.`}/>
+            </Helmet>
+
             <div className={"course-info-page"}>
                 <p className={"course-page-tag"}>{course.tag}</p>
                 <p className={"course-page-title"}>{course.name}</p>

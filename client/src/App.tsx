@@ -9,6 +9,7 @@ import Course from "./pages/Course";
 import Professor from "./pages/Professor";
 import NotFound from "./pages/NotFound";
 import LoadingScreen from "./components/LoadingScreen";
+import {Helmet} from "react-helmet";
 
 const App = () => {
     const {t, i18n} = useTranslation();
@@ -16,6 +17,13 @@ const App = () => {
 
     return (
         <BrowserRouter>
+            <Helmet
+                titleTemplate="%s - UAEU Space"
+                defaultTitle="UAEU Space"
+            >
+                <meta name="description"
+                      content="UAEU Space is a multi-purpose platform for UAEU students to prepare them during their studies. You can find and share materials for courses that are taken by the university's students."/>
+            </Helmet>
             <React.Suspense fallback={<LoadingScreen/>}>
                 <NavBar/>
                 <Routes>
