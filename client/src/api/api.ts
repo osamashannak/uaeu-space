@@ -5,6 +5,7 @@ import {ICourse} from "../utils/Course";
 
 const HOST = "https://api.uaeu.space";
 
+
 export const getProfessor = async (professorEmail: string, viewed: boolean) => {
     let response;
 

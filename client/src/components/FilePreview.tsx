@@ -25,9 +25,11 @@ const FilePreview = (props: { courseTag: string, name: string, file: File, chang
 
     return (
         <div className={"file-preview"}>
-            <Icon icon={deleteOutlineSharp} className={"remove-file"} onClick={event => {
-                props.deleteFile(props.file);
-            }}/>
+            <div hidden={progress !== "Ready to upload"}>
+                <Icon icon={deleteOutlineSharp} className={"remove-file"} onClick={event => {
+                    props.deleteFile(props.file);
+                }}/>
+            </div>
             <input
                 type={"text"}
                 onChange={event => {

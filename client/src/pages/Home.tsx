@@ -1,10 +1,11 @@
-import Box from "../components/Box";
-import {Icon} from '@iconify/react';
-import informationVariant from '@iconify/icons-mdi/information-variant';
-import instagramIcon from '@iconify/icons-skill-icons/instagram';
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
-import {Helmet} from "react-helmet";
+import reading from "../assests/Group 1.png";
+import professor from "../assests/Group 2.png";
+import SearchBoxElement from "../components/SearchBox";
+import {Icon} from '@iconify/react';
+import arrowForwardIos from '@iconify/icons-material-symbols/arrow-forward-ios';
+import {Link} from "react-router-dom";
 
 const Home = () => {
 
@@ -14,45 +15,27 @@ const Home = () => {
         <div className={"home"}>
 
             <div className={"help-us"}>
-                <p className={"alert"}>{t("alert.title")}</p>
+                <p className={"help-us-icon"}>💙</p>
                 <p>{t("alert.description")}</p>
             </div>
-            <div className={"help-us"} style={{fontWeight: 400, maxWidth: '25rem'}}>
-                <p><Icon icon={instagramIcon}/> Follow <a href="https://instagram.com/uaeu.space" style={{
-                    textDecoration: 'none',
-                    color: 'darkblue',
 
-                }}>@uaeu.space</a> on Instagram!</p>
-            </div>
-            <div className={"boxes"}>
-                <Box
-                    title={t("course_box.title")}
-                    descriptions={t("course_box.description")}
-                    searchBoxProps={{
-                        type: "course"
-                    }}/>
-                <Box
-                    title={t("professor_box.title")}
-                    descriptions={t("professor_box.description")}
-                    searchBoxProps={{
-                        type: "professor"
-                    }}/>
-            </div>
-            <div className={"info"}>
-                <p className={"info-title"}><Icon icon={informationVariant}/> {t("info.title")}</p>
-                <li className={"info-description"}>
-                    {t("info.paragraph1")}
-                </li>
-                <li className={"info-description"}>
-                    {t("info.paragraph2")}
-                </li>
-                <li className={"info-description"}>
-                    {t("info.paragraph3")} <a target="_blank"
-                                              rel="noreferrer"
-                                              className={"foot-link"}
-                                              href="https://github.com/Am4nso/uaeu-space">GitHub</a>.
-                </li>
-            </div>
+            <section className={"course-materials"}>
+                <span className={"section-title"}>{t("course_box.title")}</span>
+                <p className={"section-desc"}>{t("course_box.description")}</p>
+                <div>
+                    <SearchBoxElement type={"course"}/>
+                </div>
+                <img className={"reading-image"} src={reading}/>
+            </section>
+            <div className={"separator"}>&nbsp;</div>
+            <section className={"professor-materials"}>
+                <p className={"section-title"}>{t("professor_box.title")}</p>
+                <p className={"section-desc"}>{t("professor_box.description")}</p>
+                {/*<Link to={"/compare"} className={"compare-professor"}>Compare Professors <Icon icon={arrowForwardIos}/></Link>*/}
+                <SearchBoxElement type={"professor"}/>
+                <img className={"professor-image"} src={professor}/>
+            </section>
+
 
         </div>
     );

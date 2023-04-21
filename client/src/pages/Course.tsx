@@ -16,6 +16,8 @@ const Course = () => {
     const [course, setCourse] = useState<ICourse | null>();
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+
         if (!tag) {
             setIsFetching(false);
             return;
@@ -35,7 +37,7 @@ const Course = () => {
 
     if (isFetching) {
         return (
-            <div className={"professor"}>
+            <div className={"course"}>
                 <Helmet>
                     <meta name="description"
                           content={`Download and upload learning material to help students at UAEU.`}/>
@@ -55,7 +57,7 @@ const Course = () => {
                     <meta name="description"
                           content={`Download and upload learning material to help students at UAEU.`}/>
                 </Helmet>
-                <div className={"course-info-page"}>
+                <div className={"prof-not-found"}>
                     <p>Course Not Found 404</p>
                 </div>
             </div>

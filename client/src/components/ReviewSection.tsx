@@ -20,7 +20,7 @@ const ReviewSection = (props: { reviews: IReview[] }) => {
             {
                 reviews.length > 0 ? reviews.map((review, index) => (
                     <Review key={index} {...review}/>
-                )) : <p className={"no-reviews"}>{t("new_review.status.no_reviews")}</p>
+                )) : <p className={"no-reviews review"}>{t("new_review.status.no_reviews")}</p>
             }
         </div>
     );

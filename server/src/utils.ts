@@ -1,5 +1,7 @@
 import {createReadStream, createWriteStream} from "fs";
 import {createGzip} from "zlib";
+import requestIp from "request-ip";
+import {Request} from 'express';
 
 
 export const compressFile = async (filePath: string) => {
@@ -13,6 +15,19 @@ export const compressFile = async (filePath: string) => {
             .on('error', () => reject(null));
     });
 };
+
+export const getUserDetails = (req: Request) => {
+    let address = requestIp.getClientIp(req);
+
+    if (address && address.includes(":")) {
+        address = address.split(":").slice(-1).pop()!;
+    }
+
+    return JSON.stringify({
+        user_agent: req.headers['user-agent'],
+        ip: address
+    });
+}
 
 
 export const ALLOWED_APPLICATION_TYPES = [

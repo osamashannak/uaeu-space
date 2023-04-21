@@ -105,16 +105,9 @@ const FileForm = (props: { courseTag: string }) => {
 
     return (
         <form className={"new-review"} onSubmit={handleSubmit}>
-            <p><Upload/> {t("upload_materials")}</p>
+            <p>{t("upload_materials")}</p>
             <fieldset style={{border: "none", padding: 0}}>
                 <div className={"file-form-entity"}>
-                    <div className={"file-disclaimer"}>
-                        {t("disclaimer.maximum")}:
-                        <ul style={{paddingLeft: "1rem", paddingRight: "1rem"}}>
-                            <li>{t("disclaimer.size")}</li>
-                            <li>{t("disclaimer.amount")}</li>
-                        </ul>
-                    </div>
                     <div hidden={submitting}>
                         <span>{t("upload_files")}: </span>
                         <input type={"file"}
@@ -125,7 +118,19 @@ const FileForm = (props: { courseTag: string }) => {
                                onChange={onFileSelect}/>
                         <label className={"upload-file-button"} htmlFor={"file-upload"}>{t("select_files")}</label>
                     </div>
+
                 </div>
+
+                <div className={"file-disclaimer"}>
+
+                    <em>{t("disclaimer.maximum")}:</em>
+                    <ul>
+                        <li><em>{t("disclaimer.size")}</em></li>
+                        <li><em>{t("disclaimer.amount")}</em></li>
+                    </ul>
+
+                </div>
+
                 <div>
                     {
                         details.map((value, index) => {
@@ -143,10 +148,6 @@ const FileForm = (props: { courseTag: string }) => {
                         {t("thank_you")}<br/>{t("confirmation")}
                     </div>)
                 }
-
-                <div style={{marginTop: "1rem", color: 'darkred', fontWeight: 400, fontSize: "0.8rem"}}>
-                    <p>{t("warning")}</p>
-                </div>
 
                 <input hidden={submitting} type={"submit"} title={t("submit")!} className={"new-review-button"}
                        value={t("submit")!}/>

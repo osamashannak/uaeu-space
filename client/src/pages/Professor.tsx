@@ -9,6 +9,7 @@ import {Icon} from '@iconify/react';
 import bubbleLoading from '@iconify/icons-eos-icons/bubble-loading';
 import ReviewForm from "../components/ReviewForm";
 import {Helmet} from "react-helmet";
+import einstein from "../assests/einstien.png";
 
 const Professor = () => {
 
@@ -19,6 +20,7 @@ const Professor = () => {
     const [isFetching, setIsFetching] = useState(true);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
 
         if (!email) {
             setIsFetching(false);
@@ -65,8 +67,12 @@ const Professor = () => {
                     <meta name="description"
                           content={`Rate a professor or learn from other students about their performance. .`}/>
                 </Helmet>
-                <div className={"prof-info-page prof-info-head"}>
-                    <p>Professor Not Found 404</p>
+                <div className={"prof-not-found"}>
+                    <div>
+                        <span>Professor not found :(</span>
+                        <p>Please DM us on Instagram to add them to the website.</p>
+                    </div>
+                    <img src={einstein}/>
                 </div>
             </div>
         )
@@ -79,11 +85,11 @@ const Professor = () => {
                 <meta name="description"
                       content={`Rate ${professor.name} or learn from other students about their performance. .`}/>
             </Helmet>
-            <div className={"prof-info-page"}>
+            <section className={"prof-info-page"}>
                 <div className={"prof-info-head"}>
                     <div className={"prof-info"}>
                         <p className={"prof-name"}>{professor.name}</p>
-                        <p className={"department"}>{professor.college}</p>
+                        <p>{professor.college}</p>
                     </div>
 
                     <div className={"prof-overall"}>
@@ -91,9 +97,10 @@ const Professor = () => {
                             className={"score-out-of"}>/5</span></p>
                     </div>
                 </div>
-                <ReviewSection reviews={professor.reviews}/>
-                <ReviewForm email={email!}/>
-            </div>
+            </section>
+            <ReviewSection reviews={professor.reviews}/>
+            <ReviewForm email={email!}/>
+
         </div>
     );
 }

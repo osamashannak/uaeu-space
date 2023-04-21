@@ -4,7 +4,7 @@ import {Professor} from "../orm/entity/Professor";
 import {Equal, ILike} from "typeorm";
 import {Review} from "../orm/entity/Review";
 import {ReviewRatings} from "../orm/entity/ReviewRatings";
-import {Course} from "../orm/entity/Course";
+import {getUserDetails} from "../utils";
 
 
 type ProfessorFindBody = {
@@ -22,6 +22,7 @@ type RateBody = {
 }
 
 export const rate = async (req: Request, res: Response) => {
+
     const body: RateBody = req.body;
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
@@ -36,6 +37,7 @@ export const rate = async (req: Request, res: Response) => {
     const review = new Review();
 
     review.author = body.review.author || "Anonymous";
+    review.client_details = getUserDetails(req);
     review.comment = body.review.comment;
     review.score = body.review.score;
     review.positive = body.review.positive;
@@ -47,7 +49,6 @@ export const rate = async (req: Request, res: Response) => {
 }
 
 export const getRating = async (req: Request, res: Response) => {
-
     const body: ProfessorFindBody = req.body;
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
@@ -67,6 +68,7 @@ export const getRating = async (req: Request, res: Response) => {
 }
 
 export const rateReview = async (req: Request, res: Response) => {
+
     const body = req.body;
     console.log(body)
 
@@ -87,6 +89,7 @@ export const rateReview = async (req: Request, res: Response) => {
     const reviewRating = new ReviewRatings();
 
     reviewRating.request_key = body.request_key;
+    reviewRating.client_details = getUserDetails(req);
     reviewRating.is_positive = body.positive;
     reviewRating.review = review;
 

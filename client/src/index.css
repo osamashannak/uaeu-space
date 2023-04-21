@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 html {
     height: 100%;
 }
 
 body {
-    background-color: #f1f2f3;
+    background-color: #ffffff;
     height: 100%;
     margin: 0;
 }
@@ -15,10 +15,13 @@ body {
 }
 
 .home, .course, .professor {
-    margin-top: 5%;
-    margin-left: 2rem;
-    margin-right: 2rem;
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.professor, .course {
+    padding-bottom: 1rem;
+    background-color: #f1f2f3;
+    min-height: calc(100vh - 15rem);
 }
 
 @keyframes bang {
@@ -93,7 +96,7 @@ NotFound DATA HERE
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 10rem 0;
+    padding: 34.5vh 0;
     font-size: 2rem;
     gap: 2rem;
 }
@@ -110,51 +113,146 @@ NotFound DATA HERE
 NavBar DATA HERE
  */
 
-.nav-bar {
+header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 2020;
+    background-color: #add8ff;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
-    background-color: #4C89EE;
-    -webkit-box-shadow: 0 8px 6px -6px #999;
-    -moz-box-shadow: 0 8px 6px -6px #999;
-    box-shadow: 0 8px 6px -6px #999;
+    padding: 0.75rem 1rem;
     direction: ltr;
 }
 
+.right-side-nav {
+    display: flex;
+    gap: 1rem;
+}
+
+.instagram-nav {
+    color: white;
+    align-self: center;
+    cursor: pointer;
+}
+
 .title {
-    color: #E9DAD7;
-    font-weight: 600;
-    font-size: 1.5rem;
+    color: white;
+    font-weight: 500;
+    font-size: 1rem;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
 .nav-choice {
-    color: #E9DAD7;
+    color: white;
     list-style-type: none;
-    font-size: 1.1rem;
+    font-size: 1rem;
     text-decoration: none;
 }
 
 .change-locale {
-    border: 2px solid #E9DAD7;
-    padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+    border: none;
     cursor: pointer;
     background-color: transparent;
 }
 
-.change-locale:hover {
-    box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+@keyframes float {
+    0% {
+        transform: translatey(0px);
+    }
+    50% {
+        transform: translatey(-11px);
+    }
+    100% {
+        transform: translatey(0px);
+    }
 }
+
+.reading-image {
+    opacity: 0.5;
+    margin-top: 3rem;
+    transition: opacity 1s ease;
+    max-width: 20rem;
+    max-height: 20rem;
+
+}
+
+.professor-image {
+    opacity: 0.5;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    transition: opacity 1s ease;
+    max-width: 20rem;
+    max-height: 20rem;
+}
+
+.professor-image:hover, .reading-image:hover {
+    opacity: 1;
+}
+
+
+.course-materials {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.85rem;
+    padding: 2rem 5rem;
+    border-radius: 3px;
+    text-align: center;
+    background-color: #ADFFFD;
+}
+
+
+.separator {
+    width: 100%;
+    height: 1px;
+    background-color: #ffffff;
+    padding-bottom: 0.5rem;
+}
+
+.professor-materials {
+    background-color: #f1f2f3;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.85rem;
+    padding: 2rem 5rem;
+    border-radius: 3px;
+    text-align: center;
+}
+
+.section-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.section-desc {
+    margin-bottom: 1rem;
+}
+
+.compare-professor {
+    color: #06c;
+    text-decoration: none;
+    font-size: 0.75rem;
+    text-align: left;
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.2rem;
+    margin-bottom: 1rem;
+}
+
 
 /*
 Home DATA
  */
 
 .home {
-    margin-top: 5%;
-    margin-left: 2rem;
-    margin-right: 2rem;
     display: flex;
     flex-direction: column;
 }
@@ -168,37 +266,32 @@ Home DATA
 }
 
 .help-us {
-    background-color: #E5F6FD;
-    font-weight: 200;
-    font-size: 1rem;
-    border-radius: 8px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
-    padding: 1.5rem;
-    color: #007fff;
-    margin-bottom: 4rem;
-}
-
-.alert {
+    background-color: white;
+    margin-top: 2.7rem;
+    border-radius: 2px;
     font-weight: 400;
-    margin-bottom: 1rem;
+    font-size: 0.75rem;
+    padding: 1rem;
+    max-width: fit-content;
+    display: flex;
+    color: rgb(2, 136, 209);
+    text-align: center;
 }
 
-.info {
-    margin-top: 10rem;
-    margin-bottom: 10rem;
+[dir=ltr] .help-us-icon {
+    padding-right: 0.5rem;
+    margin-right: 0.5rem;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    align-self: center;
 }
 
-.info-title {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+[dir=rtl] .help-us-icon {
+    padding-left: 0.5rem;
+    margin-left: 0.5rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    align-self: center;
 }
 
-.info-description {
-    font-weight: 200;
-    margin-top: 1.5rem;
-    margin-left: 10px;
-    font-size: 1rem;
-}
 
 /*
 Box DATA HERE
@@ -211,20 +304,20 @@ Box DATA HERE
     width: 100%;
     max-width: 40rem;
     box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
-    border-radius: 6px;
+    border-radius: 2px;
     padding: 2rem;
     background-color: white;
 }
 
 .box-title {
-    font-weight: 400;
-    font-size: 1rem;
+    font-weight: 500;
+    font-size: 0.75rem;
     margin-bottom: 1.5rem;
 }
 
 .box-description {
-    font-weight: 200;
-    font-size: 1rem;
+    font-weight: 300;
+    font-size: 0.75rem;
     margin-bottom: 2rem;
 }
 
@@ -232,34 +325,24 @@ Box DATA HERE
 SearchBox DATA
  */
 
-[dir="ltr"] .search-bar {
-    background: url("assests/list-dropdown.svg") no-repeat scroll 0.9rem;
-    border: 1px solid rgba(0, 0, 0, 0.20);
-    width: 100%;
-    max-width: 25rem;
+.search-bar {
+    border: none;
+    background-color: rgba(170, 170, 170, 0.1);
+    border-radius: 32px;
     padding-left: 2.5rem;
-    height: 2.5rem;
-    box-shadow: rgba(50, 50, 105, 0.5) 0 2px 5px 0, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+    height: 1.6rem;
     margin-top: 2rem;
-    margin-bottom: 0.5rem;
-    border-radius: 6px;
     font-weight: 400;
-    font-size: 1rem;
+    font-size: 0.75rem;
 }
 
-[dir="rtl"] .search-bar {
-    background: url("assests/list-dropdown.svg") no-repeat scroll right 0.9rem bottom 0.7rem;
-    border: 1px solid rgba(0, 0, 0, 0.20);
-    width: 100%;
-    max-width: 25rem;
+[dir=rtl] .search-bar {
     padding-right: 2.5rem;
-    height: 2.5rem;
-    box-shadow: rgba(50, 50, 105, 0.5) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
-    border-radius: 6px;
-    font-weight: 400;
-    font-size: 1rem;
+    padding-left: 0;
+}
+
+.search-bar:focus {
+    outline: none;
 }
 
 .help-course {
@@ -267,27 +350,15 @@ SearchBox DATA
     font-size: 0.8rem;
 }
 
-/*.icon-label {
-    position: relative;
-}
-
-.icon-label:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 3rem;
-    background: url("assests/list-dropdown.svg") center / contain no-repeat;
-}*/
-
 .parent-datalist {
     position: relative;
+    z-index: 999;
 }
 
 .datalist {
     position: absolute;
     padding: 0;
-    margin-top: 0;
+    margin-top: 0.1rem;
     background-color: white;
     width: 100%;
     max-width: 25rem;
@@ -311,54 +382,108 @@ SearchBox DATA
     cursor: pointer;
     text-align: left;
     border-style: none;
-    line-height: 1.8em;
+    line-height: 1.2em;
     color: rgba(0, 0, 0, .87);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: none;
     font-weight: 400;
     box-shadow: none;
-    padding: .8rem 1.1rem;
+    padding: 0.5rem 0.5rem;
     white-space: normal;
     word-wrap: normal;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.search-box {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    top: 2.25rem;
+    left: 1rem;
+    color: rgba(0, 0, 0, 0.4);
+    font-size: 1.1rem;
+}
+
+[dir=rtl] .search-icon {
+    left: unset;
+    right: 1rem;
+}
+
+.course-tag {
+    font-size: 0.65rem;
+    font-weight: 400;
+}
+
 .course-name {
-    font-size: 1rem;
+    font-size: 0.7rem;
+    font-weight: 500;
 }
 
 .bg-blue-option {
     background-color: rgba(1, 67, 97, 0.2);
 }
 
+
 /**
 Professor DATA
  */
 
 .prof-info-page {
+    direction: ltr;
     display: flex;
     flex-direction: column;
-    width: 100%;
     height: 100%;
-    max-width: 70rem;
-    box-shadow: rgba(0, 0, 0, 0.15) 0 5px 15px 0;
-    border-radius: 6px;
-    padding: 2rem;
+    padding: 2.5rem 1rem;
     background-color: white;
+    font-size: 0.75rem;
     margin: auto;
+    width: 100%;
+    max-width: 70rem;
 }
 
 .prof-info-head {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     row-gap: 1rem;
     flex-wrap: wrap;
+    padding-top: 3rem;
+}
+
+.prof-not-found {
+    height: calc(100vh - 10rem);
+    display: flex;
+    flex-wrap: wrap;
+    background-color: white;
+    gap: 3rem;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.prof-not-found > div > * {
+    font-size: 2vh;
+    padding: 1rem;
+}
+
+
+.prof-not-found > * {
+    margin: auto;
+}
+
+.prof-not-found > img {
+    width: calc(150px + 4vw);
+    opacity: 0.5;
+    transition: opacity 0.8s ease;
+}
+
+.prof-not-found > img:hover {
+    opacity: 1;
 }
 
 .prof-info {
-    font-size: 1.5rem;
-    line-height: 2rem;
+    font-size: 0.85rem;
+    line-height: 1.5rem;
 }
 
 .prof-name {
@@ -366,19 +491,20 @@ Professor DATA
 }
 
 .prof-overall {
-    font-size: 1.5rem;
     text-align: right;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 0.5rem;
 }
 
 .overall-score {
     font-weight: 600;
-    font-size: 5rem;
+    font-size: 2rem;
     text-align: center;
     color: black;
 }
 
 .score-out-of {
-    font-size: 1rem;
+    font-size: 0.75rem;
     color: rgba(0, 0, 0, 0.5);
 }
 
@@ -403,12 +529,14 @@ Professor DATA
 }
 
 .stars {
-    color: #00a500;
-    vertical-align: middle;
+    color: #007fff;
+
 }
 
 .ratings-section {
-    margin-top: 3rem;
+    margin: 1rem auto auto;
+    width: 100%;
+    max-width: 70rem;
 }
 
 .ratings-title {
@@ -422,13 +550,20 @@ Professor DATA
 
 .no-reviews {
     margin-top: 2rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .review {
-    margin-top: 2rem;
+    margin-top: 0.5rem;
     padding: 1rem;
-    background-color: #E5F6FD;
+    background-color: white;
+    font-size: 0.75rem;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.075);
+    border-top: solid 1px rgba(0, 0, 0, 0.075);
 }
+
 
 .review-info {
     display: flex;
@@ -439,15 +574,16 @@ Professor DATA
 
 .reviewer, .recommendation {
     font-weight: 600;
+    text-align: right;
 }
 
 .review-body {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: start;
     justify-content: space-between;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    margin: 2rem 0;
+    min-height: 5vh;
     row-gap: 1rem;
 }
 
@@ -456,15 +592,18 @@ Professor DATA
     display: flex;
     flex-direction: column;
     line-height: 2rem;
+
 }
 
 .review-comment {
-    max-width: 80%;
+    font-weight: 400;
+    line-height: 1.2rem;
+    max-width: 50rem;
 }
 
 .ld-review-rating {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
 }
 
 .rating-button {
@@ -500,24 +639,62 @@ i {
 .review-footer {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: rgba(0, 0, 0, 0.5);
+    border-top: solid 1px rgba(0, 0, 0, 0.075);
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+}
+
+.review-footer-left {
+    display: flex;
     flex-wrap: wrap;
+    gap: 0.3rem;
+}
+
+.flag-review {
+    font-size: 1rem;
 }
 
 .new-review {
-    margin-top: 8rem;
+    margin: 2rem auto auto;
     font-weight: 600;
+    font-size: 0.75rem;
+    background-color: white;
+    padding: 1rem;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.075);
+    border-top: solid 1px rgba(0, 0, 0, 0.075);
+    width: 100%;
+    max-width: 70rem;
+}
+
+@media (min-width: 768px) {
+    .new-review, .review, .file-row {
+        margin-top: 3rem;
+        border-radius: 6px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        border: none;
+    }
+
+    .prof-info-page {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        border: none;
+    }
 }
 
 .new-review-field {
-    background-color: transparent;
-    border-radius: 2px;
-    border: 1px solid #ddd;
+    background-color: #F1F2F3;
+    border: none;
     padding: 0.5rem;
+    border-radius: 6px;
     margin-top: 1rem;
 }
 
 .new-review-field:focus {
-    outline: auto rgb(94, 158, 214);
+    outline: none;
 }
 
 .new-review-score {
@@ -525,22 +702,26 @@ i {
 }
 
 .score-field {
-    background-color: transparent;
+    background-color: white;
+    border: none;
+    padding: 0.5rem 0.5rem 0.5rem 0.8rem;
     border-radius: 2px;
-    border: 1px solid #ddd;
     width: 1.8rem;
-    padding-left: 0.4rem;
 }
 
 .score-field:focus {
-    outline: auto rgb(94, 158, 214);
+    outline: none;
 }
 
 .rec-radio {
     margin-right: 1rem;
-    margin-left: 1rem;
     vertical-align: bottom;
     margin-top: 2rem;
+}
+
+[dir=rtl] .rec-radio {
+    margin-right: 0;
+    margin-left: 1rem;
 }
 
 .rec-radio-label {
@@ -548,68 +729,163 @@ i {
 }
 
 .new-review-comment {
-    width: 100%;
-    max-width: 50rem;
-    resize: vertical;
-    min-height: 8rem;
-    max-height: 20rem;
+    max-width: 35rem;
+    resize: none;
+    width: 90%;
+    height: 7rem;
+}
+
+.no-nsfw-warning {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 0.65rem;
+    font-weight: 400;
 }
 
 .new-review-button {
     margin-top: 3rem;
-    background-color: transparent;
-    border: 1px solid black;
+    border: none;
     cursor: pointer;
-    padding: 0.5rem;
-    color: black;
-    border-radius: 2px;
-    font-weight: 400;
+    padding: 0.7rem 1rem;
+    border-radius: 9999px;
+    color: white;
+    font-weight: 700;
+    background-color: #87CEFA;
 }
 
 .new-review-button:hover {
-    background-color: rgba(0, 127, 255, 0.05);
+    opacity: 0.8;
 }
+
+.submitted {
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.review-flag-modal {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.review-flag-modal-box {
+    width: 80%;
+    background-color: white;
+    border-radius: 6px;
+    border: none;
+    padding: 1rem;
+    max-width: 30rem;
+    position: relative;
+}
+
+.noscroll {
+    overflow: hidden;
+}
+
+.review-flag-modal-box > span {
+    font-weight: 600;
+}
+
+.review-flag-modal-box > p {
+    margin-top: 1rem;
+}
+
+.close {
+    color: #aaaaaa;
+    cursor: pointer;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.2rem;
+    font-size: 1.3rem;
+}
+
+.review-flag-modal-button {
+    margin-top: 1rem;
+    border: none;
+    cursor: pointer;
+    padding: 0.7rem 1rem;
+    float: right;
+    border-radius: 9999px;
+    color: white;
+    font-weight: 700;
+    background-color: #87CEFA;
+}
+
 
 /**
 Course DATA
  */
 
 .course-info-page {
+    padding: 3rem 0;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100%;
-    max-width: 70rem;
-    box-shadow: rgba(0, 0, 0, 0.15) 0 5px 15px 0;
-    border-radius: 6px;
-    padding: 3rem;
-    background-color: white;
-    margin: auto;
+    align-items: center;
 }
 
 .course-page-tag {
     font-weight: 600;
-    font-size: 2rem;
+    font-size: 1rem;
+    margin-top: 2rem;
 }
 
 .course-page-title {
-    font-size: 1.5rem;
+    font-size: 0.75rem;
 }
 
 .files {
-    margin-top: 3rem;
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 70rem;
 }
 
 .file-row {
+    font-size: 0.75rem;
+    display: flex;
+    margin-top: 1rem;
+    background-color: white;
+    padding: 1rem;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.075);
+    border-top: solid 1px rgba(0, 0, 0, 0.075);
+}
+
+.file-type-icon {
+    font-size: 3rem;
+}
+
+[dir="rtl"] .file-type-icon {
+    padding-left: 1rem;
+    border-left: solid 1px rgba(0, 0, 0, 0.075);
+}
+
+[dir="ltr"] .file-type-icon {
+    padding-right: 1rem;
+    border-right: solid 1px rgba(0, 0, 0, 0.075);
+}
+
+.file-row-body {
+    padding-left: 1rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 2rem;
-    background-color: lightgray;
-    padding: 1rem;
-    border-radius: 5px;
-    align-items: baseline;
     justify-content: space-between;
+    gap: 1.3rem;
+    width: 100%;
+    margin: auto;
+}
+
+[dir="rtl"] .file-row-body {
+    padding-left: 0;
+    padding-right: 1rem;
 }
 
 .file-name {
@@ -617,22 +893,6 @@ Course DATA
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-}
-
-.row-entity {
-}
-
-.file-type-icon {
-    vertical-align: middle;
-    font-size: 2rem;
-}
-
-[dir="rtl"] .file-type-icon {
-    margin-left: 1rem;
-}
-
-[dir="ltr"] .file-type-icon {
-    margin-right: 1rem;
 }
 
 .file-size {
@@ -645,8 +905,23 @@ Course DATA
 }
 
 .file-disclaimer {
-    font-size: 0.8rem;
-    margin-bottom: 1rem;
+    font-size: 0.70rem;
+    margin-top: 2rem;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.file-disclaimer > ul {
+    padding-left: 1rem;
+}
+
+[dir="rtl"] .file-disclaimer > ul {
+    padding-left: 0;
+    padding-right: 1rem;
+}
+
+.file-disclaimer > ul > li {
+    margin-top: 0.5rem;
 }
 
 .file-upload {
@@ -691,7 +966,7 @@ Course DATA
     padding: 0.5rem;
     cursor: pointer;
     font-weight: 400;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     border-radius: 2px;
     color: white;
     background-color: #4C89EE;
@@ -704,14 +979,89 @@ Course DATA
 /**
 Footer DATA
  */
+
+footer {
+    color: #6e6e73;
+    font-size: 0.65rem;
+}
+
+.alert {
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.info {
+    background-color: #f1f2f3;
+    letter-spacing: 0.05rem;
+    padding: 4rem 1rem 1rem;
+}
+
+.info > ul {
+    list-style: none;
+    padding: 0;
+}
+
+.info > ul > li {
+    margin-top: 0.5rem;
+}
+
+.github-link {
+    color: #6e6e73;
+}
+
 .footer {
-    padding: 3rem 2rem;
-    font-size: 0.8rem;
+    background-color: #f1f2f3;
+    padding: 2rem 1rem;
     display: flex;
     justify-content: space-between;
 }
 
 .foot-link {
-    text-decoration-thickness: 1px;
-    color: black;
+    color: #6e6e73;
 }
+
+/**
+Sitemap DATA
+ */
+
+.sitemap {
+    padding: 4rem 1rem;
+    line-height: 2rem;
+    max-width: 100rem;
+    width: 100%;
+    margin: auto;
+}
+
+.sitemap-section {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: solid 1px rgba(0, 0, 0, 0.075);
+}
+
+.sitemap-section-title {
+    margin-bottom: 2rem;
+}
+
+.sitemap-subsection-list {
+    list-style-type: none;
+    padding-left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.sitemap-subsection {
+    margin-right: 2rem;
+}
+
+.sitemap-link-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.sitemap-link {
+    text-decoration: none;
+    color: #06c;
+
+}
+

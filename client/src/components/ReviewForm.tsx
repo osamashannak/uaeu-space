@@ -57,7 +57,7 @@ const ReviewForm = (props: { email: string }) => {
 
     if (submitting === null) {
         return (
-            <div style={{marginTop: "3rem", fontWeight: 400}}>
+            <div className={"new-review submitted"}>
                 {t("new_review.status.submitted")}
             </div>
         )
@@ -65,7 +65,7 @@ const ReviewForm = (props: { email: string }) => {
 
     if (submitting) {
         return (
-            <div style={{marginTop: "3rem", fontWeight: 400}}>
+            <div className={"new-review submitted"}>
                 {t("new_review.status.submitted")} <Icon icon={bubbleLoading}/>
             </div>
         )
@@ -73,7 +73,7 @@ const ReviewForm = (props: { email: string }) => {
 
     return (
         <form className={"new-review"} onSubmit={handleSubmit}>
-            <p><Icon icon={writeIcon}/> {t("new_review.title")}</p>
+            <p>{t("new_review.title")}</p>
             <fieldset style={{border: "none", padding: 0}}>
                 <div>
                     <input maxLength={15}
@@ -93,9 +93,8 @@ const ReviewForm = (props: { email: string }) => {
                           }}
                           className={"new-review-field new-review-comment"}
                           placeholder={t("new_review.comment")!}/>
-                <div style={{color: 'darkred', fontWeight: 400, fontSize: "0.8rem"}}>
+                <div className={"no-nsfw-warning"}>
                     <p>{t("warning.line1")}</p>
-                    <p>{t("warning.line2")}</p>
                 </div>
                 <div>
                     <div className={"new-review-score"}>
@@ -103,6 +102,7 @@ const ReviewForm = (props: { email: string }) => {
                         <input
                             required maxLength={1}
                             inputMode={"numeric"}
+                            placeholder={"#"}
                             onChange={
                                 event => {
                                     event.target.value = a2e(event.target.value);

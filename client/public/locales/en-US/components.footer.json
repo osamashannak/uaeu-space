@@ -1,4 +1,11 @@
 {
   "copyright": "Copyright © 2023. Icons from",
-  "contact": "Contact me"
+  "contact": "Contact me",
+  "info": {
+    "title": "Information about UAEU Space",
+    "paragraph1": "1. UAEU Space is a multi-purpose platform for UAEU students to prepare them during their studies. You can find and share materials for courses that are taken by the university's students.",
+    "paragraph2": "2. Courses and professors data are collected from the University's official website.",
+    "paragraph2_reportit": "please report it here.",
+    "paragraph3": "3. Source code for this website is available on"
+  }
 }

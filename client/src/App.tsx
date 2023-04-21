@@ -10,6 +10,7 @@ import Professor from "./pages/Professor";
 import NotFound from "./pages/NotFound";
 import LoadingScreen from "./components/LoadingScreen";
 import {Helmet} from "react-helmet";
+import Sitemap from "./pages/Sitemap";
 
 const App = () => {
     const {t, i18n} = useTranslation();
@@ -32,6 +33,7 @@ const App = () => {
                     <Route path={"/course/:tag"} element={<Course/>}/>
                     <Route path={"/professor"} element={<Professor/>}/>
                     <Route path={"/professor/:email"} element={<Professor/>}/>
+                    <Route path={"/sitemap"} element={<Sitemap/>}/>
                     <Route path={"/*"} element={<NotFound/>}/>
                 </Routes>
                 <Footer/>

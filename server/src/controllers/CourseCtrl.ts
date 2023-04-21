@@ -9,7 +9,7 @@ import requestIp from "request-ip";
 import {generateToken, getFileURL, uploadBlob} from "../azure";
 import {promisify} from "util";
 import * as fs from "fs";
-import {compressFile} from "../utils";
+import {compressFile, getUserDetails} from "../utils";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -76,6 +76,7 @@ export const rateFile = async (req: Request, res: Response) => {
     fileRating.request_key = body.request_key;
     fileRating.is_positive = body.positive;
     fileRating.file = file;
+    fileRating.client_details = getUserDetails(req);
 
     await AppDataSource.getRepository(FileRating).save(fileRating);
 
@@ -162,6 +163,7 @@ export const uploadFile = async (req: Request, res: Response) => {
     courseFile.size = file.size;
     courseFile.name = req.body.name;
     courseFile.type = file.mimetype;
+    courseFile.client_details = getUserDetails(req);
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);
 
@@ -171,6 +173,8 @@ export const uploadFile = async (req: Request, res: Response) => {
         }
         // file written successfully
     });
+
+    res.status(200).json({result: "success"});
 
 }
 

@@ -12,10 +12,13 @@ export class Review {
     professor!: Professor
 
     @Column()
-    author!: string
+    author!: string;
+
+    @Column({default: null})
+    client_details!: string;
 
     @Column()
-    score!: number
+    score!: number;
 
     @Column()
     positive!: boolean;

@@ -6,8 +6,8 @@ import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
 import {getCoursesList, getProfessorsList} from "../api/api";
 import Fuse from "fuse.js";
-import {da} from "date-fns/locale";
-
+import {Icon} from '@iconify/react';
+import searchRounded from '@iconify/icons-material-symbols/search-rounded';
 
 const SearchBoxElement = (props: SearchBoxProps) => {
 
@@ -32,6 +32,10 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                     return;
                 }
 
+                if (items.length === 1 && items[0].item.name === "Loading...") {
+                    return;
+                }
+
                 if (!allItems.length) {
                     setItems([{item: {name: "Loading...", tag: ""}}]);
 
@@ -49,7 +53,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                             ignoreLocation: true,
                             keys: ['tag', 'name']
                         })
-                    } else{
+                    } else {
                         fuse = new Fuse(newDatalist, {
                             threshold: 0.4,
                             ignoreLocation: true,
@@ -98,10 +102,11 @@ const SearchBoxElement = (props: SearchBoxProps) => {
         return (
             <div>
 
-                <label className={"icon-label"}>
+                <div className={"search-box"}>
+                    <Icon className={"search-icon"} icon={searchRounded}/>
                     <input placeholder={t(`${props.type}_box.search_placeholder`)}
                            className={"search-bar"} {...getInputProps()}/>
-                </label>
+                </div>
 
                 <div className={"parent-datalist"}>
                     <ul className={"datalist"} {...getMenuProps()}>
@@ -114,7 +119,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                                     disabled: element.item.name === "Loading..."
                                 })}>
 
-                                    <span>{'tag' in element.item && element.item.tag}</span>
+                                    <span className={"course-tag"}>{'tag' in element.item && element.item.tag}</span>
                                     <span className={"course-name"}>{element.item.name}</span>
                                 </li>
                             ))

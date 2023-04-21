@@ -23,6 +23,9 @@ export class CourseFile {
     @Column()
     size!: number;
 
+    @Column({default: null})
+    client_details!: string;
+
     @Column({default: false})
     visible!: boolean;
 

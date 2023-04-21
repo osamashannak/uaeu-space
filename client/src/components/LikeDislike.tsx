@@ -8,6 +8,9 @@ const random = (max: number) => {
     return Math.random() * max;
 }
 
+
+// TODO fix this dogshit code
+
 const generateConfetti = (id: string) => {
 
     const c = document.createDocumentFragment();
