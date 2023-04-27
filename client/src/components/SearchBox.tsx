@@ -1,5 +1,5 @@
 import {useCombobox} from "downshift";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {DatalistContent, getFilter, SearchBoxProps} from "../utils/SearchBox";
 import {useTranslation} from "react-i18next";
@@ -17,6 +17,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
         const [items, setItems] = useState<DatalistContent[]>([]);
         const [allItems, setAllItems] = useState<DatalistContent[]>([]);
         const {t} = useTranslation(namespaces.pages.home);
+        const lastInputValue = useRef<string>();
 
         const {
             inputValue,
@@ -26,6 +27,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
             getItemProps,
         } = useCombobox({
             async onInputValueChange({inputValue}) {
+                lastInputValue.current = inputValue;
 
                 if (!inputValue) {
                     setItems([]);
@@ -33,7 +35,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                 }
 
                 if (items.length === 1 && items[0].item.name === "Loading...") {
-                    return;
+                    return
                 }
 
                 if (!allItems.length) {
@@ -62,7 +64,7 @@ const SearchBoxElement = (props: SearchBoxProps) => {
                     }
 
                     setAllItems(newDatalist);
-                    setItems(fuse.search(inputValue, {limit: 5}) as unknown as DatalistContent[]);
+                    setItems(fuse.search(lastInputValue.current!, {limit: 5}) as unknown as DatalistContent[]);
                     return;
                 }
 
