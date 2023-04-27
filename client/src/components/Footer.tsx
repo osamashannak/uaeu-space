@@ -10,9 +10,13 @@ const Footer = () => {
 
     return (
         <div className={"footer"}>
-            <p>{t("copyright")} <a className={"foot-link"} target="_blank"
-                                   rel="noreferrer"
-                                   href="https://iconify.design">Iconify</a>.</p>
+            <div>
+
+                <p>{t("copyright")} <a className={"foot-link"} target="_blank"
+                                       rel="noreferrer"
+                                       href="https://iconify.design">Iconify</a>.</p>
+                <a className={"foot-link"} href={"https://api.uaeu.space/sitemap.xml"}>Sitemap</a>
+            </div>
             <p className={"foot-link"}><Icon icon={instagramIcon}/> Follow <a
                 href="https://instagram.com/uaeu.space" style={{
                 textDecoration: 'none',
