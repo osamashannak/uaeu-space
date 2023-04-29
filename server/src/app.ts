@@ -9,11 +9,11 @@ import professorRouter from "./routes/ProfessorRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
 import {loadAzure} from "./azure";
-import {CourseFile} from "./orm/entity/CourseFile";
+import {CourseFile} from "./orm/entity/course/CourseFile";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
-import {Professor} from "./orm/entity/Professor";
-import {Course} from "./orm/entity/Course";
+import {Professor} from "./orm/entity/professor/Professor";
+import {Course} from "./orm/entity/course/Course";
 
 
 const app = express();
@@ -24,7 +24,14 @@ app.use(bodyParser.json({limit: "100mb"}));
 
 let sitemap: Buffer;
 
-app.use("/sitemap.xml", async (req, res) => {
+app.get("/auth", async (req, res)=> {
+   // todo auth
+   // check if client alrady exist - return their existing sessionkey
+   // add them to the database - return their unique sessionkey
+
+});
+
+app.get("/sitemap.xml", async (req, res) => {
     res.header('Content-Type', 'application/xml');
     res.header('Content-Encoding', 'gzip');
 

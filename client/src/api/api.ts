@@ -1,12 +1,31 @@
 import axios from 'axios';
 import {IProfessor, IReview} from "../utils/Professor";
 import {ICourse} from "../utils/Course";
+import {createUploadForm, onUploadProgress, uuidv4} from "./utils";
 
 
 const HOST = "https://api.uaeu.space";
 
+export const auth = async () => {
+    let response;
 
-export const getProfessor = async (professorEmail: string, viewed: boolean) => {
+    try {
+        response = await axios({
+            method: "get",
+            url: HOST + "/auth"
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.data.sessionKey;
+}
+
+export const getProfessor = async (professorEmail: string, sessionKey: string | null) => {
+    if (!sessionKey) {
+        sessionKey = await auth();
+    }
+
     let response;
 
     try {
@@ -14,8 +33,8 @@ export const getProfessor = async (professorEmail: string, viewed: boolean) => {
             method: "get",
             url: HOST + "/professor",
             params: {
-                email: professorEmail,
-                viewed: viewed
+                sessionKey: sessionKey,
+                email: professorEmail
             }
         })
     } catch (error) {
@@ -54,7 +73,11 @@ export const getProfessorsList = async () => {
 
     return response.data.professors as IProfessor[];
 }
-export const postReview = async (review: IReview, email: string) => {
+export const postReview = async (review: IReview, email: string, sessionKey: string | null) => {
+    if (!sessionKey) {
+        sessionKey = await auth();
+    }
+
     let response;
 
     try {
@@ -62,6 +85,7 @@ export const postReview = async (review: IReview, email: string) => {
             method: "post",
             url: HOST + "/professor/rate",
             data: {
+                sessionKey: sessionKey,
                 review: review,
                 professor: email
             }
@@ -73,7 +97,11 @@ export const postReview = async (review: IReview, email: string) => {
     return response.data.result === "success";
 }
 
-export const getCourse = async (tag: string, viewed: boolean) => {
+export const getCourse = async (tag: string, viewed: boolean, sessionKey: string | null) => {
+    if (!sessionKey) {
+        sessionKey = await auth();
+    }
+
     let response;
 
     try {
@@ -81,6 +109,7 @@ export const getCourse = async (tag: string, viewed: boolean) => {
             method: "get",
             url: HOST + "/course",
             params: {
+                sessionKey: sessionKey,
                 tag: tag,
                 viewed: viewed
             }
@@ -92,39 +121,10 @@ export const getCourse = async (tag: string, viewed: boolean) => {
     return response.data.course as ICourse;
 }
 
-export const getReviewRatings = async (reviewId: number) => {
-    let response;
-
-    try {
-        response = await axios({
-            method: "get",
-            url: HOST + "/professor/review/rating",
-            params: {
-                reviewId: reviewId
-            }
-        })
-    } catch (error) {
-        return undefined;
+export const rateReview = async (reviewId: number, positive: boolean, sessionKey: string | null) => {
+    if (!sessionKey) {
+        sessionKey = await auth();
     }
-
-    return response.data;
-}
-
-function uuidv4() {
-    // @ts-ignore
-    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    );
-}
-
-export const rateReview = async (reviewId: number, positive: boolean) => {
-    let uuid;
-    try {
-        uuid = uuidv4()
-    } catch (e) {
-        alert(e)
-    }
-
 
     let response;
 
@@ -133,20 +133,24 @@ export const rateReview = async (reviewId: number, positive: boolean) => {
             method: "post",
             url: HOST + "/professor/review/rating",
             data: {
+                sessionKey: sessionKey,
                 reviewId: reviewId,
-                positive: positive,
-                request_key: uuid
+                positive: positive
             }
         })
     } catch (error) {
         return undefined;
     }
 
-    return uuid;
+    return response;
 }
 
 
-export const removeReviewRating = async (request_key: string) => {
+export const removeReviewRating = async (request_key: string, reviewId: number, sessionKey: string | null) => {
+    if (!sessionKey) {
+        sessionKey = await auth();
+    }
+
     let response;
 
     try {
@@ -154,7 +158,8 @@ export const removeReviewRating = async (request_key: string) => {
             method: "post",
             url: HOST + "/professor/review/rating/remove",
             data: {
-                request_key: request_key
+                sessionKey: sessionKey,
+                reviewId: reviewId
             }
         })
     } catch (error) {
@@ -162,24 +167,6 @@ export const removeReviewRating = async (request_key: string) => {
     }
 
     return response.data.result === "success";
-}
-
-export const getFileRatings = async (fileId: number) => {
-    let response;
-
-    try {
-        response = await axios({
-            method: "get",
-            url: HOST + "/course/file/rating",
-            params: {
-                id: fileId
-            }
-        })
-    } catch (error) {
-        return undefined;
-    }
-
-    return response.data;
 }
 
 export const rateFile = async (fileId: number, positive: boolean) => {
@@ -223,28 +210,15 @@ export const removeFileRating = async (request_key: string) => {
 }
 
 export const uploadFile = async (fileName: string, file: File, courseTag: string, setProgress: any, finishedUploading: any): Promise<boolean> => {
-    const form = new FormData();
-    form.set("tag", courseTag);
-    form.set("name", fileName);
-    form.set("file", file);
+
     const response = await axios({
         method: "post",
         url: HOST + "/course/file",
         headers: {
             "content-type": "multipart/form-data"
         },
-        data: form,
-        onUploadProgress: (progressEvent) => {
-            let percentComplete = Math.round(progressEvent.loaded * 100 / progressEvent.total!);
-
-            if (percentComplete > 99) {
-                setProgress(`Uploaded`);
-                finishedUploading(file);
-            } else {
-                setProgress(`Uploading... ${percentComplete}%`);
-            }
-
-        }
+        data: createUploadForm(courseTag, fileName, file),
+        onUploadProgress: onUploadProgress(setProgress, finishedUploading, file)
     })
 
     return response.data.result === "success";

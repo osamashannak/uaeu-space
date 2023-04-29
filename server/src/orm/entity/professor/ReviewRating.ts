@@ -2,7 +2,7 @@ import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn} from "typeor
 import {Review} from "./Review";
 
 @Entity()
-export class ReviewRatings {
+export class ReviewRating {
 
     @PrimaryColumn()
     request_key!: string;

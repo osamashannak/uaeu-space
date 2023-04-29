@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import NavBar from "./components/NavBar";
 import "./normalize.css";
 import Footer from "./components/Footer";
@@ -15,6 +15,12 @@ import Sitemap from "./pages/Sitemap";
 const App = () => {
     const {t, i18n} = useTranslation();
     document.body.dir = i18n.dir();
+
+    useEffect(() => {
+
+        // todo migrate to new api
+
+    }, []);
 
     return (
         <BrowserRouter>
@@ -33,7 +39,6 @@ const App = () => {
                     <Route path={"/course/:tag"} element={<Course/>}/>
                     <Route path={"/professor"} element={<Professor/>}/>
                     <Route path={"/professor/:email"} element={<Professor/>}/>
-                    <Route path={"/sitemap"} element={<Sitemap/>}/>
                     <Route path={"/*"} element={<NotFound/>}/>
                 </Routes>
                 <Footer/>

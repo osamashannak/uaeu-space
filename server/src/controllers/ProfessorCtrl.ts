@@ -1,9 +1,9 @@
 import {Request, Response} from 'express';
 import {AppDataSource} from "../orm/data-source";
-import {Professor} from "../orm/entity/Professor";
+import {Professor} from "../orm/entity/professor/Professor";
 import {Equal, ILike} from "typeorm";
-import {Review} from "../orm/entity/Review";
-import {ReviewRatings} from "../orm/entity/ReviewRatings";
+import {Review} from "../orm/entity/professor/Review";
+import {ReviewRating} from "../orm/entity/professor/ReviewRating";
 import {getUserDetails} from "../utils";
 
 
@@ -86,14 +86,14 @@ export const rateReview = async (req: Request, res: Response) => {
         return;
     }
 
-    const reviewRating = new ReviewRatings();
+    const reviewRating = new ReviewRating();
 
     reviewRating.request_key = body.request_key;
     reviewRating.client_details = getUserDetails(req);
     reviewRating.is_positive = body.positive;
     reviewRating.review = review;
 
-    await AppDataSource.getRepository(ReviewRatings).save(reviewRating);
+    await AppDataSource.getRepository(ReviewRating).save(reviewRating);
 
     res.status(200).json({result: "success"});
 }
@@ -107,7 +107,7 @@ export const removeReviewRating = async (req: Request, res: Response) => {
         return;
     }
 
-    const reviewRating = await AppDataSource.getRepository(ReviewRatings).findOne({
+    const reviewRating = await AppDataSource.getRepository(ReviewRating).findOne({
         where: {request_key: Equal(body.request_key)}
     });
 
@@ -117,7 +117,7 @@ export const removeReviewRating = async (req: Request, res: Response) => {
         return;
     }
 
-    await AppDataSource.getRepository(ReviewRatings).remove(reviewRating);
+    await AppDataSource.getRepository(ReviewRating).remove(reviewRating);
 
     res.status(200).json({result: "success"});
 }
@@ -185,6 +185,8 @@ export const getAll = async (req: Request, res: Response) => {
         select: {name: true, email: true},
         order: {views: "desc"}
     });
+
+    res.setHeader("Cache-Control", "max-age=604800");
 
     res.status(200).json({professors: professors});
 }

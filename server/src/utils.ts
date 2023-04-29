@@ -50,3 +50,12 @@ export const ALLOWED_TYPES = [
     "audio",
     "video"
 ]
+
+export enum LogAction {
+    AUTH = 'auth',
+    FILE_UPLOAD = 'file_upload',
+    FILE_DOWNLOAD = 'file_download',
+    NEW_REVIEW = 'new_review',
+    FLAG_REVIEW = 'flag_review',
+    RATING_ADDED = 'rating_added'
+}

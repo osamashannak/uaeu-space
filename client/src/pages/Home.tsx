@@ -9,7 +9,7 @@ import {Link} from "react-router-dom";
 
 const Home = () => {
 
-    const {t, i18n} = useTranslation(namespaces.pages.home);
+    const {t} = useTranslation(namespaces.pages.home);
 
     return (
         <div className={"home"}>

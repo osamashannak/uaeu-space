@@ -1,10 +1,10 @@
 import {Request, Response} from 'express';
 import {AppDataSource} from "../orm/data-source";
-import {Course} from "../orm/entity/Course";
+import {Course} from "../orm/entity/course/Course";
 import {Equal, ILike} from "typeorm";
-import {CourseFile} from "../orm/entity/CourseFile";
-import {FileRating} from "../orm/entity/FileRating";
-import {FileAccessToken} from "../orm/entity/FileAccessToken";
+import {CourseFile} from "../orm/entity/course/CourseFile";
+import {FileRating} from "../orm/entity/course/FileRating";
+import {FileAccessToken} from "../orm/entity/course/FileAccessToken";
 import requestIp from "request-ip";
 import {generateToken, getFileURL, uploadBlob} from "../azure";
 import {promisify} from "util";
@@ -49,6 +49,8 @@ export const getAll = async (req: Request, res: Response) => {
     const courses = await AppDataSource.getRepository(Course).find({
         select: {name: true, tag: true}, order: {views: "desc"}
     });
+
+    res.setHeader("5184000", "max-age=5184000, immutable");
 
     res.status(200).json({courses: courses});
 
@@ -146,10 +148,16 @@ export const uploadFile = async (req: Request, res: Response) => {
     const filePath = await compressFile(file.path);
 
     if (!filePath) {
-        res.status(400).json({});
+        res.status(400).json({error: "Failed to upload file."});
         return;
     }
 
+    const course = await AppDataSource.getRepository(Course).findOne({ where: {tag: req.body.tag} });
+
+    if (course == null) {
+        res.status(400).json({error: "Uh-oh. An error occurred."});
+        return;
+    }
 
     const blobName = await uploadBlob(req.body.name, filePath, file.mimetype);
 
@@ -158,7 +166,7 @@ export const uploadFile = async (req: Request, res: Response) => {
     await unlinkAsync(filePath);
 
     const courseFile = new CourseFile();
-    courseFile.course = req.body.tag;
+    courseFile.course = course;
     courseFile.blob_name = blobName;
     courseFile.size = file.size;
     courseFile.name = req.body.name;
@@ -171,7 +179,6 @@ export const uploadFile = async (req: Request, res: Response) => {
         if (err) {
             console.error(err);
         }
-        // file written successfully
     });
 
     res.status(200).json({result: "success"});

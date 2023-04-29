@@ -27,7 +27,7 @@ const Footer = () => {
                 <p>{t("copyright")} <a className={"foot-link"} target="_blank"
                                        rel="noreferrer"
                                        href="https://iconify.design">Iconify</a>.</p>
-                <Link className={"foot-link"} to={"/sitemap"}>Sitemap</Link>
+                <Link className={"foot-link"} to={"https://uaeu.space/sitemap.xml"}>Sitemap</Link>
             </section>
         </footer>
     );
