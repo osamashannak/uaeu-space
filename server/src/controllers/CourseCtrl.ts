@@ -3,13 +3,13 @@ import {AppDataSource} from "../orm/data-source";
 import {Course} from "../orm/entity/course/Course";
 import {Equal, ILike} from "typeorm";
 import {CourseFile} from "../orm/entity/course/CourseFile";
-import {FileRating} from "../orm/entity/course/FileRating";
 import {FileAccessToken} from "../orm/entity/course/FileAccessToken";
 import requestIp from "request-ip";
 import {generateToken, getFileURL, uploadBlob} from "../azure";
 import {promisify} from "util";
 import * as fs from "fs";
-import {compressFile, getUserDetails} from "../utils";
+import {compressFile} from "../utils";
+import Client from "../orm/entity/Client";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -21,8 +21,26 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
-    const course = await AppDataSource.getRepository(Course).findOne({
-        where: {tag: ILike(params.tag as string)},
+    const clientKey = req.headers['client-key'] as string;
+
+    if (!clientKey) {
+        res.status(400).json({"request": "failed"});
+        return;
+    }
+
+    const client = await AppDataSource.getRepository(Client).findOne({
+        where: {client_key: Equal(clientKey)},
+    });
+
+    if (!client) {
+        res.status(400).json({"request": "failed"});
+        return;
+    }
+
+    const courseRepo = AppDataSource.getRepository(Course);
+
+    const course = await courseRepo.findOne({
+        where: {tag: ILike(params.tag as string), files: {visible: true}},
         relations: ["files"],
         order: {files: {created_at: "desc"}},
     });
@@ -32,12 +50,11 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
-    course.files = course.files.filter(value => value.visible);
-
-    if (params.viewed && params.viewed === "false") {
-        const userRepo = AppDataSource.getRepository(Course);
+    if (!client.visits.find(value => value === course.tag)) {
+        client.visits.push(course.tag);
+        await AppDataSource.getRepository(Client).save(client);
         course.views += 1;
-        await userRepo.save(course);
+        await courseRepo.save(course);
     }
 
     res.status(200).json({course: course});
@@ -56,89 +73,24 @@ export const getAll = async (req: Request, res: Response) => {
 
 }
 
-export const rateFile = async (req: Request, res: Response) => {
-    const body = req.body;
-
-    if (!body.id || body.positive === null || !body.request_key) {
-        res.status(400).json();
-        return;
-    }
-
-    const file = await AppDataSource.getRepository(CourseFile).findOne({
-        where: {id: Equal(body.id as number)}
-    });
-
-    if (!file) {
-        res.status(200).json({error: "File not found."});
-        return;
-    }
-
-    const fileRating = new FileRating();
-
-    fileRating.request_key = body.request_key;
-    fileRating.is_positive = body.positive;
-    fileRating.file = file;
-    fileRating.client_details = getUserDetails(req);
-
-    await AppDataSource.getRepository(FileRating).save(fileRating);
-
-    res.status(200).json({result: "success"});
-}
-
-export const removeFileRating = async (req: Request, res: Response) => {
-    const body = req.body;
-
-
-    if (!body.request_key) {
-        res.status(400).json();
-        return;
-    }
-
-    const fileRating = await AppDataSource.getRepository(FileRating).findOne({
-        where: {request_key: Equal(body.request_key)}
-    });
-
-    if (!fileRating) {
-        console.log(body)
-        res.status(200).json({error: "File rating not found."});
-        return;
-    }
-
-    await AppDataSource.getRepository(FileRating).remove(fileRating);
-
-    res.status(200).json({result: "success"});
-}
-
-export const getFileRatings = async (req: Request, res: Response) => {
-    const params = req.query;
-
-    if (!params.id) {
-        res.status(400).json();
-        return;
-    }
-
-    const file = await AppDataSource.getRepository(CourseFile).findOne({
-        where: {id: Equal(parseInt(params.id as string))},
-        relations: ["ratings"]
-    });
-
-    if (!file) {
-        res.status(200).json({error: "File not found."});
-        return;
-    }
-
-    let likes = 0;
-    let dislikes = 0;
-
-    file.ratings.forEach(value => {
-        value.is_positive ? likes += 1 : dislikes += 1;
-    });
-
-    res.status(200).json({likes: likes, dislikes: dislikes});
-}
-
 export const uploadFile = async (req: Request, res: Response) => {
     const file = req.file;
+
+    const clientKey = req.headers['client-key'] as string;
+
+    if (!clientKey) {
+        res.status(400).json({error: "Invalid client key"});
+        return;
+    }
+
+    const client = await AppDataSource.getRepository(Client).findOne({
+        where: {client_key: Equal(clientKey)},
+    });
+
+    if (!client) {
+        res.status(400).json({error: "Invalid client key"});
+        return;
+    }
 
     if (!(file && req.body.tag && req.body.name)) {
         res.status(400).json({error: "File type is not allowed"});
@@ -152,7 +104,7 @@ export const uploadFile = async (req: Request, res: Response) => {
         return;
     }
 
-    const course = await AppDataSource.getRepository(Course).findOne({ where: {tag: req.body.tag} });
+    const course = await AppDataSource.getRepository(Course).findOne({where: {tag: req.body.tag}});
 
     if (course == null) {
         res.status(400).json({error: "Uh-oh. An error occurred."});
@@ -171,10 +123,11 @@ export const uploadFile = async (req: Request, res: Response) => {
     courseFile.size = file.size;
     courseFile.name = req.body.name;
     courseFile.type = file.mimetype;
-    courseFile.client_details = getUserDetails(req);
+    courseFile.client = client;
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);
 
+    // todo remove this later
     fs.writeFile('today.txt', `${[blobName, req.body.tag]}\n`, {flag: 'a'}, err => {
         if (err) {
             console.error(err);

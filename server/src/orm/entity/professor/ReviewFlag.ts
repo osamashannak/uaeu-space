@@ -1,6 +1,4 @@
-import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
-import {Professor} from "./Professor";
-import {ReviewRating} from "./ReviewRating";
+import {Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Review} from "./Review";
 
 @Entity()
@@ -12,6 +10,4 @@ export class ReviewFlag {
     @ManyToOne(() => Review, (review: Review) => review.flags)
     review!: Review;
 
-    @CreateDateColumn()
-    created_at!: Date;
 }

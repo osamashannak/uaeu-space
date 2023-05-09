@@ -1,7 +1,8 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Professor} from "./Professor";
-import {ReviewRating} from "./ReviewRating";
 import {ReviewFlag} from "./ReviewFlag";
+import Client from "../Client";
+import {ReviewRating} from "../Rating";
 
 @Entity()
 export class Review {
@@ -9,14 +10,14 @@ export class Review {
     @PrimaryGeneratedColumn()
     id!: number;
 
+    @ManyToOne(() => Client, (client: Client) => client.reviews)
+    client!: Client;
+
     @ManyToOne(() => Professor, (professor: Professor) => professor.reviews)
     professor!: Professor;
 
     @Column()
     author!: string;
-
-    @Column({default: null})
-    client_details!: string;
 
     @Column()
     score!: number;

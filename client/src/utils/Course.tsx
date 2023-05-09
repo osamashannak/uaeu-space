@@ -19,6 +19,8 @@ export interface IFile {
     name: string,
     type: string,
     size: number,
+    likes: number,
+    dislikes: number,
     created_at: string
 }
 

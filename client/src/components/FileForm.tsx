@@ -1,4 +1,3 @@
-import {ReactComponent as Upload} from "../assests/baseline-upload.svg";
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
 import {FormEvent, useState} from "react";
@@ -7,13 +6,11 @@ import FilePreview from "./FilePreview";
 const FileForm = (props: { courseTag: string }) => {
 
     const {t} = useTranslation(namespaces.pages.course);
-
     const [details, setDetails] = useState<{ name: string, file: File }[]>([]);
-
     const [submitting, setSubmitting] = useState<boolean>(false);
     const [finished, setFinished] = useState<File[]>([]);
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (details.length < 1) {
             alert(t("errors.no_files"));
@@ -23,7 +20,6 @@ const FileForm = (props: { courseTag: string }) => {
     }
 
     const changeName = (file: File, name: string) => {
-
         details.find(value => value.file === file)!.name = name;
         console.log(details)
         setDetails((prevState) => {
@@ -58,7 +54,6 @@ const FileForm = (props: { courseTag: string }) => {
     window.onbeforeunload = (e) => {
         if (details.length > 0 && !isFinished()) {
 
-            // todo if left before finish delete file from multer
             return t("errors.still_uploading");
         }
     }
@@ -137,7 +132,8 @@ const FileForm = (props: { courseTag: string }) => {
                             return <FilePreview key={`${value.name}`} file={value.file} name={value.name}
                                                 uploadFile={submitting}
                                                 courseTag={props.courseTag}
-                                                finishedUploading={finishedUploading} changeName={changeName}
+                                                finishedUploading={finishedUploading}
+                                                changeName={changeName}
                                                 deleteFile={deleteFile}/>
                         })
                     }

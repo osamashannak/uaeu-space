@@ -1,12 +1,16 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Course} from "./Course";
-import {FileRating} from "./FileRating";
+import Client from "../Client";
+import {FileRating} from "../Rating";
 
 @Entity()
 export class CourseFile {
 
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @ManyToOne(() => Client, client => client.uploads)
+    client!: Client;
 
     @Column()
     blob_name!: string;
@@ -22,9 +26,6 @@ export class CourseFile {
 
     @Column()
     size!: number;
-
-    @Column({default: null})
-    client_details!: string;
 
     @Column({default: false})
     visible!: boolean;

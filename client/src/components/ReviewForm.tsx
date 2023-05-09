@@ -1,33 +1,26 @@
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
 import {FormEvent, useEffect, useState} from "react";
-import {IReview} from "../utils/Professor";
+import {IReview, IReviewForm} from "../utils/Professor";
 import {Icon} from '@iconify/react';
 import bubbleLoading from '@iconify/icons-eos-icons/bubble-loading';
-import writeIcon from '@iconify/icons-icon-park-outline/write';
 import {postReview} from "../api/api";
+import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
+import {getProfileFromSession} from "../utils/Global";
 
 const a2e = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
 
 const ReviewForm = (props: { email: string }) => {
 
     const {t, i18n} = useTranslation(namespaces.pages.professor);
-
-    const [details, setDetails] = useState<IReview>({
-        id: 0,
+    const [details, setDetails] = useState<IReviewForm>({
         author: "Anonymous",
         score: 1,
         comment: "",
-        positive: false,
-        created_at: Date.now().toString()
+        positive: false
     });
-
     const [submitting, setSubmitting] = useState<boolean | null>(false);
-
-    useEffect(() => {
-        const hasSubmittedBefore = localStorage.getItem(`${props.email}-prof`);
-        setSubmitting(hasSubmittedBefore ? null : false);
-    }, []);
+    const {executeRecaptcha} = useGoogleReCaptcha();
 
     const clearValidity = () => {
         (document.getElementById("main-rec-radio") as HTMLInputElement).setCustomValidity("");
@@ -45,14 +38,12 @@ const ReviewForm = (props: { email: string }) => {
         event.preventDefault();
         setSubmitting(true);
 
-        const apiRes = await postReview(details, props.email);
-        if (!apiRes) {
-            setSubmitting(false);
-            return;
-        }
+        const clientKey = localStorage.getItem(`clientKey`)!;
+        const token = await executeRecaptcha!("new_review");
+
+        await postReview(details, props.email, token, clientKey);
+
         setSubmitting(null);
-        localStorage.setItem(`${props.email}-prof`, 'true');
-        window.location.reload();
     }
 
     if (submitting === null) {
@@ -66,7 +57,7 @@ const ReviewForm = (props: { email: string }) => {
     if (submitting) {
         return (
             <div className={"new-review submitted"}>
-                {t("new_review.status.submitted")} <Icon icon={bubbleLoading}/>
+                {t("new_review.status.submitting")} <Icon icon={bubbleLoading}/>
             </div>
         )
     }
@@ -150,7 +141,9 @@ const ReviewForm = (props: { email: string }) => {
                             {t("new_review.negative")}
                         </label>
                     </div>
-                    <input type={"submit"} title={"Submit"} className={"new-review-button"}
+                    <input type={"submit"}
+                           title={"Submit"}
+                           className={"new-review-button"}
                            value={t("new_review.submit")!}/>
                 </div>
             </fieldset>

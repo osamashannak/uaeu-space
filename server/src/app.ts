@@ -6,14 +6,15 @@ import express from "express";
 import cors from "cors";
 import courseRouter from "./routes/CourseRouter";
 import professorRouter from "./routes/ProfessorRouter";
+import authRouter from "./routes/AuthRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
 import {loadAzure} from "./azure";
-import {CourseFile} from "./orm/entity/course/CourseFile";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
 import {Professor} from "./orm/entity/professor/Professor";
 import {Course} from "./orm/entity/course/Course";
+import sharedRouter from "./routes/SharedRouter";
 
 
 const app = express();
@@ -23,13 +24,6 @@ app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
 
 let sitemap: Buffer;
-
-app.get("/auth", async (req, res)=> {
-   // todo auth
-   // check if client alrady exist - return their existing sessionkey
-   // add them to the database - return their unique sessionkey
-
-});
 
 app.get("/sitemap.xml", async (req, res) => {
     res.header('Content-Type', 'application/xml');
@@ -79,20 +73,15 @@ app.get("/sitemap.xml", async (req, res) => {
 
 app.use("/course", courseRouter);
 app.use("/professor", professorRouter);
+app.use("/auth", authRouter);
+app.use("/rating", sharedRouter);
 
 const port = process.env.PORT || 4000;
 
 const main = (): void => {
-
     loadAzure().then(r => console.log("Azure client loaded."));
 
-    AppDataSource.initialize().then(async () => {
-
-        /*console.log("Inserting a new user into the database...")
-        const files = await AppDataSource.manager.getRepository(CourseFile).find({relations: ['course']});
-        console.log(files)*/
-
-    }).catch(error => console.log(error))
+    AppDataSource.initialize().catch(error => console.log(error));
 
     app.listen(port, () => {
         console.log(`Socket is listening on port ${port}`);

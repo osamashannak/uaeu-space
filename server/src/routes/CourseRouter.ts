@@ -1,5 +1,5 @@
 import express from "express";
-import {find, getAll, getFile, getFileRatings, rateFile, removeFileRating, uploadFile} from "../controllers/CourseCtrl";
+import {find, getAll, getFile, uploadFile} from "../controllers/CourseCtrl";
 import multer from "multer";
 import {ALLOWED_APPLICATION_TYPES, ALLOWED_TYPES} from "../utils";
 
@@ -38,8 +38,5 @@ router.get("/", find);
 router.get("/all", getAll);
 router.get("/file", getFile);
 router.post("/file", upload.single("file"), uploadFile);
-router.get("/file/rating", getFileRatings);
-router.post("/file/rating", rateFile);
-router.post("/file/rating/remove", removeFileRating);
 
 export default router;

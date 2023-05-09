@@ -1,7 +1,7 @@
 import {formatBytes, getFontAwesomeIconFromMIME, IFile} from "../utils/Course";
-import {dateHumanize} from "../utils/Global";
+import {dateHumanize, RatingType} from "../utils/Global";
 import {useTranslation} from "react-i18next";
-import LikeDislike from "./FileRating";
+import LikeDislike from "./Rating";
 import {namespaces} from "../i18n";
 
 const FileTable = (props: { files: IFile[] }) => {
@@ -32,7 +32,7 @@ const FileTable = (props: { files: IFile[] }) => {
                             </span>
                             <p className={"file-size"}>{formatBytes(value.size)}</p>
                             <p>{dateHumanize(value.created_at, i18n.language || window.localStorage.i18nextLng)}</p>
-                            <LikeDislike fileId={value.id}/>
+                            <LikeDislike dislikes={0} id={value.id} likes={0} type={RatingType.File}/>
                         </div>
                     </div>
                 ))

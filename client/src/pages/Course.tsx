@@ -23,13 +23,10 @@ const Course = () => {
             return;
         }
 
-        const hasViewed = localStorage.getItem(`${tag}-exist`) === 'true';
+        const clientKey = localStorage.getItem(`clientKey`)!;
 
-        getCourse(tag, hasViewed).then(course => {
+        getCourse(tag, clientKey).then(course => {
             setCourse(course);
-            if (course) {
-                localStorage.setItem(`${tag}-exist`, 'true');
-            }
             setIsFetching(false);
         });
 

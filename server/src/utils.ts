@@ -2,6 +2,10 @@ import {createReadStream, createWriteStream} from "fs";
 import {createGzip} from "zlib";
 import requestIp from "request-ip";
 import {Request} from 'express';
+import Client from "./orm/entity/Client";
+import {Repository} from "typeorm";
+import {AppDataSource} from "./orm/data-source";
+import {Rating} from "./orm/entity/Rating";
 
 
 export const compressFile = async (filePath: string) => {
@@ -23,10 +27,10 @@ export const getUserDetails = (req: Request) => {
         address = address.split(":").slice(-1).pop()!;
     }
 
-    return JSON.stringify({
-        user_agent: req.headers['user-agent'],
-        ip: address
-    });
+    return {
+        user_agent: req.headers['user-agent'] ?? "unknown",
+        ip: address ?? "unknown",
+    };
 }
 
 
@@ -57,5 +61,49 @@ export enum LogAction {
     FILE_DOWNLOAD = 'file_download',
     NEW_REVIEW = 'new_review',
     FLAG_REVIEW = 'flag_review',
-    RATING_ADDED = 'rating_added'
+    FILE_RATING_ADDED = 'file_rating_added',
+    REVIEW_RATING_ADDED = 'review_rating_added'
 }
+
+export const migrateDate = async (client: Client, clientRepo: Repository<Client>, data: (string | { key: string; value: string; })[]) => {
+
+    const ratingRepository = AppDataSource.getRepository(Rating);
+
+    const visits = client.visits;
+
+    for (let item of data) {
+
+        if (typeof item === "string") {
+
+            visits.push(item.replace("-exist", ""));
+
+        } else {
+
+            const check = await ratingRepository.findOne({where: {id: item.value}});
+
+            if (!check || check.client) continue;
+
+            await ratingRepository.update({id: item.value}, {client: client});
+
+        }
+    }
+
+    await clientRepo.update({client_key: client.client_key}, {visits: visits});
+}
+
+export const detectRobot = (userAgent: string): boolean => {
+    const robots = new RegExp(([
+        /bot/, /spider/, /crawl/,                               // GENERAL TERMS
+        /APIs-Google/, /AdsBot/, /Googlebot/,                   // GOOGLE ROBOTS
+        /mediapartners/, /Google Favicon/,
+        /FeedFetcher/, /Google-Read-Aloud/,
+        /DuplexWeb-Google/, /googleweblight/,
+        /bing/, /yandex/, /baidu/, /duckduck/, /yahoo/,           // OTHER ENGINES
+        /ecosia/, /ia_archiver/,
+        /facebook/, /instagram/, /pinterest/, /reddit/,          // SOCIAL MEDIA
+        /slack/, /twitter/, /whatsapp/, /youtube/,
+        /semrush/,                                            // OTHER
+    ] as RegExp[]).map((r) => r.source).join("|"), "i");     // BUILD REGEXP + "i" FLAG
+
+    return robots.test(userAgent);
+};

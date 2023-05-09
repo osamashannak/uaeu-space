@@ -11,13 +11,19 @@ const FilePreview = (props: { courseTag: string, name: string, file: File, chang
 
     useEffect(() => {
         if (props.uploadFile) {
-
             setProgress("Uploading 1%")
 
-            uploadFile(name, props.file, props.courseTag, setProgress, props.finishedUploading).catch((error) => {
+            const clientKey = localStorage.getItem(`clientKey`)!;
+
+            uploadFile({
+                fileName: name,
+                file: props.file,
+                courseTag: props.courseTag,
+                progressFunction: setProgress,
+                finishedFunction: props.finishedUploading
+            }, clientKey).catch((error) => {
                 setProgress(error.response.data.error);
             });
-
         }
 
     }, [props.uploadFile]);

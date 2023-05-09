@@ -1,4 +1,5 @@
 import {Column, CreateDateColumn, Entity, PrimaryColumn} from "typeorm"
+
 @Entity()
 export class FileAccessToken {
 
@@ -7,6 +8,9 @@ export class FileAccessToken {
 
     @Column()
     url!: string;
+
+    @Column()
+    uses!: number;
 
     @Column()
     expires_on!: Date;

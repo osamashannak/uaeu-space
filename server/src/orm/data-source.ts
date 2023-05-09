@@ -1,12 +1,13 @@
 import "reflect-metadata";
+import {Rating, FileRating, ReviewRating} from "./entity/Rating";
 import {DataSource} from "typeorm";
 import {Professor} from "./entity/professor/Professor";
 import {Review} from "./entity/professor/Review";
 import {Course} from "./entity/course/Course";
 import {CourseFile} from "./entity/course/CourseFile";
-import {ReviewRating} from "./entity/professor/ReviewRating";
-import {FileRating} from "./entity/course/FileRating";
 import {FileAccessToken} from "./entity/course/FileAccessToken";
+import {ReviewFlag} from "./entity/professor/ReviewFlag";
+import Client from "./entity/Client";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -17,8 +18,8 @@ export const AppDataSource = new DataSource({
     database: process.env.POSTGRES_DB,
     synchronize: true,
     ssl: false,
-    logging: false,
-    entities: [Professor, Review, Course, CourseFile, ReviewRating, FileRating, FileAccessToken],
+    logging: true,
+    entities: [Professor, Review, Client, CourseFile, Course, Rating, FileRating, ReviewRating, ReviewFlag, FileAccessToken],
     migrations: [],
     subscribers: [],
 })

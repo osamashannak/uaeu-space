@@ -3,8 +3,7 @@ import {AppDataSource} from "../orm/data-source";
 import {Professor} from "../orm/entity/professor/Professor";
 import {Equal, ILike} from "typeorm";
 import {Review} from "../orm/entity/professor/Review";
-import {ReviewRating} from "../orm/entity/professor/ReviewRating";
-import {getUserDetails} from "../utils";
+import Client from "../orm/entity/Client";
 
 
 type ProfessorFindBody = {
@@ -21,9 +20,24 @@ type RateBody = {
     professor: string
 }
 
-export const rate = async (req: Request, res: Response) => {
+export const review = async (req: Request, res: Response) => {
 
     const body: RateBody = req.body;
+
+    const headers = req.headers;
+    if (!headers['client-key']) {
+        res.status(400).json({error: "Invalid client key."});
+        return;
+    }
+
+    const client = await AppDataSource.getRepository(Client).findOne({
+        where: {client_key: Equal(headers['client-key'] as string)},
+    });
+
+    if (!client) {
+        res.status(400).json({error: "Invalid client key."});
+        return;
+    }
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
         where: {email: Equal(body.professor)}
@@ -37,7 +51,7 @@ export const rate = async (req: Request, res: Response) => {
     const review = new Review();
 
     review.author = body.review.author || "Anonymous";
-    review.client_details = getUserDetails(req);
+    review.client = client;
     review.comment = body.review.comment;
     review.score = body.review.score;
     review.positive = body.review.positive;
@@ -48,7 +62,7 @@ export const rate = async (req: Request, res: Response) => {
     res.status(200).json({result: "success"});
 }
 
-export const getRating = async (req: Request, res: Response) => {
+export const getReviews = async (req: Request, res: Response) => {
     const body: ProfessorFindBody = req.body;
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
@@ -67,103 +81,44 @@ export const getRating = async (req: Request, res: Response) => {
 
 }
 
-export const rateReview = async (req: Request, res: Response) => {
-
-    const body = req.body;
-    console.log(body)
-
-    if (!body.reviewId || body.positive === null || !body.request_key) {
-        res.status(400).json();
-        return;
-    }
-
-    const review = await AppDataSource.getRepository(Review).findOne({
-        where: {id: Equal(body.reviewId)}
-    });
-
-    if (!review) {
-        res.status(200).json({error: "Review not found."});
-        return;
-    }
-
-    const reviewRating = new ReviewRating();
-
-    reviewRating.request_key = body.request_key;
-    reviewRating.client_details = getUserDetails(req);
-    reviewRating.is_positive = body.positive;
-    reviewRating.review = review;
-
-    await AppDataSource.getRepository(ReviewRating).save(reviewRating);
-
-    res.status(200).json({result: "success"});
-}
-
-export const removeReviewRating = async (req: Request, res: Response) => {
-    const body = req.body;
-
-
-    if (!body.request_key) {
-        res.status(400).json();
-        return;
-    }
-
-    const reviewRating = await AppDataSource.getRepository(ReviewRating).findOne({
-        where: {request_key: Equal(body.request_key)}
-    });
-
-    if (!reviewRating) {
-        console.log(body)
-        res.status(200).json({error: "Review rating not found."});
-        return;
-    }
-
-    await AppDataSource.getRepository(ReviewRating).remove(reviewRating);
-
-    res.status(200).json({result: "success"});
-}
-
-export const getReviewRatings = async (req: Request, res: Response) => {
-    const params = req.query;
-
-    if (!params.reviewId) {
-        res.status(400).json();
-        return;
-    }
-
-    const review = await AppDataSource.getRepository(Review).findOne({
-        where: {id: Equal(parseInt(<string>params.reviewId))},
-        relations: ["ratings"]
-    });
-
-    if (!review) {
-        res.status(200).json({error: "Review not found."});
-        return;
-    }
-
-    let likes = 0;
-    let dislikes = 0;
-
-    review.ratings.forEach(value => {
-        value.is_positive ? likes += 1 : dislikes += 1;
-    });
-
-    res.status(200).json({likes: likes, dislikes: dislikes});
-}
-
 export const find = async (req: Request, res: Response) => {
-
     const params = req.query;
+    const headers = req.headers;
 
-    if (!params.email) {
-        res.status(400).json({"request": "failed"});
+    if (!params.email || !headers['client-key']) {
+        res.status(400).json({request: "failed"});
         return;
     }
 
-    const professor = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: ILike(params.email as string)},
+    const client = await AppDataSource.getRepository(Client).findOne({
+        where: {client_key: Equal(headers['client-key'] as string)},
+    });
+
+    if (!client) {
+        res.status(400).json({error: "Invalid client key."});
+        return;
+    }
+
+    const professorRepo = AppDataSource.getRepository(Professor);
+
+    const professor = await professorRepo.findOne({
+        where: {email: ILike(params.email as string), reviews: {hidden: false}},
+        select: {
+            email: true,
+            name: true,
+            college: true,
+            views: true,
+            reviews: {
+                id: true,
+                positive: true,
+                comment: true,
+                score: true,
+                created_at: true,
+                author: true,
+            }
+        },
         relations: ["reviews"],
         order: {reviews: {created_at: "desc"}},
-
     });
 
     if (!professor) {
@@ -171,13 +126,27 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
-    if (params.viewed && params.viewed === "false") {
-        const userRepo = AppDataSource.getRepository(Professor);
+    const reviews = professor.reviews.map(review => {
+        const likes = (review.ratings || []).filter(rating => rating.is_positive).length;
+        const dislikes = (review.ratings || []).filter(rating => !rating.is_positive).length;
+        return {...review, likes, dislikes};
+    });
+
+    if (!client.visits.find(value => value === professor.email)) {
+        client.visits.push(professor.email);
+        await AppDataSource.getRepository(Client).save(client);
         professor.views += 1;
-        await userRepo.save(professor);
+        await professorRepo.save(professor);
     }
 
-    res.status(200).json({professor: professor});
+    res.status(200).json({
+        professor: {
+            email: professor.email,
+            name: professor.name,
+            college: professor.college,
+            reviews,
+        }
+    });
 }
 
 export const getAll = async (req: Request, res: Response) => {

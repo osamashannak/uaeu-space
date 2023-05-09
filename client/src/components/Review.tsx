@@ -1,11 +1,11 @@
-import {IReview, ratingToIcon} from "../utils/Professor";
+import {IReview} from "../utils/Professor";
 import {useTranslation} from "react-i18next";
 import {namespaces} from "../i18n";
-import {dateHumanize} from "../utils/Global";
-import LikeDislike from "./LikeDislike";
+import {dateHumanize, ratingToIcon, RatingType} from "../utils/Global";
 import {Icon} from '@iconify/react';
 import flagRounded from '@iconify/icons-material-symbols/flag-rounded';
 import {useState} from "react";
+import Rating from "./Rating";
 
 
 const Review = (props: IReview) => {
@@ -56,7 +56,7 @@ const Review = (props: IReview) => {
                 <div className={"review-footer-left"}>
                     <p>{dateHumanize(props.created_at, i18n.language || window.localStorage.i18nextLng)}</p>
                     ·
-                    <LikeDislike id={props.id}/>
+                    <Rating id={props.id} dislikes={props.dislikes} likes={props.likes} type={RatingType.Review}/>
                 </div>
                 <Icon onClick={!isFlagged ? flagReviewPopup : () => {
                 }} style={isFlagged ? {color: "red", cursor: "default"} : {color: "inherit", cursor: "pointer"}}

@@ -16,7 +16,7 @@ const Professor = () => {
     const {email} = useParams();
     const [professor, setProfessor] = useState<IProfessor | null>();
     const [score, setScore] = useState<number>(0);
-    const {t, i18n} = useTranslation(namespaces.pages.professor);
+    const {t} = useTranslation(namespaces.pages.professor);
     const [isFetching, setIsFetching] = useState(true);
 
     useEffect(() => {
@@ -27,12 +27,11 @@ const Professor = () => {
             return;
         }
 
-        const hasViewed = localStorage.getItem(`${email}-exist`) === 'true';
+        const clientKey = localStorage.getItem(`clientKey`)!;
 
-        getProfessor(email, hasViewed).then(professor => {
+        getProfessor(email, clientKey).then(professor => {
             setProfessor(professor);
             if (professor) {
-                localStorage.setItem(`${email}-exist`, 'true');
                 if (professor.reviews.length > 0) {
                     let allScore = 0;
                     professor.reviews.forEach((review: IReview) => {

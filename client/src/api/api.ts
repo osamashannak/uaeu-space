@@ -1,39 +1,59 @@
 import axios from 'axios';
-import {IProfessor, IReview} from "../utils/Professor";
+import {IProfessor, IReviewForm} from "../utils/Professor";
 import {ICourse} from "../utils/Course";
-import {createUploadForm, onUploadProgress, uuidv4} from "./utils";
+import {createUploadForm, onUploadProgress} from "./utils";
+import {IProfile, RatingType} from "../utils/Global";
 
 
-const HOST = "https://api.uaeu.space";
+const HOST = "http://localhost:8080";
 
-export const auth = async () => {
+export const auth = async (migrationData: (string | { key: string; value: string; })[]) => {
     let response;
 
     try {
         response = await axios({
-            method: "get",
-            url: HOST + "/auth"
+            method: "post",
+            url: HOST + "/auth",
+            data: {
+                migrationData: migrationData
+            }
         })
     } catch (error) {
         return undefined;
     }
 
-    return response.data.sessionKey;
+    return response.data.clientKey;
 }
 
-export const getProfessor = async (professorEmail: string, sessionKey: string | null) => {
-    if (!sessionKey) {
-        sessionKey = await auth();
+export const getProfile = async (clientKey: string) => {
+    let response;
+
+    try {
+        response = await axios({
+            method: "get",
+            url: HOST + "/auth/profile",
+            params: {
+                clientKey: clientKey
+            }
+        })
+    } catch (error) {
+        return undefined;
     }
 
+    return response.data.profile as IProfile;
+}
+
+export const getProfessor = async (professorEmail: string, clientKey: string) => {
     let response;
 
     try {
         response = await axios({
             method: "get",
             url: HOST + "/professor",
+            headers: {
+                "client-key": clientKey
+            },
             params: {
-                sessionKey: sessionKey,
                 email: professorEmail
             }
         })
@@ -73,19 +93,18 @@ export const getProfessorsList = async () => {
 
     return response.data.professors as IProfessor[];
 }
-export const postReview = async (review: IReview, email: string, sessionKey: string | null) => {
-    if (!sessionKey) {
-        sessionKey = await auth();
-    }
-
+export const postReview = async (review: IReviewForm, email: string, token: string, clientKey: string) => {
     let response;
 
     try {
         response = await axios({
             method: "post",
             url: HOST + "/professor/rate",
+            headers: {
+                "client-key": clientKey
+            },
             data: {
-                sessionKey: sessionKey,
+                token: token,
                 review: review,
                 professor: email
             }
@@ -94,24 +113,21 @@ export const postReview = async (review: IReview, email: string, sessionKey: str
         return undefined;
     }
 
-    return response.data.result === "success";
+    return response.data.result;
 }
 
-export const getCourse = async (tag: string, viewed: boolean, sessionKey: string | null) => {
-    if (!sessionKey) {
-        sessionKey = await auth();
-    }
-
+export const getCourse = async (tag: string, clientKey: string) => {
     let response;
 
     try {
         response = await axios({
             method: "get",
             url: HOST + "/course",
+            headers: {
+                "client-key": clientKey
+            },
             params: {
-                sessionKey: sessionKey,
-                tag: tag,
-                viewed: viewed
+                tag: tag
             }
         })
     } catch (error) {
@@ -121,21 +137,20 @@ export const getCourse = async (tag: string, viewed: boolean, sessionKey: string
     return response.data.course as ICourse;
 }
 
-export const rateReview = async (reviewId: number, positive: boolean, sessionKey: string | null) => {
-    if (!sessionKey) {
-        sessionKey = await auth();
-    }
-
+export const addRating = async (id: number, positive: boolean, type: RatingType, clientKey: string) => {
     let response;
 
     try {
         response = await axios({
             method: "post",
-            url: HOST + "/professor/review/rating",
+            url: HOST + "/rating",
+            headers: {
+                "client-key": clientKey
+            },
             data: {
-                sessionKey: sessionKey,
-                reviewId: reviewId,
-                positive: positive
+                id: id,
+                positive: positive,
+                type: type
             }
         })
     } catch (error) {
@@ -145,80 +160,17 @@ export const rateReview = async (reviewId: number, positive: boolean, sessionKey
     return response;
 }
 
-
-export const removeReviewRating = async (request_key: string, reviewId: number, sessionKey: string | null) => {
-    if (!sessionKey) {
-        sessionKey = await auth();
-    }
-
-    let response;
-
-    try {
-        response = await axios({
-            method: "post",
-            url: HOST + "/professor/review/rating/remove",
-            data: {
-                sessionKey: sessionKey,
-                reviewId: reviewId
-            }
-        })
-    } catch (error) {
-        return undefined;
-    }
-
-    return response.data.result === "success";
-}
-
-export const rateFile = async (fileId: number, positive: boolean) => {
-    const uuid = uuidv4();
-
-    let response;
-
-    try {
-        response = await axios({
-            method: "post",
-            url: HOST + "/course/file/rating/",
-            data: {
-                id: fileId,
-                positive: positive,
-                request_key: uuid
-            }
-        })
-    } catch (error) {
-        return undefined;
-    }
-
-    return uuid;
-}
-
-export const removeFileRating = async (request_key: string) => {
-    let response;
-
-    try {
-        response = await axios({
-            method: "post",
-            url: HOST + "/course/file/rating/remove",
-            data: {
-                request_key: request_key
-            }
-        })
-    } catch (error) {
-        return undefined;
-    }
-
-    return response.data.result === "success";
-}
-
-export const uploadFile = async (fileName: string, file: File, courseTag: string, setProgress: any, finishedUploading: any): Promise<boolean> => {
+export const uploadFile = async (data: { fileName: string, file: File, courseTag: string, progressFunction: any, finishedFunction: any }, clientKey: string): Promise<boolean> => {
 
     const response = await axios({
         method: "post",
         url: HOST + "/course/file",
         headers: {
-            "content-type": "multipart/form-data"
+            "client-key": clientKey,
+            "content-type": "multipart/form-data",
         },
-        data: createUploadForm(courseTag, fileName, file),
-        onUploadProgress: onUploadProgress(setProgress, finishedUploading, file)
+        data: createUploadForm(data.courseTag, data.fileName, data.file),
+        onUploadProgress: onUploadProgress(data.progressFunction, data.finishedFunction, data.file)
     })
 
     return response.data.result === "success";
