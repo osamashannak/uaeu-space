@@ -157,13 +157,13 @@ export const find = async (req: Request, res: Response) => {
     }
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: ILike(params.email as string)},
+        where: {email: ILike(params.email as string), reviews: {visible: true}},
         relations: ["reviews"],
         order: {reviews: {created_at: "desc"}},
 
     });
 
-    if (!professor) {
+    if (!professor || !professor.visible) {
         res.status(404).json({error: "Professor not found."});
         return;
     }
@@ -179,6 +179,7 @@ export const find = async (req: Request, res: Response) => {
 
 export const getAll = async (req: Request, res: Response) => {
     const professors = await AppDataSource.getRepository(Professor).find({
+        where: {visible: true},
         select: {name: true, email: true},
         order: {views: "desc"}
     });

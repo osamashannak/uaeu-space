@@ -26,6 +26,9 @@ export class Review {
     @OneToMany(() => ReviewRatings, ratings => ratings.review)
     ratings!: ReviewRatings[]
 
+    @Column({default: true})
+    visible!: boolean;
+
     @CreateDateColumn()
     created_at!: Date;
 }
