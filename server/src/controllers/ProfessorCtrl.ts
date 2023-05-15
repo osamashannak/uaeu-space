@@ -157,8 +157,8 @@ export const find = async (req: Request, res: Response) => {
     }
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: ILike(params.email as string), reviews: {visible: true}},
-        relations: ["reviews"],
+        where: {email: ILike(params.email as string)},
+        relations: ["reviews", "reviews.ratings"],
         order: {reviews: {created_at: "desc"}},
 
     });
@@ -168,13 +168,32 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
+    const {visible, views, ...professorWithoutVisible} = professor;
+
+    const newProfessor = {
+        ...professorWithoutVisible,
+        reviews: professor.reviews
+            .filter(review => review.visible)
+            .map(({ratings, visible, ...review}) => {
+                const likesCount = ratings.filter(rating => rating.is_positive).length;
+                const dislikesCount = ratings.filter(rating => !rating.is_positive).length;
+
+                return {
+                    ...review,
+                    likes: likesCount,
+                    dislikes: dislikesCount
+                };
+            }),
+        score: professor.reviews.reduce((sum, review) => sum + review.score, 0) / Math.max(professor.reviews.length, 1)
+    };
+
     if (params.viewed && params.viewed === "false") {
         const userRepo = AppDataSource.getRepository(Professor);
         professor.views += 1;
         await userRepo.save(professor);
     }
 
-    res.status(200).json({professor: professor});
+    res.status(200).json({professor: newProfessor});
 }
 
 export const getAll = async (req: Request, res: Response) => {

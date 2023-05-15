@@ -152,12 +152,19 @@ export const uploadFile = async (req: Request, res: Response) => {
 
     const blobName = await uploadBlob(req.body.name, filePath, file.mimetype);
 
+    const course = await AppDataSource.getRepository(Course).findOne({where: {tag: req.body.tag}});
+
+    if (!course) {
+        res.status(400).json({error: "Course not found."});
+        return;
+    }
+
     console.log([blobName, req.body.tag]);
     await unlinkAsync(file.path);
     await unlinkAsync(filePath);
 
     const courseFile = new CourseFile();
-    courseFile.course = req.body.tag;
+    courseFile.course = course;
     courseFile.blob_name = blobName;
     courseFile.size = file.size;
     courseFile.name = req.body.name;
