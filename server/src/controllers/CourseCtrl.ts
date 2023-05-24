@@ -9,7 +9,7 @@ import requestIp from "request-ip";
 import {generateToken, getFileURL, uploadBlob} from "../azure";
 import {promisify} from "util";
 import * as fs from "fs";
-import {compressFile} from "../utils";
+import {compressFile, verifyJWTToken} from "../utils";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -23,7 +23,7 @@ export const find = async (req: Request, res: Response) => {
 
     const course = await AppDataSource.getRepository(Course).findOne({
         where: {tag: ILike(params.tag as string)},
-        relations: ["files"],
+        relations: ["files", "files.ratings"],
         order: {files: {created_at: "desc"}},
     });
 
@@ -32,7 +32,23 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
-    course.files = course.files.filter(value => value.visible);
+    const {views, ...courseWithoutViews} = course;
+
+    const newCourse = {
+        ...courseWithoutViews,
+        files: course.files
+            .filter(value => value.visible)
+            .map(({ratings, downloads, reviewed, visible, ...file}) => {
+                const likesCount = ratings.filter(rating => rating.is_positive).length;
+                const dislikesCount = ratings.filter(rating => !rating.is_positive).length;
+
+                return {
+                    ...file,
+                    likes: likesCount,
+                    dislikes: dislikesCount
+                };
+            })
+    };
 
     if (params.viewed && params.viewed === "false") {
         const userRepo = AppDataSource.getRepository(Course);
@@ -40,7 +56,7 @@ export const find = async (req: Request, res: Response) => {
         await userRepo.save(course);
     }
 
-    res.status(200).json({course: course});
+    res.status(200).json({course: newCourse});
 }
 
 
@@ -149,7 +165,6 @@ export const uploadFile = async (req: Request, res: Response) => {
         return;
     }
 
-
     const blobName = await uploadBlob(req.body.name, filePath, file.mimetype);
 
     const course = await AppDataSource.getRepository(Course).findOne({where: {tag: req.body.tag}});
@@ -178,6 +193,8 @@ export const uploadFile = async (req: Request, res: Response) => {
         }
         // file written successfully
     });
+
+    res.status(200).json({result: "success"});
 
 }
 
@@ -227,7 +244,11 @@ export const getFile = async (req: Request, res: Response) => {
         }
     });
 
-    if (!(courseFile && courseFile.visible)) {
+    const token = params.token as string | undefined;
+
+    const decodedToken = token ? verifyJWTToken(token) : undefined;
+
+    if (!courseFile || (!courseFile.visible && !decodedToken)) {
         res.status(404).json({});
         return;
     }

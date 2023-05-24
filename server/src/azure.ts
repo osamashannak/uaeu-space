@@ -14,6 +14,8 @@ const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
 const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME;
 
 if (!(containerName && accountName)) {
+    console.log(accountName);
+    console.log(containerName);
     throw Error('Missing configurations for Azure.');
 }
 
@@ -46,6 +48,10 @@ export const uploadBlob = async (fileName: string, filePath: string, mimeType: s
 
     const blobClient = containerClient.getBlockBlobClient(blobName);
 
+    if (mimeType.includes("video")) {
+        mimeType = "";
+    }
+    
     const response = await blobClient.uploadFile(filePath, {
         blobHTTPHeaders: {
             blobContentType: mimeType,

@@ -6,15 +6,19 @@ import express from "express";
 import cors from "cors";
 import courseRouter from "./routes/CourseRouter";
 import professorRouter from "./routes/ProfessorRouter";
+import dashboardRouter from "./routes/DashboardRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
 import {loadAzure} from "./azure";
-import {CourseFile} from "./orm/entity/CourseFile";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
 import {Professor} from "./orm/entity/Professor";
 import {Course} from "./orm/entity/Course";
+import {AdClick} from "./orm/entity/AdClick";
+import requestIp from "request-ip";
+import jwt from "jsonwebtoken";
 
+export let JWT_SECRET: jwt.Secret;
 
 const app = express();
 
@@ -22,16 +26,42 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
 
-let sitemap: Buffer;
 
-app.use("/sitemap.xml", async (req, res) => {
+app.get("/advertisement", async (req, res) => {
+    res.redirect("https://www.88studies.com/");
+
+    let address = requestIp.getClientIp(req);
+
+    if (!address) {
+        return;
+    }
+
+    if (address.includes(":")) {
+        address = address.split(":").slice(-1).pop()!;
+    }
+
+    const adClickRepo = AppDataSource.getRepository(AdClick);
+
+    const adClick = await adClickRepo.findOne({where: {ipAddress: address}});
+
+    if (!adClick) {
+        const newAdClick = new AdClick();
+        newAdClick.ipAddress = address;
+        await adClickRepo.save(newAdClick);
+        return;
+    }
+
+    adClick.lastVisit = new Date();
+    adClick.visits += 1;
+
+    await adClickRepo.save(adClick);
+});
+
+app.get("/sitemap.xml", async (req, res) => {
     res.header('Content-Type', 'application/xml');
     res.header('Content-Encoding', 'gzip');
 
-    if (sitemap) {
-        res.send(sitemap)
-        return
-    }
+    let sitemap: Buffer;
 
     try {
         const smStream = new SitemapStream({hostname: 'https://uaeu.space/'})
@@ -41,19 +71,35 @@ app.use("/sitemap.xml", async (req, res) => {
 
         const professors = await AppDataSource.getRepository(Professor).find({
             select: {name: true, email: true},
+            relations: ["reviews"],
             order: {views: "desc"}
         });
 
         for (let prof of professors) {
-            smStream.write({url: '/professor/' + prof.email.replace("@", "%40"), changefreq: 'daily', priority: 0.5});
+            if (prof.reviews.length > 0) {
+                smStream.write({
+                    url: '/professor/' + prof.email.replace("@", "%40"),
+                    changefreq: 'daily',
+                    priority: 0.5
+                });
+            }
         }
 
         const courses = await AppDataSource.getRepository(Course).find({
-            select: {name: true, tag: true}, order: {views: "desc"}
+            select: {name: true, tag: true},
+            relations: ["files"],
+            order: {views: "desc"}
         });
 
         for (let course of courses) {
-            smStream.write({url: '/course/' + course.tag, changefreq: 'daily', priority: 0.5})
+            course.files = course.files.filter(value => value.visible);
+            if (course.files.length > 0) {
+                smStream.write({
+                    url: '/course/' + course.tag,
+                    changefreq: 'daily',
+                    priority: 0.5
+                });
+            }
         }
 
         streamToPromise(pipeline).then(sm => sitemap = sm)
@@ -72,10 +118,13 @@ app.use("/sitemap.xml", async (req, res) => {
 
 app.use("/course", courseRouter);
 app.use("/professor", professorRouter);
+app.use("/dashboard", dashboardRouter);
 
 const port = process.env.PORT || 4000;
 
 const main = (): void => {
+
+    JWT_SECRET = require('crypto').randomBytes(32).toString('hex');
 
     loadAzure().then(r => console.log("Azure client loaded."));
 

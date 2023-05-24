@@ -6,25 +6,31 @@ import {ReviewRatings} from "./ReviewRatings";
 export class Review {
 
     @PrimaryGeneratedColumn()
-    id!: number
+    id!: number;
+
+    @Column("inet", {nullable: true, default: null})
+    author_ip!: string;
 
     @ManyToOne(() => Professor, professor => professor.reviews)
-    professor!: Professor
+    professor!: Professor;
 
     @Column()
-    author!: string
+    author!: string;
 
     @Column()
-    score!: number
+    score!: number;
 
     @Column()
     positive!: boolean;
 
     @Column()
-    comment!: string
+    comment!: string;
 
     @OneToMany(() => ReviewRatings, ratings => ratings.review)
     ratings!: ReviewRatings[]
+
+    @Column({default: false})
+    reviewed!: boolean;
 
     @Column({default: true})
     visible!: boolean;

@@ -4,7 +4,8 @@ import {Professor} from "../orm/entity/Professor";
 import {Equal, ILike} from "typeorm";
 import {Review} from "../orm/entity/Review";
 import {ReviewRatings} from "../orm/entity/ReviewRatings";
-import {Course} from "../orm/entity/Course";
+import requestIp from "request-ip";
+import {createAssessment} from "../utils";
 
 
 type ProfessorFindBody = {
@@ -18,11 +19,31 @@ type RateBody = {
         comment: string,
         score: number
     },
-    professor: string
+    professor: string,
+    recaptchaToken: string
 }
 
 export const rate = async (req: Request, res: Response) => {
     const body: RateBody = req.body;
+    let address = requestIp.getClientIp(req);
+
+    let valid: boolean = true;
+
+    if (body.recaptchaToken) {
+        const checkValidity = await createAssessment(body.recaptchaToken);
+        if (!checkValidity) {
+            valid = checkValidity;
+        }
+    }
+
+    if (!address) {
+        res.status(400).json({error: "Invalid."});
+        return;
+    }
+
+    if (address.includes(":")) {
+        address = address.split(":").slice(-1).pop()!;
+    }
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
         where: {email: Equal(body.professor)}
@@ -40,30 +61,12 @@ export const rate = async (req: Request, res: Response) => {
     review.score = body.review.score;
     review.positive = body.review.positive;
     review.professor = professor;
+    review.author_ip = address;
+    review.visible = valid;
 
     await AppDataSource.getRepository(Review).save(review);
 
     res.status(200).json({result: "success"});
-}
-
-export const getRating = async (req: Request, res: Response) => {
-
-    const body: ProfessorFindBody = req.body;
-
-    const professor = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: Equal(body.email)},
-        relations: ["reviews"],
-        order: {reviews: {id: "asc"}}
-    });
-
-
-    if (!professor) {
-        res.status(404).json({error: "Professor not found."});
-        return;
-    }
-
-    res.status(200).json({reviews: professor.reviews || []});
-
 }
 
 export const rateReview = async (req: Request, res: Response) => {
@@ -119,34 +122,6 @@ export const removeReviewRating = async (req: Request, res: Response) => {
     res.status(200).json({result: "success"});
 }
 
-export const getReviewRatings = async (req: Request, res: Response) => {
-    const params = req.query;
-
-    if (!params.reviewId) {
-        res.status(400).json();
-        return;
-    }
-
-    const review = await AppDataSource.getRepository(Review).findOne({
-        where: {id: Equal(parseInt(<string>params.reviewId))},
-        relations: ["ratings"]
-    });
-
-    if (!review) {
-        res.status(200).json({error: "Review not found."});
-        return;
-    }
-
-    let likes = 0;
-    let dislikes = 0;
-
-    review.ratings.forEach(value => {
-        value.is_positive ? likes += 1 : dislikes += 1;
-    });
-
-    res.status(200).json({likes: likes, dislikes: dislikes});
-}
-
 export const find = async (req: Request, res: Response) => {
 
     const params = req.query;
@@ -170,11 +145,12 @@ export const find = async (req: Request, res: Response) => {
 
     const {visible, views, ...professorWithoutVisible} = professor;
 
+    const filteredReviews = professor.reviews.filter(review => review.visible);
+
     const newProfessor = {
         ...professorWithoutVisible,
-        reviews: professor.reviews
-            .filter(review => review.visible)
-            .map(({ratings, visible, ...review}) => {
+        reviews: filteredReviews
+            .map(({ratings, reviewed, author_ip, visible, ...review}) => {
                 const likesCount = ratings.filter(rating => rating.is_positive).length;
                 const dislikesCount = ratings.filter(rating => !rating.is_positive).length;
 
@@ -184,7 +160,7 @@ export const find = async (req: Request, res: Response) => {
                     dislikes: dislikesCount
                 };
             }),
-        score: professor.reviews.reduce((sum, review) => sum + review.score, 0) / Math.max(professor.reviews.length, 1)
+        score: filteredReviews.reduce((sum, review) => sum + review.score, 0) / Math.max(filteredReviews.length, 1)
     };
 
     if (params.viewed && params.viewed === "false") {

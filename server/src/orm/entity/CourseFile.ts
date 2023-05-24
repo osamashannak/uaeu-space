@@ -24,6 +24,9 @@ export class CourseFile {
     size!: number;
 
     @Column({default: false})
+    reviewed!: boolean;
+
+    @Column({default: false})
     visible!: boolean;
 
     @Column({default: 0})
