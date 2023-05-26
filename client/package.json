@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "client",
   "version": "0.1.0",
   "private": true,
@@ -60,5 +61,36 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+=======
+  "name": "uaeu-space",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.7",
+    "downshift": "^7.6.0",
+    "eslint": "8.39.0",
+    "eslint-config-next": "13.3.4",
+    "fuse.js": "^6.6.2",
+    "next": "13.3.4",
+    "nprogress": "^0.2.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-google-recaptcha-v3": "^1.10.1",
+    "sharp": "^0.32.1",
+    "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "18.16.3",
+    "@types/nprogress": "^0.2.0",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.1",
+    "sass": "^1.62.1"
+>>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
   }
 }

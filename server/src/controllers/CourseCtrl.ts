@@ -3,7 +3,10 @@ import {AppDataSource} from "../orm/data-source";
 import {Course} from "../orm/entity/Course";
 import {Equal, ILike} from "typeorm";
 import {CourseFile} from "../orm/entity/CourseFile";
+<<<<<<< HEAD
 import {FileRating} from "../orm/entity/FileRating";
+=======
+>>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 import {FileAccessToken} from "../orm/entity/FileAccessToken";
 import requestIp from "request-ip";
 import {generateToken, getFileURL, uploadBlob} from "../azure";
@@ -70,6 +73,7 @@ export const getAll = async (req: Request, res: Response) => {
 
 }
 
+<<<<<<< HEAD
 export const rateFile = async (req: Request, res: Response) => {
     const body = req.body;
 
@@ -150,6 +154,8 @@ export const getFileRatings = async (req: Request, res: Response) => {
     res.status(200).json({likes: likes, dislikes: dislikes});
 }
 
+=======
+>>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 export const uploadFile = async (req: Request, res: Response) => {
     const file = req.file;
 

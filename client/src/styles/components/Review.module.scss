@@ -1,0 +1,125 @@
+.review {
+  background-color: white;
+  font-size: 0.75rem;
+  padding: 1rem;
+  margin-top: 3rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 768px) {
+    border-radius: 0;
+    box-shadow: none;
+    margin-top: 0.5rem;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.075);
+    border-top: solid 1px rgba(0, 0, 0, 0.075);
+  }
+}
+
+
+.reviewInfo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+
+  p, span {
+    text-align: right;
+    font-weight: 600;
+  }
+}
+
+.reviewBody {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin: 2rem 0;
+  min-height: 5vh;
+  row-gap: 1rem;
+
+  p {
+    font-weight: 400;
+    line-height: 1.2rem;
+    max-width: 80rem;
+  }
+}
+
+.reviewFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.5);
+  border-top: solid 1px rgba(0, 0, 0, 0.075);
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+
+  div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+}
+
+.stars {
+  filter: invert(44%) sepia(62%) saturate(5705%) hue-rotate(196deg) brightness(99%) contrast(109%);
+}
+
+.flagReview {
+  filter: invert(50%);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.flagReviewPressed {
+  filter: invert(50%) sepia(62%) saturate(5705%) hue-rotate(196deg) brightness(99%) contrast(109%);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.flagModal {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.flagModelBox {
+  width: 80%;
+  background-color: white;
+  border-radius: 6px;
+  border: none;
+  padding: 1rem;
+  max-width: 30rem;
+  position: relative;
+}
+
+.flagModalButton {
+  margin-top: 1rem;
+  border: none;
+  cursor: pointer;
+  padding: 0.7rem 1rem;
+  float: right;
+  border-radius: 9999px;
+  color: white;
+  font-weight: 700;
+  background-color: #87CEFA;
+}
+
+.close {
+  color: #aaaaaa;
+  cursor: pointer;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.2rem;
+  font-size: 1.3rem;
+}

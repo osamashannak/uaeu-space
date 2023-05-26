@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /server/node_modules/
 /server/.idea/
 /client/.idea/
@@ -6,3 +7,34 @@
 .idea
 /server/tmp/
 /server/dist/
+=======
+.idea
+
+client/node_modules
+client/.pnp
+client/.pnp.js
+
+client/coverage
+
+client/.next/
+client/out/
+
+client/build
+
+client/.DS_Store
+client/*.pem
+
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+
+client/.env*.local
+
+client/*.tsbuildinfo
+client/next-env.d.ts
+
+server/.env
+server/tmp/
+server/dist/
+server/node_modules/
+>>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)

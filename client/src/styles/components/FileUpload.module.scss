@@ -1,0 +1,70 @@
+// use _form.scss
+@use "../form";
+
+.formField {
+  font-weight: 400;
+  margin-top: 2rem;
+}
+
+.uploadButtonHTML {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.limits {
+  font-size: 0.75rem;
+  margin-top: 2rem;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  ul {
+    padding-left: 1rem;
+  }
+  ul > li {
+    margin-top: 0.5rem;
+  }
+}
+
+.uploadButtonLabel {
+  padding: 0.5rem;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 0.7rem;
+  border-radius: 2px;
+  color: white;
+  background-color: #4C89EE;
+  &:focus {
+    outline: auto rgb(94, 158, 214);
+  }
+}
+
+.filePreview {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-width: 35rem;
+  width: 100%;
+  font-weight: 400;
+  padding: 1rem;
+}
+
+.deleteIcon {
+  cursor: pointer;
+  border-radius: 50%;
+    padding: 0.25rem;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.filePreviewName {
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}

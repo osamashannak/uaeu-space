@@ -3,7 +3,10 @@ import {AppDataSource} from "../orm/data-source";
 import {Professor} from "../orm/entity/Professor";
 import {Equal, ILike} from "typeorm";
 import {Review} from "../orm/entity/Review";
+<<<<<<< HEAD
 import {ReviewRatings} from "../orm/entity/ReviewRatings";
+=======
+>>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 import requestIp from "request-ip";
 import {createAssessment} from "../utils";
 
@@ -69,6 +72,7 @@ export const rate = async (req: Request, res: Response) => {
     res.status(200).json({result: "success"});
 }
 
+<<<<<<< HEAD
 export const rateReview = async (req: Request, res: Response) => {
     const body = req.body;
     console.log(body)
@@ -122,6 +126,8 @@ export const removeReviewRating = async (req: Request, res: Response) => {
     res.status(200).json({result: "success"});
 }
 
+=======
+>>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 export const find = async (req: Request, res: Response) => {
 
     const params = req.query;

@@ -1,0 +1,160 @@
+@mixin home-section($theme) {
+  background-color: $theme;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.5rem 1rem 0.2rem;
+
+  h2 {
+    font-weight: 600;
+    font-size: 2.5rem;
+  }
+  h3 {
+    margin-top: 1rem;
+    font-weight: 400;
+    font-size: 1.5rem;
+  }
+
+  @media (max-width: 1068px) {
+    h2 {
+      font-size: 2rem;
+    }
+    h3 {
+      font-size: 1.25rem;
+    }
+    .image {
+      width: 330px;
+      height: 300px;
+    }
+  }
+
+  @media (max-width: 734px) {
+    h2 {
+      font-size: 1.5rem;
+    }
+    h3 {
+      font-size: 1rem;
+    }
+  }
+
+}
+
+.image {
+  opacity: 0.5;
+  transition: opacity 1s ease;
+}
+
+.image:hover {
+  opacity: 1;
+}
+
+.course {
+  @include home-section(#ADFFFD);
+}
+
+.professor {
+  @include home-section(#FAFAFA);
+}
+
+.separator {
+  border: 0;
+  border-top: 8px solid #ffffff;
+}
+
+.adCover {
+  border-top: 8px solid #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 0.5rem;
+  
+  img {
+    cursor: pointer;
+  }
+  
+  .adImage2 {
+    display: none;
+  }
+
+  @media (max-width: 800px) {
+    .adImage1 {
+        display: none;
+    }
+
+    .adImage2 {
+        display: block;
+    }
+  }
+}
+
+.helpUs {
+  background-color: white;
+  padding: 1rem 1rem 1rem calc(1rem + env(safe-area-inset-right));
+  display: flex;
+  color: rgb(2, 136, 209);
+  font-size: 14px;
+
+  span {
+    padding-right: 0.5rem;
+    margin-right: 0.5rem;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    align-self: center;
+  }
+}
+
+.sectionBody {
+  margin: 3rem 0 5rem;
+  * {
+    margin: 0 auto;
+  }
+
+}
+
+.trending {
+  border-radius: 6px;
+  text-align: left;
+  padding: 0rem 1rem 1rem;
+  margin-bottom: 2rem;
+
+  div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  div > svg {
+    margin: 0.8rem 0 0;
+  }
+
+  div > h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0.8rem 0.8rem 0;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  ul > li {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #007bff;
+    text-decoration: none;
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: 400;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

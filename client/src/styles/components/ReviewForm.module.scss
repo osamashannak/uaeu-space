@@ -1,0 +1,54 @@
+@use "../form";
+
+.reviewFormField {
+  background-color: #F1F2F3;
+  border: none;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  font-weight: 300;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.reviewFormComment {
+  @extend .reviewFormField;
+  max-width: 35rem;
+  resize: none;
+  width: 90%;
+  height: 7rem;
+}
+
+.noNSFWWarning {
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.reviewFormScore {
+  border: none;
+  background-color: white;
+  font-size: 0.8rem;
+  padding: 0.5rem 0rem 0.5rem 1rem;
+  border-radius: 2px;
+  width: 1.65rem;
+  margin-top: 1rem;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.reviewFormPositivityList {
+  list-style: none;
+  font-weight: 400;
+}
+
+.reviewFormRadio {
+  margin-right: 1rem;
+  vertical-align: bottom;
+  margin-top: 1rem;
+}
+

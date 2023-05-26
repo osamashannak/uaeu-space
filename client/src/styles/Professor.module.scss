@@ -1,0 +1,87 @@
+.profPage {
+  background-color: #f1f2f3;
+  padding-bottom: 1rem;
+  min-height: 85vh;
+}
+
+.profInfoHead {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  margin: auto;
+  background-color: white;
+  max-width: 90rem;
+  width: 100%;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+
+  @media (max-width: 768px) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: none;
+    border: none;
+
+  }
+}
+
+.profInfoLeft {
+  font-size: 0.85rem;
+  line-height: 1.5rem;
+
+  p {
+    font-size: 1rem;
+  }
+}
+
+.profInfoRight {
+  text-align: right;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  padding-left: 0.5rem;
+
+  p {
+    font-weight: 600;
+    font-size: 2rem;
+    text-align: center;
+    color: black;
+
+    span {
+      font-size: 0.75rem;
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+}
+
+.commentsSection {
+  margin: 1rem auto auto;
+  width: 100%;
+  max-width: 90rem;
+}
+
+.professorNotFound {
+  height: calc(100vh - 10rem);
+  display: flex;
+  flex-wrap: wrap;
+  background-color: white;
+  gap: 3rem;
+  color: rgba(0, 0, 0, 0.5);
+
+  * {
+    margin: auto;
+  }
+
+  div > * {
+    font-size: 2vh;
+    padding: 1rem;
+  }
+
+  img {
+    opacity: 0.5;
+    transition: opacity 0.8s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "short_name": "USpace",
   "name": "UAEU Space",
   "icons": [
@@ -13,3 +14,33 @@
   "theme_color": "#f1f2f3",
   "background_color": "#f1f2f3"
 }
+=======
+  "background_color": "#ffffff",
+  "categories": [
+    "social",
+    "utilities",
+    "education"
+  ],
+  "description": "UAEU Space is a multi-purpose platform for UAEU students to prepare them during their studies. You can find and share materials for courses that are taken by the university's students.",
+  "display": "standalone",
+  "gcm_sender_id": "49625052041",
+  "gcm_user_visible_only": true,
+  "icons": [
+    {
+      "src": "logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "name": "UAEU Space",
+  "short_name": "UAEU Space",
+  "start_url": "https://uaeu.space",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}
+>>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)

@@ -17,6 +17,10 @@ import {Course} from "./orm/entity/Course";
 import {AdClick} from "./orm/entity/AdClick";
 import requestIp from "request-ip";
 import jwt from "jsonwebtoken";
+<<<<<<< HEAD
+=======
+import sharedRouter from "./routes/SharedRouter";
+>>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 
 export let JWT_SECRET: jwt.Secret;
 
@@ -119,6 +123,10 @@ app.get("/sitemap.xml", async (req, res) => {
 app.use("/course", courseRouter);
 app.use("/professor", professorRouter);
 app.use("/dashboard", dashboardRouter);
+<<<<<<< HEAD
+=======
+app.use("/shared", sharedRouter);
+>>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 
 const port = process.env.PORT || 4000;
 

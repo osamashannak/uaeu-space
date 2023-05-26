@@ -1,0 +1,117 @@
+.dashboard {
+  min-height: 115vh;
+  padding: 1rem;
+  background-color: #f4f4f4;
+
+  h1 {
+    font-size: 48px;
+    margin: 3rem 0;
+    font-weight: 600;
+    line-height: 1.08349;
+    letter-spacing: -.003em;
+  }
+
+  h2 {
+    font-size: 32px;
+    margin: 3rem 0;
+    font-weight: 600;
+    line-height: 1.08349;
+    letter-spacing: -.003em;
+  }
+
+}
+
+.login {
+  margin-top: 8rem;
+}
+
+.googleLogin {
+  margin-top: 1rem;
+  width: 200px;
+}
+
+.header {
+  text-align: center;
+  padding-bottom: 1rem;
+}
+
+.dashboardBody {
+  display: flex;
+  gap: 2rem;
+  row-gap: 4rem;
+  flex-wrap: wrap;
+}
+
+.section {
+  flex: 1;
+}
+
+.sectionBody {
+  height: 50rem;
+  overflow-y: scroll;
+    padding: 1rem;
+  border: 3px dotted rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+
+  article:first-child {
+    margin-top: 0;
+  }
+}
+
+.buttons {
+    display: flex;
+  gap: 2rem;
+    justify-content: center;
+
+}
+
+@mixin button($theme) {
+  margin: 1rem 0;
+  cursor: pointer;
+  border: none;
+  padding: 0.7rem 1rem;
+  border-radius: 9999px;
+  color: white;
+  font-weight: 700;
+  width: 120px;
+  text-align: center;
+  background-color: $theme;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.approveButton {
+  @include button(#87CEFA);
+}
+
+.hideButton {
+  @include button(#FF6347);
+}
+
+.downloadButton {
+  border-radius: 9999px;
+  background-color: #87CEFA;
+  align-self: center;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: white;
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.resetButton {
+  border-radius: 9999px;
+  border: 1px solid #4285F4;
+  display: inline-block;
+  margin-left: 1rem;
+  align-self: center;
+  padding: 0.5rem;
+  cursor: pointer;
+    color: #4285F4;
+  &:hover {
+    opacity: 0.8;
+  }
+}
