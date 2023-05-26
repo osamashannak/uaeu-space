@@ -1,24 +1,3 @@
-<<<<<<< HEAD
-import {useCombobox} from "downshift";
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {DatalistContent, getFilter, SearchBoxProps} from "../utils/SearchBox";
-import {useTranslation} from "react-i18next";
-import {namespaces} from "../i18n";
-import {getCoursesList, getProfessorsList} from "../api/api";
-import Fuse from "fuse.js";
-import {da} from "date-fns/locale";
-
-
-const SearchBoxElement = (props: SearchBoxProps) => {
-
-    const SearchBox = () => {
-
-        const nav = useNavigate();
-        const [items, setItems] = useState<DatalistContent[]>([]);
-        const [allItems, setAllItems] = useState<DatalistContent[]>([]);
-        const {t} = useTranslation(namespaces.pages.home);
-=======
 'use client';
 
 import {useCombobox} from "downshift";
@@ -39,7 +18,6 @@ const SearchBoxElement = (props: {type: "professor" | "course"}) => {
         const [allItems, setAllItems] = useState<Item[]>([]);
         const lastInputValue = useRef<string>();
         const router = useRouter();
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 
         const {
             inputValue,
@@ -48,34 +26,15 @@ const SearchBoxElement = (props: {type: "professor" | "course"}) => {
             highlightedIndex,
             getItemProps,
         } = useCombobox({
-<<<<<<< HEAD
-            async onInputValueChange({inputValue}) {
-=======
             id: 'search-box',
             async onInputValueChange({inputValue}) {
                 lastInputValue.current = inputValue;
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 
                 if (!inputValue) {
                     setItems([]);
                     return;
                 }
 
-<<<<<<< HEAD
-                if (!allItems.length) {
-                    setItems([{item: {name: "Loading...", tag: ""}}]);
-
-                    const datalist: unknown = props.type === "course" ? await getCoursesList() : await getProfessorsList();
-
-                    if (!datalist) return;
-
-                    const newDatalist: DatalistContent[] = datalist as DatalistContent[];
-
-                    let fuse;
-
-                    if ('tag' in newDatalist[0]) {
-                        fuse = new Fuse(newDatalist, {
-=======
                 if (items.length === 1 && items[0].name === "Loading...") {
                     return
                 }
@@ -97,33 +56,22 @@ const SearchBoxElement = (props: {type: "professor" | "course"}) => {
 
                     if ('tag' in datalist[0]) {
                         fuse = new Fuse(datalist, {
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
                             threshold: 0.4,
                             ignoreLocation: true,
                             keys: ['tag', 'name']
                         })
-<<<<<<< HEAD
-                    } else{
-                        fuse = new Fuse(newDatalist, {
-=======
                     } else {
                         fuse = new Fuse(datalist, {
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
                             threshold: 0.4,
                             ignoreLocation: true,
                             keys: ['name']
                         })
                     }
 
-<<<<<<< HEAD
-                    setAllItems(newDatalist);
-                    setItems(fuse.search(inputValue, {limit: 5}) as unknown as DatalistContent[]);
-=======
                     setAllItems(datalist);
 
                     setItems(fuse.search(lastInputValue.current as string, {limit: 5}).map((result) => result.item));
 
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
                     return;
                 }
 
@@ -142,26 +90,12 @@ const SearchBoxElement = (props: {type: "professor" | "course"}) => {
                         keys: ['name']
                     })
                 }
-<<<<<<< HEAD
-                setItems((fuse.search(inputValue, {limit: 5}) as unknown as DatalistContent[]) || [""]);
-=======
 
                 setItems(fuse.search(lastInputValue.current as string, {limit: 5}).map((result) => result.item));
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 
             },
             items,
             itemToString(item) {
-<<<<<<< HEAD
-                return item ? item.item.name : "";
-            },
-            onSelectedItemChange: ({selectedItem: newSelectedItem}) => {
-                if (!newSelectedItem) return;
-                if ('email' in newSelectedItem.item) {
-                    nav(`/professor/${newSelectedItem.item.email}`);
-                } else {
-                    nav(`/course/${newSelectedItem.item.tag}`);
-=======
                 return item ? item.name : "";
             },
             onSelectedItemChange: ({selectedItem: newSelectedItem}) => {
@@ -170,35 +104,12 @@ const SearchBoxElement = (props: {type: "professor" | "course"}) => {
                     router.push(`/professor/${newSelectedItem.email}`);
                 } else {
                     router.push(`/course/${newSelectedItem.tag}`);
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 
                 }
             }
         })
 
         return (
-<<<<<<< HEAD
-            <div>
-
-                <label className={"icon-label"}>
-                    <input placeholder={t(`${props.type}_box.search_placeholder`)}
-                           className={"search-bar"} {...getInputProps()}/>
-                </label>
-
-                <div className={"parent-datalist"}>
-                    <ul className={"datalist"} {...getMenuProps()}>
-                        {inputValue &&
-                            items.map((element, index) => (
-                                <li className={`datalist-option ${highlightedIndex === index && ' bg-blue-option'}`}
-                                    key={`${element.item.name}${index}`} {...getItemProps({
-                                    item: element.item as unknown as DatalistContent,
-                                    index,
-                                    disabled: element.item.name === "Loading..."
-                                })}>
-
-                                    <span>{'tag' in element.item && element.item.tag}</span>
-                                    <span className={"course-name"}>{element.item.name}</span>
-=======
             <div className={styles.searchBox}>
                 <input placeholder={props.type === "course" ? "Search for a course..." : "Search for a professor..."}
                        className={styles.searchBar} {...getInputProps()}/>
@@ -221,18 +132,12 @@ const SearchBoxElement = (props: {type: "professor" | "course"}) => {
                                 })}>
                                     {'tag' in element && <span>{element.tag}<br/></span>}
                                     <span className={"course-name"}>{element.name}</span>
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
                                 </li>
                             ))
                         }
                     </ul>
                 </div>
 
-<<<<<<< HEAD
-                {/*<p><Link className={"help-course"} to={'/report'}>{t(`${props.type}_box.not_found`)}</Link></p>*/}
-
-=======
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
             </div>
         )
 

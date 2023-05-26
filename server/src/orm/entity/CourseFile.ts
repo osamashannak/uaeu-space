@@ -1,10 +1,6 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Course} from "./Course";
-<<<<<<< HEAD
-import {FileRating} from "./FileRating";
-=======
 import {FileRating} from "./Rating";
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 
 @Entity()
 export class CourseFile {

@@ -1,20 +1,4 @@
 {
-<<<<<<< HEAD
-  "short_name": "USpace",
-  "name": "UAEU Space",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#f1f2f3",
-  "background_color": "#f1f2f3"
-}
-=======
   "background_color": "#ffffff",
   "categories": [
     "social",
@@ -43,4 +27,3 @@
   "theme_color": "#ffffff",
   "scope": "/"
 }
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)

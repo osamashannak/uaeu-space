@@ -1,4 +1,4 @@
-import {Column, DataSource, Entity, OneToMany, PrimaryColumn} from "typeorm"
+import {Column, Entity, OneToMany, PrimaryColumn} from "typeorm"
 import {Review} from "./Review";
 
 @Entity()

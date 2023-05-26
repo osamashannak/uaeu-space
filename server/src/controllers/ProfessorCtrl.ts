@@ -3,17 +3,9 @@ import {AppDataSource} from "../orm/data-source";
 import {Professor} from "../orm/entity/Professor";
 import {Equal, ILike} from "typeorm";
 import {Review} from "../orm/entity/Review";
-<<<<<<< HEAD
-import {ReviewRatings} from "../orm/entity/ReviewRatings";
-=======
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 import requestIp from "request-ip";
 import {createAssessment} from "../utils";
 
-
-type ProfessorFindBody = {
-    email: string
-}
 
 type RateBody = {
     review: {
@@ -72,62 +64,6 @@ export const rate = async (req: Request, res: Response) => {
     res.status(200).json({result: "success"});
 }
 
-<<<<<<< HEAD
-export const rateReview = async (req: Request, res: Response) => {
-    const body = req.body;
-    console.log(body)
-
-    if (!body.reviewId || body.positive === null || !body.request_key) {
-        res.status(400).json();
-        return;
-    }
-
-    const review = await AppDataSource.getRepository(Review).findOne({
-        where: {id: Equal(body.reviewId)}
-    });
-
-    if (!review) {
-        res.status(200).json({error: "Review not found."});
-        return;
-    }
-
-    const reviewRating = new ReviewRatings();
-
-    reviewRating.request_key = body.request_key;
-    reviewRating.is_positive = body.positive;
-    reviewRating.review = review;
-
-    await AppDataSource.getRepository(ReviewRatings).save(reviewRating);
-
-    res.status(200).json({result: "success"});
-}
-
-export const removeReviewRating = async (req: Request, res: Response) => {
-    const body = req.body;
-
-
-    if (!body.request_key) {
-        res.status(400).json();
-        return;
-    }
-
-    const reviewRating = await AppDataSource.getRepository(ReviewRatings).findOne({
-        where: {request_key: Equal(body.request_key)}
-    });
-
-    if (!reviewRating) {
-        console.log(body)
-        res.status(200).json({error: "Review rating not found."});
-        return;
-    }
-
-    await AppDataSource.getRepository(ReviewRatings).remove(reviewRating);
-
-    res.status(200).json({result: "success"});
-}
-
-=======
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 export const find = async (req: Request, res: Response) => {
 
     const params = req.query;

@@ -4,8 +4,6 @@ import Head from "next/head";
 import styles from "@/styles/Dashboard.module.scss";
 import Script from "next/script";
 
-// 503811163032-7sb2rm7k4r4knulc0ig7ubp9jcjanaco.apps.googleusercontent.com
-
 declare var google: any;
 
 const DashboardAuth = () => {

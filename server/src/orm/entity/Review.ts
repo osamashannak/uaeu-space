@@ -1,10 +1,6 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Professor} from "./Professor";
-<<<<<<< HEAD
-import {ReviewRatings} from "./ReviewRatings";
-=======
 import {ReviewRating} from "./Rating";
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 
 @Entity()
 export class Review {
@@ -30,13 +26,8 @@ export class Review {
     @Column()
     comment!: string;
 
-<<<<<<< HEAD
-    @OneToMany(() => ReviewRatings, ratings => ratings.review)
-    ratings!: ReviewRatings[]
-=======
     @OneToMany(() => ReviewRating, ratings => ratings.review)
     ratings!: ReviewRating[]
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 
     @Column({default: false})
     reviewed!: boolean;

@@ -1,67 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "client",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/react-helmet": "^6.1.6",
-    "axios": "^1.2.3",
-    "date-fns": "^2.29.3",
-    "downshift": "^7.2.0",
-    "fuse.js": "^6.6.2",
-    "i18next": "^22.4.9",
-    "i18next-browser-languagedetector": "^7.0.1",
-    "i18next-http-backend": "^2.1.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-helmet": "^6.1.0",
-    "react-i18next": "^12.1.4",
-    "react-router-dom": "^6.6.2",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
-  "devDependencies": {
-    "@iconify/icons-eos-icons": "^1.2.6",
-    "@iconify/icons-icon-park-outline": "^1.2.9",
-    "@iconify/icons-material-symbols": "^1.2.26",
-    "@iconify/icons-mdi": "^1.2.40",
-    "@iconify/icons-skill-icons": "^1.2.1",
-    "@iconify/icons-vscode-icons": "^1.2.23",
-    "@iconify/react": "^4.1.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.11",
-    "@types/react": "^18.0.26",
-    "@types/react-dom": "^18.0.10",
-    "@types/react-router-dom": "^5.3.3",
-    "typescript": "^4.9.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-=======
   "name": "uaeu-space",
   "version": "1.0.0",
   "private": true,
@@ -91,6 +28,5 @@
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.1",
     "sass": "^1.62.1"
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
   }
 }

@@ -3,10 +3,6 @@ import {AppDataSource} from "../orm/data-source";
 import {Course} from "../orm/entity/Course";
 import {Equal, ILike} from "typeorm";
 import {CourseFile} from "../orm/entity/CourseFile";
-<<<<<<< HEAD
-import {FileRating} from "../orm/entity/FileRating";
-=======
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 import {FileAccessToken} from "../orm/entity/FileAccessToken";
 import requestIp from "request-ip";
 import {generateToken, getFileURL, uploadBlob} from "../azure";
@@ -73,89 +69,6 @@ export const getAll = async (req: Request, res: Response) => {
 
 }
 
-<<<<<<< HEAD
-export const rateFile = async (req: Request, res: Response) => {
-    const body = req.body;
-
-    if (!body.id || body.positive === null || !body.request_key) {
-        res.status(400).json();
-        return;
-    }
-
-    const file = await AppDataSource.getRepository(CourseFile).findOne({
-        where: {id: Equal(body.id as number)}
-    });
-
-    if (!file) {
-        res.status(200).json({error: "File not found."});
-        return;
-    }
-
-    const fileRating = new FileRating();
-
-    fileRating.request_key = body.request_key;
-    fileRating.is_positive = body.positive;
-    fileRating.file = file;
-
-    await AppDataSource.getRepository(FileRating).save(fileRating);
-
-    res.status(200).json({result: "success"});
-}
-
-export const removeFileRating = async (req: Request, res: Response) => {
-    const body = req.body;
-
-
-    if (!body.request_key) {
-        res.status(400).json();
-        return;
-    }
-
-    const fileRating = await AppDataSource.getRepository(FileRating).findOne({
-        where: {request_key: Equal(body.request_key)}
-    });
-
-    if (!fileRating) {
-        console.log(body)
-        res.status(200).json({error: "File rating not found."});
-        return;
-    }
-
-    await AppDataSource.getRepository(FileRating).remove(fileRating);
-
-    res.status(200).json({result: "success"});
-}
-
-export const getFileRatings = async (req: Request, res: Response) => {
-    const params = req.query;
-
-    if (!params.id) {
-        res.status(400).json();
-        return;
-    }
-
-    const file = await AppDataSource.getRepository(CourseFile).findOne({
-        where: {id: Equal(parseInt(params.id as string))},
-        relations: ["ratings"]
-    });
-
-    if (!file) {
-        res.status(200).json({error: "File not found."});
-        return;
-    }
-
-    let likes = 0;
-    let dislikes = 0;
-
-    file.ratings.forEach(value => {
-        value.is_positive ? likes += 1 : dislikes += 1;
-    });
-
-    res.status(200).json({likes: likes, dislikes: dislikes});
-}
-
-=======
->>>>>>> d51fdb0 (major redesign: switch to nextjs, seo improvements)
 export const uploadFile = async (req: Request, res: Response) => {
     const file = req.file;
 
