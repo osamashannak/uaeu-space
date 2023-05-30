@@ -1,5 +1,5 @@
 .file {
-  font-size: 0.75rem;
+  font-size: 15px;
   display: flex;
   background-color: white;
   padding: 1rem;
@@ -36,7 +36,7 @@
   font-weight: 500;
 }
 
-.fileIcon > img {
+.fileIcon > svg {
   padding-right: 1rem;
   border-right: solid 1px rgba(0, 0, 0, 0.075);
 }

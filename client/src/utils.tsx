@@ -1,4 +1,4 @@
-import Image from "next/image";
+import icons from "@/icons";
 
 export const HOST = "https://api.uaeu.space";
 
@@ -53,22 +53,22 @@ export const formatBytes = (bytes: number, decimals: number = 1) => {
 
 const iconClasses = {
     // Media
-    "image": "/icons/file/file-type-image.svg",
-    "audio": "/icons/file/file-type-audio.svg",
-    "video": "/icons/file/file-type-video.svg",
+    "image": icons.image,
+    "audio": icons.audio,
+    "video": icons.video,
     // Documents
-    "application/pdf": "/icons/file/file-type-pdf2.svg",
-    "application/msword": "/icons/file/file-type-word.svg",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "/icons/file/file-type-word.svg",
-    "application/vnd.ms-powerpoint": "/icons/file/file-type-powerpoint.svg",
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation": "/icons/file/file-type-powerpoint.svg",
-    "application/vnd.ms-excel": "/icons/file/file-type-excel.svg",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "/icons/file/file-type-excel.svg",
+    "application/pdf": icons.pdf,
+    "application/msword": icons.word,
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": icons.word,
+    "application/vnd.ms-powerpoint": icons.powerpoint,
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": icons.powerpoint,
+    "application/vnd.ms-excel": icons.excel,
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": icons.excel,
     // Archives
-    "application/gzip": "/icons/file/file-type-zip.svg",
-    "application/zip": "/icons/file/file-type-zip.svg",
-    "application/x-7z-compressed": "/icons/file/file-type-zip.svg",
-    "application/vnd.rar": "/icons/file/file-type-zip.svg",
+    "application/gzip": icons.archive,
+    "application/zip": icons.archive,
+    "application/x-7z-compressed": icons.archive,
+    "application/vnd.rar": icons.archive
 };
 
 export function getIconFromMIME(mimeType: string): JSX.Element {
@@ -77,15 +77,11 @@ export function getIconFromMIME(mimeType: string): JSX.Element {
         return mimeType.startsWith(key);
     });
 
-    // write a better function
-
     if (candidate === undefined) {
-        return <Image className={"file-type-icon"} width={50} height={50} alt={""}
-                      src={"/icons/file/default-file.svg"}/>;
+        return icons.file;
     } else {
-        return <Image className={"file-type-icon"} width={50} height={50} alt={""} src={candidate[1]}/>;
+        return candidate[1];
     }
-
 }
 
 export const generateConfetti = (id: string) => {
@@ -117,3 +113,5 @@ export const generateConfetti = (id: string) => {
 
     }, 10000);
 }
+
+export const convertArabicNumeral = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))

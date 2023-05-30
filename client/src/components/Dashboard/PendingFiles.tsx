@@ -1,9 +1,8 @@
 import {useEffect, useState} from "react";
-import reviewStyles from "@/styles/components/Review.module.scss";
 import styles from "@/styles/Dashboard.module.scss";
-import File from "@/components/File";
 import {getPendingFiles} from "@/api/dashboard";
 import {DashboardFileAPI} from "@/interface/dashboard";
+import File from "@/components/Course/File";
 
 
 const PendingFiles = (props: {course: string | null}) => {

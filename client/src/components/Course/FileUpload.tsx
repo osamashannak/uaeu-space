@@ -1,13 +1,11 @@
-import {ChangeEvent, FormEvent, useCallback, useEffect, useState} from "react";
-import FilePreview from "@/components/FilePreview";
-import {useRouter} from "next/router";
+import {ChangeEvent, FormEvent, useState} from "react";
 import styles from "@/styles/components/FileUpload.module.scss";
+import FilePreview from "@/components/Course/FilePreview";
 
 const FileUpload = (props: { courseTag: string }) => {
     const [details, setDetails] = useState<{name: string, file: File}[]>([]);
     const [submitting, setSubmitting] = useState<boolean>(false);
     const [finished, setFinished] = useState<File[]>([]);
-    const router = useRouter();
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();

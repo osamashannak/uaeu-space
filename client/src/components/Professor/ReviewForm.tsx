@@ -3,8 +3,7 @@ import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "@/styles/components/ReviewForm.module.scss";
 import {postReview} from "@/api/professor";
 import {ReviewForm} from "@/interface/professor";
-
-const a2e = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+import {convertArabicNumeral} from "@/utils";
 
 const ReviewForm = (props: { professorEmail: string }) => {
 
@@ -121,7 +120,7 @@ const ReviewForm = (props: { professorEmail: string }) => {
                             placeholder={"#"}
                             onChange={
                                 event => {
-                                    event.target.value = a2e(event.target.value);
+                                    event.target.value = convertArabicNumeral(event.target.value);
                                     if ((/[^1-5]/g.test(event.target.value))) {
                                         event.target.setCustomValidity("Please enter a number between 1 and 5.");
                                         event.target.value = event.target.value.replace(/[^1-5]/g, '')

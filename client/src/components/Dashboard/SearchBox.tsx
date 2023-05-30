@@ -3,7 +3,6 @@
 import {useCombobox} from "downshift";
 import {useRef, useState} from "react";
 import Fuse from "fuse.js";
-import {useRouter} from "next/navigation";
 import styles from "@/styles/components/SearchBox.module.scss";
 import {getCoursesList} from "@/api/course";
 import {getProfessorsList} from "@/api/professor";
@@ -17,7 +16,6 @@ const SearchBox = (props: { type: "professor" | "course", setState: any }) => {
         const [items, setItems] = useState<Item[]>([]);
         const [allItems, setAllItems] = useState<Item[]>([]);
         const lastInputValue = useRef<string>();
-        const router = useRouter();
 
         const {
             inputValue,

@@ -1,12 +1,12 @@
 import '@/styles/globals.scss'
 import type {AppProps} from 'next/app'
-import Layout from "@/components/Layout";
 import {Montserrat} from "next/font/google";
 import {Router} from "next/router";
 import NProgress from "nprogress";
 import {GoogleReCaptchaProvider} from 'react-google-recaptcha-v3';
+import Layout from "@/components/Global/Layout";
 
-const montserrat = Montserrat({subsets: ['latin'], weight: ["100", "200", "300", "400", "500", "600", "700"]});
+const montserrat = Montserrat({subsets: ['latin'], weight: ["100", "200", "300", "400", "500", "600", "700", "800"]});
 
 NProgress.configure({showSpinner: false});
 

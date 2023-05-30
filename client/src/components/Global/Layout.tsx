@@ -1,8 +1,8 @@
-import Header from "@/components/Header";
 import Head from "next/head";
-import Footer from "@/components/Footer";
 import Script from 'next/script'
 import {ReactNode} from "react";
+import Footer from "@/components/Global/Footer";
+import Header from "@/components/Global/Header";
 
 
 const Layout = (props: { children: ReactNode }) => {

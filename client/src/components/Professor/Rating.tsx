@@ -31,7 +31,6 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
         if (likeKey) {
             const request = await removeRating(likeKey, props.type);
             if (!request) return;
-            console.log(likeKey)
             localStorage.removeItem(`like-request-${props.id}`);
             localStorage.removeItem(`${props.id}-rev`);
         }
@@ -55,8 +54,8 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
 
         // Remove Like
         if (liked) {
-            await unLike();
             setLiked(null);
+            await unLike();
             running.current = false;
             return;
         }
@@ -86,8 +85,8 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
 
         // Remove dislike
         if (liked === false) {
-            await unDislike();
             setLiked(null);
+            await unDislike();
             running.current = false;
             return;
         }

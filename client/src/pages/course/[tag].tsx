@@ -1,13 +1,13 @@
 import styles from "@/styles/Course.module.scss";
 import fileStyles from "@/styles/components/File.module.scss";
-import File from "@/components/File";
-import FileUpload from "@/components/FileUpload";
 import Head from 'next/head';
 import {CourseAPI} from "@/interface/course";
 import {getCourse} from "@/api/course";
 import {GetServerSidePropsContext} from "next";
 import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
 import {MultiplexAd} from "@/components/MultiplexAd";
+import File from "@/components/Course/File";
+import FileUpload from "@/components/Course/FileUpload";
 
 const Course = (props: CourseAPI) => {
 

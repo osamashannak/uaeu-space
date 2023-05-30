@@ -14,11 +14,11 @@ const Dashboard = (props: AuthResponse) => {
 
     const [professor, setProfessor] = useState<string | null>(null);
     const [course, setCourse] = useState<string | null>(null);
-    
+
     useEffect(() => {
         sessionStorage.setItem("token", props.token);
     }, [props.token]);
-    
+
     if (!props.token) return;
 
     return (

@@ -1,21 +1,20 @@
-import {useEffect, useState} from "react";
-import Review from "@/components/Review";
-import reviewStyles from "@/styles/components/Review.module.scss";
+import {useEffect, useRef, useState} from "react";
 import styles from "@/styles/Dashboard.module.scss";
 import {getPendingReviews, getProfessorReviews, reviewAction} from "@/api/dashboard";
 import {DashboardReviewAPI} from "@/interface/dashboard";
 import NProgress from "nprogress";
+import Review from "@/components/Professor/Review";
 
 const PendingReviews = (props: {professor: string | null}) => {
 
     const [reviews, setReviews] = useState<DashboardReviewAPI[]>();
-    
+    const previousProfessor = useRef(props.professor);
+
     useEffect(() => {
         if (!props.professor) return;
         
         const token = sessionStorage.getItem("token")!;
         getProfessorReviews(token, props.professor).then((data) => {
-            console.log(data)
             setReviews(data == undefined ? [] : data);
         });
         
@@ -23,14 +22,19 @@ const PendingReviews = (props: {professor: string | null}) => {
 
     useEffect(() => {
         if (props.professor) return;
+
         
-        if (!reviews || reviews.length === 0 || props.professor === null) {
+        if (!reviews || reviews.length === 0 || (previousProfessor.current !== null && props.professor === null)) {
             const token = sessionStorage.getItem("token")!;
             getPendingReviews(token).then((data) => {
                 setReviews(data == undefined ? [] : data);
             });
         }
     }, [props.professor, reviews]);
+
+    useEffect(() => {
+        previousProfessor.current = props.professor;
+    }, [props.professor]);
 
     const reviewActionClick = (id: number, action: "approve" | "hide") => {
         return () => {
@@ -86,8 +90,8 @@ const PendingReviews = (props: {professor: string | null}) => {
                             <div className={styles.hideButton} onClick={reviewActionClick(review.id, "hide")}>Hide</div>
                             <div onClick={professorPageClick(review.professor.email)} className={styles.downloadButton}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                          stroke-linejoin="round" stroke-width="2"
+                                    <path fill="none" stroke="currentColor" strokeLinecap="round"
+                                          strokeLinejoin="round" strokeWidth="2"
                                           d="M12 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6m-7 1l9-9m-5 0h5v5"/>
                                 </svg>
                             </div>

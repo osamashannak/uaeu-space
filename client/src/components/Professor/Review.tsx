@@ -1,12 +1,11 @@
 import {useState} from "react";
 import {ratingToIcon} from "@/utils";
 import styles from "@/styles/components/Review.module.scss";
-import Rating from "@/components/Rating";
 import dayjs from "dayjs";
-
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {ReviewAPI} from "@/interface/professor";
 import {DashboardReviewAPI} from "@/interface/dashboard";
+import Rating from "@/components/Professor/Rating";
 
 dayjs.extend(relativeTime)
 

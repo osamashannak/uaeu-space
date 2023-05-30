@@ -6,7 +6,7 @@ import Link from "next/link";
 import {MultiplexAd} from "@/components/MultiplexAd";
 import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
 
-export default function Home() {
+const Home = () => {
 
     const adClick = () => {
         window.open("https://api.uaeu.space/advertisement", "_blank");
@@ -121,3 +121,5 @@ export default function Home() {
         </>
     )
 }
+
+export default Home;

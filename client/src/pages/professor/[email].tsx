@@ -1,6 +1,4 @@
 import styles from "@/styles/Professor.module.scss";
-import Review from "@/components/Review";
-import ReviewForm from "@/components/ReviewForm";
 import reviewStyles from "@/styles/components/Review.module.scss";
 import einstein from "../../../public/einstien.png";
 import Head from 'next/head';
@@ -10,6 +8,8 @@ import {GetServerSidePropsContext} from "next";
 import {getProfessor} from "@/api/professor";
 import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
 import {MultiplexAd} from "@/components/MultiplexAd";
+import ReviewForm from "@/components/Professor/ReviewForm";
+import Review from "@/components/Professor/Review";
 
 const Professor = (props: ProfessorAPI | {}) => {
 
