@@ -22,6 +22,8 @@ const Home = () => {
                 <meta property="og:url" content="https://uaeu.space"/>
             </Head>
 
+            <ResponsiveAdUnit slotId={4492620959}/>
+
             <section className={styles.helpUs}>
                 <span>💙</span>
                 <p>Uploading materials and rating professors will help students like you succeed in the university.</p>

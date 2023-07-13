@@ -137,23 +137,23 @@ export const getFile = async (req: Request, res: Response) => {
             client_address: address
         }
     });
-
-    if (!fileAccessToken || fileAccessToken.expires_on < new Date()) {
-        if (!address) {
-            res.status(401).json();
-            return
-        }
-
+    
+    if (!fileAccessToken) {
         const queryParams = generateToken(address);
-
-        console.log(queryParams)
-
+        
         fileAccessToken = new FileAccessToken();
-
+        
         fileAccessToken.url = queryParams.toString();
         fileAccessToken.expires_on = queryParams.expiresOn!;
         fileAccessToken.client_address = address;
-
+        
+        await AppDataSource.getRepository(FileAccessToken).save(fileAccessToken);
+    } else if (fileAccessToken.expires_on < new Date()) {
+        const queryParams = generateToken(address);
+        
+        fileAccessToken.url = queryParams.toString();
+        fileAccessToken.expires_on = queryParams.expiresOn!;
+        
         await AppDataSource.getRepository(FileAccessToken).save(fileAccessToken);
     }
 

@@ -81,6 +81,7 @@ const Professor = (props: ProfessorAPI | {}) => {
                     }}
                 />
             </Head>
+            <ResponsiveAdUnit slotId={4492620959}/>
             <div className={styles.profPage}>
                 <section className={styles.profInfoHead}>
                     <div className={styles.profInfoLeft}>

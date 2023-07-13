@@ -29,6 +29,7 @@ const Course = (props: CourseAPI) => {
                 <meta property="og:url" content={`https://uaeu.space/course/${props.tag}`}/>
             </Head>
 
+            <ResponsiveAdUnit slotId={4492620959}/>
             <div className={styles.coursePage}>
                 <section className={styles.courseInfoHead}>
                     <h2>{props.tag}</h2>
