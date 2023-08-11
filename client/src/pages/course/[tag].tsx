@@ -5,7 +5,6 @@ import {CourseAPI} from "@/interface/course";
 import {getCourse} from "@/api/course";
 import {GetServerSidePropsContext} from "next";
 import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
-import {MultiplexAd} from "@/components/MultiplexAd";
 import File from "@/components/Course/File";
 import FileUpload from "@/components/Course/FileUpload";
 
@@ -51,13 +50,10 @@ const Course = (props: CourseAPI) => {
                     }
                 </section>
 
-                <ResponsiveAdUnit slotId={3842429430}/>
-
                 <section>
                     <FileUpload courseTag={props.tag}/>
                 </section>
                 
-                <MultiplexAd slotId={6339480708} style={{marginTop: "1rem"}}/>
             </div>
         </>
     );

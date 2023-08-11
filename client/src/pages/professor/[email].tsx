@@ -7,7 +7,6 @@ import {ProfessorAPI} from "@/interface/professor";
 import {GetServerSidePropsContext} from "next";
 import {getProfessor} from "@/api/professor";
 import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
-import {MultiplexAd} from "@/components/MultiplexAd";
 import ReviewForm from "@/components/Professor/ReviewForm";
 import Review from "@/components/Professor/Review";
 
@@ -113,7 +112,6 @@ const Professor = (props: ProfessorAPI | {}) => {
 
                 <ReviewForm professorEmail={props.email}/>
 
-                <MultiplexAd slotId={9040352589} style={{marginTop: "1rem"}}/>
             </div>
         </>
     );

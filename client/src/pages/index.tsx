@@ -3,7 +3,6 @@ import styles from '@/styles/Home.module.scss';
 import Image from "next/image";
 import SearchBox from "@/components/SearchBox";
 import Link from "next/link";
-import {MultiplexAd} from "@/components/MultiplexAd";
 import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
 
 const Home = () => {
@@ -119,7 +118,6 @@ const Home = () => {
                 <Image onClick={adClick} className={styles.adImage2} src={"/ad/adPhone.jpeg"} alt={""} width={300}
                        height={100}/>
             </div>
-            <MultiplexAd slotId={6026218571}/>
         </>
     )
 }
