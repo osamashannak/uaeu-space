@@ -1,13 +1,73 @@
 .rating {
   display: flex;
   align-items: center;
+}
+
+.like {
+  @extend .rating;
   cursor: pointer;
+
+  @media (min-width: 768px) {
+    &:hover {
+      color: rgb(29, 155, 240);
+
+      .ratingIconBg {
+        background-color: rgba(232, 77, 77, 0.1);
+        border-radius: 50%;
+
+      }
+    }
+  }
+}
+
+.dislike {
+  @extend .rating;
+  cursor: pointer;
+  margin-left: 1rem;
+
+  @media (min-width: 768px) {
+    &:hover {
+      color: rgb(29, 155, 240);
+
+      .ratingIconBg {
+        background-color: rgba(29, 155, 240, 0.1);
+        border-radius: 50%;
+
+      }
+    }
+  }
+}
+
+.ratingIconBg {
+  position: absolute;
+  margin: -8px;
+  outline-style: none;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+  border-radius: 9999px;
+  transition-duration: 0.2s;
+}
+
+.ratingCount {
+  padding-left: 12px;
+  padding-right: 12px;
+
 }
 
 .ratingIcon {
-    color: #a9a9a9;
+  width: 20px;
+  height: 20px;
+}
+
+.filledRatingIcon {
+  @extend .ratingIcon;
+  color: rgb(29, 155, 240);
 }
 
 .buttonWrapper {
   position: relative;
+  display: flex;
+
 }

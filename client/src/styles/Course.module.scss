@@ -8,7 +8,7 @@
   padding: 1rem;
   margin: auto;
   background-color: white;
-  max-width: 90rem;
+  max-width: 800px;
   width: 100%;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
@@ -19,7 +19,7 @@
     margin-top: 0.5rem;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 815px) {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     box-shadow: none;
@@ -31,7 +31,7 @@
 .fileList {
   margin: 2rem auto auto;
   width: 100%;
-  max-width: 90rem;
+  max-width: 800px;
 }
 
 .courseNotFound {

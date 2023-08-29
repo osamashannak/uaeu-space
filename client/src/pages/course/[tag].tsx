@@ -28,23 +28,23 @@ const Course = (props: CourseAPI) => {
                 <meta property="og:url" content={`https://uaeu.space/course/${props.tag}`}/>
             </Head>
 
-            <ResponsiveAdUnit slotId={4492620959}/>
+            {/*<ResponsiveAdUnit slotId={4492620959}/>*/}
+
             <div className={styles.coursePage}>
                 <section className={styles.courseInfoHead}>
                     <h2>{props.tag}</h2>
                     <h1>{props.name}</h1>
                 </section>
 
-                <ResponsiveAdUnit slotId={8903184422}/>
+                {/*<ResponsiveAdUnit slotId={8903184422}/>*/}
 
                 <section className={styles.fileList}>
                     {
                         fileCount > 0 ? props.files.map((value, index) => (
                             <>
                                 <File key={index} {...value}/>
-                                {Math.floor(fileCount / 2) === index &&
-                                    <ResponsiveAdUnit slotId={1529404516}/>
-                                }
+                                {/*{Math.floor(fileCount / 2) === index &&
+                                    <ResponsiveAdUnit slotId={1529404516}/>}*/}
                             </>
                         )) : <p className={fileStyles.file}>{"There are no files."}</p>
                     }

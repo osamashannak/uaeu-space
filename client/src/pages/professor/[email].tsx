@@ -40,7 +40,7 @@ const Professor = (props: ProfessorAPI | {}) => {
     return (
         <>
             <Head>
-                <title>{`Discover ${props.name}&apos;s Reviews and Ratings - UAEU Space`}</title>
+                <title>{`Discover ${props.name}'s Reviews and Ratings - UAEU Space`}</title>
                 <meta name="description"
                       content={mostLengthReview || `Rate ${props.name} or learn from other students about their performance.`}/>
                 <link rel="canonical" href={`https://uaeu.space/professor/${props.email}`}/>
@@ -80,7 +80,9 @@ const Professor = (props: ProfessorAPI | {}) => {
                     }}
                 />
             </Head>
-            <ResponsiveAdUnit slotId={4492620959}/>
+
+            {/*<ResponsiveAdUnit slotId={4492620959}/>*/}
+
             <div className={styles.profPage}>
                 <section className={styles.profInfoHead}>
                     <div className={styles.profInfoLeft}>
@@ -93,22 +95,21 @@ const Professor = (props: ProfessorAPI | {}) => {
                     </div>
                 </section>
 
-                <ResponsiveAdUnit slotId={4212296223}/>
+                {/*<ResponsiveAdUnit slotId={4212296223}/>*/}
 
                 <section className={styles.commentsSection}>
                     {
                         reviewCount > 0 ? props.reviews.map((review, index) => (
                             <>
                                 <Review key={review.id} {...review}/>
-                                {Math.floor(reviewCount / 2) === index &&
-                                    <ResponsiveAdUnit slotId={8705186952}/>
-                                }
+                                {/*{Math.floor(reviewCount / 2) === index &&
+                                    <ResponsiveAdUnit slotId={8705186952}/>}*/}
                             </>
                         )) : <p className={reviewStyles.review}>{"There are no comments."}</p>
                     }
                 </section>
 
-                <ResponsiveAdUnit slotId={7386567554}/>
+                {/*<ResponsiveAdUnit slotId={7386567554}/>*/}
 
                 <ReviewForm professorEmail={props.email}/>
 

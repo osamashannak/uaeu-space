@@ -1,5 +1,10 @@
 @import "nprogress";
 
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -107,3 +112,11 @@ footer {
 }
 
 .grecaptcha-badge { visibility: hidden; }
+
+.text-separator {
+  padding-left: 4px;
+  padding-right: 4px;
+  color: rgb(139, 152, 165);
+  font-weight: 400;
+
+}

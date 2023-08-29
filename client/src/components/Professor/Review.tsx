@@ -41,7 +41,15 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
             </div>
 
             <div className={styles.reviewInfo}>
-                <p>{props.author}</p>
+                <div>
+                    <span>{props.author}</span>
+                    <span className={"text-separator"}>·</span>
+                    <time
+                        dateTime={props.created_at.toString()}
+                        title={dayjs(props.created_at).format("MMM D, YYYY h:mm A")}
+                        className={styles.time}
+                    >{dayjs(props.created_at).fromNow(true)}</time>
+                </div>
                 <span>
                     <p>{props.positive ? "Recommend" : "Not recommended"}</p>
                     <span className={styles.stars}>{ratingToIcon(props.score)}</span>
@@ -54,8 +62,6 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
 
             <div className={styles.reviewFooter}>
                 <div>
-                    <span>{'author_ip' in props ? props.created_at.toString() : dayjs(props.created_at).fromNow()}</span>
-                    ·
                     <Rating dislikes={props.dislikes} likes={props.likes} id={props.id} type={"review"}/>
                 </div>
                 <svg

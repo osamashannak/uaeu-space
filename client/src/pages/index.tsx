@@ -21,7 +21,7 @@ const Home = () => {
                 <meta property="og:url" content="https://uaeu.space"/>
             </Head>
 
-            <ResponsiveAdUnit slotId={4492620959}/>
+           {/*<ResponsiveAdUnit slotId={4492620959}/>*/}
 
             <section className={styles.helpUs}>
                 <span>💙</span>
@@ -70,8 +70,7 @@ const Home = () => {
 
             <hr className={styles.separator}/>
 
-            <ResponsiveAdUnit slotId={9919633065} style={{marginBottom: "1rem", marginTop: "0.5rem"}}/>
-
+            {/*<ResponsiveAdUnit slotId={9919633065} style={{marginBottom: "1rem", marginTop: "0.5rem"}}/>*/}
 
             <section className={styles.professor}>
                 <h2>Rate a Professor</h2>

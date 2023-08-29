@@ -9,7 +9,7 @@ dayjs.extend(relativeTime)
 
 const File = (props: CourseFileAPI) => {
     return (
-        <article className={styles.file}>
+        <div className={styles.file}>
             <div className={styles.fileIcon}>
                 {getIconFromMIME(props.type)}
             </div>
@@ -22,12 +22,12 @@ const File = (props: CourseFileAPI) => {
                        title={props.name}>{props.name}</a>
                 </h3>
                 <p className={"file-size"}>{formatBytes(props.size)}</p>
-                <p>{dayjs(props.created_at).fromNow()}</p>
-                <div className={styles.fileRating}>
-                    <Rating dislikes={props.dislikes} likes={props.likes} id={props.id} type={"file"}/>
-                </div>
+                <time
+                    dateTime={props.created_at.toString()}
+                    title={dayjs(props.created_at).format("MMM D, YYYY h:mm A")}
+                >{dayjs(props.created_at).fromNow()}</time>
             </div>
-        </article>
+        </div>
     );
 }
 

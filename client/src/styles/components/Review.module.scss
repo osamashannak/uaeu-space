@@ -6,7 +6,7 @@
   border-radius: 6px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 
-  @media (max-width: 768px) {
+  @media (max-width: 815px) {
     border-radius: 0;
     box-shadow: none;
     margin-top: 0.5rem;
@@ -22,25 +22,27 @@
   justify-content: space-between;
   align-items: baseline;
 
-  p, span {
+  span {
     text-align: right;
     font-weight: 600;
   }
 }
 
+
+.time {
+  color: rgb(139, 152, 165);
+}
+
 .reviewBody {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin: 2rem 0;
-  min-height: 5vh;
-  row-gap: 1rem;
+  margin: 16px 0;
+  min-height: 7vh;
 
   p {
     font-weight: 400;
-    line-height: 1.2rem;
+    line-height: 20px;
     max-width: 80rem;
+    word-wrap: break-word;
+    white-space: pre-wrap;
   }
 }
 
@@ -54,11 +56,6 @@
   padding-top: 1rem;
   padding-bottom: 0.5rem;
 
-  div {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-  }
 }
 
 .stars {
