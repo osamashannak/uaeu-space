@@ -38,6 +38,10 @@ const Course = (props: CourseAPI) => {
 
                 {/*<ResponsiveAdUnit slotId={8903184422}/>*/}
 
+                <section>
+                    <FileUpload courseTag={props.tag}/>
+                </section>
+
                 <section className={styles.fileList}>
                     {
                         fileCount > 0 ? props.files.map((value, index) => (
@@ -48,10 +52,6 @@ const Course = (props: CourseAPI) => {
                             </>
                         )) : <p className={fileStyles.file}>{"There are no files."}</p>
                     }
-                </section>
-
-                <section>
-                    <FileUpload courseTag={props.tag}/>
                 </section>
                 
             </div>

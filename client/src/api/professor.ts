@@ -1,6 +1,7 @@
-import {ProfessorAPI, ReviewForm} from "@/interface/professor";
+import {ProfessorAPI, ReviewFormAPI} from "@/interface/professor";
 import {HOST} from "@/utils";
 import {ProfessorItem} from "@/interface/searchbox";
+
 export const getProfessorsList = async () => {
     let response;
 
@@ -27,7 +28,25 @@ export const getProfessor = async (id: string) => {
     return response['professor'] as ProfessorAPI ?? null ;
 }
 
-export const postReview = async (details: ReviewForm, professorEmail: string, recaptchaToken: string) => {
+export const uploadAttachment = async (file: File | Blob) => {
+    let response;
+
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const request = await fetch(HOST + "/professor/rate/upload", {
+            method: "POST",
+            body: formData
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.id as string;
+}
+
+export const postReview = async (options: ReviewFormAPI) => {
     let response;
 
     try {
@@ -36,18 +55,12 @@ export const postReview = async (details: ReviewForm, professorEmail: string, re
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                review: details,
-                professor: professorEmail,
-                recaptchaToken: recaptchaToken
-            })
+            body: JSON.stringify(options)
         });
         response = await request.json();
     } catch (error) {
         return undefined;
     }
-
-    console.log(response)
 
     return response.result === "success";
 }

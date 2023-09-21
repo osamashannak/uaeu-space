@@ -8,10 +8,12 @@
 .profInfoHead {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+
   padding: 1rem;
   margin: auto;
   background-color: white;
-  max-width: 800px;
+  max-width: 600px;
   width: 100%;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
@@ -22,6 +24,7 @@
     border-bottom-right-radius: 0;
     box-shadow: none;
     border: none;
+    max-width: 100%;
 
   }
 }
@@ -39,24 +42,32 @@
   text-align: right;
   border-left: 1px solid rgba(0, 0, 0, 0.1);
   padding-left: 0.5rem;
+  display: flex;
+  font-weight: 600;
 
-  p {
-    font-weight: 600;
-    font-size: 2rem;
-    text-align: center;
-    color: black;
+}
 
-    span {
-      font-size: 0.75rem;
-      color: rgba(0, 0, 0, 0.5);
-    }
-  }
+.score {
+  font-size: 3rem;
+  text-align: center;
+  color: black;
+}
+
+.outOf {
+  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.5);
+    margin-top: 0.70rem;
+  margin-left: 0.25rem;
 }
 
 .commentsSection {
   margin: 1rem auto auto;
   width: 100%;
-  max-width: 800px;
+  max-width: 600px;
+
+    @media (max-width: 815px) {
+        max-width: 100%;
+    }
 }
 
 .professorNotFound {

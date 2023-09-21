@@ -6,6 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import {ReviewAPI} from "@/interface/professor";
 import {DashboardReviewAPI} from "@/interface/dashboard";
 import Rating from "@/components/Professor/Rating";
+import Image, {default as NextImage} from "next/image";
 
 dayjs.extend(relativeTime)
 
@@ -23,11 +24,15 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
 
     const flagReviewPopup = () => {
         setPopup(true);
+        document.body.style.overflow = "hidden";
     }
 
     const closePopup = () => {
         setPopup(false);
+        document.body.style.overflow = "auto";
     }
+
+    let attachment_url = "https://uaeuresources.blob.core.windows.net/attachments/" + props.attachment?.id;
 
     return (
         <article className={styles.review}>
@@ -41,23 +46,48 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
             </div>
 
             <div className={styles.reviewInfo}>
-                <div>
-                    <span>{props.author}</span>
-                    <span className={"text-separator"}>·</span>
+                <div className={styles.reviewInfoLeft}>
+                    <div className={styles.authorName}>
+                        <span>{props.author}</span>
+                    </div>
+                    <div className={"text-separator"}>
+                        <span>·</span>
+                    </div>
                     <time
                         dateTime={props.created_at.toString()}
                         title={dayjs(props.created_at).format("MMM D, YYYY h:mm A")}
                         className={styles.time}
                     >{dayjs(props.created_at).fromNow(true)}</time>
                 </div>
-                <span>
-                    <p>{props.positive ? "Recommend" : "Not recommended"}</p>
-                    <span className={styles.stars}>{ratingToIcon(props.score)}</span>
-                </span>
+                <div className={styles.reviewScore}>
+                    <div>
+                        <span>{props.positive ? "Recommend" : "Not recommended"}</span>
+                    </div>
+                    <div>
+                        <span className={styles.stars}>{ratingToIcon(props.score)}</span>
+                    </div>
+                </div>
             </div>
 
             <div className={styles.reviewBody}>
                 <p dir={"auto"}>{props.comment}</p>
+                <div className={styles.imageList}>
+                    {
+                        props.attachment &&
+                        <div className={styles.attachment} onClick={event => {
+                            window.open(attachment_url, '_blank');
+                        }}>
+                            <div style={{paddingBottom: `${props.attachment.height/props.attachment.width * 100}%`}}></div>
+                            <div style={{backgroundImage: `url(${attachment_url})`}} className={styles.imageDiv}>
+                            </div>
+                            <NextImage src={attachment_url}
+                                       draggable={false}
+                                       width={100}
+                                       height={100}
+                                       alt={""}/>
+                        </div>
+                    }
+                </div>
             </div>
 
             <div className={styles.reviewFooter}>

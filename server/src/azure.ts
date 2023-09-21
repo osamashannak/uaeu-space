@@ -6,24 +6,29 @@ import {
     SASQueryParameters,
     StorageSharedKeyCredential
 } from "@azure/storage-blob";
+import * as crypto from "crypto";
 
 let blobService: BlobServiceClient;
-let containerClient: ContainerClient;
+let materialsClient: ContainerClient;
+let attachmentsClient: ContainerClient;
 
 const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
-const containerName = process.env.AZURE_STORAGE_CONTAINER_NAME;
+const materialsContainer = process.env.AZURE_STORAGE_CONTAINER_MATERIALS;
+const attachmentsContainer = process.env.AZURE_STORAGE_CONTAINER_ATTACHMENTS;
 
-if (!(containerName && accountName)) {
+if (!(materialsContainer && accountName && attachmentsContainer)) {
     console.log(accountName);
-    console.log(containerName);
+    console.log(materialsContainer);
+    console.log(attachmentsContainer);
     throw Error('Missing configurations for Azure.');
 }
 
-const storageUrl = `https://${accountName}.blob.core.windows.net/${containerName}`;
+const storageUrl = (container: string) => `https://${accountName}.blob.core.windows.net/${container}`;
 
 export const loadAzure = async () => {
     blobService = new BlobServiceClient(`https://${accountName}.blob.core.windows.net/`, getKeyCredential())
-    containerClient = blobService.getContainerClient(containerName);
+    materialsClient = blobService.getContainerClient(materialsContainer);
+    attachmentsClient = blobService.getContainerClient(attachmentsContainer);
 }
 
 const getBlobName = (originalName: string) => {
@@ -39,19 +44,20 @@ const getKeyCredential = () => {
     return new StorageSharedKeyCredential(accountName, accountKey1 || accountKey2);
 }
 
-export const getFileURL = (blobName: string, token: string) => {
-    return `${storageUrl}/${blobName}?${token}`;
+export const getFileURL = (blobName: string, container: "attachments" | "materials", token: string="") => {
+    return `${storageUrl(container)}/${blobName}?${token}`;
 }
 
-export const uploadBlob = async (fileName: string, filePath: string, mimeType: string) => {
+
+export const uploadMaterial = async (fileName: string, filePath: string, mimeType: string) => {
     const blobName = getBlobName(fileName);
 
-    const blobClient = containerClient.getBlockBlobClient(blobName);
+    const blobClient = materialsClient.getBlockBlobClient(blobName);
 
     if (mimeType.includes("video")) {
         mimeType = "";
     }
-    
+
     const response = await blobClient.uploadFile(filePath, {
         blobHTTPHeaders: {
             blobContentType: mimeType,
@@ -65,7 +71,24 @@ export const uploadBlob = async (fileName: string, filePath: string, mimeType: s
     return blobName;
 }
 
-export const generateToken = (ipAddress: string): SASQueryParameters => {
+export const uploadAttachment = async (file: Buffer, mimeType: string) => {
+    const blobName = crypto.randomUUID();
+
+    const blobClient = attachmentsClient.getBlockBlobClient(blobName);
+
+    const response = await blobClient.uploadData(file, {
+        blobHTTPHeaders: {
+            blobContentType: mimeType,
+            blobCacheControl: 'max-age=31536000, immutable'
+        }
+    });
+
+    console.log(response);
+
+    return blobName;
+}
+
+export const generateToken = (ipAddress: string, container: string): SASQueryParameters => {
 
     const expiry = new Date();
     expiry.setMonth(expiry.getMonth() + 3); // three month from now (basically one semester)
@@ -73,8 +96,8 @@ export const generateToken = (ipAddress: string): SASQueryParameters => {
 
     return generateBlobSASQueryParameters({
         expiresOn: expiry,
-        ipRange: {start: ipAddress},
-        containerName: containerName,
+        ipRange: {start: ipAddress, end: ipAddress},
+        containerName: container,
         permissions: ContainerSASPermissions.parse("r"),
     }, getKeyCredential()!);
 

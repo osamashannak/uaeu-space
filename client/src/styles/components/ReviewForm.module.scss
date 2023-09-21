@@ -1,38 +1,221 @@
 @use "../form";
 
-.reviewFormField {
-  background-color: #F1F2F3;
-  border: none;
-  padding: 0.5rem;
-  border-radius: 6px;
-  margin-top: 1rem;
-  font-weight: 300;
 
-  &:focus {
-    outline: none;
+.formHeader {
+  display: flex;
+  align-items: center;
+}
+
+.authorName {
+  font-weight: 600;
+}
+
+.infoHover {
+  display: flex;
+  cursor: pointer;
+  margin-left: 0.3rem;
+  color: #808080;
+}
+
+
+.postEditor {
+  overflow-x: hidden;
+  position: relative;
+  cursor: text;
+  padding: 1rem 0;
+  max-height: 350px;
+  min-height: 24px;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.postContent {
+  padding-bottom: 2px;
+  padding-top: 2px;
+  position: relative;
+  z-index: 1;
+  outline: none;
+  line-height: 24px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
+.postPlaceholder {
+  color: #536471;
+  position: absolute;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 1;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+.imagesPreviewList {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 8px;
+
+  // if on mobile, center the images
+    @media (max-width: 812px) {
+        justify-content: center;
+    }
+}
+
+.imagePreview {
+  position: relative;
+  cursor: pointer;
+
+  width: 600px;
+  height: 100%;
+  max-height: 680px;
+
+  border-radius: 16px;
+  border: 1px solid #E5E5E5;
+
+  overflow: hidden;
+  z-index: 1;
+
+
+  .imageDiv {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  img {
+    inset: 0px;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+    -webkit-user-drag: none;
+    overflow-clip-margin: content-box;
+    overflow: clip;
+  }
+
+
+  .deleteButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    margin: 8px;
+    cursor: pointer;
+    transition-duration: 0.2s;
+    transition-property: background-color, box-shadow;
+    border-radius: 9999px;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    width: 24px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+  }
+
+}
+
+.postFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.postButtonList {
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.buttonIconWrapper {
+  min-width: 36px;
+  min-height: 36px;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  transition-property: background-color, box-shadow;
+  border-radius: 9999px;
+  margin-left: -8px;
+
+  &:hover {
+    color: #049AE5;
+  }
+
+  @media (min-width: 768px) {
+    &:hover {
+      background-color: rgba(4, 154, 229, 0.1);
+    }
   }
 }
 
-.reviewFormComment {
-  @extend .reviewFormField;
-  resize: none;
-  width: 100%;
-  height: 7rem;
+.buttonLabel {
+  transition-property: background-color;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+
 }
 
-.noNSFWWarning {
-  font-size: 0.75rem;
-  font-weight: 400;
+.labelBackground {
+  position: absolute;
+  margin: -8px;
+  outline-style: none;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+  border-radius: 9999px;
+  transition-duration: 0.2s;
+}
+
+.imageUploadHTML {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+
+.formOptions {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+}
+
+.score {
+  margin-bottom: 20px;
+  width: fit-content;
 }
 
 .reviewFormScore {
   border: none;
   background-color: white;
-  font-size: 0.8rem;
-  padding: 0.5rem 0rem 0.5rem 1rem;
+  font-size: 15px;
+  padding: 0 0rem 0.5rem 1rem;
   border-radius: 2px;
   width: 1.65rem;
-  margin-top: 1rem;
+  font-weight: 500;
 
   &:focus {
     outline: none;
@@ -42,10 +225,53 @@
 .reviewFormPositivityList {
   list-style: none;
   font-weight: 400;
+  width: fit-content;
+  margin-bottom: 12px;
 }
 
 .reviewFormRadio {
   margin-right: 1rem;
   vertical-align: bottom;
+}
+
+.radioOne {
+  @extend .reviewFormRadio;
+}
+
+.radioTwo {
+  @extend .reviewFormRadio;
   margin-top: 1rem;
+}
+
+// create mixin with argument color
+@mixin commentLength($color) {
+  color: $color;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: color 0.2s ease-in-out, transform  0.4s ease-in-out;
+  transform-origin: right;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.commentLengthGood {
+  @include commentLength(#808080);
+  transform: scale(1.1);
+}
+
+.commentLength {
+  @include commentLength(#808080);
+}
+
+.commentLengthWarning {
+  @include commentLength(#FF0000);
+  //font-size: 0.9rem;
+  transform: scale(1.3);
+
+}
+
+.commentLengthPerfect {
+  @include commentLength(#049AE5);
+  transform: scale(1.1);
 }

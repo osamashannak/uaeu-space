@@ -91,15 +91,23 @@ const Professor = (props: ProfessorAPI | {}) => {
                     </div>
 
                     <div className={styles.profInfoRight}>
-                        {score > 0 ? <p>{score}<span className={"score-out-of"}>/5</span></p> : <p>N/A</p>}
+                        {score > 0 ?
+                            <>
+                                <p className={styles.score}>{score}</p>
+                                <span className={styles.outOf}>/5</span>
+                            </>
+                            :
+                            <p className={styles.score}>N/A</p>}
                     </div>
                 </section>
+
+                <ReviewForm professorEmail={props.email}/>
 
                 {/*<ResponsiveAdUnit slotId={4212296223}/>*/}
 
                 <section className={styles.commentsSection}>
                     {
-                        reviewCount > 0 ? props.reviews.map((review, index) => (
+                        reviewCount > 0 ? props.reviews.map((review) => (
                             <>
                                 <Review key={review.id} {...review}/>
                                 {/*{Math.floor(reviewCount / 2) === index &&
@@ -110,8 +118,6 @@ const Professor = (props: ProfessorAPI | {}) => {
                 </section>
 
                 {/*<ResponsiveAdUnit slotId={7386567554}/>*/}
-
-                <ReviewForm professorEmail={props.email}/>
 
             </div>
         </>

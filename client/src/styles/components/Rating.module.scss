@@ -9,10 +9,10 @@
 
   @media (min-width: 768px) {
     &:hover {
-      color: rgb(29, 155, 240);
+      color: #049AE5;
 
       .ratingIconBg {
-        background-color: rgba(232, 77, 77, 0.1);
+        background-color: rgba(4, 154, 229, 0.1);
         border-radius: 50%;
 
       }
@@ -27,10 +27,10 @@
 
   @media (min-width: 768px) {
     &:hover {
-      color: rgb(29, 155, 240);
+      color: #049AE5;
 
       .ratingIconBg {
-        background-color: rgba(29, 155, 240, 0.1);
+        background-color: rgba(4, 154, 229, 0.1);
         border-radius: 50%;
 
       }
@@ -63,7 +63,7 @@
 
 .filledRatingIcon {
   @extend .ratingIcon;
-  color: rgb(29, 155, 240);
+  color: #049AE5;
 }
 
 .buttonWrapper {

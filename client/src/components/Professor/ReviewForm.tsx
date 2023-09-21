@@ -1,40 +1,63 @@
-import {FormEvent, useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "@/styles/components/ReviewForm.module.scss";
-import {postReview} from "@/api/professor";
+import {postReview, uploadAttachment} from "@/api/professor";
 import {ReviewForm} from "@/interface/professor";
 import {convertArabicNumeral} from "@/utils";
+import {default as NextImage} from "next/image";
+import Compressor from 'compressorjs';
 
 const ReviewForm = (props: { professorEmail: string }) => {
 
     const [details, setDetails] = useState<ReviewForm>({
-        author: "Anonymous",
-        score: 1,
+        score: undefined,
         comment: "",
-        positive: false
+        positive: undefined,
+        attachment: [],
     });
     const [submitting, setSubmitting] = useState<boolean | null | "error" | "loading">("loading");
     const {executeRecaptcha} = useGoogleReCaptcha();
-    
+    const cursorPositionRef = useRef<Range | null>(null);
+    const uploadInputRef = useRef<boolean>(false);
+
     useEffect(() => {
         const hasSubmittedBefore = localStorage.getItem(`${props.professorEmail}-prof`);
         setSubmitting(hasSubmittedBefore ? null : false);
     }, [props.professorEmail]);
 
-    const clearValidity = () => {
-        (document.getElementById("main-rec-radio") as HTMLInputElement).setCustomValidity("");
-    }
-
-    const invalidFieldSubmission = (event: any) => {
-        event.currentTarget.setCustomValidity("Please fill out this field.");
+    const formFilled = () => {
+        return (
+            (details.comment
+                && details.comment.trim()
+                && details.comment.length <= 350 || details.attachment.length > 0) &&
+            details.score &&
+            details.positive !== undefined);
     }
 
     const invalidRadioSubmission = (event: any) => {
         event.currentTarget.setCustomValidity("Please select one of these options.");
     }
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const storeCursorPosition = () => {
+        const selection = window.getSelection();
+
+        if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            cursorPositionRef.current = range.cloneRange();
+        }
+    }
+
+    const restoreCursorPosition = () => {
+        if (cursorPositionRef.current) {
+            const selection = window.getSelection();
+            if (selection) {
+                selection.removeAllRanges();
+                selection.addRange(cursorPositionRef.current);
+            }
+        }
+    }
+
+    const handleSubmit = async () => {
         setSubmitting(true);
 
         if (!executeRecaptcha) {
@@ -44,7 +67,19 @@ const ReviewForm = (props: { professorEmail: string }) => {
 
         const token = await executeRecaptcha("new_review");
 
-        await postReview(details, props.professorEmail, token);
+        const status = await postReview({
+            comment: details.comment!,
+            score: details.score!,
+            positive: details.positive!,
+            professorEmail: props.professorEmail,
+            recaptchaToken: token,
+            attachments: details.attachment.map((attachment) => attachment.id)
+        });
+
+        if (!status) {
+            setSubmitting("error");
+            return;
+        }
 
         localStorage.setItem(`${props.professorEmail}-prof`, 'true');
         setSubmitting(null);
@@ -82,111 +117,317 @@ const ReviewForm = (props: { professorEmail: string }) => {
         )
     }
 
+    let lengthStyle = styles.commentLength;
+
+    if (details.comment && details.comment.length > 350) {
+        lengthStyle += ` ${styles.commentLengthWarning}`;
+    } else if (details.comment && details.comment.length == 350) {
+        lengthStyle += ` ${styles.commentLengthPerfect}`;
+    } else if (details.comment && details.comment.length < 350) {
+        lengthStyle += ` ${styles.commentLengthGood}`;
+    }
+
     return (
-        <section className={styles.form}>
-            <h2>Write a Comment</h2>
-            <form onSubmit={handleSubmit}>
-                <fieldset style={{border: "none", padding: 0}}>
+        <section
+            className={styles.form}
+            onClick={event => {
+                event.preventDefault();
+                const selection = window.getSelection();
+                const input = document.querySelector(`.${styles.postContent}`) as HTMLDivElement;
 
-                    <div>
-                        <input maxLength={15}
-                               className={styles.reviewFormField}
-                               onChange={(event) => {
-                                   details.author = event.target.value;
-                                   setDetails(details)
-                               }}
-                               placeholder={"Name (Optional)"}/>
+                if (!selection || (selection.rangeCount > 0 && selection.getRangeAt(0).startOffset >= selection.getRangeAt(0).endOffset)) {
+                    input.focus();
+                }
+            }}>
+
+            <div className={styles.formHeader}>
+                <span className={styles.authorName}>Anonymous</span>
+                <div
+                    className={styles.infoHover}
+                    title={"The author of this review will be hidden."}
+                    onClick={event => {
+                        event.stopPropagation();
+                    }}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                              d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div className={styles.postEditor}>
+                <div>
+                    {
+                        <div className={styles.postPlaceholder}>
+                            <span>What was your experience?</span>
+                        </div>
+                    }
+                </div>
+
+                <div
+                    onInput={(event) => {
+                        const target = event.target as HTMLDivElement;
+
+                        setDetails((prevDetails) => ({
+                            ...prevDetails,
+                            comment: target.textContent || "",
+                        }));
+
+                        const placeholder = document.querySelector(`.${styles.postPlaceholder}`) as HTMLDivElement;
+                        placeholder.style.display = target.textContent?.length === 0 ? "block" : "none";
+
+                        storeCursorPosition();
+                    }}
+                    onSelect={storeCursorPosition}
+                    onFocus={restoreCursorPosition} dir={"auto"} contentEditable className={styles.postContent}>
+                </div>
+            </div>
+
+            <div className={lengthStyle}>
+                <div>
+                    {(details.comment ?? "").trim().length > 0 ?
+                        <span>{details.comment?.length} </span>
+                        : <span>0 </span>}
+                    <span>/ 350</span>
+                </div>
+            </div>
+
+            {details.attachment && <div className={styles.imagesPreviewList}>
+                {details.attachment.map((attachment, index) => {
+                    return (
+                        <div key={attachment.file.name + index} className={styles.imagePreview} onClick={event => {
+                            event.stopPropagation();
+                            window.open(attachment.url, '_blank');
+                        }}>
+                            <div className={styles.deleteButton}
+                                 onClick={(event) => {
+                                     event.stopPropagation();
+                                     setDetails((prevDetails) => ({
+                                         ...prevDetails,
+                                         attachment: prevDetails.attachment?.filter((_, i) => i !== index),
+                                     }));
+                                     URL.revokeObjectURL(attachment.url);
+                                 }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256">
+                                    <path fill="currentColor"
+                                          d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"/>
+                                </svg>
+                            </div>
+                            <div style={{paddingBottom: `${attachment.aspectRatio * 100}%`}}></div>
+                            <div style={{backgroundImage: `url(${attachment.url})`}} className={styles.imageDiv}>
+                            </div>
+                            <NextImage src={attachment.url}
+                                       draggable={false}
+                                       width={100}
+                                       height={100}
+                                       alt={""}/>
+                        </div>
+                    )
+                })}
+            </div>}
+
+            <div className={styles.postFooter}>
+                <div
+                    className={styles.postButtonList}
+                    onClick={event => {
+                        event.stopPropagation();
+                    }}>
+                    <div className={styles.buttonIconWrapper}>
+                        <label className={styles.buttonLabel} htmlFor={"upload-images"}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                      d="M5 21q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21H5Zm0-2h14V5H5v14Zm1-2h12l-3.75-5l-3 4L9 13l-3 4Zm-1 2V5v14Z"/>
+                            </svg>
+                        </label>
                     </div>
+                    <input className={styles.imageUploadHTML}
+                           onChange={(event) => {
 
-                    <textarea required maxLength={350}
-                              onInvalid={invalidFieldSubmission}
-                              onChange={event => {
-                                  details.comment = event.target.value;
-                                  setDetails(details)
-                                  event.target.setCustomValidity("")
-                              }}
-                              className={styles.reviewFormComment}
-                              placeholder={"Comment (max. 350)"}/>
+                               if (uploadInputRef.current) {
+                                   alert("Please wait for the image to upload.");
+                                   event.target.value = "";
+                                   return;
+                               }
 
-                    <div className={styles.noNSFWWarning}>
-                        <p>Keep your comment polite and respectful.</p>
-                    </div>
+                               uploadInputRef.current = true;
 
-                    <div className={"new-review-score"}>
-                        <label>Score: </label>
-                        <input
-                            required maxLength={1}
-                            inputMode={"numeric"}
-                            placeholder={"#"}
-                            onChange={
-                                event => {
-                                    event.target.value = convertArabicNumeral(event.target.value);
-                                    if ((/[^1-5]/g.test(event.target.value))) {
-                                        event.target.setCustomValidity("Please enter a number between 1 and 5.");
-                                        event.target.value = event.target.value.replace(/[^1-5]/g, '')
-                                    } else {
-                                        event.target.setCustomValidity("");
-                                        details.score = parseInt(event.target.value);
-                                        setDetails(details)
-                                    }
-                                    event.target.reportValidity();
+                               const mimeTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+                               const files = Array.from(event.target.files!).filter(file => mimeTypes.includes(file.type));
+
+                               event.target.value = "";
+
+                               if (files.length === 0) {
+                                   alert("File type not supported.");
+                                   uploadInputRef.current = false;
+                                   return;
+                               }
+
+                               const images = Array.from(files).slice(0, 1);
+
+                               if (images.length === 0) return;
+
+                               if (details.attachment.length > 0) {
+                                   alert("You may only upload one image.");
+                                   uploadInputRef.current = false;
+                                   return;
+                               }
+
+                               function addImage(file: File | Blob) {
+                                   let img = new Image();
+                                   img.src = URL.createObjectURL(file);
+
+                                   img.onload = async () => {
+
+                                       if (img.height < 50 || img.width < 50 || img.height > 16000 || img.width > 16000) {
+                                           alert("Image must be at least 50 pixels in width and height.");
+                                           uploadInputRef.current = false;
+                                           return;
+                                       }
+
+                                       const id = await uploadAttachment(file);
+
+                                       if (id === undefined) {
+                                           alert("Failed to upload the image.");
+                                           uploadInputRef.current = false;
+                                           return;
+                                       }
+
+                                       details.attachment.push({
+                                           file,
+                                           url: img.src,
+                                           aspectRatio: img.height / img.width,
+                                           id
+                                       });
+
+                                       setDetails({...details});
+
+                                       uploadInputRef.current = false;
+                                   }
+                               }
+
+                               if (images[0].type !== "image/gif" && images[0].type !== "image/webp" && images[0].size > 4 * 1024 * 1024) {
+                                   new Compressor(images[0], {
+                                       quality: 0.8,
+                                       success(compressedFile) {
+                                           if (compressedFile.size > 4 * 1024 * 1024) {
+                                               alert("Image size is too large.");
+                                               uploadInputRef.current = false;
+                                               return;
+                                           }
+                                           addImage(compressedFile);
+                                       },
+                                       error() {
+                                           alert("Failed to upload the image.");
+                                           event.target.value = "";
+                                           uploadInputRef.current = false;
+                                       },
+                                   });
+                                   return;
+                               } else if (images[0].type === "image/gif" && images[0].size > 4 * 1024 * 1024) {
+                                   alert("GIFs must be under 4MB.");
+                                   uploadInputRef.current = false;
+                                   return;
+                               }
+
+                               addImage(images[0]);
+
+                           }}
+                           accept={"image/jpeg,image/png,image/webp,image/gif"} multiple
+                           tabIndex={-1} type={"file"} id={"upload-images"}/>
+                </div>
+            </div>
+
+
+            <div className={styles.formOptions}>
+                <div
+                    onClick={event => {
+                        event.stopPropagation();
+                    }}
+                    className={styles.score}>
+                    <span>Score: </span>
+                    <input
+                        required maxLength={1}
+                        inputMode={"numeric"}
+                        placeholder={"#"}
+                        onChange={
+                            event => {
+                                event.target.value = convertArabicNumeral(event.target.value);
+                                if ((/[^1-5]/g.test(event.target.value))) {
+                                    event.target.setCustomValidity("Enter a number 1-5.");
+                                    event.target.value = event.target.value.replace(/[^1-5]/g, '')
+                                    details.score = undefined;
+                                    setDetails({...details});
+                                } else {
+                                    event.target.setCustomValidity("");
+                                    details.score = parseInt(event.target.value);
+                                    setDetails({...details});
                                 }
+                                event.target.reportValidity();
                             }
-                            type={"text"}
-                            className={styles.reviewFormScore}/>
-                        <span style={{fontWeight: 400}}> /5</span>
-                    </div>
+                        }
+                        type={"text"}
+                        className={styles.reviewFormScore}/>
+                    <span> /5</span>
+                </div>
 
-                    <ul className={styles.reviewFormPositivityList}>
-                        <li>
-                            <label>
-                                <input required
-                                       id={"main-rec-radio"}
-                                       onChange={event => {
-                                           event.target.setCustomValidity("")
-                                           details.positive = true;
-                                           setDetails(details)
-                                       }}
-                                       onInvalid={invalidRadioSubmission}
-                                       type="radio"
-                                       className={styles.reviewFormRadio}
-                                       name="recommendation"
-                                       value="positive"/>
-                                Recommend
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input
-                                    onChange={event => {
-                                        clearValidity();
-                                        details.positive = false;
-                                        setDetails(details)
-                                    }}
-                                    type="radio"
-                                    className={styles.reviewFormRadio}
-                                    name="recommendation"
-                                    value="negative"/>
-                                Not recommended
-                            </label>
-                        </li>
-                    </ul>
+                <ul className={styles.reviewFormPositivityList}
+                    onClick={event => {
+                        event.stopPropagation();
+                    }}>
+                    <li>
+                        <label>
+                            <input required
+                                   id={"main-rec-radio"}
+                                   onChange={() => {
+                                       details.positive = true;
+                                       setDetails({...details});
+                                   }}
+                                   onInvalid={invalidRadioSubmission}
+                                   type="radio"
+                                   className={styles.radioOne}
+                                   name="recommendation"
+                                   value="positive"/>
+                            Recommend
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input
+                                onChange={() => {
+                                    details.positive = false;
+                                    setDetails({...details});
+                                }}
+                                type="radio"
+                                className={styles.radioTwo}
+                                name="recommendation"
+                                value="negative"/>
+                            Not recommended
+                        </label>
+                    </li>
+                </ul>
+            </div>
 
-                    <input type={"submit"}
-                           title={"Submit"}
-                           className={styles.formSubmit}
-                           value={"Submit"}/>
+            <input type={"submit"}
+                   title={"Submit"}
+                   className={formFilled() ? styles.enabledFormSubmit : styles.disabledFormSubmit}
+                   value={"Submit"}
+                   onClick={async event => {
+                       event.stopPropagation();
+                       if (!formFilled()) return;
+                       await handleSubmit();
+                   }}/>
 
-                    <div className={styles.disclaimer}>
-                        By submitting this review, you agree to the <a href={"/terms-of-service"} target={"_blank"}>Terms of
-                        Service</a> and <a href={"/privacy"} target={"_blank"}>Privacy Policy</a>.
-                        <br/>
-                        This site is protected by reCAPTCHA and the Google <a
-                        href="https://policies.google.com/privacy" target={"_blank"}>Privacy Policy</a> and <a
-                        href="https://policies.google.com/terms" target={"_blank"}>Terms of Service</a> apply.
-                    </div>
-                </fieldset>
-            </form>
+            <div className={styles.disclaimer}>
+                By submitting this review, you agree to the <a href={"/terms-of-service"} target={"_blank"}>Terms
+                of
+                Service</a> and <a href={"/privacy"} target={"_blank"}>Privacy Policy</a>.
+                <br/>
+                This site is protected by reCAPTCHA and the Google <a
+                href="https://policies.google.com/privacy" target={"_blank"}>Privacy Policy</a> and <a
+                href="https://policies.google.com/terms" target={"_blank"}>Terms of Service</a> apply.
+            </div>
         </section>
     );
 }

@@ -7,6 +7,7 @@ import {CourseFile} from "./entity/CourseFile";
 import {FileAccessToken} from "./entity/FileAccessToken";
 import {AdClick} from "./entity/AdClick";
 import {FileRating, Rating, ReviewRating} from "./entity/Rating";
+import {ReviewAttachment} from "./entity/ReviewAttachment";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -18,7 +19,7 @@ export const AppDataSource = new DataSource({
     synchronize: false,
     ssl: true,
     logging: false,
-    entities: [Professor, Review, Course, CourseFile, FileAccessToken, AdClick, Rating, ReviewRating, FileRating],
+    entities: [ReviewAttachment, Professor, Review, Course, CourseFile, FileAccessToken, AdClick, Rating, ReviewRating, FileRating],
     migrations: [],
     subscribers: [],
 })

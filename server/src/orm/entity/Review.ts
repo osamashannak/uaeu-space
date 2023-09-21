@@ -1,6 +1,7 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Professor} from "./Professor";
 import {ReviewRating} from "./Rating";
+import {ReviewAttachment} from "./ReviewAttachment";
 
 @Entity()
 export class Review {
@@ -26,8 +27,11 @@ export class Review {
     @Column()
     comment!: string;
 
+    @Column({default: null, nullable: true})
+    attachment!: string;
+
     @OneToMany(() => ReviewRating, ratings => ratings.review)
-    ratings!: ReviewRating[]
+    ratings!: ReviewRating[];
 
     @Column({default: false})
     reviewed!: boolean;

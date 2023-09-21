@@ -1,6 +1,7 @@
 @import "nprogress";
 
 html {
+  -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
@@ -118,5 +119,4 @@ footer {
   padding-right: 4px;
   color: rgb(139, 152, 165);
   font-weight: 400;
-
 }

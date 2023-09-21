@@ -5,7 +5,7 @@ import {Equal, ILike} from "typeorm";
 import {CourseFile} from "../orm/entity/CourseFile";
 import {FileAccessToken} from "../orm/entity/FileAccessToken";
 import requestIp from "request-ip";
-import {generateToken, getFileURL, uploadBlob} from "../azure";
+import {generateToken, getFileURL, uploadMaterial} from "../azure";
 import {promisify} from "util";
 import * as fs from "fs";
 import {compressFile, verifyJWTToken} from "../utils";
@@ -84,7 +84,7 @@ export const uploadFile = async (req: Request, res: Response) => {
         return;
     }
 
-    const blobName = await uploadBlob(req.body.name, filePath, file.mimetype);
+    const blobName = await uploadMaterial(req.body.name, filePath, file.mimetype);
 
     const course = await AppDataSource.getRepository(Course).findOne({where: {tag: req.body.tag}});
 
@@ -139,7 +139,7 @@ export const getFile = async (req: Request, res: Response) => {
     });
     
     if (!fileAccessToken) {
-        const queryParams = generateToken(address);
+        const queryParams = generateToken(address, "materials");
         
         fileAccessToken = new FileAccessToken();
         
@@ -149,7 +149,7 @@ export const getFile = async (req: Request, res: Response) => {
         
         await AppDataSource.getRepository(FileAccessToken).save(fileAccessToken);
     } else if (fileAccessToken.expires_on < new Date()) {
-        const queryParams = generateToken(address);
+        const queryParams = generateToken(address, "materials");
         
         fileAccessToken.url = queryParams.toString();
         fileAccessToken.expires_on = queryParams.expiresOn!;
@@ -176,7 +176,7 @@ export const getFile = async (req: Request, res: Response) => {
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);
 
-    const fileUrl = getFileURL(courseFile.blob_name, fileAccessToken.url)
+    const fileUrl = getFileURL(courseFile.blob_name, "materials", fileAccessToken.url)
 
     res.status(200).redirect(fileUrl);
 
