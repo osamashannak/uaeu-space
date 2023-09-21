@@ -74,7 +74,7 @@ const iconClasses = {
 
 export function getIconFromMIME(mimeType: string): JSX.Element {
 
-    const candidate = Object.entries(iconClasses).find(([key, value]) => {
+    const candidate = Object.entries(iconClasses).find(([key]) => {
         return mimeType.startsWith(key);
     });
 
@@ -113,6 +113,38 @@ export const generateConfetti = (id: string) => {
         });
 
     }, 10000);
+}
+
+export const formatRelativeTime = (inputDate: Date) => {
+
+    const now = new Date();
+    const diff = Math.abs(now.getTime() - inputDate.getTime());
+    const diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+
+    if (diffDays > 7) {
+        // format in d/mm/yy without time. the year must be 2 digits
+        const day = inputDate.getDate();
+        const month = inputDate.getMonth() + 1;
+        const year = inputDate.getFullYear().toString().slice(-2);
+        return day + "/" + month + "/" + year;
+    }
+
+    if (diffDays > 1 && diffDays < 7) {
+        return diffDays + "d";
+    }
+
+    const diffHours = Math.ceil(diff / (1000 * 3600));
+    if (diffHours > 1 && diffHours < 24) {
+        return diffHours + "h";
+    }
+
+    const diffMinutes = Math.ceil(diff / (1000 * 60));
+    if (diffMinutes > 1 && diffMinutes < 60) {
+        return diffMinutes + "m";
+    }
+
+    const diffSeconds = Math.ceil(diff / (1000));
+    return diffSeconds + "s";
 }
 
 export const convertArabicNumeral = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))

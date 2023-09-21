@@ -6,7 +6,6 @@ import {
     SASQueryParameters,
     StorageSharedKeyCredential
 } from "@azure/storage-blob";
-import * as crypto from "crypto";
 
 let blobService: BlobServiceClient;
 let materialsClient: ContainerClient;
@@ -71,8 +70,7 @@ export const uploadMaterial = async (fileName: string, filePath: string, mimeTyp
     return blobName;
 }
 
-export const uploadAttachment = async (file: Buffer, mimeType: string) => {
-    const blobName = crypto.randomUUID();
+export const uploadAttachment = async (blobName: string, file: Buffer, mimeType: string) => {
 
     const blobClient = attachmentsClient.getBlockBlobClient(blobName);
 

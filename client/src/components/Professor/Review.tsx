@@ -1,12 +1,12 @@
 import {useState} from "react";
-import {ratingToIcon} from "@/utils";
+import {formatRelativeTime, ratingToIcon} from "@/utils";
 import styles from "@/styles/components/Review.module.scss";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {ReviewAPI} from "@/interface/professor";
 import {DashboardReviewAPI} from "@/interface/dashboard";
 import Rating from "@/components/Professor/Rating";
-import Image, {default as NextImage} from "next/image";
+import {default as NextImage} from "next/image";
 
 dayjs.extend(relativeTime)
 
@@ -57,7 +57,7 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
                         dateTime={props.created_at.toString()}
                         title={dayjs(props.created_at).format("MMM D, YYYY h:mm A")}
                         className={styles.time}
-                    >{dayjs(props.created_at).fromNow(true)}</time>
+                    >{formatRelativeTime(new Date(props.created_at))}</time>
                 </div>
                 <div className={styles.reviewScore}>
                     <div>
@@ -74,7 +74,7 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
                 <div className={styles.imageList}>
                     {
                         props.attachment &&
-                        <div className={styles.attachment} onClick={event => {
+                        <div className={styles.attachment} onClick={() => {
                             window.open(attachment_url, '_blank');
                         }}>
                             <div style={{paddingBottom: `${props.attachment.height/props.attachment.width * 100}%`}}></div>

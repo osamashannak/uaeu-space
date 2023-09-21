@@ -6,7 +6,7 @@ import NProgress from "nprogress";
 import {GoogleReCaptchaProvider} from 'react-google-recaptcha-v3';
 import Layout from "@/components/Global/Layout";
 
-const montserrat = Montserrat({subsets: ['latin'], weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"]});
+const montserrat = Montserrat({subsets: ['latin'], weight: ["100", "200", "300", "400", "500", "600", "700", "800"]});
 
 NProgress.configure({showSpinner: false});
 

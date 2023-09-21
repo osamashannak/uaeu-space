@@ -8,6 +8,7 @@ import {createAssessment} from "../utils";
 import {getFileURL, uploadAttachment} from "../azure";
 import {ReviewAttachment} from "../orm/entity/ReviewAttachment";
 import {analyzeImage} from "../azure-vision";
+import crypto from "crypto";
 
 const sizeOf = require('image-size');
 
@@ -96,13 +97,11 @@ export const upload = async (req: Request, res: Response) => {
 
     const dimensions = sizeOf(file.buffer);
 
-    const blobName = await uploadAttachment(file.buffer, file.mimetype);
+    const blobName = crypto.randomUUID();
 
     res.status(200).json({result: "success", id: blobName});
 
-    const nsfwResult = await analyzeImage(getFileURL(blobName, "attachments"));
-
-    console.log(nsfwResult);
+    await uploadAttachment(blobName, file.buffer, file.mimetype);
 
     const reviewAttachment = new ReviewAttachment();
 
@@ -112,6 +111,12 @@ export const upload = async (req: Request, res: Response) => {
     reviewAttachment.height = dimensions.height;
     reviewAttachment.width = dimensions.width;
     reviewAttachment.ip_address = address;
+
+    await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
+
+    const nsfwResult = await analyzeImage(getFileURL(blobName, "attachments"));
+
+    console.log(nsfwResult);
     reviewAttachment.visible = nsfwResult;
 
     await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
@@ -156,7 +161,7 @@ export const find = async (req: Request, res: Response) => {
                         const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
                             where: {id: Equal(attachment)}
                         });
-                        if (reviewAttachment) {
+                        if (reviewAttachment && reviewAttachment.visible) {
                             newAttachment = {
                                 id: reviewAttachment.id,
                                 width: reviewAttachment.width,

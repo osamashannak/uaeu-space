@@ -19,7 +19,7 @@ export class ReviewAttachment {
     @Column()
     height!: number;
 
-    @Column()
+    @Column({default: null, nullable: true})
     visible!: boolean;
 
     @Column("inet")

@@ -60,6 +60,11 @@ const ReviewForm = (props: { professorEmail: string }) => {
     const handleSubmit = async () => {
         setSubmitting(true);
 
+        if (details.attachment.length > 0 && details.attachment[0].id === "UPLOADING") {
+            setTimeout(handleSubmit, 500);
+            return;
+        }
+
         if (!executeRecaptcha) {
             setSubmitting("error");
             return;
@@ -140,7 +145,7 @@ const ReviewForm = (props: { professorEmail: string }) => {
                 }
             }}>
 
-            <div className={styles.formHeader}>
+            {/*<div className={styles.formHeader}>
                 <span className={styles.authorName}>Anonymous</span>
                 <div
                     className={styles.infoHover}
@@ -154,7 +159,7 @@ const ReviewForm = (props: { professorEmail: string }) => {
                               d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8z"/>
                     </svg>
                 </div>
-            </div>
+            </div>*/}
 
             <div className={styles.postEditor}>
                 <div>
@@ -207,6 +212,7 @@ const ReviewForm = (props: { professorEmail: string }) => {
                                          ...prevDetails,
                                          attachment: prevDetails.attachment?.filter((_, i) => i !== index),
                                      }));
+                                     uploadInputRef.current = false;
                                      URL.revokeObjectURL(attachment.url);
                                  }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256">
@@ -244,6 +250,12 @@ const ReviewForm = (props: { professorEmail: string }) => {
                     <input className={styles.imageUploadHTML}
                            onChange={(event) => {
 
+                               if (details.attachment.length > 0) {
+                                   alert("You may only upload one image.");
+                                   uploadInputRef.current = false;
+                                   return;
+                               }
+
                                if (uploadInputRef.current) {
                                    alert("Please wait for the image to upload.");
                                    event.target.value = "";
@@ -268,50 +280,61 @@ const ReviewForm = (props: { professorEmail: string }) => {
 
                                if (images.length === 0) return;
 
-                               if (details.attachment.length > 0) {
-                                   alert("You may only upload one image.");
-                                   uploadInputRef.current = false;
-                                   return;
-                               }
-
                                function addImage(file: File | Blob) {
                                    let img = new Image();
                                    img.src = URL.createObjectURL(file);
 
                                    img.onload = async () => {
 
-                                       if (img.height < 50 || img.width < 50 || img.height > 16000 || img.width > 16000) {
+                                       if (img.height < 50 || img.width < 50) {
                                            alert("Image must be at least 50 pixels in width and height.");
                                            uploadInputRef.current = false;
                                            return;
                                        }
 
-                                       const id = await uploadAttachment(file);
-
-                                       if (id === undefined) {
-                                           alert("Failed to upload the image.");
+                                       if (img.height > 16000 || img.width > 16000) {
+                                           alert("Image must be at most 16000 pixels in width and height.");
                                            uploadInputRef.current = false;
                                            return;
                                        }
 
                                        details.attachment.push({
+                                           id: "UPLOADING",
                                            file,
                                            url: img.src,
-                                           aspectRatio: img.height / img.width,
-                                           id
+                                           aspectRatio: img.height / img.width
                                        });
+
+                                       const index = details.attachment.length - 1;
 
                                        setDetails({...details});
 
-                                       uploadInputRef.current = false;
+                                       const id = await uploadAttachment(file);
+
+                                       if (id === undefined) {
+                                           alert("Failed to upload the image.");
+                                           setDetails((prevDetails) => ({
+                                               ...prevDetails,
+                                               attachment: prevDetails.attachment?.filter((_, i) => i !== details.attachment.length - 1),
+                                           }));
+                                           uploadInputRef.current = false;
+                                           return;
+                                       }
+
+                                       if (uploadInputRef.current && details.attachment[index].url === img.src) {
+                                           details.attachment[index].id = id;
+                                           setDetails({...details});
+                                           uploadInputRef.current = false;
+                                       }
+
                                    }
                                }
 
-                               if (images[0].type !== "image/gif" && images[0].type !== "image/webp" && images[0].size > 4 * 1024 * 1024) {
+                               if (images[0].type !== "image/gif" && images[0].type !== "image/webp" && images[0].size > 4 * 1000 * 1000) {
                                    new Compressor(images[0], {
                                        quality: 0.8,
                                        success(compressedFile) {
-                                           if (compressedFile.size > 4 * 1024 * 1024) {
+                                           if (compressedFile.size > 4 * 1000 * 1000) {
                                                alert("Image size is too large.");
                                                uploadInputRef.current = false;
                                                return;
@@ -325,7 +348,7 @@ const ReviewForm = (props: { professorEmail: string }) => {
                                        },
                                    });
                                    return;
-                               } else if (images[0].type === "image/gif" && images[0].size > 4 * 1024 * 1024) {
+                               } else if (images[0].type === "image/gif" && images[0].size > 4 * 1000 * 1000) {
                                    alert("GIFs must be under 4MB.");
                                    uploadInputRef.current = false;
                                    return;
@@ -349,6 +372,7 @@ const ReviewForm = (props: { professorEmail: string }) => {
                     <span>Score: </span>
                     <input
                         required maxLength={1}
+                        id={"score-field"}
                         inputMode={"numeric"}
                         placeholder={"#"}
                         onChange={
@@ -415,15 +439,27 @@ const ReviewForm = (props: { professorEmail: string }) => {
                    value={"Submit"}
                    onClick={async event => {
                        event.stopPropagation();
-                       if (!formFilled()) return;
+                       if (!formFilled()) {
+                            const invalidFields = Array.from(document.querySelectorAll("input:invalid"));
+                            const score = invalidFields.find(field => field.id === "score-field");
+
+                            if (score) {
+                                // @ts-ignore
+                                score.reportValidity();
+                                return;
+                            }
+
+                            if (invalidFields.length > 1) {
+                                // @ts-ignore
+                                invalidFields[0].reportValidity();
+                            }
+
+                           return;
+                       }
                        await handleSubmit();
                    }}/>
 
             <div className={styles.disclaimer}>
-                By submitting this review, you agree to the <a href={"/terms-of-service"} target={"_blank"}>Terms
-                of
-                Service</a> and <a href={"/privacy"} target={"_blank"}>Privacy Policy</a>.
-                <br/>
                 This site is protected by reCAPTCHA and the Google <a
                 href="https://policies.google.com/privacy" target={"_blank"}>Privacy Policy</a> and <a
                 href="https://policies.google.com/terms" target={"_blank"}>Terms of Service</a> apply.
