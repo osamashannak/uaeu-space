@@ -4,8 +4,11 @@ import Image from "next/image";
 import SearchBox from "@/components/SearchBox";
 import Link from "next/link";
 import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
+import {useRouter} from "next/router";
 
 const Home = () => {
+
+    const router = useRouter();
 
     const adClick = () => {
         window.open("https://api.uaeu.space/advertisement", "_blank");
@@ -21,102 +24,62 @@ const Home = () => {
                 <meta property="og:url" content="https://uaeu.space"/>
             </Head>
 
-           {/*<ResponsiveAdUnit slotId={4492620959}/>*/}
+            {/*<ResponsiveAdUnit slotId={4492620959}/>*/}
 
-            <section className={styles.helpUs}>
+            {/*<section className={styles.helpUs}>
                 <span>💙</span>
                 <p>Uploading materials and rating professors will help students like you succeed in the university.</p>
-            </section>
+            </section>*/}
 
-            <section className={styles.course}>
-                <h2>Study Materials</h2>
-                <h3>Share and find materials you need to help you succeed in your courses</h3>
-                <div className={styles.sectionBody}>
-                    <SearchBox type={"course"}/>
-                    <div className={styles.trending}>
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                      d="M3.4 18L2 16.6l7.4-7.45l4 4L18.6 8H16V6h6v6h-2V9.4L13.4 16l-4-4l-6 6Z"/>
-                            </svg>
-                            <h3>Most Uploads</h3>
+
+            <h3 className={styles.phrase}>It's time to transform your academic journey.</h3>
+
+            <div className={styles.boxList}>
+
+                <div className={styles.box}
+                     onClick={() => {
+                         router.push("/course");
+                     }}>
+                    <div>
+                        <div className={styles.boxImage}>
+                            <Image
+                                src={"/homepage/course.png"}
+                                alt={""}
+                                width={300}
+                                height={300}/>
                         </div>
-                        <ul>
-                            <li>
-                                <Link href={"/course/STAT210"}>
-                                    Probability and Statistics
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={"/course/GEIT112"}>
-                                    Fourth Industrial Revolution
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={"/course/GESU121"}>
-                                    Sustainability
-                                </Link>
-                            </li>
-                        </ul>
+                        <div className={styles.boxTitle}>
+                            <span>Course Materials</span>
+                        </div>
                     </div>
                 </div>
-                <Image src={"/girl-reading.png"}
-                       className={styles.image}
-                       alt={""}
-                       priority
-                       width={550}
-                       height={500}/>
-            </section>
 
-            <hr className={styles.separator}/>
-
-            {/*<ResponsiveAdUnit slotId={9919633065} style={{marginBottom: "1rem", marginTop: "0.5rem"}}/>*/}
-
-            <section className={styles.professor}>
-                <h2>Rate a Professor</h2>
-                <h3>Learn about your professors from other students and rate their performance</h3>
-                <div className={styles.sectionBody}>
-                    <SearchBox type={"professor"}/>
-                    <div className={styles.trending}>
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                      d="M3.4 18L2 16.6l7.4-7.45l4 4L18.6 8H16V6h6v6h-2V9.4L13.4 16l-4-4l-6 6Z"/>
-                            </svg>
-                            <h3>Trending Professors</h3>
+                <div className={styles.box}
+                     onClick={() => {
+                         router.push("/professor");
+                     }}>
+                    <div>
+                        <div className={styles.boxImage}>
+                            <Image
+                                src={"/homepage/professor.png"}
+                                alt={""}
+                                width={300}
+                                height={300}/>
                         </div>
-                        <ul>
-                            <li>
-                                <Link href={"/professor/mohammed_m@uaeu.ac.ae"}>
-                                    Dr. Mohammed Abuomar
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={"/professor/nqamhieh@uaeu.ac.ae"}>
-                                    Dr. Naser Qamhieh
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href={"/professor/f.alblooshi@uaeu.ac.ae"}>
-                                    Dr. Fatima Alblooshi
-                                </Link>
-                            </li>
-                        </ul>
+                        <div className={styles.boxTitle}>
+                            <span>Rate Professor</span>
+                        </div>
                     </div>
                 </div>
-                <Image src={"/professor-teaching.png"}
-                       className={styles.image}
-                       alt={""}
-                       priority
-                       width={776}
-                       height={500}/>
-            </section>
-            <div className={styles.adCover}>
+            </div>
+
+
+            {/*<div className={styles.adCover}>
                 <Image onClick={adClick} className={styles.adImage1} src={"/ad/ad.jpeg"} alt={""} width={800}
                        height={100}/>
                 <Image onClick={adClick} className={styles.adImage2} src={"/ad/adPhone.jpeg"} alt={""} width={300}
                        height={100}/>
-            </div>
+            </div>*/}
         </>
     )
 }

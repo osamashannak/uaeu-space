@@ -2,5 +2,9 @@
 
 #nprogress .bar {
   // place under header
-    top: 52.1px;
+
+  @media (max-width: 768px) {
+    top: -5px;
+  }
+
 }

@@ -10,7 +10,7 @@ import {getProfessorsList} from "@/api/professor";
 import {Item} from "@/interface/searchbox";
 
 
-const SearchBoxElement = (props: {type: "professor" | "course"}) => {
+const SearchBoxElement = (props: { type: "professor" | "course" }) => {
 
     const SearchBox = () => {
 
@@ -112,7 +112,7 @@ const SearchBoxElement = (props: {type: "professor" | "course"}) => {
         return (
             <div className={styles.searchBox}>
                 <input placeholder={props.type === "course" ? "Search for a course..." : "Search for a professor..."}
-                       className={styles.searchBar} {...getInputProps()}/>
+                    className={styles.searchBar} {...getInputProps()}/>
                 <svg className={styles.searchIcon} xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                      viewBox="0 0 24 24">
                     <path fill="currentColor"
@@ -121,7 +121,7 @@ const SearchBoxElement = (props: {type: "professor" | "course"}) => {
 
 
                 <div className={styles.parentDataList}>
-                    <ul className={styles.datalist} style={{backgroundColor: props.type === "course" ? "#ADFFFD" : "#FAFAFA"}} {...getMenuProps()}>
+                    <ul className={styles.datalist} {...getMenuProps()}>
                         {inputValue &&
                             items.map((element, index) => (
                                 <li className={`${styles.datalistOption} ${highlightedIndex === index && ` ${styles.bgBlueOption}`}`}

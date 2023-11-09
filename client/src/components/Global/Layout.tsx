@@ -505,9 +505,21 @@ const Layout = (props: { children: ReactNode }) => {
             })(window, document, "clarity", "script", "gefdnbatcq");`,
                 }}/>
 
-            <Header/>
-            <main>{props.children}</main>
-            <Footer/>
+            <div className={"body"}>
+
+                <Header/>
+
+                <main>
+                    <div className={"main"}>
+                        {props.children}
+                    </div>
+                </main>
+
+                <Footer/>
+
+                <div className={"right"}/>
+
+            </div>
         </>
     );
 };
