@@ -10,7 +10,7 @@ import {getProfessorsList} from "@/api/professor";
 import {Item} from "@/interface/searchbox";
 
 
-const SearchBoxElement = (props: {type: "professor" | "course"}) => {
+const SearchBoxElement = (props: { type: "professor" | "course" }) => {
 
     const SearchBox = () => {
 
@@ -121,7 +121,7 @@ const SearchBoxElement = (props: {type: "professor" | "course"}) => {
 
 
                 <div className={styles.parentDataList}>
-                    <ul className={styles.datalist} style={{backgroundColor: props.type === "course" ? "#ADFFFD" : "#FAFAFA"}} {...getMenuProps()}>
+                    <ul className={styles.datalist} {...getMenuProps()}>
                         {inputValue &&
                             items.map((element, index) => (
                                 <li className={`${styles.datalistOption} ${highlightedIndex === index && ` ${styles.bgBlueOption}`}`}

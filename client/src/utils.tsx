@@ -129,17 +129,17 @@ export const formatRelativeTime = (inputDate: Date) => {
         return day + "/" + month + "/" + year;
     }
 
-    if (diffDays > 1 && diffDays < 7) {
+    if (diffDays >= 1 && diffDays <= 7) {
         return diffDays + "d";
     }
 
     const diffHours = Math.ceil(diff / (1000 * 3600));
-    if (diffHours > 1 && diffHours < 24) {
+    if (diffHours >= 1 && diffHours <= 24) {
         return diffHours + "h";
     }
 
     const diffMinutes = Math.ceil(diff / (1000 * 60));
-    if (diffMinutes > 1 && diffMinutes < 60) {
+    if (diffMinutes >= 1 && diffMinutes <= 60) {
         return diffMinutes + "m";
     }
 
