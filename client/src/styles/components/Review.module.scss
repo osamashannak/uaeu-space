@@ -13,6 +13,7 @@
 
 
 .reviewInfo {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -20,6 +21,7 @@
 }
 
 .reviewInfoLeft {
+  width: 100%;
   display: flex;
   align-items: baseline;
 }
@@ -32,7 +34,7 @@
   color: rgb(139, 152, 165);
 }
 
-.reviewScore {
+.reviewInfoRight {
   font-weight: 600;
   text-align: right;
   white-space: nowrap;

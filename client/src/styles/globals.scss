@@ -30,7 +30,7 @@ header {
 }
 
 footer {
-  max-width: 350px;
+  max-width: 380px;
   flex-grow: 1;
   padding: 1rem;
 }
@@ -62,10 +62,10 @@ main {
 a {
   color: inherit;
   text-decoration: none;
+
   &:hover{
     text-decoration: underline;
   }
-
 }
 
 body {

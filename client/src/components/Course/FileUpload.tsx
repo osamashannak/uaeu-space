@@ -1,3 +1,5 @@
+"use client";
+
 import {ChangeEvent, FormEvent, useState} from "react";
 import styles from "@/styles/components/FileUpload.module.scss";
 import FilePreview from "@/components/Course/FilePreview";

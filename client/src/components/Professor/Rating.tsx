@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "@/styles/components/Rating.module.scss";
 import {useEffect, useRef, useState} from "react";
 import {generateConfetti} from "@/utils";

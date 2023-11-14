@@ -1,17 +1,20 @@
+"use client";
+
 import Image from 'next/image';
 import Link from "next/link";
 import {useEffect, useRef, useState} from "react";
-import {useRouter} from "next/router";
+import {usePathname, useRouter} from "next/navigation";
 import styles from "@/styles/components/Header.module.scss";
 
 const Header = () => {
 
     const router = useRouter();
-    const [selected, setSelected] = useState<string>(router.pathname.toString().split('/')[1]);
+    const pathname = usePathname();
+    const [selected, setSelected] = useState<string>((pathname || "").toString().split('/')[1] || "");
 
     useEffect(() => {
-        setSelected(router.pathname.toString().split('/')[1]);
-    }, [router.pathname]);
+        setSelected((pathname || "").toString().split('/')[1]);
+    }, [pathname]);
 
     const scrollDown = () => {
         document.getElementsByClassName(styles.header2)[0].classList.add(styles.navUp);
@@ -113,10 +116,10 @@ const Header = () => {
                                     :
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
                                          viewBox="0 0 512 512">
-                                        <path fill="none" stroke="currentColor" stroke-linecap="round"
-                                              stroke-linejoin="round" stroke-width="32"
+                                        <path fill="none" stroke="currentColor" strokeLinecap="round"
+                                              strokeLinejoin="round" strokeWidth="32"
                                               d="M344 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96Z"/>
-                                        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"
+                                        <path fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="32"
                                               d="M256 304c-87 0-175.3 48-191.64 138.6C62.39 453.52 68.57 464 80 464h352c11.44 0 17.62-10.48 15.65-21.4C431.3 352 343 304 256 304Z"/>
                                     </svg>
 
@@ -169,10 +172,10 @@ const Header = () => {
                         </svg>
                         :
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 512 512">
-                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                  stroke-width="32"
+                            <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
+                                  strokeWidth="32"
                                   d="M344 144c-3.92 52.87-44 96-88 96s-84.15-43.12-88-96c-4-55 35-96 88-96s92 42 88 96Z"/>
-                            <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"
+                            <path fill="none" stroke="currentColor" strokeMiterlimit="10" strokeWidth="32"
                                   d="M256 304c-87 0-175.3 48-191.64 138.6C62.39 453.52 68.57 464 80 464h352c11.44 0 17.62-10.48 15.65-21.4C431.3 352 343 304 256 304Z"/>
                         </svg>
                     }

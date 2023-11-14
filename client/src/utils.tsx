@@ -1,5 +1,6 @@
 import icons from "@/icons";
 import styles from "@/styles/components/Review.module.scss";
+import {random} from "nanoid";
 
 export const HOST = "https://api.uaeu.space";
 
@@ -28,13 +29,13 @@ export const ratingToIcon = (rating: number) => {
     let output = [];
 
     for (i = rating; i >= 1; i--) {
-        output.push(<FullStar/>);
+        output.push(<FullStar key={Math.random()}/>);
     }
     if (i === .5) {
-        output.push(<HalfStar/>);
+        output.push(<HalfStar key={Math.random()}/>);
     }
     for (let i = (5 - rating); i >= 1; i--) {
-        output.push(<EmptyStar/>);
+        output.push(<EmptyStar key={Math.random()}/>);
     }
 
     return output;

@@ -1,12 +1,12 @@
 import styles from "@/styles/TermsOfService.module.scss";
-import Head from "next/head";
+
+export const metadata = {
+    title: 'Privacy Policy - UAEU Space'
+}
 
 const Privacy = () => {
     return (
         <>
-            <Head>
-                <title>Privacy Policy - UAEU Space</title>
-            </Head>
             <div className={styles.page}>
                 <section>
                     <h1>Privacy Policy</h1>

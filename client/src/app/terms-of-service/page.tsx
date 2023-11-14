@@ -1,13 +1,12 @@
 import styles from "@/styles/TermsOfService.module.scss";
-import Head from "next/head";
 
+export const metadata = {
+    title: 'Terms of Service - UAEU Space'
+}
 
-const TermsOfService = () => {
+const Page = () => {
     return (
         <>
-            <Head>
-                <title>Terms of Service - UAEU Space</title>
-            </Head>
             <div className={styles.page}>
                 <section>
                     <h1>UAEU Space Terms of Service</h1>
@@ -405,4 +404,4 @@ const TermsOfService = () => {
     )
 }
 
-export default TermsOfService;
+export default Page;

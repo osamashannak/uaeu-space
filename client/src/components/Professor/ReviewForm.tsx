@@ -1,5 +1,7 @@
+"use client";
+
 import {useEffect, useRef, useState} from "react";
-import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
+import {GoogleReCaptchaProvider, useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "@/styles/components/ReviewForm.module.scss";
 import {postReview, uploadAttachment} from "@/api/professor";
 import {ReviewForm} from "@/interface/professor";
@@ -133,6 +135,12 @@ const ReviewForm = (props: { professorEmail: string }) => {
     }
 
     return (
+        <GoogleReCaptchaProvider
+            reCaptchaKey="6Lf8FeElAAAAAJX3DVLxtBSEydXx0ln7KscspOZ8"
+            useEnterprise={true}
+            scriptProps={{
+                async: true
+            }}>
         <section
             className={styles.form}
             onClick={event => {
@@ -144,22 +152,6 @@ const ReviewForm = (props: { professorEmail: string }) => {
                     input.focus();
                 }
             }}>
-
-            {/*<div className={styles.formHeader}>
-                <span className={styles.authorName}>Anonymous</span>
-                <div
-                    className={styles.infoHover}
-                    title={"The author of this review will be hidden."}
-                    onClick={event => {
-                        event.stopPropagation();
-                    }}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                              d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8z"/>
-                    </svg>
-                </div>
-            </div>*/}
 
             <div className={styles.postEditor}>
                 <div>
@@ -465,6 +457,7 @@ const ReviewForm = (props: { professorEmail: string }) => {
                 href="https://policies.google.com/terms" target={"_blank"}>Terms of Service</a> apply.
             </div>
         </section>
+        </GoogleReCaptchaProvider>
     );
 }
 

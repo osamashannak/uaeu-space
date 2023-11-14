@@ -1,12 +1,11 @@
+"use client";
+
 import Head from 'next/head';
 import styles from '@/styles/Home.module.scss';
 import Image from "next/image";
-import SearchBox from "@/components/SearchBox";
-import Link from "next/link";
-import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 
-const Home = () => {
+const Page = () => {
 
     const router = useRouter();
 
@@ -26,13 +25,13 @@ const Home = () => {
 
             {/*<ResponsiveAdUnit slotId={4492620959}/>*/}
 
-            {/*<section className={styles.helpUs}>
+            <section className={styles.helpUs}>
                 <span>💙</span>
                 <p>Uploading materials and rating professors will help students like you succeed in the university.</p>
-            </section>*/}
+            </section>
 
 
-            <h3 className={styles.phrase}>It's time to transform your academic journey.</h3>
+            <h3 className={styles.phrase}>It&apos;s time to transform your academic journey.</h3>
 
             <div className={styles.boxList}>
 
@@ -84,4 +83,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export default Page;
