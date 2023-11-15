@@ -6,7 +6,9 @@ export const getCoursesList = async () => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/course/all");
+        const request = await fetch(HOST + "/course/all", {
+            cache: "no-cache"
+        });
         response = await request.json();
     } catch (error) {
         return undefined;
@@ -19,7 +21,9 @@ export const getCourse = async (id: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/course?tag=" + id);
+        const request = await fetch(HOST + "/course?tag=" + id, {
+            cache: "no-cache"
+        });
         response = await request.json();
     } catch (error) {
         return undefined;

@@ -120,7 +120,7 @@ export const formatRelativeTime = (inputDate: Date) => {
 
     const now = new Date();
     const diff = Math.abs(now.getTime() - inputDate.getTime());
-    const diffDays = Math.ceil(diff / (1000 * 3600 * 24));
+    const diffDays = Math.floor(diff / (1000 * 3600 * 24));
 
     if (diffDays > 7) {
         // format in d/mm/yy without time. the year must be 2 digits
@@ -134,17 +134,17 @@ export const formatRelativeTime = (inputDate: Date) => {
         return diffDays + "d";
     }
 
-    const diffHours = Math.ceil(diff / (1000 * 3600));
+    const diffHours = Math.floor(diff / (1000 * 3600));
     if (diffHours >= 1 && diffHours <= 24) {
         return diffHours + "h";
     }
 
-    const diffMinutes = Math.ceil(diff / (1000 * 60));
+    const diffMinutes = Math.floor(diff / (1000 * 60));
     if (diffMinutes >= 1 && diffMinutes <= 60) {
         return diffMinutes + "m";
     }
 
-    const diffSeconds = Math.ceil(diff / (1000));
+    const diffSeconds = Math.floor(diff / (1000));
     return diffSeconds + "s";
 }
 

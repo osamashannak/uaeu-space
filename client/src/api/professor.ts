@@ -6,7 +6,9 @@ export const getProfessorsList = async () => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/all");
+        const request = await fetch(HOST + "/professor/all", {
+            cache: "no-cache"
+        });
         response = await request.json();
     } catch (error) {
         return undefined;
@@ -19,7 +21,9 @@ export const getProfessor = async (id: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor?email=" + id);
+        const request = await fetch(HOST + "/professor?email=" + id, {
+            cache: "no-cache"
+        });
         response = await request.json();
     } catch (error) {
         return undefined;
