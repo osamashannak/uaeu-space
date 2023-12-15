@@ -7,6 +7,7 @@ import Review from "@/components/Professor/Review";
 import reviewStyles from "@/styles/components/Review.module.scss";
 
 
+
 enum SORT_BY {
     rated,
     newest
@@ -20,7 +21,7 @@ const ReviewSection = (props: { professorReviews: ReviewAPI[] }) => {
 
     console.log(sortBy)
 
-    useEffect(() => {
+    /*useEffect(() => {
         if (reviews == null) {
             return;
         }
@@ -30,7 +31,7 @@ const ReviewSection = (props: { professorReviews: ReviewAPI[] }) => {
         } else {
             setReviews(reviews.sort((a, b) => (b.likes - b.dislikes) - (a.likes - a.dislikes)));
         }
-    }, [reviews, sortBy]);
+    }, [reviews, sortBy]);*/
 
     const reviewCount = reviews.length;
 
@@ -39,7 +40,8 @@ const ReviewSection = (props: { professorReviews: ReviewAPI[] }) => {
             <div className={styles.sortButtonWrapper}>
                 <div className={styles.sortButton}
                      onClick={(event) => {
-                         setSortHidden(!sortHidden);
+                            event.preventDefault();
+                            setSortHidden(!sortHidden);
                      }}>
                     <div className={styles.sortIcon}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -56,13 +58,19 @@ const ReviewSection = (props: { professorReviews: ReviewAPI[] }) => {
                 <div className={styles.sortByMenuList}>
                     <div className={styles.sortByListItem}
                          onClick={() => {
-                             setSortBy(SORT_BY.rated);
+                             setReviews((prevReviews) =>
+                                 [...prevReviews].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                             );
+
                          }}>
                         <span>Rated</span>
                     </div>
                     <div className={styles.sortByListItem}
                          onClick={() => {
-                             setSortBy(SORT_BY.newest);
+                             setReviews((prevReviews) =>
+                                 [...prevReviews].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                             );
+
                          }}>
                         <span>Newest</span>
                     </div>

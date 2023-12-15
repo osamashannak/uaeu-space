@@ -1,4 +1,6 @@
-import {formatRelativeTime, ratingToIcon} from "@/utils";
+"use client";
+
+import {formatRelativeTime, parseText, ratingToIcon} from "@/utils";
 import styles from "@/styles/components/Review.module.scss";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -6,9 +8,9 @@ import {ReviewAPI} from "@/interface/professor";
 import {DashboardReviewAPI} from "@/interface/dashboard";
 import Rating from "@/components/Professor/Rating";
 import {default as NextImage} from "next/image";
-import reviewStyles from "@/styles/components/Review.module.scss";
 
 dayjs.extend(relativeTime)
+
 
 const Review = (props: ReviewAPI | DashboardReviewAPI) => {
 
@@ -36,20 +38,23 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
                         <span>{props.positive ? "Recommend" : "Not recommended"}</span>
                     </div>
                     <div>
-                        <span>{ratingToIcon(props.score)}</span>
+                        <span title={props.score.toString()}>{ratingToIcon(props.score)}</span>
                     </div>
                 </div>
             </div>
 
             <div className={styles.reviewBody}>
-                <p dir={"auto"}>{props.comment}</p>
+
+                <p dir={"auto"} dangerouslySetInnerHTML={{__html: parseText(props.comment)}}/>
+
                 <div className={styles.imageList}>
                     {
                         props.attachment &&
                         <div className={styles.attachment} onClick={() => {
                             window.open(attachment_url, '_blank');
                         }}>
-                            <div style={{paddingBottom: `${props.attachment.height/props.attachment.width * 100}%`}}></div>
+                            <div
+                                style={{paddingBottom: `${props.attachment.height / props.attachment.width * 100}%`}}></div>
                             <div style={{backgroundImage: `url(${attachment_url})`}} className={styles.imageDiv}>
                             </div>
                             <NextImage src={attachment_url}

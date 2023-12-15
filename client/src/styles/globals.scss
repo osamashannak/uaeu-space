@@ -42,6 +42,13 @@ footer {
   flex-grow: 1;
 }
 
+img.emoji {
+  height: 1.2em;
+  width: 1.2em;
+  margin: 0 .075em 0 .075em;
+  vertical-align: -20%;
+}
+
 main {
   width: 600px;
   max-width: 1200px;
