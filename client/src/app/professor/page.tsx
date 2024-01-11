@@ -1,6 +1,11 @@
 import SearchBox from "@/components/SearchBox";
 import styles from "@/styles/Professor.module.scss";
 
+export const metadata = {
+    title: `Rate a Professor - UAEU Space`,
+    description: `Learn about your professors from other students and rate their performance`,
+}
+
 const Professor = () => {
     return (
         <div className={styles.searchPage}>

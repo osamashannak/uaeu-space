@@ -5,6 +5,11 @@ const Footer = () => {
     return (
         <footer>
             <section className={styles.footerBlock}>
+                <h2 className={styles.blockTitle}>Login</h2>
+                <p>Login in to save your reviews</p>
+                <Link href={"/login"} className={styles.loginButton}>Login</Link>
+            </section>
+            <section className={styles.footerBlock}>
                 <h2 className={styles.blockTitle}>About UAEU Space</h2>
                 <div className={styles.blockBody}>
                     <ul className={styles.blockList}>
@@ -22,7 +27,7 @@ const Footer = () => {
             </section>
             <section className={styles.footerEnd}>
                 <p className={styles.copyright}>© 2023 UAEU Space. Not affiliated with United Arab Emirates
-                    University (Student-operated).</p>
+                    University (Student-operated). Emojis by Twemoji.</p>
                 <ul className={styles.links}>
                     <li><Link href={"/terms-of-service"}>Terms of Service</Link></li>
                     <li><Link href={"/privacy"}>Privacy Policy</Link></li>

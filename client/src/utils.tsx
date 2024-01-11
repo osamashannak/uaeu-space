@@ -1,6 +1,6 @@
 import icons from "@/icons";
 import styles from "@/styles/components/Review.module.scss";
-import {random} from "nanoid";
+import {twemoji} from "@/twemoji";
 
 export const HOST = "https://api.uaeu.space";
 
@@ -149,3 +149,10 @@ export const formatRelativeTime = (inputDate: Date) => {
 }
 
 export const convertArabicNumeral = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+
+export const parseText = (text: string) => {
+    return twemoji.parse(text, {
+        folder: 'svg',
+        ext: '.svg',
+    });
+}

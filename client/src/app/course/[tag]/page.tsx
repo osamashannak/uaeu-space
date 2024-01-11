@@ -1,12 +1,54 @@
 import styles from "@/styles/Course.module.scss";
 import fileStyles from "@/styles/components/File.module.scss";
 import Head from 'next/head';
-import {CourseAPI} from "@/interface/course";
 import {getCourse} from "@/api/course";
-import {GetServerSidePropsContext} from "next";
 import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
 import File from "@/components/Course/File";
 import FileUpload from "@/components/Course/FileUpload";
+import {Metadata, ResolvingMetadata} from "next";
+
+
+type Props = {
+    params: { tag: string }
+}
+
+export async function generateMetadata(
+    {params}: Props,
+    parent: ResolvingMetadata
+): Promise<Metadata> {
+
+        const tag = params.tag;
+
+        const props = await getCourse(tag);
+
+        if (props == undefined) {
+            return {
+                robots: "noindex"
+            }
+        }
+
+        const files = props.files.length > 0 ? [...props.files].sort((a, b) => b.name.length - a.name.length).slice(0, 3).map((value) => value.name) : [];
+        const filesString = files.length > 0 ? `Download ${files.join(", ")}` : "";
+
+        const fileCount = props.files.length;
+
+        return {
+            title: `${props.tag} - UAE University - UAEU Space`,
+            description: filesString || `Find and upload materials for ${props.tag} to help other students at UAEU.`,
+            alternates: {
+                canonical: `https://uaeu.space/course/${props.tag}`,
+            },
+            openGraph: {
+                title: `${props.name} - UAEU Space`,
+                description: filesString || `Find and upload materials for ${props.tag} to help other students at UAEU.`,
+                url: `https://uaeu.space/course/${props.tag}`,
+            },
+            robots: fileCount == 0 ? "noindex" : "index"
+        }
+
+
+}
+
 
 const Course = async ({params}: { params: { tag: string } }) => {
     const data = await getCourse(params.tag as string);

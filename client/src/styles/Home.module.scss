@@ -24,11 +24,19 @@
   }
 }
 
+.helpusWrapper {
+  padding-left: 12px;
+    padding-right: 12px;
+    margin-bottom: 32px;
+}
+
 .helpUs {
-  background-color: white;
   display: flex;
-  color: rgb(2, 136, 209);
   font-size: 14px;
+  padding: 12px;
+  background-color: rgb(229, 246, 253);
+    border-radius: 8px;
+  // darker border
 
   span {
     padding-right: 0.5rem;
@@ -70,19 +78,26 @@
   align-items: center;
   justify-content: center;
 
+  max-height: 240px;
+
   cursor: pointer;
   padding: 24px;
-  height: calc(100% - 40px);
-  max-width: 400px;
-  width: 100%;
-  box-shadow: 0px 4.8px 14.4px rgba(131, 126, 255, 0.3);
+  max-width: 50%;
   border-radius: 0 8px 8px 8px;
 
   user-select: none;
+
+  transition: box-shadow 0.2s ease-in-out;
+
+  position: relative;
+
+  &:hover {
+    box-shadow: 0px 4.8px 14.4px rgba(131, 126, 255, 0.3);
+  }
 }
 
 .boxImage {
-  width: 100%;
+  height: 100%;
   border-radius: 50%;
   display: inline-block;
   position: relative;
@@ -114,4 +129,33 @@
   margin-bottom: 12px;
 
   text-align: center;
+
+  position: absolute;
+  bottom: 0px;
+  padding-bottom: 4px;
+
+  text-decoration: underline;
+
+}
+
+.trendingBox {
+  position: relative;
+  border-radius: 8px;
+    padding: 12px;
+  margin-bottom: 32px;
+    margin-top: 32px;
+  border: 1px solid rgb(229, 246, 253);
+}
+
+.trendingTitle {
+  position: absolute;
+    top: -12px;
+    left: 12px;
+    background-color: #fff;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+
 }
