@@ -102,7 +102,7 @@ export const getPendingReviews = async (req: Request, res: Response) => {
             where: {reviewed: false},
             relations: ["professor", "ratings"],
             order: {created_at: "desc"},
-            take: 10
+            take: 30
         });
     }
 
@@ -190,11 +190,45 @@ export const reviewAction = async (req: Request, res: Response) => {
 
     review.reviewed = true;
 
-    if (action === "hide") {
-        review.visible = false;
-    }
+    review.visible = action !== "hide";
 
     await AppDataSource.getRepository(Review).save(review);
 
     res.status(200).json({success: true});
+}
+
+export const fileAction = async (req: Request, res: Response) => {
+
+        const token = req.headers.authorization;
+        const fileId = req.body.fileId;
+        const action = req.body.action;
+
+        if (!token || !fileId || !action) {
+            res.status(400).send("Invalid");
+            return;
+        }
+
+        const validateToken = verifyJWTToken(token);
+
+        if (!validateToken) {
+            res.status(401).send("Invalid");
+            return;
+        }
+
+        const file = await AppDataSource.getRepository(CourseFile).findOne({
+            where: {id: fileId},
+        });
+
+        if (!file) {
+            res.status(404).send("Invalid");
+            return;
+        }
+
+        file.reviewed = true;
+
+        file.visible = action !== "hide";
+
+        await AppDataSource.getRepository(CourseFile).save(file);
+
+        res.status(200).json({success: true});
 }

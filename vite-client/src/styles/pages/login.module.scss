@@ -1,0 +1,195 @@
+.loginPage {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 300px);
+  justify-content: center;
+  max-width: 400px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+  }
+
+}
+
+.headSection {
+  margin-bottom: 36px;
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+.formField {
+  width: 100%;
+  margin-bottom: 22px;
+  padding: 9px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+
+  &:focus {
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+  }
+
+  &::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.formButton {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 10px 0;
+  border: none;
+  background-color: #87CEFA;
+  cursor: pointer;
+  font-weight: 700;
+  color: white;
+  font-size: 16px;
+  transition: opacity 0.2s ease-in-out;
+  border-radius: 20px;
+  -webkit-user-select: none;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.signUpButton {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 10px 0;
+  border: none;
+  background-color: #45b9ff;
+  cursor: pointer;
+  font-weight: 700;
+  color: white;
+  font-size: 16px;
+  transition: opacity 0.2s ease-in-out;
+  border-radius: 20px;
+
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+}
+
+.orSeparator {
+  user-select: none;
+  -webkit-user-select: none;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  line-height: 0.1em;
+  margin: 10px 0 20px;
+  letter-spacing: 0.18rem;
+  font-weight: 700;
+  color: rgba(18, 18, 18, 0.75);
+
+  span {
+    background: #fff;
+    padding: 0 10px;
+  }
+}
+
+.loginWith {
+  font-weight: 700;
+}
+
+.terms {
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.5);
+  margin-top: 1rem;
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+
+.screen {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background-color: rgba(0, 0, 0, 0.5);
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+
+  width: 100%;
+  height: 100%;
+
+}
+
+.registerScreen {
+  @extend .screen;
+}
+
+
+.panel {
+  background-color: white;
+  border-radius: 8px;
+  padding: 32px;
+  max-width: 400px;
+  width: 100%;
+
+  min-height: 300px;
+
+  position: relative;
+}
+
+.panelTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+
+
+  p {
+    font-weight: 400;
+    margin-top: 8px;
+    margin-bottom: 22px;
+  }
+}
+
+.deleteButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  margin: 8px;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  transition-property: background-color, box-shadow;
+  border-radius: 9999px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 24px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+}

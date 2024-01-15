@@ -1,6 +1,6 @@
 import * as express from "express";
 import {
-    authenticate,
+    authenticate, fileAction,
     getPendingFiles,
     getPendingReviews,
     reviewAction,
@@ -14,5 +14,6 @@ router.post("/verify", verifyToken);
 router.get("/reviews", getPendingReviews);
 router.get("/files", getPendingFiles);
 router.post("/reviewAction", reviewAction);
+router.post("/fileAction", fileAction);
 
 export default router;

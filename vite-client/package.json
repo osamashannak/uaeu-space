@@ -10,10 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
+    "compressorjs": "^1.2.1",
     "dayjs": "^1.11.10",
+    "downshift": "^8.3.1",
+    "emoji-picker-react": "^4.6.8",
+    "fuse.js": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-recaptcha-v3": "^1.10.1",
+    "react-helmet-async": "^2.0.4",
     "react-loading-skeleton": "^3.3.1",
     "react-router-dom": "^6.21.1"
   },
