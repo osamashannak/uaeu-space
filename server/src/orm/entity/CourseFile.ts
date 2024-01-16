@@ -26,6 +26,9 @@ export class CourseFile {
     @Column({default: false})
     reviewed!: boolean;
 
+    @Column({nullable: true})
+    vt_report!: string;
+
     @Column({default: false})
     visible!: boolean;
 

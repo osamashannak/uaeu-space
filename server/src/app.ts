@@ -9,7 +9,7 @@ import professorRouter from "./routes/ProfessorRouter";
 import dashboardRouter from "./routes/DashboardRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
-import {loadAzure} from "./azure";
+import {getFileURL, loadAzure} from "./azure";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
 import {Professor} from "./orm/entity/Professor";
@@ -18,8 +18,14 @@ import {AdClick} from "./orm/entity/AdClick";
 import requestIp from "request-ip";
 import jwt from "jsonwebtoken";
 import sharedRouter from "./routes/SharedRouter";
+import VirusTotalClient from "./virustotal";
+import {CourseFile} from "./orm/entity/CourseFile";
+import {IsNull, LessThan} from "typeorm";
+import * as fs from "fs";
+import Axios from 'axios';
 
 export let JWT_SECRET: jwt.Secret;
+export let VTClient: VirusTotalClient;
 
 const app = express();
 
@@ -128,15 +134,18 @@ const main = (): void => {
 
     JWT_SECRET = require('crypto').randomBytes(32).toString('hex');
 
+    VTClient = new VirusTotalClient();
+
     loadAzure().then(r => console.log("Azure client loaded."));
 
     AppDataSource.initialize().then(async () => {
-
-        /*console.log("Inserting a new user into the database...")
-        const files = await AppDataSource.manager.getRepository(CourseFile).find({relations: ['course']});
-        console.log(files)*/
-
+        console.log("Database connection established.")
     }).catch(error => console.log(error))
+
+
+    /*console.log("Inserting a new user into the database...")
+    const files = await AppDataSource.manager.getRepository(CourseFile).find({relations: ['course']});
+    console.log(files)*/
 
     app.listen(port, () => {
         console.log(`Socket is listening on port ${port}`);

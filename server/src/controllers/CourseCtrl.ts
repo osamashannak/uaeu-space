@@ -9,6 +9,7 @@ import {generateToken, getFileURL, uploadMaterial} from "../azure";
 import {promisify} from "util";
 import * as fs from "fs";
 import {compressFile, verifyJWTToken} from "../utils";
+import {VTClient} from "../app";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -93,8 +94,8 @@ export const uploadFile = async (req: Request, res: Response) => {
         return;
     }
 
-    console.log([blobName, req.body.tag]);
-    await unlinkAsync(file.path);
+    await VTClient.addToQueue(file.path, blobName);
+
     await unlinkAsync(filePath);
 
     const courseFile = new CourseFile();

@@ -28,7 +28,9 @@ export const ALLOWED_APPLICATION_TYPES = [
     "application/gzip",
     "application/zip",
     "application/x-7z-compressed",
-    "application/vnd.rar"
+    "application/vnd.rar",
+    "application/x-compressed"
+
 ]
 
 export const ALLOWED_TYPES = [

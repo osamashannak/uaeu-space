@@ -21,10 +21,10 @@ const upload = multer({
 
         const type = file.mimetype.split('/')[0]!;
 
-        if (!(ALLOWED_TYPES.includes(type) || ALLOWED_APPLICATION_TYPES.includes(file.mimetype))) {
+        /*if (!(ALLOWED_TYPES.includes(type) || ALLOWED_APPLICATION_TYPES.includes(file.mimetype))) {
             cb(null, false);
             return;
-        }
+        }*/
 
         cb(null, true);
     }
