@@ -14,4 +14,14 @@ export interface DashboardReviewAPI extends ReviewAPI {
 export interface DashboardFileAPI extends CourseFileAPI {
     course: CourseAPI;
     downloads: number;
+    vt_report: VTReport | null;
+}
+
+export interface VTReport {
+    harmless: number;
+    malicious: number;
+    suspicious: number;
+    timeout: number;
+    undetected: number;
+    error: number;
 }

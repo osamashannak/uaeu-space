@@ -1,5 +1,6 @@
 import icons from "@/icons";
 import styles from "@/styles/components/Review.module.scss";
+import {VTReport} from "@/interface/dashboard";
 
 export const HOST = "https://api.uaeu.space";
 
@@ -148,3 +149,7 @@ export const formatRelativeTime = (inputDate: Date) => {
 }
 
 export const convertArabicNumeral = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+
+export const isHarmful = (report: VTReport) => {
+    return report.malicious > 0 || report.suspicious > 0;
+}

@@ -96,7 +96,7 @@ export const reviewAction = async (reviewId: number, action: string, token: stri
     return response;
 }
 
-export const fileAction = async (fileId: string, action: string, token: string) => {
+export const fileAction = async (fileId: number, action: string, token: string) => {
     let response;
 
     try {

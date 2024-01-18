@@ -130,7 +130,7 @@ const FileUpload = (props: { courseTag: string }) => {
                     </div>)
                 }
 
-                <input hidden={submitting} type={"submit"} title={"Submit"} className={styles.formSubmit}
+                <input hidden={submitting} type={"submit"} title={"Submit"} className={details.length> 0 ? styles.enabledFormSubmit : styles.disabledFormSubmit}
                        value={"Submit"}/>
 
                 <div className={styles.disclaimer}>
