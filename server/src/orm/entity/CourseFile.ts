@@ -1,6 +1,7 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Course} from "./Course";
 import {FileRating} from "./Rating";
+import {User} from "./user/User";
 
 @Entity()
 export class CourseFile {
@@ -22,6 +23,9 @@ export class CourseFile {
 
     @Column()
     size!: number;
+
+    @ManyToOne(()=> User, user => user.reviews)
+    user!: User;
 
     @Column({default: false})
     reviewed!: boolean;

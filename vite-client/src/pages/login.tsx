@@ -4,17 +4,47 @@ import dayjs from "dayjs";
 import {CredentialResponse, GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 import {Helmet} from "react-helmet-async";
 import {useState} from "react";
-import LoginWithEmail from "../components/login/LoginWithEmail.tsx";
-import RegisterForm from "../components/login/RegisterForm.tsx";
+import LoginWithEmail from "../components/login/login_with_email.tsx";
+import RegisterForm from "../components/login/register_form.tsx";
+import CompleteGoogleSignUp from "../components/login/complete_google_signup.tsx";
+import {GoogleSignUpProps} from "../typed/user.ts";
 
 
 export default function Login() {
 
+    const [googleSignUp, setGoogleSignUp] = useState<GoogleSignUpProps | null>(null);
+
 
     function googleSignInSuccess(response: CredentialResponse) {
-        console.log(response);
+       // todo check if user is already signed up before
+        console.log(response)
+
+        setGoogleSignUp({
+            email: "ohussein.m@gmail.com",
+            username: "ohusseinm",
+            googleId: "1234"
+        });
+
+
     }
 
+    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
+
+    if (!googleClientId) {
+        console.error("Google Client ID not found in .env file");
+    }
+
+    function getWidth() {
+        console.log(innerWidth)
+        if (window.innerWidth <= 415) {
+            return window.innerWidth-46;
+        } else if (window.innerWidth <= 768) {
+            return 370;
+        }
+        return 400;
+    }
+
+    console.log(getWidth())
 
 
     return (
@@ -26,6 +56,8 @@ export default function Login() {
 
             <LoginWithEmail/>
             <RegisterForm/>
+            {googleSignUp && <CompleteGoogleSignUp autocomplete={googleSignUp}/>}
+
 
             <div className={styles.loginPage}>
 
@@ -40,17 +72,19 @@ export default function Login() {
                         e.stopPropagation();
                         const screen = document.querySelector(`.${styles.screen}`) as HTMLDivElement;
                         screen.style.display = "flex";
+                        document.body.style.maxHeight = "100vh";
                         document.body.style.overflow = "hidden";
-                        document.body.style.height = "100vh";
-                    }}>Login with Email</button>
+                    }}>Login with Email
+                    </button>
 
                     <button className={styles.signUpButton} onClick={(e) => {
                         e.stopPropagation();
                         const screen = document.querySelector(`.${styles.registerScreen}`) as HTMLDivElement;
                         screen.style.display = "flex";
+                        document.body.style.maxHeight = "100vh";
                         document.body.style.overflow = "hidden";
-                        document.body.style.height = "100vh";
-                    }}>Create Account</button>
+                    }}>Create Account
+                    </button>
 
                     <div className={styles.orSeparator}>
                         <span>OR</span>
@@ -58,17 +92,19 @@ export default function Login() {
 
                     <div className={styles.loginWith}>
 
-                        <GoogleOAuthProvider clientId="<your_client_id>">
+                        <GoogleOAuthProvider clientId={googleClientId}>
                             <GoogleLogin
+                                width={getWidth()}
                                 type={"standard"}
                                 theme={"outline"}
                                 size={"large"}
                                 text={"continue_with"}
                                 shape={"pill"}
-                                itp_support={true}
                                 ux_mode={"popup"}
                                 useOneTap={false}
                                 locale={dayjs.locale()}
+                                use_fedcm_for_prompt
+                                itp_support
                                 onSuccess={googleSignInSuccess}/>
                         </GoogleOAuthProvider>
                     </div>

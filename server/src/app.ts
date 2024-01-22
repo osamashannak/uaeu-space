@@ -6,7 +6,6 @@ import express from "express";
 import cors from "cors";
 import courseRouter from "./routes/CourseRouter";
 import professorRouter from "./routes/ProfessorRouter";
-import dashboardRouter from "./routes/DashboardRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
 import {loadAzure} from "./azure";
@@ -119,8 +118,19 @@ app.get("/sitemap.xml", async (req, res) => {
 
 app.use("/course", courseRouter);
 app.use("/professor", professorRouter);
-app.use("/dashboard", dashboardRouter);
 app.use("/shared", sharedRouter);
+
+app.use(function(req, res, next) {
+    if (req.secure) {
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+        res.setHeader('Cache-Control', 'private, s-maxage=0, max-age=0, must-revalidate, no-store');
+        res.setHeader('X-XSS-Protection', '0');
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        res.removeHeader("X-Powered-By");
+    }
+    next();
+})
 
 const port = process.env.PORT || 4000;
 

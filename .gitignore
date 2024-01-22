@@ -28,3 +28,4 @@ server/.env
 server/tmp/
 server/dist/
 server/node_modules/
+server/src/sensitive

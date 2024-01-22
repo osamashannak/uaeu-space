@@ -2,6 +2,7 @@ import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGenerated
 import {Professor} from "./Professor";
 import {ReviewRating} from "./Rating";
 import {ReviewAttachment} from "./ReviewAttachment";
+import {User} from "./user/User";
 
 @Entity()
 export class Review {
@@ -29,6 +30,9 @@ export class Review {
 
     @Column({default: null, nullable: true})
     attachment!: string;
+
+    @ManyToOne(()=> User, user => user.reviews)
+    user!: User;
 
     @OneToMany(() => ReviewRating, ratings => ratings.review)
     ratings!: ReviewRating[];

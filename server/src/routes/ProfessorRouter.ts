@@ -1,8 +1,8 @@
 import * as express from "express";
 import {
+    comment,
     find,
     getAll,
-    rate,
     upload
 } from "../controllers/ProfessorCtrl";
 import multer from "multer";
@@ -26,7 +26,7 @@ const router = express.Router();
 
 router.get("/", find);
 router.get("/all", getAll);
-router.post("/rate", rate);
+router.post("/rate", comment);
 router.post("/rate/upload", uploadMulter.single("file"), upload);
 
 

@@ -4,26 +4,24 @@ import {Professor} from "../orm/entity/Professor";
 import {Equal, ILike} from "typeorm";
 import {Review} from "../orm/entity/Review";
 import requestIp from "request-ip";
-import {createAssessment} from "../utils";
+import {createAssessment, validateProfessorComment} from "../utils";
 import {getFileURL, uploadAttachment} from "../azure";
 import {ReviewAttachment} from "../orm/entity/ReviewAttachment";
 import {analyzeImage} from "../azure-vision";
 import crypto from "crypto";
+import sizeOf from 'image-size';
 
-const sizeOf = require('image-size');
 
-type RateBody = {
-    positive: boolean,
-    comment: string,
-    score: number,
-    attachments: string[],
-    professorEmail: string,
-    recaptchaToken: string
-}
 
-export const rate = async (req: Request, res: Response) => {
-    const body: RateBody = req.body;
+
+export const comment = async (req: Request, res: Response) => {
+    const body = validateProfessorComment(req.body);
     let address = requestIp.getClientIp(req);
+
+    if (!body) {
+        res.status(400).json({error: "Invalid."});
+        return;
+    }
 
     let valid: boolean = true;
 
@@ -47,7 +45,7 @@ export const rate = async (req: Request, res: Response) => {
         where: {email: Equal(body.professorEmail)}
     });
 
-    if (!professor || body.comment == undefined || !body.score || body.positive == undefined) {
+    if (!professor) {
         res.status(200).json({success: "failed-nop"});
         return;
     }
@@ -66,7 +64,7 @@ export const rate = async (req: Request, res: Response) => {
 
     review.author = "Anonymous";
     review.comment = body.comment;
-    review.score = body.score;
+    review.score = parseInt(body.score);
     review.positive = body.positive;
     review.professor = professor;
     review.author_ip = address;
@@ -74,7 +72,7 @@ export const rate = async (req: Request, res: Response) => {
 
     await AppDataSource.getRepository(Review).save(review);
 
-    res.status(200).json({result: "success"});
+    res.status(201).json({result: "success"});
 }
 
 export const upload = async (req: Request, res: Response) => {
@@ -108,8 +106,8 @@ export const upload = async (req: Request, res: Response) => {
     reviewAttachment.id = blobName;
     reviewAttachment.mime_type = file.mimetype;
     reviewAttachment.size = file.size;
-    reviewAttachment.height = dimensions.height;
-    reviewAttachment.width = dimensions.width;
+    reviewAttachment.height = dimensions.height!;
+    reviewAttachment.width = dimensions.width!;
     reviewAttachment.ip_address = address;
 
     await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);

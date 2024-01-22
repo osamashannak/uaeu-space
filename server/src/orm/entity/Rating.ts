@@ -8,6 +8,7 @@ import {
 } from "typeorm"
 import {CourseFile} from "./CourseFile";
 import {Review} from "./Review";
+import {User} from "./user/User";
 
 @Entity()
 @TableInheritance({column: {type: "varchar", name: "type"}})
@@ -21,6 +22,9 @@ export abstract class Rating {
 
     @Column("inet", {nullable: true, default: null})
     ip_address!: string;
+
+    @ManyToOne(() => User, user => user.ratings)
+    user!: User;
 
     @CreateDateColumn({nullable: true, default: null})
     created_at!: Date;

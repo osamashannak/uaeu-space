@@ -73,9 +73,17 @@
     align-items: center;
   }
 
-  span {
+  span{
     margin-left: 1rem;
   }
+
+  p {
+    margin-right: 1rem;
+  }
+}
+
+.navLinkLogin {
+  display: none;
 }
 
 .mobileNav {
@@ -102,10 +110,15 @@
 
   .navLink {
     width: fit-content;
+    align-self: flex-end;
 
     span {
       display: none;
     }
+  }
+
+  .navLinkLogin {
+    display: flex;
   }
 }
 

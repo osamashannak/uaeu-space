@@ -117,13 +117,30 @@ export default function Header() {
                                 }
                                 <span className={"nav-link-text"}>Rate Professor</span>
                             </Link>
+
+                            <Link className={`${styles.navLink} ${styles.navLinkLogin}`} to={"/login"}
+                                  title={"Login"}>
+                                <p>Login</p>
+                                {selected === "login" ?
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                              d="M12 21v-2h7V5h-7V3h7q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm-2-4l-1.375-1.45l2.55-2.55H3v-2h8.175l-2.55-2.55L10 7l5 5z"/>
+                                    </svg>
+                                    :
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                              d="M11.98 20v-1h6.405q.23 0 .423-.192q.192-.193.192-.423V5.615q0-.23-.192-.423Q18.615 5 18.385 5H11.98V4h6.404q.69 0 1.152.463q.463.462.463 1.152v12.77q0 .69-.462 1.152q-.463.463-1.153.463zm-.71-4.462l-.703-.719l2.32-2.319H4v-1h8.887l-2.32-2.32l.702-.718L14.808 12z"/>
+                                    </svg>
+
+                                }
+                            </Link>
                         </div>
                     </div>
                 </div>
             </header>
 
             <div className={styles.mobileNav}>
-                <Link className={"nav-link"} to={"/"}>
+                <Link className={styles.navLink} to={"/"}>
                     {selected === "" ?
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
                             <path fill="currentColor" fillRule="evenodd"
@@ -137,7 +154,7 @@ export default function Header() {
                     }
                 </Link>
 
-                <Link className={"nav-link uaeu-space-icon"} to={"/course"}>
+                <Link className={styles.navLink} to={"/course"}>
 
                     {selected === "course" ?
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
@@ -154,7 +171,7 @@ export default function Header() {
                     }
                 </Link>
 
-                <Link className={"nav-link uaeu-space-icon"} to={"/professor"}>
+                <Link className={styles.navLink} to={"/professor"}>
 
                     {selected === "professor" ?
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
@@ -166,6 +183,23 @@ export default function Header() {
                             <path fill="currentColor"
                                   d="M6.385 13.615h2.203l5.27-5.269q.129-.148.193-.31q.064-.163.064-.323t-.067-.316q-.067-.157-.19-.305l-.92-.95q-.128-.129-.298-.193q-.169-.064-.334-.064q-.16 0-.322.064q-.163.064-.31.193l-5.29 5.27zm6.846-5.902l-.925-.944zm-5.962 5.018v-.95l3.448-3.448l.462.488l.47.48l-3.43 3.43zm3.91-3.91l.47.48l-.932-.968zm.63 4.794h5.806v-1H12.81zM3 20.077V4.615q0-.69.463-1.152Q3.925 3 4.615 3h14.77q.69 0 1.152.463q.463.462.463 1.152v10.77q0 .69-.462 1.153q-.463.462-1.153.462H6.077zM5.65 16h13.735q.23 0 .423-.192q.192-.193.192-.423V4.615q0-.23-.192-.423Q19.615 4 19.385 4H4.615q-.23 0-.423.192Q4 4.385 4 4.615v13.03zM4 16V4z"/>
                         </svg>
+                    }
+
+                </Link>
+
+                <Link className={styles.navLink} to={"/login"}>
+
+                    {selected === "login" ?
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                  d="M12 21v-2h7V5h-7V3h7q.825 0 1.413.588T21 5v14q0 .825-.587 1.413T19 21zm-2-4l-1.375-1.45l2.55-2.55H3v-2h8.175l-2.55-2.55L10 7l5 5z"/>
+                        </svg>
+                        :
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                  d="M11.98 20v-1h6.405q.23 0 .423-.192q.192-.193.192-.423V5.615q0-.23-.192-.423Q18.615 5 18.385 5H11.98V4h6.404q.69 0 1.152.463q.463.462.463 1.152v12.77q0 .69-.462 1.152q-.463.463-1.153.463zm-.71-4.462l-.703-.719l2.32-2.319H4v-1h8.887l-2.32-2.32l.702-.718L14.808 12z"/>
+                        </svg>
+
                     }
 
                 </Link>

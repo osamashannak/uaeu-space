@@ -154,3 +154,25 @@ export const parseText = (text: HTMLElement | string) => {
         ext: '.svg',
     });
 }
+
+
+export const isPasswordValid = (password: string) => {
+    if (password.match(/[\u0080-\uFFFF]/)) {
+        return "Password cannot contain unicode characters."
+    }
+
+    if (password.match(/\s/)) {
+        return "Password cannot contain spaces."
+    }
+
+    if (password.length < 8 || password.length > 16) {
+        return "Password must be between 8 and 16 characters long."
+    }
+
+    return true;
+}
+
+export const isEmailValid = (email: string) => {
+    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    return emailRegex.test(email);
+}

@@ -6,6 +6,7 @@ import {ReviewFormDraft} from "../../typed/professor.ts";
 import {postReview, uploadAttachment} from "../../api/professor.ts";
 import {convertArabicNumeral} from "../../utils.tsx";
 import EmojiPicker, {EmojiStyle, Theme} from 'emoji-picker-react';
+import {Link} from "react-router-dom";
 
 export default function ReviewForm(props: { professorEmail: string }) {
 
@@ -300,7 +301,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
                                 <p className={styles.element}>2. Delete your reviews at any time</p>
                             </div>
                             <h5>Your reviews will always be anonymous</h5>
-                            <a className={styles.warningButton} href={"/login"}>Login</a>
+                            <Link className={styles.warningButton} to={"/login"}>Login</Link>
                         </div>
 
                     </div>

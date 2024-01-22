@@ -24,10 +24,6 @@ export function Root() {
                     <h3>UAEU Space is now <span className={styles.title}>SpaceRead.net</span><span
                         className={styles.confettiEmoji}>🎉</span></h3>
                 </div>
-
-                <div>
-                    <h3>What's new?</h3>
-                </div>
                 {/*<h3 className={styles.phrase}>It&apos;s time to transform your academic journey.</h3>*/}
 
 

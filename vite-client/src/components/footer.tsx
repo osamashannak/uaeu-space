@@ -7,7 +7,7 @@ export default function Footer() {
         <footer>
             <section className={styles.footerBlock}>
                 <h2 className={styles.blockTitle}>Join the UAEU Community</h2>
-                <Link to={"/login"} className={styles.loginButton}>Login</Link>
+                <Link to={"/login"} className={styles.loginButton}>Go to Login</Link>
             </section>
             <section className={styles.footerBlock}>
                 <h2 className={styles.blockTitle}>About UAEU Space</h2>

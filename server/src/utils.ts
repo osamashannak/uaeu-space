@@ -2,6 +2,7 @@ import {createReadStream, createWriteStream} from "fs";
 import {createGzip} from "zlib";
 import jwt from "jsonwebtoken";
 import {JWT_SECRET} from "./app";
+import {CommentBody} from "./typed/professor";
 
 export const compressFile = async (filePath: string) => {
     const stream = createReadStream(filePath);
@@ -92,5 +93,32 @@ export const createAssessment = async (token: string) => {
     }
 
     return response.riskAnalysis?.score > 0.5;
+
+}
+
+export const validateProfessorComment = (body: CommentBody): CommentBody | null => {
+    if (!body.professorEmail || !body.comment || !body.score || body.positive == undefined) {
+        return null;
+    }
+
+    body.comment = body.comment.trimEnd();
+
+    if (body.comment.length > 350) {
+        return null;
+    }
+
+    if (!Number.isInteger(body.score) || parseInt(body.score) < 1 || parseInt(body.score) > 5) {
+        return null;
+    }
+
+    if (body.attachments.length > 1) {
+        return null;
+    }
+
+    if (body.positive != undefined) {
+        return null;
+    }
+
+    return body;
 
 }

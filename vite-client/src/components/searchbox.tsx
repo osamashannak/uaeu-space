@@ -122,6 +122,7 @@ export default function SearchBox(props: { type: "professor" | "course" }) {
                         {inputValue &&
                             items.map((element, index) => (
                                 <li className={`${styles.datalistOption} ${highlightedIndex === index && ` ${styles.bgBlueOption}`}`}
+                                    style={element.name === "Loading..." ? {pointerEvents: "none"} : {}}
                                     key={`${element.name}${index}`} {...getItemProps({
                                     item: element,
                                     index,

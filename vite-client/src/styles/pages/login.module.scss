@@ -28,7 +28,6 @@
   flex-direction: column;
   width: 100%;
   border-radius: 8px;
-  margin: 0 auto;
 }
 
 .formField {
@@ -36,17 +35,33 @@
   margin-bottom: 22px;
   padding: 9px 8px;
   border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
   font-size: 16px;
+  transition: background 0.2s ease-in-out, border 0.2s ease-in-out;
+  border: none;
+  background: rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
 
   &:focus {
     outline: none;
-    border: 1px solid rgba(0, 0, 0, 0.5);
   }
 
   &::placeholder {
     color: rgba(0, 0, 0, 0.5);
   }
+}
+
+.invalid {
+  outline: 2px solid red;
+
+}
+
+.validation {
+  font-size: 12px;
+  height: 32px;
+  color: red;
 }
 
 .formButton {
@@ -146,6 +161,11 @@
   @extend .screen;
 }
 
+.completeSignUpScreen {
+  @extend .screen;
+  display: flex;
+}
+
 
 .panel {
   background-color: white;
@@ -160,9 +180,9 @@
 }
 
 .panelTitle {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
 
 
   p {

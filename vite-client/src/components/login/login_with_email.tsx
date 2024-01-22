@@ -1,21 +1,23 @@
 import styles from "../../styles/pages/login.module.scss";
+import {useState} from "react";
 
 
 export default function LoginWithEmail() {
 
+    const [loginForm, setLoginForm] = useState({
+        id: "",
+        password: ""
+    });
+
     return (
-        <div className={styles.screen} onClick={(e) => {
-            const screen = document.querySelector(`.${styles.screen}`) as HTMLDivElement;
-            e.stopPropagation();
-            screen.style.display = "none";
-            document.body.style.overflow = "auto";
-            document.body.style.height = "auto";
-        }}>
+        <div className={styles.screen}>
             <div className={styles.panel} onClick={e => e.stopPropagation()}>
                 <div className={styles.deleteButton}
                      onClick={() => {
                          const screen = document.querySelector(`.${styles.screen}`) as HTMLDivElement;
                          screen.style.display = "none";
+                         document.body.style.removeProperty("max-height");
+                         document.body.style.removeProperty("overflow");
                      }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                          viewBox="0 0 256 256">
@@ -31,12 +33,18 @@ export default function LoginWithEmail() {
 
                 <form>
                     <div className={styles.loginForm}>
-                        <input type={"text"} required placeholder={"Username or Email"} className={styles.formField}/>
-                        <input type={"password"} required placeholder={"Password"} className={styles.formField}/>
+                        <input type={"text"} onChange={(e) => {
+                            setLoginForm({...loginForm, id: e.target.value})
+                        }} required placeholder={"Username or Email"} className={styles.formField}/>
+                        <input type={"password"} onChange={(e) => {
+                            setLoginForm({...loginForm, password: e.target.value})
+                        }} required placeholder={"Password"} className={styles.formField}/>
+                        <div id={"login-form"} className={styles.validation}/>
+
                     </div>
 
                     <div>
-                        <button type={"submit"} className={styles.formButton}>Login</button>
+                    <button type={"submit"} className={styles.formButton}>Login</button>
                     </div>
                 </form>
 
