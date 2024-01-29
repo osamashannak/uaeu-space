@@ -1,8 +1,6 @@
 import {Request, Response} from 'express';
 import {AppDataSource} from "../orm/data-source";
-import {Professor} from "../orm/entity/Professor";
 import {Equal, ILike} from "typeorm";
-import {Review} from "../orm/entity/Review";
 import requestIp from "request-ip";
 import {createAssessment, validateProfessorComment} from "../utils";
 import {getFileURL, uploadAttachment} from "../azure";
@@ -10,6 +8,8 @@ import {ReviewAttachment} from "../orm/entity/ReviewAttachment";
 import {analyzeImage} from "../azure-vision";
 import crypto from "crypto";
 import sizeOf from 'image-size';
+import {Professor} from "../orm/entity/professor/Professor";
+import {Review} from "../orm/entity/professor/Review";
 
 
 

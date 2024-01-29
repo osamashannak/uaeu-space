@@ -7,6 +7,7 @@ export default function RegisterForm() {
 
     function formSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        console.log(123213213)
     }
 
     return (
@@ -18,6 +19,8 @@ export default function RegisterForm() {
                          screen.style.display = "none";
                          document.body.style.removeProperty("max-height");
                          document.body.style.removeProperty("overflow");
+                         const html = document.querySelector("html") as HTMLHtmlElement;
+                         html.style.overscrollBehaviorY = "auto";
 
                      }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"

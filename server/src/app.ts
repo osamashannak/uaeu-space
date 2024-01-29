@@ -11,12 +11,12 @@ import {AppDataSource} from "./orm/data-source";
 import {loadAzure} from "./azure";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
-import {Professor} from "./orm/entity/Professor";
 import {Course} from "./orm/entity/Course";
 import {AdClick} from "./orm/entity/AdClick";
 import requestIp from "request-ip";
 import jwt from "jsonwebtoken";
 import sharedRouter from "./routes/SharedRouter";
+import {Professor} from "./orm/entity/professor/Professor";
 
 export let JWT_SECRET: jwt.Secret;
 
@@ -123,7 +123,7 @@ app.use("/shared", sharedRouter);
 app.use(function(req, res, next) {
     if (req.secure) {
         res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-        res.setHeader('Cache-Control', 'private, s-maxage=0, max-age=0, must-revalidate, no-store');
+        res.setHeader('Cache-Control', 'private, no-cache, s-maxage=0, max-age=0, must-revalidate, no-store');
         res.setHeader('X-XSS-Protection', '0');
         res.setHeader('X-Content-Type-Options', 'nosniff');
         res.setHeader('X-Frame-Options', 'SAMEORIGIN');
@@ -142,6 +142,7 @@ const main = (): void => {
 
     AppDataSource.initialize().then(async () => {
 
+        console.log("Connected to database.")
         /*console.log("Inserting a new user into the database...")
         const files = await AppDataSource.manager.getRepository(CourseFile).find({relations: ['course']});
         console.log(files)*/

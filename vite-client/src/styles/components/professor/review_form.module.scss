@@ -99,27 +99,51 @@
 
 .postEditor {
   overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
+  -webkit-user-select: none;
   cursor: text;
-  padding-bottom: 1rem;
   max-height: 350px;
   min-height: 24px;
   font-size: 20px;
   line-height: 24px;
   font-weight: 400;
+  width: 100%;
 }
 
-.postContent {
+.postContentContainer {
   padding-bottom: 2px;
   padding-top: 2px;
   position: relative;
   z-index: 1;
-  outline: none;
-  line-height: 24px;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: break-word;
+}
+
+.postContent {
+  -moz-user-modify: read-write-plaintext-only;
   -webkit-user-modify: read-write-plaintext-only;
+  height: inherit;
+  max-height: inherit;
+  min-height: inherit;
+  text-align: initial;
+}
+
+.postRTL {
+    direction: rtl;
+    text-align: right;
+}
+
+.postLTR {
+    direction: ltr;
+    text-align: left;
+}
+
+.postParagraph {
+  padding-bottom: 2px;
+  padding-top: 2px;
+  overflow: hidden;
+    position: relative;
+  white-space: pre-wrap;
+
 }
 
 .postPlaceholder {
@@ -137,7 +161,6 @@
   flex-wrap: wrap;
   margin-top: 8px;
 
-  // if on mobile, center the images
   @media (max-width: 812px) {
     justify-content: center;
   }
@@ -147,7 +170,7 @@
   position: relative;
   cursor: pointer;
 
-  width: 600px;
+  width: 100%;
   height: 100%;
   max-height: 680px;
 
@@ -223,8 +246,8 @@
     position: absolute;
     top: 50px;
   }
-}
 
+}
 .postFooter {
   display: flex;
   justify-content: space-between;

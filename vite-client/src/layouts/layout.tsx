@@ -1,4 +1,4 @@
-import React, {ReactNode} from "react";
+import {ReactNode} from "react";
 import styles from "../styles/layout.module.scss";
 import Header from "../components/header.tsx";
 import Footer from "../components/footer.tsx";
@@ -11,10 +11,10 @@ export default function Layout({children}: { children: ReactNode }) {
 
             <ScrollToTop/>
             <main>
-                {children}
+                <div className={styles.main}>
+                    {children}
+                </div>
             </main>
-
-
 
             <Footer/>
 

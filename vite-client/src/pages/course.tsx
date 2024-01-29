@@ -1,14 +1,23 @@
 import {CourseAPI} from "../typed/course.ts";
-import {useEffect, useState} from "react";
+import {lazy, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {getCourse} from "../api/course.ts";
 import Layout from "../layouts/layout.tsx";
-import FileSkeleton from "../components/skeletons/file.tsx";
 import Skeleton from "react-loading-skeleton";
 import styles from "../styles/pages/course.module.scss";
-import FileUpload from "../components/course/file_upload.tsx";
-import File from "../components/course/file.tsx";
 import fileStyles from "../styles/components/course/file.module.scss";
+
+
+const FileSkeleton = lazy(
+    async () => await import("../components/skeletons/file.tsx")
+);
+const FileUpload = lazy(
+    async () => await import("../components/course/file_upload.tsx")
+);
+const File = lazy(
+    async () => await import("../components/course/file.tsx")
+);
+
 
 export default function Course() {
     const [course, setCourse] = useState<CourseAPI | undefined | null>();

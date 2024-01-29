@@ -74,6 +74,8 @@ export default function Login() {
                         screen.style.display = "flex";
                         document.body.style.maxHeight = "100vh";
                         document.body.style.overflow = "hidden";
+                        const html = document.querySelector("html") as HTMLHtmlElement;
+                        html.style.overscrollBehaviorY = "none";
                     }}>Login with Email
                     </button>
 
@@ -83,6 +85,8 @@ export default function Login() {
                         screen.style.display = "flex";
                         document.body.style.maxHeight = "100vh";
                         document.body.style.overflow = "hidden";
+                        const html = document.querySelector("html") as HTMLHtmlElement;
+                        html.style.overscrollBehaviorY = "none";
                     }}>Create Account
                     </button>
 

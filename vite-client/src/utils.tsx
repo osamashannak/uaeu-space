@@ -165,8 +165,8 @@ export const isPasswordValid = (password: string) => {
         return "Password cannot contain spaces."
     }
 
-    if (password.length < 8 || password.length > 16) {
-        return "Password must be between 8 and 16 characters long."
+    if (password.length < 8 || password.length > 20) {
+        return "Password must be between 8 and 20 characters long."
     }
 
     return true;

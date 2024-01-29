@@ -1,7 +1,7 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Course} from "./Course";
-import {FileRating} from "./Rating";
 import {User} from "./user/User";
+import {FileRating} from "./legacy/Rating";
 
 @Entity()
 export class CourseFile {

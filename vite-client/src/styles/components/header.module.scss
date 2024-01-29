@@ -169,3 +169,13 @@
   backdrop-filter: none;
   opacity: 0.5;
 }
+
+
+@media all and (display-mode: standalone) {
+  .mobileNav {
+    height: 82px;
+    a {
+      align-self: start;
+    }
+  }
+}

@@ -6,13 +6,13 @@ import {
     ManyToOne, PrimaryColumn,
     TableInheritance
 } from "typeorm"
-import {CourseFile} from "./CourseFile";
-import {Review} from "./Review";
-import {User} from "./user/User";
+import {CourseFile} from "../CourseFile";
+import {Review} from "../professor/Review";
+import {GuestSession} from "../user/Session";
 
 @Entity()
 @TableInheritance({column: {type: "varchar", name: "type"}})
-export abstract class Rating {
+export abstract class LegacyRating {
 
     @PrimaryColumn("uuid")
     request_key!: string;
@@ -23,8 +23,8 @@ export abstract class Rating {
     @Column("inet", {nullable: true, default: null})
     ip_address!: string;
 
-    @ManyToOne(() => User, user => user.ratings)
-    user!: User;
+    @ManyToOne(() => GuestSession, session => session.legacyRatings)
+    session!: GuestSession;
 
     @CreateDateColumn({nullable: true, default: null})
     created_at!: Date;
@@ -32,7 +32,7 @@ export abstract class Rating {
 }
 
 @ChildEntity()
-export class FileRating extends Rating {
+export class FileRating extends LegacyRating {
 
     @ManyToOne(() => CourseFile, file => file.ratings)
     file!: CourseFile;
@@ -40,7 +40,7 @@ export class FileRating extends Rating {
 }
 
 @ChildEntity()
-export class ReviewRating extends Rating {
+export class ReviewRating extends LegacyRating {
 
     @ManyToOne(() => Review, review => review.ratings)
     review!: Review;

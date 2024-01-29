@@ -10,18 +10,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lexical/react": "^0.12.6",
     "@react-oauth/google": "^0.12.1",
     "compressorjs": "^1.2.1",
     "dayjs": "^1.11.10",
     "downshift": "^8.3.1",
-    "emoji-picker-react": "^4.6.8",
+    "emoji-picker-react": "^4.7.8",
     "fuse.js": "^7.0.0",
+    "lexical": "^0.12.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-recaptcha-v3": "^1.10.1",
     "react-helmet-async": "^2.0.4",
     "react-loading-skeleton": "^3.3.1",
-    "react-router-dom": "^6.21.1"
+    "react-router-dom": "^6.21.1",
+    "webpack-s3-plugin": "^1.2.0-rc.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

@@ -1,7 +1,6 @@
 import {Link, useNavigate} from "react-router-dom";
 import styles from "../styles/components/header.module.scss";
 import {useEffect, useRef, useState} from "react";
-import logo from "../assets/logo.png";
 
 export default function Header() {
     const navigate = useNavigate();
@@ -25,7 +24,7 @@ export default function Header() {
 
     if (typeof window !== "undefined") {
         let scrollCounter = 0;
-        const updateInterval = 10; // Set N to your desired value
+        const updateInterval = 4;
 
         window.onscroll = () => {
 
@@ -45,9 +44,8 @@ export default function Header() {
 
             if (scrollCounter % updateInterval === 0) {
                 const scrollDifference = Math.abs(window.scrollY - scrollRef.current);
-                console.log(scrollDifference)
 
-                if (window.scrollY < scrollRef.current && scrollDifference > 300) {
+                if (window.scrollY < scrollRef.current && scrollDifference > 50) {
                     scrollUp();
                 }
 
@@ -64,7 +62,16 @@ export default function Header() {
                 <div className={styles.header}>
                     <div className={styles.header2}>
                         <h1 className={styles.title} onClick={() => navigate("/")}>
-                            <img src={logo} width={"25"} height={"25"} alt={""}/>
+                            <svg width="25" height="25" viewBox="0 0 192 192" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="96" cy="96" r="96" fill="#0599E5"/>
+                                <path
+                                    d="M89.1191 141.493C79.9991 136.213 52.1591 119.701 50.7191 117.973C49.3751 116.533 48.6071 114.613 48.6071 109.813C48.6071 106.447 48.6071 105.013 48.6071 102.613C48.9911 102.613 55.5191 105.493 62.7191 108.373C69.3541 111.027 81.4391 116.053 81.4391 116.053C81.4391 116.053 72.3191 111.658 54.0791 100.213C29.5991 84.8526 25.2791 83.3816 29.5991 81.0126C44.4791 72.8526 42.5591 74.6271 60.3191 65.6526C91.9991 49.6442 93.7271 48.2766 95.8391 48.8526C95.8391 48.8526 95.8391 48.8526 162.559 81.4926C164.383 82.385 164.453 83.9054 163.519 84.3726C160.639 85.8126 163.519 84.3726 135.199 100.693C107.381 116.724 107.839 117.493 107.839 117.493C107.839 117.493 107.839 117.493 124.428 110.101C142.111 102.613 142.111 102.613 142.111 102.613C142.111 102.613 142.111 104.533 142.111 109.813C142.111 118.098 139.039 119.413 139.039 119.413C139.039 119.413 111.116 138.96 99.1991 142.933C97.7591 143.413 93.2646 143.893 89.1191 141.493Z"
+                                    fill="white"/>
+                                <path
+                                    d="M146.239 117.973V101.077L153.919 97.8127C153.919 97.8127 153.919 106.069 153.919 116.053C153.919 126.133 153.919 133.333 153.919 134.293L150.079 131.893L146.239 134.293C146.239 134.293 146.239 134.293 146.239 117.973Z"
+                                    fill="white"/>
+                            </svg>
                             <span className={styles.titleText}>SpaceRead</span>
                         </h1>
 

@@ -1,8 +1,7 @@
 import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm"
 import {Professor} from "./Professor";
-import {ReviewRating} from "./Rating";
-import {ReviewAttachment} from "./ReviewAttachment";
-import {User} from "./user/User";
+import {User} from "../user/User";
+import {ReviewRating} from "./ReviewRating";
 
 @Entity()
 export class Review {

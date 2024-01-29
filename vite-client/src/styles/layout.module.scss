@@ -2,3 +2,8 @@
   flex: 1;
 }
 
+@media (max-width: 768px) {
+  .main {
+    margin-top: 51px;
+  }
+}

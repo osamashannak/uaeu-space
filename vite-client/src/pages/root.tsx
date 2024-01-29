@@ -1,10 +1,7 @@
 import Layout from "../layouts/layout.tsx";
 import styles from "../styles/pages/home.module.scss";
-import {Link} from "react-router-dom";
-import courseImage from "../assets/images/course.png";
-import professorImage from "../assets/images/professor.png";
 
-export function Root() {
+export default function Root() {
 
 
     return (

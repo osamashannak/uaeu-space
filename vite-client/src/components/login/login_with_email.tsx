@@ -1,5 +1,6 @@
 import styles from "../../styles/pages/login.module.scss";
-import {useState} from "react";
+import {FormEvent, useState} from "react";
+import {sendLonginRequest} from "../../api/auth.ts";
 
 
 export default function LoginWithEmail() {
@@ -9,8 +10,23 @@ export default function LoginWithEmail() {
         password: ""
     });
 
+    function formSubmit(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        console.log("12321321")
+
+        sendLonginRequest(loginForm.id, loginForm.password).then((res) => {
+            if (typeof res == "string") {
+                window.location.href = res;
+            }
+        })
+    }
+
     return (
-        <div className={styles.screen}>
+        <div className={styles.screen} onClick={(e) => {
+            // stop propagation to prevent closing the screen when clicking on the panel
+            e.stopPropagation();
+
+        }}>
             <div className={styles.panel} onClick={e => e.stopPropagation()}>
                 <div className={styles.deleteButton}
                      onClick={() => {
@@ -18,6 +34,8 @@ export default function LoginWithEmail() {
                          screen.style.display = "none";
                          document.body.style.removeProperty("max-height");
                          document.body.style.removeProperty("overflow");
+                         const html = document.querySelector("html") as HTMLHtmlElement;
+                         html.style.overscrollBehaviorY = "auto";
                      }}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                          viewBox="0 0 256 256">
@@ -31,7 +49,7 @@ export default function LoginWithEmail() {
                 </div>
 
 
-                <form>
+                <form onSubmit={formSubmit}>
                     <div className={styles.loginForm}>
                         <input type={"text"} onChange={(e) => {
                             setLoginForm({...loginForm, id: e.target.value})

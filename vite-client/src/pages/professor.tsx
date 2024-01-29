@@ -1,15 +1,24 @@
 import Layout from "../layouts/layout.tsx";
 import einstein from "../assets/einstien.png";
-import {useEffect, useState} from "react";
-import ReviewForm from "../components/professor/review_form.tsx";
-import ReviewSection from "../components/professor/review_section.tsx";
+import {lazy, useEffect, useState} from "react";
 import styles from "../styles/pages/professor.module.scss";
 import {getProfessor} from "../api/professor.ts";
 import {useParams} from "react-router-dom";
 import {ProfessorAPI} from "../typed/professor.ts";
 import Skeleton from "react-loading-skeleton";
-import ReviewSkeleton from "../components/skeletons/review.tsx";
 import 'react-loading-skeleton/dist/skeleton.css'
+import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
+
+const ReviewForm = lazy(
+    async () => await import("../components/professor/review_form.tsx")
+);
+const ReviewSection = lazy(
+    async () => await import("../components/professor/review_section.tsx")
+);
+const ReviewSkeleton = lazy(
+    async () => await import("../components/skeletons/review.tsx")
+);
+
 
 export default function Professor() {
     const [professor, setProfessor] = useState<ProfessorAPI | undefined | null>();
@@ -22,7 +31,6 @@ export default function Professor() {
         }
 
         getProfessor(email).then((professor) => {
-            console.log(professor)
             setProfessor(professor);
         })
 
@@ -77,30 +85,38 @@ export default function Professor() {
 
     return (
         <Layout>
-            <div className={styles.profPage}>
-                <section className={styles.profInfoHead}>
-                    <div className={styles.profInfoLeft}>
-                        <h1>{professor.name}</h1>
-                        <p>{professor.college}</p>
-                    </div>
 
-                    <div className={styles.profInfoRight}>
-                        {score > 0 ?
-                            <>
-                                <p className={styles.score}>{score}</p>
-                                <span className={styles.outOf}>/5</span>
-                            </>
-                            :
-                            <p className={styles.score}>N/A</p>}
-                    </div>
-                </section>
+            <GoogleReCaptchaProvider
+                reCaptchaKey="6Lf8FeElAAAAAJX3DVLxtBSEydXx0ln7KscspOZ8"
+                useEnterprise={true}
+                scriptProps={{
+                    async: true
+                }}>
+                <div className={styles.profPage}>
+                    <section className={styles.profInfoHead}>
+                        <div className={styles.profInfoLeft}>
+                            <h1>{professor.name}</h1>
+                            <p>{professor.college}</p>
+                        </div>
+
+                        <div className={styles.profInfoRight}>
+                            {score > 0 ?
+                                <>
+                                    <p className={styles.score}>{score}</p>
+                                    <span className={styles.outOf}>/5</span>
+                                </>
+                                :
+                                <p className={styles.score}>N/A</p>}
+                        </div>
+                    </section>
 
 
-                <ReviewForm professorEmail={professor.email}/>
+                    <ReviewForm professorEmail={professor.email}/>
 
-                <ReviewSection professorReviews={professor.reviews}/>
+                    <ReviewSection professorReviews={professor.reviews}/>
 
-            </div>
+                </div>
+            </GoogleReCaptchaProvider>
         </Layout>
     );
 }

@@ -8,9 +8,6 @@ import {
     TableInheritance
 } from "typeorm";
 import {Session} from "./Session";
-import {Review} from "../professor/Review";
-import {CourseFile} from "../CourseFile";
-import {ReviewRating} from "../professor/ReviewRating";
 
 
 @Entity()
@@ -19,12 +16,6 @@ export class User {
 
     @PrimaryGeneratedColumn()
     id!: number;
-
-    @OneToMany(() => Review, review => review.user)
-    reviews!: Review[];
-
-    @OneToMany(() => CourseFile, courseFile => courseFile.user)
-    courseFiles!: CourseFile[];
 
     @CreateDateColumn()
     createdAt!: Date;
@@ -46,12 +37,24 @@ export class RegisteredUser extends User {
     @Column({default: null, nullable: true, unique: true})
     googleId!: string;
 
-    @OneToMany(() => ReviewRating, rating => rating.user)
-    reviewRatings!: ReviewRating[];
-
 }
 
 @ChildEntity("guest")
 export class Guest extends User {
+
+    @Column({unique: true})
+    token!: string;
+
+    @Column()
+    ipAddress!: string;
+
+    @Column()
+    userAgent!: string;
+
+    @CreateDateColumn()
+    createdAt!: Date;
+
+    @CreateDateColumn()
+    updatedAt!: Date;
 
 }
