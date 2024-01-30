@@ -3,7 +3,6 @@ import {DataSource} from "typeorm";
 import {User} from "./entity/User";
 import {Session} from "./entity/Session";
 
-console.log([__dirname + "\\entity\\*{.ts,.js}"])
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -12,9 +11,9 @@ export const AppDataSource = new DataSource({
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    synchronize: true,
-    ssl: true,
-    logging: true,
+    synchronize: false,
+    ssl: process.env.POSTGRES_HOST !== "localhost",
+    logging: process.env.ENVIRONMENT === "development",
     entities: [__dirname + "\\entity\\*{.ts,.js}"],
     migrations: [],
     subscribers: [],

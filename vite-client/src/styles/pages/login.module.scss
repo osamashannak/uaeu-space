@@ -83,6 +83,17 @@
   }
 }
 
+.disabledButton {
+  @extend .formButton;
+  background-color: rgba(135, 206, 250, 0.5);
+  cursor: wait;
+
+  &:hover {
+  opacity: 1;
+
+}
+}
+
 .signUpButton {
   width: 100%;
   margin-bottom: 1rem;

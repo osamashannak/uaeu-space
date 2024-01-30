@@ -12,12 +12,24 @@ export default function LoginWithEmail() {
 
     function formSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log("12321321")
+
+        const validation = document.querySelector(`.${styles.validation}`) as HTMLDivElement;
+        validation.innerText = "";
+
+        const button = document.querySelector(`.${styles.formButton}`) as HTMLButtonElement;
+        button.disabled = true;
+        button.classList.add(styles.disabledButton);
 
         sendLonginRequest(loginForm.id, loginForm.password).then((res) => {
-            if (typeof res == "string") {
-                window.location.href = res;
+            if ('redirect' in res) {
+                window.location.href = res.redirect as string;
+            } else {
+                validation.innerText = res.message;
+
+                button.disabled = false;
+                button.classList.remove(styles.disabledButton);
             }
+
         })
     }
 

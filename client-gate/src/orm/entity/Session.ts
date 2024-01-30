@@ -1,5 +1,5 @@
-import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn} from "typeorm";
-import {RegisteredUser} from "./User";
+import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn} from "typeorm";
+import {User} from "./User";
 
 
 @Entity()
@@ -10,8 +10,8 @@ export class Session {
     @Column()
     ipAddress!: string;
 
-    @ManyToOne(() => RegisteredUser, user => user.sessions)
-    user!: RegisteredUser;
+    @ManyToOne(() => User, user => user.sessions)
+    user!: User;
 
     @Column()
     userAgent!: string;
@@ -19,7 +19,7 @@ export class Session {
     @CreateDateColumn()
     createdAt!: Date;
 
-    @CreateDateColumn()
+    @UpdateDateColumn()
     updatedAt!: Date;
 
 }

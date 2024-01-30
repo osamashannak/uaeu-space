@@ -30,5 +30,6 @@ server/dist/
 server/node_modules/
 
 client-gate/.env
+client-gate/views/
 
 auth-server/

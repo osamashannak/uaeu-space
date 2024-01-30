@@ -11,12 +11,13 @@ export async function sendLonginRequest(id: string, password: string) {
             body: JSON.stringify({id: id, password: password}),
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            credentials: "include"
         })
         response =  await request.json();
     } catch (error) {
         return undefined;
     }
 
-    return response.redirect;
+    return response;
 }

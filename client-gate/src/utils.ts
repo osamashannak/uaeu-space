@@ -2,10 +2,10 @@ import {Response, Request} from "express";
 import crypto from "crypto";
 import {Session} from "./orm/entity/Session";
 import {AppDataSource} from "./orm/data-source";
-import {RegisteredUser} from "./orm/entity/User";
+import {User} from "./orm/entity/User";
 
 const SessionRepository = AppDataSource.getRepository(Session);
-const RegisteredRepository = AppDataSource.getRepository(RegisteredUser);
+const UserRepository = AppDataSource.getRepository(User);
 
 
 export interface RedisSession {
@@ -31,25 +31,40 @@ export function setHeaders(res: Response) {
 
 
 export function isAuthValid(session: any, authUsername: string) {
-    return session.user.username !== authUsername;
+    return session.user.username.toLowerCase() === authUsername.toLowerCase();
 }
 
 export async function generateAuthSession(username: string, address: string, req: Request) {
     const token = crypto.randomBytes(20).toString('hex');
+    const user = await UserRepository.findOne({where: {username: username}});
     const newSession = new Session();
     newSession.token = token;
     newSession.ipAddress = address;
     newSession.userAgent = req.headers['user-agent'] ?? "";
-    newSession.user = (await RegisteredRepository.findOne({where: {username: username}}))!;
+    newSession.user = user!;
     SessionRepository.save(newSession).then();
     return token;
 }
 
-export function setSessionCookie(res: Response, name: string, value: string) {
-    res.cookie(name, value, {
+export function setSessionCookie(res: Response, name: string, value: string, sessionOnly: boolean) {
+    const options = {
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24,
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
-        // todo secure: true
-    });
+        maxAge: 1000 * 60 * 60 * 24,
+        domain: process.env.DOMAIN,
+        secure: true
+    } as {
+        httpOnly: boolean,
+        expires: Date | undefined,
+        maxAge: number | undefined,
+        domain: string | undefined,
+        secure: boolean
+    }
+
+    if (sessionOnly) {
+        delete options.expires;
+        delete options.maxAge;
+    }
+
+    res.cookie(name, value, options);
 }
