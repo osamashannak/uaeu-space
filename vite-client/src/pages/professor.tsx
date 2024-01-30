@@ -7,7 +7,6 @@ import {useParams} from "react-router-dom";
 import {ProfessorAPI} from "../typed/professor.ts";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
-import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
 
 const ReviewForm = lazy(
     async () => await import("../components/professor/review_form.tsx")
@@ -85,38 +84,30 @@ export default function Professor() {
 
     return (
         <Layout>
+            <div className={styles.profPage}>
+                <section className={styles.profInfoHead}>
+                    <div className={styles.profInfoLeft}>
+                        <h1>{professor.name}</h1>
+                        <p>{professor.college}</p>
+                    </div>
 
-            <GoogleReCaptchaProvider
-                reCaptchaKey="6Lf8FeElAAAAAJX3DVLxtBSEydXx0ln7KscspOZ8"
-                useEnterprise={true}
-                scriptProps={{
-                    async: true
-                }}>
-                <div className={styles.profPage}>
-                    <section className={styles.profInfoHead}>
-                        <div className={styles.profInfoLeft}>
-                            <h1>{professor.name}</h1>
-                            <p>{professor.college}</p>
-                        </div>
-
-                        <div className={styles.profInfoRight}>
-                            {score > 0 ?
-                                <>
-                                    <p className={styles.score}>{score}</p>
-                                    <span className={styles.outOf}>/5</span>
-                                </>
-                                :
-                                <p className={styles.score}>N/A</p>}
-                        </div>
-                    </section>
+                    <div className={styles.profInfoRight}>
+                        {score > 0 ?
+                            <>
+                                <p className={styles.score}>{score}</p>
+                                <span className={styles.outOf}>/5</span>
+                            </>
+                            :
+                            <p className={styles.score}>N/A</p>}
+                    </div>
+                </section>
 
 
-                    <ReviewForm professorEmail={professor.email}/>
+                <ReviewForm professorEmail={professor.email}/>
 
-                    <ReviewSection professorReviews={professor.reviews}/>
+                <ReviewSection professorReviews={professor.reviews}/>
 
-                </div>
-            </GoogleReCaptchaProvider>
+            </div>
         </Layout>
     );
 }

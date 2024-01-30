@@ -60,7 +60,7 @@
 
 .validation {
   font-size: 12px;
-  height: 32px;
+  height: 40px;
   color: red;
 }
 
@@ -74,7 +74,7 @@
   font-weight: 700;
   color: white;
   font-size: 16px;
-  transition: opacity 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
   border-radius: 20px;
   -webkit-user-select: none;
 
@@ -86,12 +86,13 @@
 .disabledButton {
   @extend .formButton;
   background-color: rgba(135, 206, 250, 0.5);
-  cursor: wait;
+  cursor: default;
+  pointer-events: none;
 
   &:hover {
-  opacity: 1;
+    opacity: 1;
 
-}
+  }
 }
 
 .signUpButton {

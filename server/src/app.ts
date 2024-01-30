@@ -14,12 +14,11 @@ import {createGzip} from "zlib";
 import {Course} from "./orm/entity/Course";
 import {AdClick} from "./orm/entity/AdClick";
 import requestIp from "request-ip";
-import jwt from "jsonwebtoken";
 import sharedRouter from "./routes/SharedRouter";
 import {Professor} from "./orm/entity/professor/Professor";
+import VirusTotalClient from "./virustotal";
 
-export let JWT_SECRET: jwt.Secret;
-
+export let VTClient: VirusTotalClient;
 const app = express();
 
 app.use(cors());
@@ -120,7 +119,7 @@ app.use("/course", courseRouter);
 app.use("/professor", professorRouter);
 app.use("/shared", sharedRouter);
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     if (req.secure) {
         res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         res.setHeader('Cache-Control', 'private, no-cache, s-maxage=0, max-age=0, must-revalidate, no-store');
@@ -134,26 +133,17 @@ app.use(function(req, res, next) {
 
 const port = process.env.PORT || 4000;
 
-const main = (): void => {
+(async function main() {
 
-    JWT_SECRET = require('crypto').randomBytes(32).toString('hex');
+    VTClient = new VirusTotalClient();
 
-    loadAzure().then(r => console.log("Azure client loaded."));
+    await loadAzure();
+    console.log("Azure client loaded.")
 
-    AppDataSource.initialize().then(async () => {
-
-        console.log("Connected to database.")
-        /*console.log("Inserting a new user into the database...")
-        const files = await AppDataSource.manager.getRepository(CourseFile).find({relations: ['course']});
-        console.log(files)*/
-
-    }).catch(error => console.log(error))
+    await AppDataSource.initialize();
+    console.log("Connected to database.")
 
     app.listen(port, () => {
         console.log(`Socket is listening on port ${port}`);
     });
-}
-
-main();
-
-export default app;
+})()

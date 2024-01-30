@@ -1,16 +1,12 @@
 import {Request, Response} from "express";
 import {AppDataSource} from "../orm/data-source";
-import {Review} from "../orm/entity/Review";
-import {Equal} from "typeorm";
-import {FileRating, Rating, ReviewRating} from "../orm/entity/Rating";
 import requestIp from "request-ip";
-import {CourseFile} from "../orm/entity/CourseFile";
+import {RatingType, ReviewRating} from "../orm/entity/professor/ReviewRating";
+import {Review} from "../orm/entity/professor/Review";
 
 interface RatingBody {
     id: number,
-    positive: boolean,
-    request_key: string,
-    type: "review" | "file"
+    positive: boolean
 }
 
 export const addRating = async (req: Request, res: Response) => {
@@ -18,49 +14,27 @@ export const addRating = async (req: Request, res: Response) => {
 
     let address = requestIp.getClientIp(req);
 
-    console.log(body)
-    console.log(address)
-
-    if (!body.id || body.positive === null || !body.request_key || !body.type || !address) {
+    if (!body.id || body.positive === null || !address) {
         res.status(400).json();
         return;
     }
 
-    let rating: ReviewRating | FileRating;
+    let rating: ReviewRating;
 
-    if (body.type === "review") {
-        const review = await AppDataSource.getRepository(Review).findOne({
-            where: {id: body.id}
-        });
+    const review = await AppDataSource.getRepository(Review).findOne({
+        where: {id: body.id}
+    });
 
-        if (!review) {
-            res.status(404).json();
-            return;
-        }
-
-        rating = new ReviewRating();
-        rating.review = review;
-        rating.is_positive = body.positive;
-        rating.request_key = body.request_key;
-        rating.ip_address = address;
-    } else {
-        const file = await AppDataSource.getRepository(CourseFile).findOne({
-            where: {id: body.id}
-        });
-
-        if (!file) {
-            res.status(404).json();
-            return;
-        }
-
-        rating = new FileRating();
-        rating.file = file;
-        rating.is_positive = body.positive;
-        rating.request_key = body.request_key;
-        rating.ip_address = address;
+    if (!review) {
+        res.status(404).json();
+        return;
     }
 
-    await AppDataSource.getRepository(Rating).save(rating);
+    rating = new ReviewRating();
+    rating.review = review;
+    rating.type = body.positive ? RatingType.LIKE : RatingType.DISLIKE;
+
+    await AppDataSource.getRepository(ReviewRating).save(rating);
 
     res.status(200).json({result: "success"});
 }
@@ -74,7 +48,7 @@ export const removeRating = async (req: Request, res: Response) => {
         return;
     }
 
-    let rating = await AppDataSource.getRepository(Rating).findOne({
+   /* let rating = await AppDataSource.getRepository(ReviewRating).findOne({
         where: {request_key: Equal(key)}
     });
 
@@ -83,7 +57,7 @@ export const removeRating = async (req: Request, res: Response) => {
         return;
     }
 
-    await AppDataSource.getRepository(Rating).remove(rating);
+    await AppDataSource.getRepository(ReviewRating).remove(rating);
 
-    res.status(200).json({result: "success"});
+    res.status(200).json({result: "success"});*/
 }

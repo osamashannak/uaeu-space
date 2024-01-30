@@ -8,7 +8,8 @@ import requestIp from "request-ip";
 import {generateToken, getFileURL, uploadMaterial} from "../azure";
 import {promisify} from "util";
 import * as fs from "fs";
-import {compressFile, verifyJWTToken} from "../utils";
+import {compressFile} from "../utils";
+import {VTClient} from "../app";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -93,8 +94,8 @@ export const uploadFile = async (req: Request, res: Response) => {
         return;
     }
 
-    console.log([blobName, req.body.tag]);
-    await unlinkAsync(file.path);
+    await VTClient.addToQueue(file.path, blobName);
+
     await unlinkAsync(filePath);
 
     const courseFile = new CourseFile();
@@ -105,13 +106,6 @@ export const uploadFile = async (req: Request, res: Response) => {
     courseFile.type = file.mimetype;
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);
-
-    fs.writeFile('today.txt', `${[blobName, req.body.tag]}\n`, {flag: 'a'}, err => {
-        if (err) {
-            console.error(err);
-        }
-        // file written successfully
-    });
 
     res.status(200).json({result: "success"});
 
@@ -163,11 +157,7 @@ export const getFile = async (req: Request, res: Response) => {
         }
     });
 
-    const token = params.token as string | undefined;
-
-    const decodedToken = token ? verifyJWTToken(token) : undefined;
-
-    if (!courseFile || (!courseFile.visible && !decodedToken)) {
+    if (!courseFile || !courseFile.visible) {
         res.status(404).json({});
         return;
     }

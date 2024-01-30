@@ -10,6 +10,7 @@ import crypto from "crypto";
 import sizeOf from 'image-size';
 import {Professor} from "../orm/entity/professor/Professor";
 import {Review} from "../orm/entity/professor/Review";
+import {RatingType} from "../orm/entity/professor/ReviewRating";
 
 
 
@@ -150,8 +151,8 @@ export const find = async (req: Request, res: Response) => {
         reviews: await Promise.all(
             filteredReviews
                 .map(async ({ratings, reviewed, author_ip, visible, attachment, ...review}) => {
-                    const likesCount = ratings.filter(rating => rating.is_positive).length;
-                    const dislikesCount = ratings.filter(rating => !rating.is_positive).length;
+                    const likesCount = ratings.filter(rating => rating.type === RatingType.LIKE).length;
+                    const dislikesCount = ratings.filter(rating => rating.type === RatingType.DISLIKE).length;
 
                     let newAttachment = null;
 

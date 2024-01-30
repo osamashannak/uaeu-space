@@ -1,7 +1,5 @@
 import {createReadStream, createWriteStream} from "fs";
 import {createGzip} from "zlib";
-import jwt from "jsonwebtoken";
-import {JWT_SECRET} from "./app";
 import {CommentBody} from "./typed/professor";
 
 export const compressFile = async (filePath: string) => {
@@ -15,51 +13,6 @@ export const compressFile = async (filePath: string) => {
             .on('error', () => reject(null));
     });
 };
-
-
-export const ALLOWED_APPLICATION_TYPES = [
-    "application/pdf",
-    "application/vnd.ms-powerpoint",
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "text/csv",
-    "application/gzip",
-    "application/zip",
-    "application/x-7z-compressed",
-    "application/vnd.rar"
-]
-
-export const ALLOWED_TYPES = [
-    "image",
-    "audio",
-    "video"
-]
-
-export const ALLOWED_EMAILS = [process.env.DASHBOARD_EMAIL_1, process.env.DASHBOARD_EMAIL_2];
-
-interface JwtPayload {
-    email: string;
-    name: string;
-}
-
-export const verifyJWTToken = (token: string) => {
-    let decoded;
-
-    try {
-        decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
-    } catch (error) {
-        return undefined;
-    }
-
-    if (!ALLOWED_EMAILS.includes(decoded.email)) {
-        return undefined;
-    }
-
-    return decoded;
-}
 
 const API_KEY = process.env.GOOGLE_API_KEY;
 

@@ -83,36 +83,6 @@ export function getIconFromMIME(mimeType: string): JSX.Element {
     }
 }
 
-export const generateConfetti = (id: string) => {
-    const random = (max: number) => {
-        return Math.random() * max;
-    }
-
-    const c = document.createDocumentFragment();
-    for (let i = 0; i < 10; i++) {
-        const styles = 'transform: translate3d(' + (random(100) - 50) + 'px, ' + (random(100) - 50) + 'px, 0) rotate(' + random(360) + 'deg);\
-                  background: hsla(' + random(360) + ',100%,50%,1);\
-                  animation: bang 500ms ease-out forwards;\
-                  opacity: 0';
-
-        const e = document.createElement("i");
-        e.style.cssText = styles.toString();
-        e.className = "confetti";
-
-        c.appendChild(e);
-    }
-
-    const element = document.getElementById(id)!;
-    element.appendChild(c);
-
-    setTimeout(() => {
-        document.querySelectorAll(".confetti").forEach(function (c) {
-            c.parentNode!.removeChild(c);
-        });
-
-    }, 10000);
-}
-
 export const formatRelativeTime = (inputDate: Date) => {
 
     const now = new Date();
@@ -157,13 +127,6 @@ export const parseText = (text: HTMLElement | string) => {
 
 
 export const isPasswordValid = (password: string) => {
-    if (password.match(/[\u0080-\uFFFF]/)) {
-        return "Password cannot contain unicode characters."
-    }
-
-    if (password.match(/\s/)) {
-        return "Password cannot contain spaces."
-    }
 
     if (password.length < 8 || password.length > 20) {
         return "Password must be between 8 and 20 characters long."
@@ -175,4 +138,20 @@ export const isPasswordValid = (password: string) => {
 export const isEmailValid = (email: string) => {
     const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
     return emailRegex.test(email);
+}
+
+export const isUsernameValid = (username: string) => {
+    if (username.match(/[\u0080-\uFFFF]/)) {
+        return "Username cannot contain unicode characters."
+    }
+
+    if (username.match(/\s/)) {
+        return "Username cannot contain spaces."
+    }
+
+    if (username.length < 3 || username.length > 20) {
+        return "Username must be between 3 and 20 characters long."
+    }
+
+    return true;
 }

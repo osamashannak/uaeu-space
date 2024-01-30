@@ -3,8 +3,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import {ReviewAPI} from "../../typed/professor.ts";
 import styles from "../../styles/components/professor/review.module.scss";
 import {formatRelativeTime, parseText, ratingToIcon} from "../../utils.tsx";
-import Rating from "../rating.tsx";
 import {useEffect} from "react";
+import ReviewRating from "./review_rating.tsx";
 
 dayjs.extend(relativeTime)
 
@@ -77,7 +77,7 @@ export default function Review(review: ReviewAPI) {
 
             <div className={styles.reviewFooter}>
                 <div>
-                    <Rating dislikes={review.dislikes} likes={review.likes} id={review.id} type={"review"}/>
+                    <ReviewRating dislikes={review.dislikes} likes={review.likes} id={review.id} type={"review"}/>
                 </div>
             </div>
 

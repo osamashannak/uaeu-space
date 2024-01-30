@@ -1,12 +1,5 @@
 import "reflect-metadata";
 import {DataSource} from "typeorm";
-import {Course} from "./entity/Course";
-import {CourseFile} from "./entity/CourseFile";
-import {FileAccessToken} from "./entity/FileAccessToken";
-import {AdClick} from "./entity/AdClick";
-import {ReviewAttachment} from "./entity/ReviewAttachment";
-import {Review} from "./entity/professor/Review";
-import {Professor} from "./entity/professor/Professor";
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -16,9 +9,9 @@ export const AppDataSource = new DataSource({
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     synchronize: false,
-    ssl: true,
-    logging: false,
-    entities: [ReviewAttachment, Professor, Review, Course, CourseFile, FileAccessToken, AdClick],
+    ssl: false,
+    logging: true,
+    entities: [__dirname + "\\entity\\**\\*{.ts,.js}"],
     migrations: [],
     subscribers: [],
 })

@@ -6,7 +6,7 @@ export async function sendLonginRequest(id: string, password: string) {
     let response;
 
     try {
-        const request = await fetch(HOST + "/gate/login", {
+        response = await fetch(HOST + "/gate/login", {
             method: "POST",
             body: JSON.stringify({id: id, password: password}),
             headers: {
@@ -14,7 +14,6 @@ export async function sendLonginRequest(id: string, password: string) {
             },
             credentials: "include"
         })
-        response =  await request.json();
     } catch (error) {
         return undefined;
     }

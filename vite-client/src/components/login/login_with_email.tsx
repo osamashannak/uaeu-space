@@ -1,5 +1,5 @@
 import styles from "../../styles/pages/login.module.scss";
-import {FormEvent, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {sendLonginRequest} from "../../api/auth.ts";
 
 
@@ -9,6 +9,11 @@ export default function LoginWithEmail() {
         id: "",
         password: ""
     });
+    const [failedAttempt, setFailedAttempt] = useState(false);
+
+    useEffect(() => {
+        setFailedAttempt(false);
+    }, [loginForm]);
 
     function formSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -20,17 +25,27 @@ export default function LoginWithEmail() {
         button.disabled = true;
         button.classList.add(styles.disabledButton);
 
-        sendLonginRequest(loginForm.id, loginForm.password).then((res) => {
-            if ('redirect' in res) {
-                window.location.href = res.redirect as string;
-            } else {
-                validation.innerText = res.message;
+        sendLonginRequest(loginForm.id, loginForm.password).then(async (res) => {
+
+            if (!res || res.status !== 200) {
+                validation.innerText = (await res?.json())?.message ?? "The authentication servers are currently down. Please try again later.";
 
                 button.disabled = false;
                 button.classList.remove(styles.disabledButton);
+                setFailedAttempt(true);
+
+                return;
             }
 
+            const responseJson = await res.json();
+
+            window.location.href = responseJson.redirect as string;
+
         })
+    }
+
+    function canSubmit() {
+        return !failedAttempt && loginForm.id.length > 0 && loginForm.password.length > 0;
     }
 
     return (
@@ -74,7 +89,7 @@ export default function LoginWithEmail() {
                     </div>
 
                     <div>
-                    <button type={"submit"} className={styles.formButton}>Login</button>
+                        <button type={"submit"} className={canSubmit() ? styles.formButton : styles.disabledButton}>Login</button>
                     </div>
                 </form>
 

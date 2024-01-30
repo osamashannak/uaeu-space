@@ -10,7 +10,7 @@ import {Review} from "./Review";
 
 
 @Entity()
-export abstract class ReviewRating {
+export class ReviewRating {
     @PrimaryGeneratedColumn()
     id!: number;
 

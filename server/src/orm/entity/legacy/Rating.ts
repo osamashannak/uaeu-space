@@ -8,7 +8,6 @@ import {
 } from "typeorm"
 import {CourseFile} from "../CourseFile";
 import {Review} from "../professor/Review";
-import {GuestSession} from "../user/Session";
 
 @Entity()
 @TableInheritance({column: {type: "varchar", name: "type"}})
@@ -22,9 +21,6 @@ export abstract class LegacyRating {
 
     @Column("inet", {nullable: true, default: null})
     ip_address!: string;
-
-    @ManyToOne(() => GuestSession, session => session.legacyRatings)
-    session!: GuestSession;
 
     @CreateDateColumn({nullable: true, default: null})
     created_at!: Date;

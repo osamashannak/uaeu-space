@@ -1,13 +1,58 @@
 import styles from "../../styles/pages/login.module.scss";
-import {isEmailValid, isPasswordValid} from "../../utils.tsx";
-import {FormEvent} from "react";
+import {isEmailValid, isPasswordValid, isUsernameValid} from "../../utils.tsx";
+import {FormEvent, useEffect, useState} from "react";
+import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 
 
 export default function RegisterForm() {
 
-    function formSubmit(e: FormEvent<HTMLFormElement>) {
+    const [form, setForm] = useState({
+        email: "",
+        username: "",
+        password: ""
+    });
+    const {executeRecaptcha} = useGoogleReCaptcha();
+
+
+    useEffect(() => {
+        const usernameValid = isUsernameValid(form.username);
+
+        if (form.username.length > 0 && typeof usernameValid === "string") {
+            setValidationMessage(usernameValid);
+            return;
+        }
+
+        const passwordValid = isPasswordValid(form.password);
+
+        if (form.password.length > 0 && typeof passwordValid === "string") {
+            setValidationMessage(passwordValid);
+            return;
+        }
+
+        setValidationMessage("");
+        
+    }, [form.password, form.username]);
+
+    async function formSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log(123213213)
+
+        /*if (!executeRecaptcha) {
+            setValidationMessage("Authentication servers are currently down. Please try again later.");
+            return;
+        }
+
+        const token = await executeRecaptcha("new_account");*/
+
+
+    }
+
+    function setValidationMessage(message: string) {
+        const validation = document.querySelector(`#signup-form`) as HTMLDivElement;
+        validation.innerText = message;
+    }
+
+    function canSubmit() {
+        return isEmailValid(form.email) && isUsernameValid(form.username) === true && isPasswordValid(form.password) === true;
     }
 
     return (
@@ -38,36 +83,68 @@ export default function RegisterForm() {
 
                 <form onSubmit={formSubmit}>
                     <div className={styles.loginForm}>
-                        <input type={"text"} onBlur={(e) => {
-                            const email = e.target.value;
-                            if (!email) return;
+                        <input type={"text"}
+                               onChange={(e) => {
+                                   const email = e.target.value;
+                                   setForm({...form, email});
+                               }}
+                               onBlur={(e) => {
+                                   const email = e.target.value;
+                                   if (!email) return;
 
-                            const emailValid = isEmailValid(email);
-                            !emailValid ? e.target.classList.add(styles.invalid) : e.target.classList.remove(styles.invalid);
-                        }} required placeholder={"Email"} className={styles.formField}/>
-                        <input type={"text"} required placeholder={"Username"} className={styles.formField}/>
-                        <input type={"password"} onBlur={(e) => {
-                            const passwordValidationElement = document.querySelector("#signup-form") as HTMLDivElement;
+                                   const emailValid = isEmailValid(email);
+                                   !emailValid ? e.target.classList.add(styles.invalid) : e.target.classList.remove(styles.invalid);
+                               }} required
+                               placeholder={"Email"}
+                               className={styles.formField}/>
 
-                            const password = e.target.value;
-                            if (!password) {
-                                passwordValidationElement.innerHTML = "";
-                                return;
-                            }
-                            const passwordValidation = isPasswordValid(password);
-                            if (typeof passwordValidation === "string") {
-                                passwordValidationElement.innerHTML = passwordValidation;
-                                e.target.classList.add(styles.invalid);
-                            } else {
-                                passwordValidationElement.innerHTML = "";
-                                e.target.classList.remove(styles.invalid);
-                            }
-                        }} required placeholder={"Password"} className={styles.formField}/>
+                        <input type={"text"}
+                               onChange={(e) => {
+                                   const username = e.target.value;
+                                   setForm({...form, username});
+                               }}
+                               onBlur={(e) => {
+                                   const username = e.target.value;
+                                   if (!username) return;
+
+                                   const usernameValid = isUsernameValid(username);
+
+                                   if (typeof usernameValid === "string") {
+                                       e.target.classList.add(styles.invalid);
+                                   } else {
+                                       e.target.classList.remove(styles.invalid);
+                                   }
+                               }}
+                               required
+                               placeholder={"Username"}
+                               className={styles.formField}/>
+
+                        <input type={"password"}
+                               onChange={(e) => {
+                                   const password = e.target.value;
+                                   setForm({...form, password});
+                               }}
+                               onBlur={(e) => {
+                                   const password = e.target.value;
+
+                                   const passwordValidation = isPasswordValid(password);
+
+                                   if (typeof passwordValidation === "string") {
+                                       e.target.classList.add(styles.invalid);
+                                   } else {
+                                       e.target.classList.remove(styles.invalid);
+                                   }
+
+                               }}
+                               required placeholder={"Password"}
+                               className={styles.formField}/>
                         <div id={"signup-form"} className={styles.validation}></div>
                     </div>
 
                     <div>
-                        <button type={"submit"} className={styles.formButton}>Sign Up</button>
+                        <button type={"submit"} className={canSubmit() ? styles.formButton : styles.disabledButton}>Sign
+                            Up
+                        </button>
                     </div>
                 </form>
 

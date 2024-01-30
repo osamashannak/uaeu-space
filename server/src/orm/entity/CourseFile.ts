@@ -2,6 +2,7 @@ import {Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGenerated
 import {Course} from "./Course";
 import {User} from "./user/User";
 import {FileRating} from "./legacy/Rating";
+import {Guest} from "./user/Guest";
 
 @Entity()
 export class CourseFile {
@@ -24,11 +25,17 @@ export class CourseFile {
     @Column()
     size!: number;
 
-    @ManyToOne(()=> User, user => user.reviews)
+    @ManyToOne(()=> User, user => user.courseFiles, {nullable: true})
     user!: User;
+
+    @ManyToOne(()=> Guest, user => user.courseFiles, {nullable: true})
+    guest!: Guest;
 
     @Column({default: false})
     reviewed!: boolean;
+
+    @Column({nullable: true})
+    vt_report!: string;
 
     @Column({default: false})
     visible!: boolean;

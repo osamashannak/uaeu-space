@@ -5,6 +5,7 @@ import {FormEvent} from "react";
 
 export default function CompleteGoogleSignUp({autocomplete}: { autocomplete: GoogleSignUpProps }) {
 
+
     function formSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         console.log("form submitted")

@@ -1,9 +1,8 @@
 import {useEffect, useRef, useState} from "react";
-import {addRating, removeRating} from "../api/shared.ts";
-import {generateConfetti} from "../utils.tsx";
 import styles from "../styles/components/rating.module.scss";
+import {addRating, removeRating} from "../../api/shared.ts";
 
-const Rating = (props: { id: number, likes: number, dislikes: number, type: "review" | "file" }) => {
+export default function ReviewRating(props: { id: number, likes: number, dislikes: number, type: "review" | "file" }) {
 
     const [liked, setLiked] = useState<boolean | null>();
 
@@ -65,7 +64,6 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
         }
 
         setLiked(true);
-        generateConfetti(`like-button-${props.id}`);
 
         const requestKey = await addRating(props.id, true, props.type);
 
@@ -149,8 +147,5 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
                 <span className={styles.ratingCount}>{dislikes + (liked == false ? 1 : 0)}</span>
             </div>
         </div>
-    )
-        ;
+    );
 }
-
-export default Rating;

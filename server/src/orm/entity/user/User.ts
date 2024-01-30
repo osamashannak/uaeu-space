@@ -1,11 +1,9 @@
 import {
-    ChildEntity,
     Column,
     CreateDateColumn,
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
-    TableInheritance
 } from "typeorm";
 import {Session} from "./Session";
 import {Review} from "../professor/Review";
@@ -14,11 +12,13 @@ import {ReviewRating} from "../professor/ReviewRating";
 
 
 @Entity()
-@TableInheritance({ column: { type: "varchar", name: "type" } })
 export class User {
 
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Column({unique: true})
+    username!: string;
 
     @OneToMany(() => Review, review => review.user)
     reviews!: Review[];
@@ -26,19 +26,8 @@ export class User {
     @OneToMany(() => CourseFile, courseFile => courseFile.user)
     courseFiles!: CourseFile[];
 
-    @CreateDateColumn()
-    createdAt!: Date;
-
-    @CreateDateColumn()
-    updatedAt!: Date;
-
-}
-
-@ChildEntity("registered")
-export class RegisteredUser extends User {
-
-    @Column({unique: true})
-    username!: string;
+    @OneToMany(() => ReviewRating, rating => rating.user)
+    reviewRatings!: ReviewRating[];
 
     @OneToMany(() => Session, userSession => userSession.user)
     sessions!: Session[];
@@ -46,12 +35,10 @@ export class RegisteredUser extends User {
     @Column({default: null, nullable: true, unique: true})
     googleId!: string;
 
-    @OneToMany(() => ReviewRating, rating => rating.user)
-    reviewRatings!: ReviewRating[];
+    @CreateDateColumn()
+    createdAt!: Date;
 
-}
-
-@ChildEntity("guest")
-export class Guest extends User {
+    @CreateDateColumn()
+    updatedAt!: Date;
 
 }
