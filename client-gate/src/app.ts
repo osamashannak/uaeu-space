@@ -11,8 +11,8 @@ import requestIp from "request-ip";
 import {isbot} from "isbot";
 import {createClient} from 'redis';
 import {Session} from "./orm/entity/Session";
-import {Guest} from "./orm/entity/User";
 import {generateAuthSession, isAuthValid, RedisSession, setHeaders, setSessionCookie} from "./utils";
+import {Guest} from "./orm/entity/Guest";
 
 const app = express();
 const client = createClient();
@@ -47,11 +47,13 @@ app.use(async function (req, res, next) {
 
     console.log("Address: " + address)
 
-    let session = req.cookies.sid ? await SessionRepository.findOne({where: {token: req.cookies.sid}}) : null;
+    let session = req.cookies.sid ? await SessionRepository.findOne({where: {token: req.cookies.sid}, relations: ["user"]}) : null;
 
-    let guestSession = req.cookies.gid ? await GuestRepository.findOne({where: {id: req.cookies.sid}}) : null;
+    let guestSession = req.cookies.gid ? await GuestRepository.findOne({where: {token: req.cookies.gid}}) : null;
 
     let authUsername = req.cookies.auth ? JSON.parse(<string>await client.get(req.cookies.auth)) as RedisSession : null;
+
+    console.log(authUsername?.username)
 
     console.log({
         session: req.cookies.sid,
@@ -68,13 +70,15 @@ app.use(async function (req, res, next) {
     console.log("Auth Username: " + authUsername)
 
     if (guestSession && !session && !authUsername) {
+        req.cookies.sid && res.clearCookie('sid');
+        req.cookies.auth && res.clearCookie('auth');
+
         next();
         return;
     }
 
     if (!authUsername && session) {
         res.clearCookie('sid');
-        next();
     }
 
     if (authUsername) {
@@ -86,10 +90,12 @@ app.use(async function (req, res, next) {
 
         const token = await generateAuthSession(authUsername.username, address, req);
 
-        setSessionCookie(res, "sid", token);
+        setSessionCookie(res, "sid", token, true);
 
         if (guestSession) {
-            await GuestRepository.delete(guestSession.id);
+            res.clearCookie('gid');
+            // todo merge
+            await GuestRepository.delete(guestSession);
         }
 
         next();
@@ -104,12 +110,11 @@ app.use(async function (req, res, next) {
 
     await GuestRepository.save(guest);
 
-    setSessionCookie(res, "gid", guest.token);
+    setSessionCookie(res, "gid", guest.token, false);
 
     next();
 
 });
-
 
 app.get('*', function (req, res) {
     /**
@@ -123,7 +128,7 @@ app.get('*', function (req, res) {
      *
      */
 
-    fs.readFile(__dirname + '/views/default.html', 'utf8', (err, text) => {
+    fs.readFile('./views/default.html', 'utf8', (err, text) => {
         const acceptEncoding = req.headers['accept-encoding'];
 
         if (!acceptEncoding || !acceptEncoding.toString().match(/\b(gzip)\b/)) {
