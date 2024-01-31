@@ -20,3 +20,22 @@ export async function sendLonginRequest(id: string, password: string) {
 
     return response;
 }
+
+export async function sendSignUpRequest(id: string, email: string, password: string) {
+    let response;
+
+    try {
+        response = await fetch(HOST + "/gate/signup", {
+            method: "POST",
+            body: JSON.stringify({id, email, password}),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response;
+}

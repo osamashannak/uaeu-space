@@ -28,7 +28,7 @@ export default class VirusTotalClient {
     private filesInProcess: number = 0;
 
     constructor() {
-        if (this.API_KEY === undefined) {
+        if (this.API_KEY == undefined) {
             throw new Error('VIRUSTOTAL_API_KEY is not set');
         }
 

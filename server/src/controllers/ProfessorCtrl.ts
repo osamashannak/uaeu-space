@@ -3,14 +3,14 @@ import {AppDataSource} from "../orm/data-source";
 import {Equal, ILike} from "typeorm";
 import requestIp from "request-ip";
 import {createAssessment, validateProfessorComment} from "../utils";
-import {getFileURL, uploadAttachment} from "../azure";
 import {ReviewAttachment} from "../orm/entity/ReviewAttachment";
-import {analyzeImage} from "../azure-vision";
 import crypto from "crypto";
 import sizeOf from 'image-size';
 import {Professor} from "../orm/entity/professor/Professor";
 import {Review} from "../orm/entity/professor/Review";
 import {RatingType} from "../orm/entity/professor/ReviewRating";
+import {Azure} from "../app";
+import {AzureClient} from "../azure";
 
 
 
@@ -100,7 +100,7 @@ export const upload = async (req: Request, res: Response) => {
 
     res.status(200).json({result: "success", id: blobName});
 
-    await uploadAttachment(blobName, file.buffer, file.mimetype);
+    await Azure.uploadAttachment(blobName, file.buffer, file.mimetype);
 
     const reviewAttachment = new ReviewAttachment();
 
@@ -113,7 +113,7 @@ export const upload = async (req: Request, res: Response) => {
 
     await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
 
-    const nsfwResult = await analyzeImage(getFileURL(blobName, "attachments"));
+    const nsfwResult = await Azure.analyzeImage(AzureClient.getFileURL(blobName, "attachments"));
 
     console.log(nsfwResult);
     reviewAttachment.visible = nsfwResult;

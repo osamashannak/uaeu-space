@@ -8,7 +8,7 @@ import courseRouter from "./routes/CourseRouter";
 import professorRouter from "./routes/ProfessorRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
-import {loadAzure} from "./azure";
+import {AzureClient} from "./azure";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
 import {Course} from "./orm/entity/Course";
@@ -19,6 +19,7 @@ import {Professor} from "./orm/entity/professor/Professor";
 import VirusTotalClient from "./virustotal";
 
 export let VTClient: VirusTotalClient;
+export let Azure: AzureClient;
 const app = express();
 
 app.use(cors());
@@ -137,7 +138,7 @@ const port = process.env.PORT || 4000;
 
     VTClient = new VirusTotalClient();
 
-    await loadAzure();
+    Azure = new AzureClient();
     console.log("Azure client loaded.")
 
     await AppDataSource.initialize();

@@ -2,6 +2,7 @@ import styles from "../../styles/pages/login.module.scss";
 import {isEmailValid, isPasswordValid, isUsernameValid} from "../../utils.tsx";
 import {FormEvent, useEffect, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
+import {sendLonginRequest, sendSignUpRequest} from "../../api/auth.ts";
 
 
 export default function RegisterForm() {
@@ -12,26 +13,12 @@ export default function RegisterForm() {
         password: ""
     });
     const {executeRecaptcha} = useGoogleReCaptcha();
+    const [validationMessage, setValidationMessage] = useState({
+        username: "",
+        password: "",
+    });
+    const [failedAttempt, setFailedAttempt] = useState(false);
 
-
-    useEffect(() => {
-        const usernameValid = isUsernameValid(form.username);
-
-        if (form.username.length > 0 && typeof usernameValid === "string") {
-            setValidationMessage(usernameValid);
-            return;
-        }
-
-        const passwordValid = isPasswordValid(form.password);
-
-        if (form.password.length > 0 && typeof passwordValid === "string") {
-            setValidationMessage(passwordValid);
-            return;
-        }
-
-        setValidationMessage("");
-        
-    }, [form.password, form.username]);
 
     async function formSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -43,16 +30,48 @@ export default function RegisterForm() {
 
         const token = await executeRecaptcha("new_account");*/
 
+        setValidationMessage({
+            username: "",
+            password: ""
+        });
 
-    }
+        useEffect(() => {
+            setFailedAttempt(false);
+        }, [form]);
 
-    function setValidationMessage(message: string) {
-        const validation = document.querySelector(`#signup-form`) as HTMLDivElement;
-        validation.innerText = message;
+        const button = document.querySelector(`.${styles.formButton}`) as HTMLButtonElement;
+        button.disabled = true;
+        button.classList.add(styles.disabledButton);
+
+        sendSignUpRequest(form.username, form.email, form.password).then(async (res) => {
+
+            if (!res || res.status !== 200) {
+                setValidationMessage((await res?.json())?.message ?? "The authentication servers are currently down. Please try again later.");
+
+                button.disabled = false;
+                button.classList.remove(styles.disabledButton);
+                setFailedAttempt(true);
+
+                return;
+            }
+
+            const responseJson = await res.json();
+
+            window.location.href = responseJson.redirect as string;
+
+        })
+
+
     }
 
     function canSubmit() {
-        return isEmailValid(form.email) && isUsernameValid(form.username) === true && isPasswordValid(form.password) === true;
+        return !failedAttempt && isEmailValid(form.email) && isUsernameValid(form.username) === true && isPasswordValid(form.password) === true;
+    }
+
+    function getValidationMessage() {
+        if (validationMessage.username) return validationMessage.username;
+        if (validationMessage.password) return validationMessage.password;
+        return "";
     }
 
     return (
@@ -110,8 +129,16 @@ export default function RegisterForm() {
                                    const usernameValid = isUsernameValid(username);
 
                                    if (typeof usernameValid === "string") {
+                                       setValidationMessage({
+                                           ...validationMessage,
+                                           username: usernameValid
+                                       });
                                        e.target.classList.add(styles.invalid);
                                    } else {
+                                       setValidationMessage({
+                                           ...validationMessage,
+                                           username: ""
+                                       });
                                        e.target.classList.remove(styles.invalid);
                                    }
                                }}
@@ -130,15 +157,25 @@ export default function RegisterForm() {
                                    const passwordValidation = isPasswordValid(password);
 
                                    if (typeof passwordValidation === "string") {
+                                       setValidationMessage({
+                                           ...validationMessage,
+                                           password: passwordValidation
+                                       });
                                        e.target.classList.add(styles.invalid);
                                    } else {
+                                       setValidationMessage({
+                                           ...validationMessage,
+                                           password: ""
+                                       });
                                        e.target.classList.remove(styles.invalid);
                                    }
 
                                }}
                                required placeholder={"Password"}
                                className={styles.formField}/>
-                        <div id={"signup-form"} className={styles.validation}></div>
+                        <div id={"signup-form"} className={styles.validation}>
+                            <p>{getValidationMessage()}</p>
+                        </div>
                     </div>
 
                     <div>
