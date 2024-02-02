@@ -1,8 +1,5 @@
 import {Request, Response} from "express";
-import {AppDataSource} from "../orm/data-source";
 import requestIp from "request-ip";
-import {RatingType, ReviewRating} from "../orm/entity/professor/ReviewRating";
-import {Review} from "../orm/entity/professor/Review";
 
 interface RatingBody {
     id: number,

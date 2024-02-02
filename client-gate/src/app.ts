@@ -6,19 +6,29 @@ import * as fs from "fs";
 import cookies from "cookie-parser";
 import * as crypto from "crypto";
 import * as zlib from "zlib";
-import {AppDataSource} from "./orm/data-source";
 import requestIp from "request-ip";
 import {isbot} from "isbot";
 import {createClient} from 'redis';
-import {Session} from "./orm/entity/Session";
 import {generateAuthSession, isAuthValid, RedisSession, setHeaders, setSessionCookie} from "./utils";
-import {Guest} from "./orm/entity/Guest";
+import {Session} from "@spaceread/database/entity/user/Session";
+import {Guest} from "@spaceread/database/entity/user/Guest";
+import {createDataSource} from "@spaceread/database";
+import {User} from "@spaceread/database/entity/user/User";
 
 const app = express();
 const client = createClient();
+export const AppDataSource = createDataSource({
+    host: process.env.POSTGRES_HOST,
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+    ssl: false,
+});
 
-const SessionRepository = AppDataSource.getRepository(Session);
-const GuestRepository = AppDataSource.getRepository(Guest);
+
+export const SessionRepository = AppDataSource.getRepository(Session);
+export const GuestRepository = AppDataSource.getRepository(Guest);
+export const UserRepository = AppDataSource.getRepository(User);
 
 app.use(cookies());
 
@@ -74,6 +84,15 @@ app.use(async function (req, res, next) {
         req.cookies.auth && res.clearCookie('auth');
 
         next();
+
+        if (!guestSession.ipAddressHistory.includes(address)) {
+            guestSession.ipAddressHistory.push(address);
+        }
+
+        guestSession.dateHistory.push(new Date().toISOString());
+
+        await GuestRepository.save(guestSession);
+
         return;
     }
 
@@ -83,8 +102,10 @@ app.use(async function (req, res, next) {
 
     if (authUsername) {
 
-        if (session && isAuthValid(session, authUsername.username)) {
+        if (session && isAuthValid(session, authUsername.username, address)) {
             next();
+            session.dateHistory.push(new Date().toISOString());
+            await SessionRepository.save(session);
             return;
         }
 
@@ -92,21 +113,16 @@ app.use(async function (req, res, next) {
 
         setSessionCookie(res, "sid", token, true);
 
-        if (guestSession) {
-            res.clearCookie('gid');
-            // todo merge
-            await GuestRepository.delete(guestSession);
-        }
-
         next();
         return;
     }
 
     const guest = new Guest();
 
-    guest.ipAddress = address;
+    guest.ipAddressHistory = [address];
     guest.userAgent = req.headers['user-agent'] ?? "";
     guest.token = crypto.randomBytes(20).toString('hex');
+    guest.dateHistory = [new Date().toISOString()];
 
     await GuestRepository.save(guest);
 
@@ -117,17 +133,6 @@ app.use(async function (req, res, next) {
 });
 
 app.get('*', function (req, res) {
-    /**
-     * Cookies:
-     * 1. Session cookie for everyone (Expires after exiting session or after 1 day, whichever comes first)
-     * 2. Auth cookie for logged-in users (Expires after 1 year or after logging out)
-     *
-     *
-     * Request Header for Authenticated Users:
-     * 1. CSRF Token
-     *
-     */
-
     fs.readFile('./views/default.html', 'utf8', (err, text) => {
         const acceptEncoding = req.headers['accept-encoding'];
 

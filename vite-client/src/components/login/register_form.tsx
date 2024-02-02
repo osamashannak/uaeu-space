@@ -113,7 +113,9 @@ export default function RegisterForm() {
 
                                    const emailValid = isEmailValid(email);
                                    !emailValid ? e.target.classList.add(styles.invalid) : e.target.classList.remove(styles.invalid);
-                               }} required
+                               }}
+                               required
+                               autoComplete={"email"}
                                placeholder={"Email"}
                                className={styles.formField}/>
 
@@ -122,6 +124,7 @@ export default function RegisterForm() {
                                    const username = e.target.value;
                                    setForm({...form, username});
                                }}
+                               pattern="[\p{L} \-]+"
                                onBlur={(e) => {
                                    const username = e.target.value;
                                    if (!username) return;
@@ -171,7 +174,9 @@ export default function RegisterForm() {
                                    }
 
                                }}
-                               required placeholder={"Password"}
+                               autoComplete={"new-password"}
+                               required
+                               placeholder={"Password"}
                                className={styles.formField}/>
                         <div id={"signup-form"} className={styles.validation}>
                             <p>{getValidationMessage()}</p>

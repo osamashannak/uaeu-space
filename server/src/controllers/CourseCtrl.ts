@@ -1,15 +1,13 @@
 import {Request, Response} from 'express';
-import {AppDataSource} from "../orm/data-source";
-import {Course} from "../orm/entity/Course";
-import {Equal, ILike} from "typeorm";
-import {CourseFile} from "../orm/entity/CourseFile";
-import {FileAccessToken} from "../orm/entity/FileAccessToken";
 import requestIp from "request-ip";
 import {promisify} from "util";
 import * as fs from "fs";
 import {compressFile} from "../utils";
-import {Azure, VTClient} from "../app";
+import {AppDataSource, Azure, VTClient} from "../app";
 import {AzureClient} from "../azure";
+import {Course} from "@spaceread/database/entity/course/Course";
+import {CourseFile} from "@spaceread/database/entity/course/CourseFile";
+import {FileAccessToken} from "@spaceread/database/entity/FileAccessToken";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -22,7 +20,7 @@ export const find = async (req: Request, res: Response) => {
     }
 
     const course = await AppDataSource.getRepository(Course).findOne({
-        where: {tag: ILike(params.tag as string)},
+        where: {tag: (params.tag as string).toLowerCase()},
         relations: ["files", "files.ratings"],
         order: {files: {created_at: "desc"}},
     });
@@ -153,7 +151,7 @@ export const getFile = async (req: Request, res: Response) => {
 
     let courseFile = await AppDataSource.getRepository(CourseFile).findOne({
         where: {
-            id: Equal(parseInt(params.id as string))
+            id: parseInt(params.id as string)
         }
     });
 

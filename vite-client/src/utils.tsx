@@ -118,7 +118,7 @@ export const formatRelativeTime = (inputDate: Date) => {
 export const convertArabicNumeral = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
 
 export const parseText = (text: HTMLElement | string) => {
-    // @ts-ignore
+    // @ts-expect-error Twemoji is already loaded via script tag
     return twemoji.parse(text, {
         folder: 'svg',
         ext: '.svg',

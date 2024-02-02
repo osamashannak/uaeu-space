@@ -1,28 +1,25 @@
 .idea
 
-client/node_modules
-client/.pnp
-client/.pnp.js
+vite-client/node_modules
+vite-client/.pnp
+vite-client/.pnp.js
 
-client/coverage
+vite-client/coverage
 
-client/.next/
-client/out/
-client/.next.tar/
+vite-client/build
+vite-client/dist
 
-client/build
+vite-client/.DS_Store
+vite-client/*.pem
 
-client/.DS_Store
-client/*.pem
+vite-client/npm-debug.log*
+vite-client/yarn-debug.log*
+vite-client/yarn-error.log*
 
-client/npm-debug.log*
-client/yarn-debug.log*
-client/yarn-error.log*
+vite-client/.env*.local
 
-client/.env*.local
-
-client/*.tsbuildinfo
-client/next-env.d.ts
+vite-client/*.tsbuildinfo
+vite-client/next-env.d.ts
 
 server/.env
 server/tmp/
@@ -31,5 +28,8 @@ server/node_modules/
 
 client-gate/.env
 client-gate/views/
+client-gate/node_modules/
 
 auth-server/
+
+spaceread-database

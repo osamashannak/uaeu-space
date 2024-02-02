@@ -1,11 +1,9 @@
 import {Response, Request} from "express";
 import crypto from "crypto";
-import {Session} from "./orm/entity/Session";
-import {AppDataSource} from "./orm/data-source";
-import {User} from "./orm/entity/User";
+import {Session} from "@spaceread/database/entity/user/Session";
+import {User} from "@spaceread/database/entity/user/User";
+import {AppDataSource, SessionRepository, UserRepository} from "./app";
 
-const SessionRepository = AppDataSource.getRepository(Session);
-const UserRepository = AppDataSource.getRepository(User);
 
 
 export interface RedisSession {
@@ -30,8 +28,8 @@ export function setHeaders(res: Response) {
 }
 
 
-export function isAuthValid(session: any, authUsername: string) {
-    return session.user.username.toLowerCase() === authUsername.toLowerCase();
+export function isAuthValid(session: any, authUsername: string, address: string) {
+    return session.user.username.toLowerCase() === authUsername.toLowerCase() && session.ipAddress === address;
 }
 
 export async function generateAuthSession(username: string, address: string, req: Request) {
@@ -42,6 +40,7 @@ export async function generateAuthSession(username: string, address: string, req
     newSession.ipAddress = address;
     newSession.userAgent = req.headers['user-agent'] ?? "";
     newSession.user = user!;
+    newSession.dateHistory = [new Date().toISOString()];
     SessionRepository.save(newSession).then();
     return token;
 }

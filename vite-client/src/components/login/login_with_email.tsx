@@ -78,18 +78,30 @@ export default function LoginWithEmail() {
 
                 <form onSubmit={formSubmit}>
                     <div className={styles.loginForm}>
-                        <input type={"text"} onChange={(e) => {
-                            setLoginForm({...loginForm, id: e.target.value})
-                        }} required placeholder={"Username or Email"} className={styles.formField}/>
-                        <input type={"password"} onChange={(e) => {
-                            setLoginForm({...loginForm, password: e.target.value})
-                        }} required placeholder={"Password"} className={styles.formField}/>
+                        <input type={"text"}
+                               onChange={(e) => {
+                                   setLoginForm({...loginForm, id: e.target.value})
+                               }}
+                               required
+                               autoComplete={"username"}
+                               placeholder={"Username or Email"}
+                               className={styles.formField}/>
+                        <input type={"password"}
+                               onChange={(e) => {
+                                   setLoginForm({...loginForm, password: e.target.value})
+                               }}
+                               required
+                               autoComplete={"current-password"}
+                               placeholder={"Password"}
+                               className={styles.formField}/>
                         <div id={"login-form"} className={styles.validation}/>
 
                     </div>
 
                     <div>
-                        <button type={"submit"} className={canSubmit() ? styles.formButton : styles.disabledButton}>Login</button>
+                        <button type={"submit"}
+                                className={canSubmit() ? styles.formButton : styles.disabledButton}>Login
+                        </button>
                     </div>
                 </form>
 

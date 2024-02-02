@@ -7,19 +7,27 @@ import cors from "cors";
 import courseRouter from "./routes/CourseRouter";
 import professorRouter from "./routes/ProfessorRouter";
 import bodyParser from "body-parser";
-import {AppDataSource} from "./orm/data-source";
 import {AzureClient} from "./azure";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
-import {Course} from "./orm/entity/Course";
-import {AdClick} from "./orm/entity/AdClick";
 import requestIp from "request-ip";
 import sharedRouter from "./routes/SharedRouter";
-import {Professor} from "./orm/entity/professor/Professor";
 import VirusTotalClient from "./virustotal";
+import {createDataSource} from "@spaceread/database";
+import {AdClick} from "@spaceread/database/entity/AdClick";
+import {Course} from "@spaceread/database/entity/course/Course";
+import {Professor} from "@spaceread/database/entity/professor/Professor";
 
 export let VTClient: VirusTotalClient;
 export let Azure: AzureClient;
+export const AppDataSource = createDataSource({
+    host: process.env.POSTGRES_HOST,
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+    ssl: true,
+});
+
 const app = express();
 
 app.use(cors());

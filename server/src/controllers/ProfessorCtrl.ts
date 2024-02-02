@@ -1,18 +1,14 @@
 import {Request, Response} from 'express';
-import {AppDataSource} from "../orm/data-source";
-import {Equal, ILike} from "typeorm";
 import requestIp from "request-ip";
 import {createAssessment, validateProfessorComment} from "../utils";
-import {ReviewAttachment} from "../orm/entity/ReviewAttachment";
 import crypto from "crypto";
 import sizeOf from 'image-size';
-import {Professor} from "../orm/entity/professor/Professor";
-import {Review} from "../orm/entity/professor/Review";
-import {RatingType} from "../orm/entity/professor/ReviewRating";
-import {Azure} from "../app";
+import {AppDataSource, Azure} from "../app";
 import {AzureClient} from "../azure";
-
-
+import {Professor} from "@spaceread/database/entity/professor/Professor";
+import {ReviewAttachment} from "@spaceread/database/entity/professor/ReviewAttachment";
+import {Review} from "@spaceread/database/entity/professor/Review";
+import {RatingType} from "@spaceread/database/entity/professor/ReviewRating";
 
 
 export const comment = async (req: Request, res: Response) => {
@@ -43,7 +39,7 @@ export const comment = async (req: Request, res: Response) => {
     }
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: Equal(body.professorEmail)}
+        where: {email: body.professorEmail}
     });
 
     if (!professor) {
@@ -56,7 +52,7 @@ export const comment = async (req: Request, res: Response) => {
     if (body.attachments.length > 0) {
         const attachmentId = body.attachments[0];
         const attachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
-            where: {id: Equal(attachmentId)}
+            where: {id: attachmentId}
         });
         if (attachment) {
             review.attachment = attachment.id;
@@ -131,7 +127,7 @@ export const find = async (req: Request, res: Response) => {
     }
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: ILike(params.email as string)},
+        where: {email: (params.email as string).toLowerCase()},
         relations: ["reviews", "reviews.ratings"],
         order: {reviews: {created_at: "desc"}},
 
@@ -158,7 +154,7 @@ export const find = async (req: Request, res: Response) => {
 
                     if (attachment) {
                         const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
-                            where: {id: Equal(attachment)}
+                            where: {id: attachment}
                         });
                         if (reviewAttachment && reviewAttachment.visible) {
                             newAttachment = {
