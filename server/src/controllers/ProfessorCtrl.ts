@@ -13,7 +13,9 @@ import {RatingType} from "@spaceread/database/entity/professor/ReviewRating";
 
 export const comment = async (req: Request, res: Response) => {
     const body = validateProfessorComment(req.body);
-    let address = requestIp.getClientIp(req);
+   // let address = requestIp.getClientIp(req);
+
+    let address = '192.168.1.1';
 
     if (!body) {
         res.status(400).json({error: "Invalid."});
@@ -74,7 +76,9 @@ export const comment = async (req: Request, res: Response) => {
 
 export const upload = async (req: Request, res: Response) => {
     const file = req.file;
-    let address = requestIp.getClientIp(req);
+    // let address = requestIp.getClientIp(req);
+
+    let address = '192.168.1.1';
 
     if (!file) {
         res.status(400).json({error: "Invalid."});

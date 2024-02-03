@@ -16,25 +16,40 @@ export interface ReviewAPI {
     likes: number;
     dislikes: number;
     reviewed: boolean;
-    attachment: {
-        id: string;
-        width: number;
-        height: number;
-    } | null;
+    attachments: {
+        url: string;
+    }[];
 }
 
-export interface ReviewFormAttachment {
-    file: File | Blob;
+
+export interface ImageAttachment {
+    id: string;
     url: string;
     aspectRatio: number;
+    weight: 1
+    src: File | Blob;
+}
+
+export interface VideoAttachment {
     id: string;
+    url: string;
+    weight: 4;
+    aspectRatio: number;
+    videoSrc: File | Blob;
+}
+
+export interface TenorGIFAttachment {
+    id: string;
+    url: string;
+    aspectRatio: number;
+    weight: 4;
 }
 
 export interface ReviewFormDraft {
     score?: number;
     positive?: boolean;
     comment: string;
-    attachment: ReviewFormAttachment[];
+    attachments: (ImageAttachment | TenorGIFAttachment | VideoAttachment)[];
 }
 
 export interface ReviewFormAPI {

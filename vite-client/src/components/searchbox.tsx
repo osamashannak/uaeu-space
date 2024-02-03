@@ -22,6 +22,7 @@ export default function SearchBox(props: { type: "professor" | "course" }) {
             getInputProps,
             highlightedIndex,
             getItemProps,
+
         } = useCombobox({
             id: 'search-box',
             async onInputValueChange({inputValue}) {
@@ -92,6 +93,9 @@ export default function SearchBox(props: { type: "professor" | "course" }) {
 
             },
             items,
+            isItemDisabled(item: Item, index: number): boolean {
+                return item.name === "Loading...";
+            },
             itemToString(item) {
                 return item ? item.name : "";
             },
@@ -109,7 +113,7 @@ export default function SearchBox(props: { type: "professor" | "course" }) {
         return (
             <div className={styles.searchBox}>
                 <input placeholder={props.type === "course" ? "Search for a course..." : "Search for a professor..."}
-                    className={styles.searchBar} {...getInputProps()}/>
+                       className={styles.searchBar} {...getInputProps()}/>
                 <svg className={styles.searchIcon} xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                      viewBox="0 0 24 24">
                     <path fill="currentColor"
@@ -126,8 +130,7 @@ export default function SearchBox(props: { type: "professor" | "course" }) {
                                     key={`${element.name}${index}`} {...getItemProps({
                                     item: element,
                                     index,
-                                    disabled: element.name === "Loading..."
-                                })}>
+                                })} >
                                     {'tag' in element && <span>{element.tag}<br/></span>}
                                     <span className={"course-name"}>{element.name}</span>
                                 </li>

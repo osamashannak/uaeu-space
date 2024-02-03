@@ -8,6 +8,7 @@ import LoginWithEmail from "../components/login/login_with_email.tsx";
 import RegisterForm from "../components/login/register_form.tsx";
 import CompleteGoogleSignUp from "../components/login/complete_google_signup.tsx";
 import {GoogleSignUpProps} from "../typed/user.ts";
+import {sendGoogleLogin} from "../api/auth.ts";
 
 
 export default function Login() {
@@ -16,13 +17,27 @@ export default function Login() {
 
 
     function googleSignInSuccess(response: CredentialResponse) {
-       // todo check if user is already signed up before
-        console.log(response)
+        if (!response.credential) {
+            return;
+        }
 
-        setGoogleSignUp({
-            email: "ohussein.m@gmail.com",
-            username: "ohusseinm",
-            googleId: "1234"
+       // todo check if user is already signed up before
+        sendGoogleLogin(response.credential).then(async (res) => {
+            if (!res) return;
+
+            const data = await res.json();
+
+            if ('redirect' in data) {
+                window.location.href = data.redirect;
+                return;
+            }
+
+            setGoogleSignUp({
+                email: data.email,
+                username: data.suggestedUsername,
+                googleId: data.gid
+            });
+
         });
 
 
@@ -43,8 +58,6 @@ export default function Login() {
         }
         return 400;
     }
-
-    console.log(getWidth())
 
 
     return (

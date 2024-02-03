@@ -1,6 +1,6 @@
 import reviewStyles from "../../styles/components/professor/review.module.scss";
 import Skeleton from "react-loading-skeleton";
-import Rating from "../rating.tsx";
+import ReviewRating from "../professor/review_rating.tsx";
 
 
 export default function ReviewSkeleton() {
@@ -35,7 +35,7 @@ export default function ReviewSkeleton() {
 
             <div className={reviewStyles.reviewFooter}>
                 <div>
-                    <Rating dislikes={0} likes={0} id={0} type={"review"}/>
+                    <ReviewRating dislikes={0} likes={0} id={0} type={"review"}/>
                 </div>
             </div>
 

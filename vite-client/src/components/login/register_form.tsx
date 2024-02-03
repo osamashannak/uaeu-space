@@ -2,7 +2,7 @@ import styles from "../../styles/pages/login.module.scss";
 import {isEmailValid, isPasswordValid, isUsernameValid} from "../../utils.tsx";
 import {FormEvent, useEffect, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
-import {sendLonginRequest, sendSignUpRequest} from "../../api/auth.ts";
+import {sendSignUpRequest} from "../../api/auth.ts";
 
 
 export default function RegisterForm() {
@@ -16,8 +16,14 @@ export default function RegisterForm() {
     const [validationMessage, setValidationMessage] = useState({
         username: "",
         password: "",
+        email: ""
     });
     const [failedAttempt, setFailedAttempt] = useState(false);
+
+
+    useEffect(() => {
+        setFailedAttempt(false);
+    }, [form]);
 
 
     async function formSubmit(e: FormEvent<HTMLFormElement>) {
@@ -30,14 +36,9 @@ export default function RegisterForm() {
 
         const token = await executeRecaptcha("new_account");*/
 
-        setValidationMessage({
-            username: "",
-            password: ""
-        });
 
-        useEffect(() => {
-            setFailedAttempt(false);
-        }, [form]);
+        const validation = document.querySelector(`#signup-form`) as HTMLDivElement;
+        validation.innerText = "";
 
         const button = document.querySelector(`.${styles.formButton}`) as HTMLButtonElement;
         button.disabled = true;
@@ -46,7 +47,8 @@ export default function RegisterForm() {
         sendSignUpRequest(form.username, form.email, form.password).then(async (res) => {
 
             if (!res || res.status !== 200) {
-                setValidationMessage((await res?.json())?.message ?? "The authentication servers are currently down. Please try again later.");
+                console.log(res)
+                validation.innerText = (await res?.json())?.message ?? "The authentication servers are currently down. Please try again later.";
 
                 button.disabled = false;
                 button.classList.remove(styles.disabledButton);

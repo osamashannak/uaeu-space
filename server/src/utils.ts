@@ -50,7 +50,7 @@ export const createAssessment = async (token: string) => {
 }
 
 export const validateProfessorComment = (body: CommentBody): CommentBody | null => {
-    if (!body.professorEmail || !body.comment || !body.score || body.positive == undefined) {
+    if (!body.professorEmail || (body.comment.length < 1 && body.attachments.length < 1) || !body.score || body.positive == undefined) {
         return null;
     }
 
@@ -68,7 +68,7 @@ export const validateProfessorComment = (body: CommentBody): CommentBody | null 
         return null;
     }
 
-    if (body.positive != undefined) {
+    if (body.positive == undefined) {
         return null;
     }
 

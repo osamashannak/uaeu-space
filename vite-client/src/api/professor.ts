@@ -8,9 +8,7 @@ export const getProfessorsList = async () => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/all", {
-            cache: "no-cache"
-        });
+        const request = await fetch(HOST + "/professor/all");
         response = await request.json();
     } catch (error) {
         return undefined;
@@ -20,13 +18,10 @@ export const getProfessorsList = async () => {
 }
 
 export const getProfessor = async (id: string) => {
-    console.log(HOST)
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor?email=" + id, {
-            cache: "no-cache"
-        });
+        const request = await fetch(HOST + "/professor?email=" + id);
         response = await request.json();
     } catch (error) {
         return null;
@@ -43,7 +38,10 @@ export const uploadAttachment = async (file: File | Blob) => {
         formData.append("file", file);
         const request = await fetch(HOST + "/professor/rate/upload", {
             method: "POST",
-            body: formData
+            body: formData,
+            headers: {
+                'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
+            }
         });
         response = await request.json();
     } catch (error) {
@@ -60,7 +58,8 @@ export const postReview = async (options: ReviewFormAPI) => {
         const request = await fetch(HOST + "/professor/rate", {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
             },
             body: JSON.stringify(options)
         });

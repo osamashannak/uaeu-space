@@ -1,16 +1,53 @@
 import styles from "../../styles/pages/login.module.scss";
 import {GoogleSignUpProps} from "../../typed/user.ts";
-import {FormEvent} from "react";
+import {FormEvent, useEffect, useState} from "react";
+import {sendGoogleSignup, sendLonginRequest} from "../../api/auth.ts";
+import {isEmailValid, isPasswordValid, isUsernameValid} from "../../utils.tsx";
 
 
 export default function CompleteGoogleSignUp({autocomplete}: { autocomplete: GoogleSignUpProps }) {
 
+    const [form, setForm] = useState(autocomplete);
+    const [failedAttempt, setFailedAttempt] = useState(false);
+    const [validationMessage, setValidationMessage] = useState("");
+
+    useEffect(() => {
+        setFailedAttempt(false);
+    }, [form]);
 
     function formSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        console.log("form submitted")
+
+        const validation = document.querySelector(`#google-signup-form`) as HTMLDivElement;
+        validation.innerText = "";
+
+        const button = document.querySelector(`.${styles.formButton}`) as HTMLButtonElement;
+        button.disabled = true;
+        button.classList.add(styles.disabledButton);
+
+        sendGoogleSignup(form.googleId, form.email, form.username).then(async (res) => {
+
+            if (!res || res.status !== 200) {
+                validation.innerText = (await res?.json())?.message ?? "The authentication servers are currently down. Please try again later.";
+
+                button.disabled = false;
+                button.classList.remove(styles.disabledButton);
+                setFailedAttempt(true);
+
+                return;
+            }
+
+            const responseJson = await res.json();
+
+            window.location.href = responseJson.redirect as string;
+
+        })
+
     }
 
+    function canSubmit() {
+        return !failedAttempt && isUsernameValid(form.username) === true;
+    }
 
     return (
         <div className={styles.completeSignUpScreen}>
@@ -27,14 +64,37 @@ export default function CompleteGoogleSignUp({autocomplete}: { autocomplete: Goo
                         <span>Email</span>
                         <input type={"email"} value={autocomplete.email} disabled required placeholder={"Email"}
                                className={styles.formField}/>
-                        <span>Username (can't be changed)</span>
-                        <input type={"text"} defaultValue={autocomplete.username} required
+                        <span>Pick a username</span>
+                        <input type={"text"}
+                               onChange={(e) => {
+                                   setForm({...form, username: e.target.value});
+                               }}
+                               onBlur={(e) => {
+                                   const username = e.target.value;
+
+                                   const usernameValidation = isPasswordValid(username);
+
+                                   if (typeof usernameValidation === "string") {
+                                       setValidationMessage(usernameValidation);
+                                       e.target.classList.add(styles.invalid);
+                                   } else {
+                                       setValidationMessage("");
+                                       e.target.classList.remove(styles.invalid);
+                                   }
+
+                               }}
+                               defaultValue={autocomplete.username} required
                                className={styles.formField}/>
+                        <div id={"google-signup-form"} className={styles.validation}>
+                            <p>{validationMessage}</p>
+                        </div>
 
                     </div>
 
                     <div>
-                        <button type={"submit"} className={styles.formButton}>Sign Up</button>
+                        <button type={"submit"} className={canSubmit() ? styles.formButton : styles.disabledButton}>Sign
+                            Up
+                        </button>
                     </div>
                 </form>
 

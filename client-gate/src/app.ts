@@ -55,29 +55,11 @@ app.use(async function (req, res, next) {
         address = address.split(":").slice(-1).pop()!;
     }
 
-    console.log("Address: " + address)
-
     let session = req.cookies.sid ? await SessionRepository.findOne({where: {token: req.cookies.sid}, relations: ["user"]}) : null;
 
     let guestSession = req.cookies.gid ? await GuestRepository.findOne({where: {token: req.cookies.gid}}) : null;
 
     let authUsername = req.cookies.auth ? JSON.parse(<string>await client.get(req.cookies.auth)) as RedisSession : null;
-
-    console.log(authUsername?.username)
-
-    console.log({
-        session: req.cookies.sid,
-        guestSession: req.cookies.gid,
-        authUsername: req.cookies.auth
-    })
-
-    console.log({
-        session: session,
-        guestSession: guestSession,
-        authUsername: authUsername
-    })
-
-    console.log("Auth Username: " + authUsername)
 
     if (guestSession && !session && !authUsername) {
         req.cookies.sid && res.clearCookie('sid');

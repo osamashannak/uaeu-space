@@ -27,7 +27,7 @@ export default function Footer() {
             </section>
             <section className={styles.footerEnd}>
                 <p className={styles.copyright}>© 2023 SpaceRead. Not affiliated with United Arab Emirates
-                    University (Student-operated). Emojis by <a href={"https://github.com/twitter/twemoji"}>Twemoji</a>.</p>
+                    University (Student-operated). Emojis by <a href={"https://github.com/twitter/twemoji"} target={"_blank"}>Twemoji</a>.</p>
                 <ul className={styles.links}>
                     <li><Link to={"/terms-of-service"}>Terms of Service</Link></li>
                     <li><Link to={"/privacy"}>Privacy Policy</Link></li>

@@ -10,11 +10,8 @@ import bodyParser from "body-parser";
 import {AzureClient} from "./azure";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
-import requestIp from "request-ip";
-import sharedRouter from "./routes/SharedRouter";
 import VirusTotalClient from "./virustotal";
 import {createDataSource} from "@spaceread/database";
-import {AdClick} from "@spaceread/database/entity/AdClick";
 import {Course} from "@spaceread/database/entity/course/Course";
 import {Professor} from "@spaceread/database/entity/professor/Professor";
 
@@ -25,7 +22,7 @@ export const AppDataSource = createDataSource({
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    ssl: true,
+    ssl: false,
 });
 
 const app = express();
@@ -33,37 +30,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
-
-
-app.get("/advertisement", async (req, res) => {
-    res.redirect("https://www.88studies.com/");
-
-    let address = requestIp.getClientIp(req);
-
-    if (!address) {
-        return;
-    }
-
-    if (address.includes(":")) {
-        address = address.split(":").slice(-1).pop()!;
-    }
-
-    const adClickRepo = AppDataSource.getRepository(AdClick);
-
-    const adClick = await adClickRepo.findOne({where: {ipAddress: address}});
-
-    if (!adClick) {
-        const newAdClick = new AdClick();
-        newAdClick.ipAddress = address;
-        await adClickRepo.save(newAdClick);
-        return;
-    }
-
-    adClick.lastVisit = new Date();
-    adClick.visits += 1;
-
-    await adClickRepo.save(adClick);
-});
 
 app.get("/sitemap.xml", async (req, res) => {
     res.header('Content-Type', 'application/xml');
@@ -126,7 +92,6 @@ app.get("/sitemap.xml", async (req, res) => {
 
 app.use("/course", courseRouter);
 app.use("/professor", professorRouter);
-app.use("/shared", sharedRouter);
 
 app.use(function (req, res, next) {
     if (req.secure) {
@@ -144,7 +109,7 @@ const port = process.env.PORT || 4000;
 
 (async function main() {
 
-    VTClient = new VirusTotalClient();
+   // VTClient = new VirusTotalClient();
 
     Azure = new AzureClient();
     console.log("Azure client loaded.")

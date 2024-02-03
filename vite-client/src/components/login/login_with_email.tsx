@@ -18,7 +18,7 @@ export default function LoginWithEmail() {
     function formSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        const validation = document.querySelector(`.${styles.validation}`) as HTMLDivElement;
+        const validation = document.querySelector(`#login-form`) as HTMLDivElement;
         validation.innerText = "";
 
         const button = document.querySelector(`.${styles.formButton}`) as HTMLButtonElement;

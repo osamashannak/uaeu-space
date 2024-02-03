@@ -39,3 +39,41 @@ export async function sendSignUpRequest(id: string, email: string, password: str
 
     return response;
 }
+
+export async function sendGoogleLogin(credential: string) {
+    let response;
+
+    try {
+        response = await fetch(HOST + "/gate/googleLogin", {
+            method: "POST",
+            body: JSON.stringify({credential}),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response;
+}
+
+export async function sendGoogleSignup(googleId: string, email: string, username: string) {
+    let response;
+
+    try {
+        response = await fetch(HOST + "/gate/googleSignup", {
+            method: "POST",
+            body: JSON.stringify({googleId, email, username}),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response;
+}
