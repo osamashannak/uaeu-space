@@ -1,15 +1,17 @@
 import {Request, Response} from 'express';
-import requestIp from "request-ip";
 import {createAssessment, validateProfessorComment} from "../utils";
-import crypto from "crypto";
-import sizeOf from 'image-size';
 import {AppDataSource, Azure} from "../app";
-import {AzureClient} from "../azure";
 import {Professor} from "@spaceread/database/entity/professor/Professor";
 import {ReviewAttachment} from "@spaceread/database/entity/professor/ReviewAttachment";
 import {Review} from "@spaceread/database/entity/professor/Review";
 import {RatingType} from "@spaceread/database/entity/professor/ReviewRating";
-
+import ffmpeg from "fluent-ffmpeg";
+import {promisify} from "util";
+import {AzureClient} from "../azure";
+import sizeOf from "image-size";
+import * as fs from "fs";
+import {Guest} from "@spaceread/database/entity/user/Guest";
+import {User} from "@spaceread/database/entity/user/User";
 
 export const comment = async (req: Request, res: Response) => {
     const body = validateProfessorComment(req.body);
@@ -18,21 +20,21 @@ export const comment = async (req: Request, res: Response) => {
     let address = '192.168.1.1';
 
     if (!body) {
-        res.status(400).json({error: "Invalid."});
+        res.status(400).json({
+            success: false,
+            message: "There was an error submitting your review. Contact us if the problem persists."
+        });
         return;
     }
 
-    let valid: boolean = true;
-
-    if (body.recaptchaToken) {
-        const checkValidity = await createAssessment(body.recaptchaToken);
-        if (!checkValidity) {
-            valid = checkValidity;
-        }
-    }
+    //const valid = await createAssessment(body.recaptchaToken);
+    const valid = true;
 
     if (!address) {
-        res.status(400).json({error: "Invalid."});
+        res.status(400).json({
+            success: false,
+            message: "There was an error submitting your review. Contact us if the problem persists."
+        });
         return;
     }
 
@@ -45,21 +47,29 @@ export const comment = async (req: Request, res: Response) => {
     });
 
     if (!professor) {
-        res.status(200).json({success: "failed-nop"});
+        res.status(400).json({
+            success: false,
+            message: "There was an error submitting your review. Contact us if the problem persists."
+        });
         return;
     }
 
     const review = new Review();
 
     if (body.attachments.length > 0) {
-        const attachmentId = body.attachments[0];
-        const attachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
-            where: {id: attachmentId}
-        });
-        if (attachment) {
-            review.attachment = attachment.id;
+        review.attachments = [];
+        for (const attachment of body.attachments) {
+            const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
+                where: {id: attachment}
+            });
+
+            if (reviewAttachment && reviewAttachment.visible) {
+                review.attachments.push(attachment);
+            }
         }
     }
+
+    const user: Guest | User = res.locals.user;
 
     review.author = "Anonymous";
     review.comment = body.comment;
@@ -69,23 +79,86 @@ export const comment = async (req: Request, res: Response) => {
     review.author_ip = address;
     review.visible = valid;
 
+    if (user instanceof Guest) {
+        review.guest = user;
+    } else {
+        review.user = user;
+    }
+
     await AppDataSource.getRepository(Review).save(review);
 
     res.status(201).json({result: "success"});
 }
 
-export const upload = async (req: Request, res: Response) => {
-    const file = req.file;
-    // let address = requestIp.getClientIp(req);
+const ffprobeAsync = promisify(ffmpeg.ffprobe);
+const unlinkAsync = promisify(fs.unlink)
 
+export const uploadVideo = async (req: Request, res: Response) => {
+    // let address = requestIp.getClientIp(req);
     let address = '192.168.1.1';
+
+    if (!address) {
+        res.status(400).json({error: "Invalid."});
+        return;
+    }
+
+    const file = req.file;
+    console.log(file);
 
     if (!file) {
         res.status(400).json({error: "Invalid."});
         return;
     }
 
+    let filePath = file.path;
+
+    const metadata = await ffprobeAsync(filePath) as ffmpeg.FfprobeData;
+
+    if (metadata.format.duration! >= 180) {
+        res.status(400).json({error: "The video must be at most 3 minutes long."});
+        return;
+    }
+
+    const frameRate = metadata.streams[0].avg_frame_rate!.split("/");
+
+
+    if (parseInt(frameRate[0]) / parseInt(frameRate[1]) > 60) {
+        res.status(400).json({error: "The video frame rate must be less than 60fps."});
+        return;
+    }
+
+    res.status(200).json({result: "success", id: file.filename});
+
+    await Azure.uploadVideoAttachment(file.filename, filePath, file.mimetype);
+
+    await unlinkAsync(filePath);
+
+    const reviewAttachment = new ReviewAttachment();
+
+    reviewAttachment.id = file.filename;
+    reviewAttachment.mime_type = file.mimetype;
+    reviewAttachment.size = file.size;
+    reviewAttachment.height = metadata.streams[0].height!;
+    reviewAttachment.width = metadata.streams[0].width!;
+    reviewAttachment.ip_address = address;
+
+    await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
+
+}
+
+export const upload = async (req: Request, res: Response) => {
+    // let address = requestIp.getClientIp(req);
+    let address = '192.168.1.1';
+
+    const file = req.file;
+
+
     if (!address) {
+        res.status(400).json({error: "Invalid."});
+        return;
+    }
+
+    if (!file) {
         res.status(400).json({error: "Invalid."});
         return;
     }
@@ -141,7 +214,6 @@ export const find = async (req: Request, res: Response) => {
         res.status(404).json({error: "Professor not found."});
         return;
     }
-
     const {visible, views, ...professorWithoutVisible} = professor;
 
     const filteredReviews = professor.reviews.filter(review => review.visible);
@@ -150,34 +222,41 @@ export const find = async (req: Request, res: Response) => {
         ...professorWithoutVisible,
         reviews: await Promise.all(
             filteredReviews
-                .map(async ({ratings, reviewed, author_ip, visible, attachment, ...review}) => {
+                .map(async ({ratings, reviewed, author_ip, visible, attachments, ...review}) => {
                     const likesCount = ratings.filter(rating => rating.type === RatingType.LIKE).length;
                     const dislikesCount = ratings.filter(rating => rating.type === RatingType.DISLIKE).length;
 
                     let newAttachment = null;
 
-                    if (attachment) {
-                        const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
-                            where: {id: attachment}
-                        });
-                        if (reviewAttachment && reviewAttachment.visible) {
-                            newAttachment = {
-                                id: reviewAttachment.id,
-                                width: reviewAttachment.width,
-                                height: reviewAttachment.height,
-                            };
-                        }
+                    if (attachments && attachments.length > 0) {
+                        newAttachment = await Promise.all(
+                            attachments.map(async attachment => {
+                                const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
+                                    where: {id: attachment}
+                                });
+
+                                if (reviewAttachment && reviewAttachment.visible) {
+                                    return {
+                                        id: attachment,
+                                        height: reviewAttachment.height,
+                                        width: reviewAttachment.width,
+                                        url: AzureClient.getFileURL(attachment, "attachments"),
+                                    };
+                                }
+                            })
+                        );
                     }
 
                     return {
                         ...review,
                         likes: likesCount,
                         dislikes: dislikesCount,
-                        attachment: newAttachment
+                        attachments: newAttachment
                     };
                 })),
         score: filteredReviews.reduce((sum, review) => sum + review.score, 0) / Math.max(filteredReviews.length, 1)
     };
+
 
     if (params.viewed && params.viewed === "false") {
         const userRepo = AppDataSource.getRepository(Professor);

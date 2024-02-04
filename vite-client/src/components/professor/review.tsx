@@ -1,17 +1,13 @@
 import dayjs from "dayjs";
-import relativeTime from 'dayjs/plugin/relativeTime';
 import {ReviewAPI} from "../../typed/professor.ts";
 import styles from "../../styles/components/professor/review.module.scss";
 import {formatRelativeTime, parseText, ratingToIcon} from "../../utils.tsx";
 import {useEffect} from "react";
 import ReviewRating from "./review_rating.tsx";
 
-dayjs.extend(relativeTime)
-
 
 export default function Review(review: ReviewAPI) {
 
-    const attachment_url = "https://uaeuresources.blob.core.windows.net/attachments/" + review.attachment?.id; // todo use env
 
     useEffect(() => {
         const p = document.getElementById(`review_comment_${review.id}`);
@@ -22,6 +18,7 @@ export default function Review(review: ReviewAPI) {
 
     }, [review.id]);
 
+    console.log(review.id, review.created_at)
     return (
         <article className={styles.review}>
 
@@ -57,20 +54,22 @@ export default function Review(review: ReviewAPI) {
 
                 <div className={styles.imageList}>
                     {
-                        review.attachment &&
-                        <div className={styles.attachment} onClick={() => {
-                            window.open(attachment_url, "_blank");
-                        }}>
-                            <div
-                                style={{paddingBottom: `${review.attachment.height / review.attachment.width * 100}%`}}></div>
-                            <div style={{backgroundImage: `url(${attachment_url})`}} className={styles.imageDiv}>
-                            </div>
-                            <img src={attachment_url}
-                                 draggable={false}
-                                 width={100}
-                                 height={100}
-                                 alt={""}/>
-                        </div>
+                        review.attachments && review.attachments.map((attachment, index) => (
+                            <div key={index} className={styles.attachment} onClick={() => {
+                                window.open(attachment.url, "_blank");
+                            }}>
+                                <div
+                                    style={{paddingBottom: `${attachment.height / attachment.width * 100}%`}}></div>
+                                <div style={{backgroundImage: `url(${attachment.url})`}} className={styles.imageDiv}>
+                                </div>
+                                <img src={attachment.url}
+                                     draggable={false}
+                                     width={100}
+                                     height={100}
+                                     alt={""}/>
+                            </div>)
+                        )
+
                     }
                 </div>
             </div>

@@ -51,6 +51,27 @@ export const uploadAttachment = async (file: File | Blob) => {
     return response.id as string;
 }
 
+export const uploadVideoAttachment = async (file: File | Blob) => {
+    let response;
+
+    try {
+        const formData = new FormData();
+        formData.append("file", file);
+        const request = await fetch(HOST + "/professor/rate/uploadVideo", {
+            method: "POST",
+            body: formData,
+            headers: {
+                'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
+            }
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.id as string;
+}
+
 export const postReview = async (options: ReviewFormAPI) => {
     let response;
 

@@ -1,6 +1,7 @@
 import express from "express";
 import {find, getAll, getFile, uploadFile} from "../controllers/CourseCtrl";
 import multer from "multer";
+import {getCredentials} from "../utils";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -27,6 +28,6 @@ const router = express.Router();
 router.get("/", find);
 router.get("/all", getAll);
 router.get("/file", getFile);
-router.post("/file", upload.single("file"), uploadFile);
+router.post("/file",  getCredentials, upload.single("file"), uploadFile);
 
 export default router;

@@ -156,16 +156,6 @@
   padding-top: 2px;
 }
 
-.imagesPreviewList {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 8px;
-
-  @media (max-width: 812px) {
-    justify-content: center;
-  }
-}
-
 .imagePreview {
   position: relative;
   cursor: pointer;
@@ -236,6 +226,11 @@
     }
 
   }
+
+}
+
+.noDisplay {
+    display: none !important;
 
 }
 

@@ -8,6 +8,8 @@ import {AzureClient} from "../azure";
 import {Course} from "@spaceread/database/entity/course/Course";
 import {CourseFile} from "@spaceread/database/entity/course/CourseFile";
 import {FileAccessToken} from "@spaceread/database/entity/FileAccessToken";
+import {Guest} from "@spaceread/database/entity/user/Guest";
+import {User} from "@spaceread/database/entity/user/User";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -96,12 +98,20 @@ export const uploadFile = async (req: Request, res: Response) => {
 
     await unlinkAsync(filePath);
 
+    const user: Guest | User = res.locals.user;
+
     const courseFile = new CourseFile();
     courseFile.course = course;
     courseFile.blob_name = blobName;
     courseFile.size = file.size;
     courseFile.name = req.body.name;
     courseFile.type = file.mimetype;
+
+    if (user instanceof Guest) {
+        courseFile.guest = user;
+    } else {
+        courseFile.user = user;
+    }
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);
 

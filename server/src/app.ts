@@ -14,6 +14,8 @@ import VirusTotalClient from "./virustotal";
 import {createDataSource} from "@spaceread/database";
 import {Course} from "@spaceread/database/entity/course/Course";
 import {Professor} from "@spaceread/database/entity/professor/Professor";
+import {createClient} from "redis";
+import cookies from "cookie-parser";
 
 export let VTClient: VirusTotalClient;
 export let Azure: AzureClient;
@@ -24,12 +26,14 @@ export const AppDataSource = createDataSource({
     database: process.env.POSTGRES_DB,
     ssl: false,
 });
+export const RedisClient = createClient();
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
+app.use(cookies());
 
 app.get("/sitemap.xml", async (req, res) => {
     res.header('Content-Type', 'application/xml');
@@ -110,6 +114,8 @@ const port = process.env.PORT || 4000;
 (async function main() {
 
    // VTClient = new VirusTotalClient();
+    await RedisClient.connect();
+    console.log("Connected to Redis.")
 
     Azure = new AzureClient();
     console.log("Azure client loaded.")

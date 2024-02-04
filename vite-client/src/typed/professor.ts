@@ -17,6 +17,9 @@ export interface ReviewAPI {
     dislikes: number;
     reviewed: boolean;
     attachments: {
+        id: string;
+        height: number;
+        width: number;
         url: string;
     }[];
 }

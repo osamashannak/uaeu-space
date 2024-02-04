@@ -25,11 +25,13 @@
     "react-helmet-async": "^2.0.4",
     "react-loading-skeleton": "^3.3.1",
     "react-router-dom": "^6.21.1",
+    "react-slick": "^0.30.1",
     "webpack-s3-plugin": "^1.2.0-rc.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
+    "@types/react-slick": "^0.23.13",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
     "@vitejs/plugin-react": "^4.2.1",

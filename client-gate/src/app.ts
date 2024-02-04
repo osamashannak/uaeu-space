@@ -67,11 +67,11 @@ app.use(async function (req, res, next) {
 
         next();
 
-        if (!guestSession.ipAddressHistory.includes(address)) {
-            guestSession.ipAddressHistory.push(address);
+        if (!guestSession.ip_address_history.includes(address)) {
+            guestSession.ip_address_history.push(address);
         }
 
-        guestSession.dateHistory.push(new Date().toISOString());
+        guestSession.date_history.push(new Date().toISOString());
 
         await GuestRepository.save(guestSession);
 
@@ -86,7 +86,7 @@ app.use(async function (req, res, next) {
 
         if (session && isAuthValid(session, authUsername.username, address)) {
             next();
-            session.dateHistory.push(new Date().toISOString());
+            session.date_history.push(new Date().toISOString());
             await SessionRepository.save(session);
             return;
         }
@@ -101,10 +101,10 @@ app.use(async function (req, res, next) {
 
     const guest = new Guest();
 
-    guest.ipAddressHistory = [address];
-    guest.userAgent = req.headers['user-agent'] ?? "";
+    guest.ip_address_history = [address];
+    guest.user_agent = req.headers['user-agent'] ?? "";
     guest.token = crypto.randomBytes(20).toString('hex');
-    guest.dateHistory = [new Date().toISOString()];
+    guest.date_history = [new Date().toISOString()];
 
     await GuestRepository.save(guest);
 

@@ -1,6 +1,12 @@
 import {createReadStream, createWriteStream} from "fs";
 import {createGzip} from "zlib";
 import {CommentBody} from "./typed/professor";
+import {Request, Response, NextFunction} from "express";
+import {AppDataSource, RedisClient} from "./app";
+import {Guest} from "@spaceread/database/entity/user/Guest";
+import {User} from "@spaceread/database/entity/user/User";
+
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 export const compressFile = async (filePath: string) => {
     const stream = createReadStream(filePath);
@@ -14,14 +20,16 @@ export const compressFile = async (filePath: string) => {
     });
 };
 
-const API_KEY = process.env.GOOGLE_API_KEY;
+export const createAssessment = async (token: string | undefined) => {
 
-export const createAssessment = async (token: string) => {
+    if (!token) {
+        return false;
+    }
 
     let response;
 
     try {
-        const request = await fetch(`https://recaptchaenterprise.googleapis.com/v1/projects/uaeu-space/assessments?key=${API_KEY}`, {
+        const request = await fetch(`https://recaptchaenterprise.googleapis.com/v1/projects/uaeu-space/assessments?key=${GOOGLE_API_KEY}`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -73,5 +81,45 @@ export const validateProfessorComment = (body: CommentBody): CommentBody | null 
     }
 
     return body;
+}
+
+export interface RedisSession {
+    username: string,
+    csrfToken: string,
+    expiration: number
+}
+
+export const getCredentials = async (req: Request, res: Response, next: NextFunction) => {
+
+    const sid = req.cookies.sid;
+    let authProfile = req.cookies.auth ? JSON.parse(<string>await RedisClient.get(req.cookies.auth)) as RedisSession : null;
+
+    if (authProfile && sid) {
+
+        const csrf = req.headers['x-csrf-token'];
+
+        if (csrf === authProfile.csrfToken) {
+            const user = await AppDataSource.getRepository(User).findOne({where: {username: authProfile.username}});
+
+            if (user) {
+                res.locals.user = user;
+                next();
+            }
+        }
+
+    }
+
+    const guest = await AppDataSource.getRepository(Guest).findOne({where: {token: req.cookies.gid}});
+
+    if (guest) {
+        res.locals.user = guest;
+        next();
+    }
+
+
+    res.status(401).send({
+        success: false,
+        message: "Try refreshing the page. If the problem persists, please contact us."
+    });
 
 }

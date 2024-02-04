@@ -1,7 +1,7 @@
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {ChangeEvent, Dispatch, SetStateAction} from "react";
 import Compressor from "compressorjs";
-import {uploadAttachment} from "../../api/professor.ts";
+import {uploadAttachment, uploadVideoAttachment} from "../../api/professor.ts";
 import {
     ImageAttachment,
     ReviewFormDraft,
@@ -20,12 +20,12 @@ export default function ReviewFormFooter(props: {
     const uploadImage = (event: ChangeEvent<HTMLInputElement>) => {
 
         if (details.attachments.length >= 4) {
-            alert("You may only choose 4 images, 1 GIF or 1 video.");
+            alert("You may only choose 4 images or 1 GIF.");
             event.target.value = "";
             return;
         }
 
-        const mimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/quicktime'];
+        const mimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
         const files = Array.from(event.target.files!).filter(file => mimeTypes.includes(file.type));
 
@@ -43,7 +43,7 @@ export default function ReviewFormFooter(props: {
         if (images.length === 0) return;
 
         for (const image of images) {
-            if (['video/mp4', 'video/quicktime'].includes(image.type)) {
+            /*if (['video/mp4', 'video/quicktime'].includes(image.type)) {
                 if (emptySlots !== 4) {
                     alert("You may only choose 4 images, 1 GIF or 1 video.");
                     continue;
@@ -52,13 +52,10 @@ export default function ReviewFormFooter(props: {
                 addVideo(image);
 
                 return;
-            }
+            }*/
 
             if (['image/webp', 'image/gif'].includes(image.type)) {
-                if (emptySlots !== 4) {
-                    alert("You may only choose 4 images, 1 GIF or 1 video.");
-                    continue;
-                }
+                if (emptySlots !== 4) continue;
 
                 addImage(image);
 
@@ -102,15 +99,15 @@ export default function ReviewFormFooter(props: {
 
             setDetails({...details});
 
-            await addAndUploadImage(file, attachment.url);
+            const id = await uploadVideoAttachment(file);
+
+            await verifyUpload(id, attachment.url);
         }
 
         video.src = URL.createObjectURL(file);
 
     }
-    async function addAndUploadImage(file: File | Blob, url: string) {
-        const id = await uploadAttachment(file);
-
+    async function verifyUpload(id: string | undefined, url: string) {
         if (id === undefined) {
             alert("Failed to upload the media file.");
             setDetails((prevDetails) => ({
@@ -173,7 +170,9 @@ export default function ReviewFormFooter(props: {
 
             setDetails({...details});
 
-            await addAndUploadImage(file, attachment.url);
+            const id = await uploadAttachment(file);
+
+            await verifyUpload(id, attachment.url);
 
         }
     }
@@ -232,7 +231,7 @@ export default function ReviewFormFooter(props: {
                            onChange={(event) => {
                                uploadImage(event);
                            }}
-                           accept={"image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime"} multiple
+                           accept={"image/jpeg,image/png,image/webp,image/gif"} multiple
                            tabIndex={-1} type={"file"} id={"upload-images"}/>
                 </div>
                 <div className={canAddGif() ? styles.buttonIconWrapper : styles.disabledButton}>

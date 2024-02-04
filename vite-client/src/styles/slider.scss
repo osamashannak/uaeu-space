@@ -1,0 +1,24 @@
+
+
+.slick-track{
+  display: flex;
+}
+
+.slick-slide {
+  align-self: center;
+}
+.slick-next {
+  right: 8px;
+}
+
+.slick-prev {
+  left: 8px;
+}
+
+.slick-arrow {
+    z-index: 1;
+
+}
+.slick-slider {
+  margin-top: 8px;
+}

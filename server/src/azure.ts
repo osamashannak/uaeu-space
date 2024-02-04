@@ -79,7 +79,19 @@ export class AzureClient {
             }
         });
 
-        console.log(response);
+        return blobName;
+    }
+
+    async uploadVideoAttachment(blobName: string, filePath: string, mimeType: string) {
+
+        const blobClient = this.attachmentsClient.getBlockBlobClient(blobName);
+
+        const response = await blobClient.uploadFile(filePath, {
+            blobHTTPHeaders: {
+                blobContentType: mimeType,
+                blobCacheControl: 'max-age=31536000, immutable'
+            }
+        });
 
         return blobName;
     }
@@ -94,8 +106,6 @@ export class AzureClient {
                 blobCacheControl: 'max-age=31536000, immutable'
             }
         });
-
-        console.log(response);
 
         return blobName;
     }
