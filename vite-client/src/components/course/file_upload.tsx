@@ -113,7 +113,7 @@ export default function FileUpload(props: { courseTag: string }) {
 
                 <div>
                     {
-                        details.map((value, index) => {
+                        details.map((value) => {
                             return <FilePreview key={`${value.name}`} file={value.file} name={value.name}
                                                 uploadFile={submitting}
                                                 courseTag={props.courseTag}
