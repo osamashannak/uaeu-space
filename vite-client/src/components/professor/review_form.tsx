@@ -114,7 +114,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
 
     if ((details.comment ?? "").trim()) {
 
-        const length = (details.comment ?? "").trim().length;
+        const length = [...(details.comment ?? "").trim()].length;
 
         if (length > 350) {
             lengthStyle += ` ${styles.commentLengthWarning}`;
@@ -231,7 +231,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
 
                     <div className={lengthStyle}>
                         <div>
-                            <span>{(details.comment ?? "").trim().length > 0 ? details.comment?.length : 0}</span>
+                            <span>{[...(details.comment ?? "").trim()].length > 0 ? [...details.comment].length : 0}</span>
                             <span>/ 350</span>
                         </div>
                     </div>

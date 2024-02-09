@@ -34,10 +34,13 @@ export default function ReviewSection (props: { professorReviews: ReviewAPI[] })
     return (
         <div className={styles.commentsSection}>
             <div className={styles.sortButtonWrapper}>
+                <div className={styles.commentsCount}>
+                    <span>{reviewCount} Comments</span>
+                </div>
                 <div className={styles.sortButton}
                      onClick={(event) => {
-                            event.preventDefault();
-                            setSortHidden(!sortHidden);
+                         event.preventDefault();
+                         setSortHidden(!sortHidden);
                      }}>
                     <div className={styles.sortIcon}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">

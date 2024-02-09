@@ -56,7 +56,7 @@ export const comment = async (req: Request, res: Response) => {
 
     const review = new Review();
 
-    if (body.attachments.length > 0) {
+    if (body.attachments && body.attachments.length > 0) {
         review.attachments = [];
         for (const attachment of body.attachments) {
             const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
@@ -72,9 +72,9 @@ export const comment = async (req: Request, res: Response) => {
     const user: Guest | User = res.locals.user;
 
     review.author = "Anonymous";
-    review.comment = body.comment;
-    review.score = parseInt(body.score);
-    review.positive = body.positive;
+    review.comment = body.comment ?? "";
+    review.score = body.score as number;
+    review.positive = body.positive as boolean;
     review.professor = professor;
     review.author_ip = address;
     review.visible = valid;

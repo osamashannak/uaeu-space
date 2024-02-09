@@ -19,7 +19,7 @@
 
 .profPage {
   padding-bottom: 1rem;
-  min-height: 85vh;
+  min-height: 150vh;
 
 }
 
@@ -78,10 +78,16 @@
 
 .sortButtonWrapper {
   display: flex;
-  justify-content: flex-end;
-  margin-right: 16px;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 16px;
+  padding-left: 16px;
   user-select: none;
   -webkit-user-select: none;
+}
+
+.commentsCount {
+  font-weight: 500;
 }
 
 .sortButton {

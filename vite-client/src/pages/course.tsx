@@ -30,7 +30,6 @@ export default function Course() {
         }
 
         getCourse(tag).then((course) => {
-            console.log(course)
             setCourse(course);
         })
 
@@ -62,12 +61,7 @@ export default function Course() {
             <Layout>
                 <div className={styles.coursePage}>
                     <section className={styles.courseInfoHead} style={{width: "100%", borderBottom: 0}}>
-                        <h2 style={{width: "100px"}}>Course Not Found</h2>
-                        <h1 style={{width: "200px"}}>Course Not Found</h1>
-                    </section>
-
-                    <section className={styles.fileList}>
-                        <p className={styles.file}>Course not found.</p>
+                        <h1>Course Not Found</h1>
                     </section>
 
                 </div>

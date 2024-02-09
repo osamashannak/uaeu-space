@@ -5,6 +5,7 @@ import {Request, Response, NextFunction} from "express";
 import {AppDataSource, RedisClient} from "./app";
 import {Guest} from "@spaceread/database/entity/user/Guest";
 import {User} from "@spaceread/database/entity/user/User";
+import {type} from "node:os";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
@@ -58,25 +59,18 @@ export const createAssessment = async (token: string | undefined) => {
 }
 
 export const validateProfessorComment = (body: CommentBody): CommentBody | null => {
-    if (!body.professorEmail || (body.comment.length < 1 && body.attachments.length < 1) || !body.score || body.positive == undefined) {
+    if (!body.professorEmail || (!body.comment && !body.attachments) || !body.score || typeof body.positive !== "boolean") {
         return null;
     }
+    if (body.comment) {
+        body.comment = body.comment.trimEnd();
 
-    body.comment = body.comment.trimEnd();
-
-    if (body.comment.length > 350) {
-        return null;
+        if ([...body.comment].length > 350) {
+            return null;
+        }
     }
 
     if (!Number.isInteger(body.score) || parseInt(body.score) < 1 || parseInt(body.score) > 5) {
-        return null;
-    }
-
-    if (body.attachments.length > 1) {
-        return null;
-    }
-
-    if (body.positive == undefined) {
         return null;
     }
 
