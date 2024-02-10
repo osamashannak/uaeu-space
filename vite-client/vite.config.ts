@@ -1,23 +1,23 @@
 import {defineConfig, loadEnv, splitVendorChunkPlugin} from 'vite'
 import react from '@vitejs/plugin-react'
+import legacy from '@vitejs/plugin-legacy'
 
 // https://vitejs.dev/config/
 export default defineConfig(({command, mode}) => {
   const env = loadEnv(mode, process.cwd());
 
   return {
-    plugins: [react(), splitVendorChunkPlugin(),
-      // plugin that replaces script tag to link tag with preload attribute
+    plugins: [react(),
+      splitVendorChunkPlugin(),
       {
         name: 'module-preload',
         enforce: 'post',
         apply: 'build',
         transformIndexHtml(html) {
           return html
-              .replace(/<script type="module" crossorigin src="(.*)"><\/script>/g, '<link rel="preload" as="script" crossorigin href="$1">')
               .replace(/<link rel="modulepreload" crossorigin href="(.*)">/g, '<link rel="preload" as="script" crossorigin href="$1">')
         }
-      }
+      },
     ],
     build: {
       emptyOutDir: true,
@@ -32,8 +32,6 @@ export default defineConfig(({command, mode}) => {
       },
       modulePreload: true,
     },
-/*
-    base: env.VITE_ASSETS_URL,
-*/
+    // base: env.VITE_ASSETS_URL,
   }
 })

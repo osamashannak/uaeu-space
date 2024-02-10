@@ -1,8 +1,8 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {ReviewFormDraft} from "../../typed/professor.ts";
-import {postReview} from "../../api/professor.ts";
+import {postReview, uploadAttachment} from "../../api/professor.ts";
 import {convertArabicNumeral} from "../../utils.tsx";
 import {Link} from "react-router-dom";
 import {LexicalComposer} from "@lexical/react/LexicalComposer";
@@ -29,6 +29,59 @@ export default function ReviewForm(props: { professorEmail: string }) {
     const [submitting, setSubmitting] = useState<boolean | null | "error" | "loading">(localStorage.getItem(`${props.professorEmail}-prof`) ? null : false);
     const {executeRecaptcha} = useGoogleReCaptcha();
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
+
+    useEffect(() => {
+        function verifyUpload(id: string | undefined, url: string) {
+            if (id === undefined) {
+                alert("Failed to upload the media file.");
+                setDetails((prevDetails) => ({
+                    ...prevDetails,
+                    attachments: prevDetails.attachments.filter((_) => _.url !== url),
+                }));
+                return;
+            }
+
+            console.log(details.attachments)
+
+            const index = details.attachments.findIndex(attachment => attachment.url === url);
+
+            console.log(index);
+            console.log(url)
+
+            details.attachments[index].id = id;
+
+            setDetails(prevState => {
+                return {
+                    ...prevState,
+                    attachments: details.attachments,
+                }
+            })
+        }
+
+        // get all attachments with status == ready
+        const attachments = details.attachments.filter(attachment => attachment.id === "READY");
+
+        for (const attachment of attachments) {
+            if ('src' in attachment) {
+                setDetails((prevDetails) => ({
+                    ...prevDetails,
+                    attachments: prevDetails.attachments.map((_) => {
+                        if (_.url === attachment.url) {
+                            return {
+                                ..._,
+                                id: "UPLOADING",
+                            }
+                        }
+                        return _;
+                    }),
+                }));
+                uploadAttachment(attachment.src).then(id => {
+                    verifyUpload(id, attachment.url).then();
+                })
+            }
+        }
+
+    }, [details.attachments]);
 
     const formFilled = () => {
         return (
@@ -318,31 +371,33 @@ export default function ReviewForm(props: { professorEmail: string }) {
                 </ul>
             </div>
 
-            <input type={"submit"}
-                   title={"Submit"}
-                   className={formFilled() ? styles.enabledFormSubmit : styles.disabledFormSubmit}
-                   value={"Submit"}
-                   onClick={async event => {
-                       event.stopPropagation();
-                       if (!formFilled()) {
-                           const invalidFields = Array.from(document.querySelectorAll("input:invalid"));
-                           const score = invalidFields.find(field => field.id === "score-field");
+            <div className={styles.submitButtonWrapper}>
+                <div title={"Submit"}
+                     className={formFilled() ? styles.enabledFormSubmit : styles.disabledFormSubmit}
+                     onClick={async event => {
+                         event.stopPropagation();
+                         if (!formFilled()) {
+                             const invalidFields = Array.from(document.querySelectorAll("input:invalid"));
+                             const score = invalidFields.find(field => field.id === "score-field");
 
-                           if (score) {
-                               // @ts-ignore
-                               score.reportValidity();
-                               return;
-                           }
+                             if (score) {
+                                 // @ts-ignore
+                                 score.reportValidity();
+                                 return;
+                             }
 
-                           if (invalidFields.length > 1) {
-                               // @ts-ignore
-                               invalidFields[0].reportValidity();
-                           }
+                             if (invalidFields.length > 1) {
+                                 // @ts-ignore
+                                 invalidFields[0].reportValidity();
+                             }
 
-                           return;
-                       }
-                       await handleSubmit();
-                   }}/>
+                             return;
+                         }
+                         await handleSubmit();
+                     }}>
+                    <span>Submit</span>
+                </div>
+            </div>
 
             <div className={styles.disclaimer}>
                 This site is protected by reCAPTCHA and the Google <a

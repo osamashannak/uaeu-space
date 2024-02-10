@@ -18,6 +18,7 @@ export default function AttachmentSlider(props: {details: ReviewFormDraft, setDe
         slidesToScroll: 1,
         arrows: details.attachments.length > 1,
         dots: details.attachments.length > 1,
+        touchMove: details.attachments.length > 1,
 
     };
 
@@ -65,7 +66,7 @@ export default function AttachmentSlider(props: {details: ReviewFormDraft, setDe
 
                 return (
                     <>
-                        <div key={attachment.aspectRatio + index} className={styles.imagePreview}
+                        <div key={attachment.id + index} className={styles.imagePreview}
                              onClick={event => {
                                  event.stopPropagation();
                                  //window.open(attachment.url, '_blank');

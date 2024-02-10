@@ -1,5 +1,6 @@
 import icons from "./icons";
 import styles from "./styles/components/professor/review.module.scss";
+import {Twemoji} from "./twemoji";
 
 const FullStar = () => (
     <svg className={styles.star} xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24">
@@ -115,11 +116,14 @@ export const formatRelativeTime = (inputDate: Date) => {
     return diffSeconds + "s";
 }
 
-export const convertArabicNumeral = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+export const convertArabicNumeral = (s: any) => s.replace(/[٠-٩]/g, (d: any) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+
+export const pluralize = (count: number, noun: string) => `${noun}${count !== 1 ? "s" : ''}`;
+
 
 export const parseText = (text: HTMLElement | string) => {
-    // @ts-expect-error Twemoji is already loaded via script tag
-    return twemoji.parse(text, {
+    // @ts-expect-error Twemoji is loaded in the global scope
+    return (twemoji as Twemoji).parse(text, {
         folder: 'svg',
         ext: '.svg',
     });

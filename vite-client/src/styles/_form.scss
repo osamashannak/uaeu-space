@@ -20,13 +20,17 @@
   }
 }
 
+.submitButtonWrapper {
+  display: flex;
+}
+
 .formSubmit {
-  margin-top: 1.5rem;
+  margin-top: 26px;
   border: none;
-  padding: 0.7rem 1rem;
+  padding: 12px 16px;
   border-radius: 9999px;
   color: white;
-  font-weight: 700;
+  font-weight: 600;
 
   user-select: none;
     -webkit-user-select: none;

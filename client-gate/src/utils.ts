@@ -1,9 +1,7 @@
 import {Response, Request} from "express";
 import crypto from "crypto";
 import {Session} from "@spaceread/database/entity/user/Session";
-import {User} from "@spaceread/database/entity/user/User";
-import {AppDataSource, SessionRepository, UserRepository} from "./app";
-
+import {SessionRepository, UserRepository} from "./app";
 
 
 export interface RedisSession {
@@ -37,10 +35,10 @@ export async function generateAuthSession(username: string, address: string, req
     const user = await UserRepository.findOne({where: {username: username}});
     const newSession = new Session();
     newSession.token = token;
-    newSession.ipAddress = address;
-    newSession.userAgent = req.headers['user-agent'] ?? "";
+    newSession.ip_address = address;
+    newSession.user_agent = req.headers['user-agent'] ?? "";
     newSession.user = user!;
-    newSession.dateHistory = [new Date().toISOString()];
+    newSession.date_history = [new Date().toISOString()];
     SessionRepository.save(newSession).then();
     return token;
 }

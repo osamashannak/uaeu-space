@@ -127,6 +127,19 @@
 
 .sortByMenu {
   position: relative;
+  opacity: 1;
+    transition-duration: 0.2s;
+    transition-property: opacity;
+    transition-timing-function: ease;
+}
+
+.hiddenSortByMenu {
+  @extend .sortByMenu;
+  opacity: 0;
+  pointer-events: none;
+  transition-duration: 0.2s;
+  transition-property: opacity;
+  transition-timing-function: ease;
 }
 
 .sortByMenuList {

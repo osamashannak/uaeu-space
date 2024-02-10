@@ -1,9 +1,9 @@
 
 export interface CommentBody {
-    positive?: boolean;
-    comment?: string;
-    score?: number;
-    attachments?: string[];
-    professorEmail?: string;
-    recaptchaToken?: string;
+    positive?: boolean | any;
+    comment?: string | any;
+    score?: number | any;
+    attachments?: string[] | any;
+    professorEmail?: string | any;
+    recaptchaToken?: string | any;
 }

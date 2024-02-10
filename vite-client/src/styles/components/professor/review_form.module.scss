@@ -259,7 +259,22 @@
 }
 
 
-.emojiSelector, .gifSelector {
+.emojiSelector {
+  position: relative;
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+  z-index: 999;
+  pointer-events: none;
+  width: fit-content;
+
+  & > div {
+    position: absolute;
+    top: 50px;
+  }
+
+}
+
+.gifSelector {
   position: relative;
   transition: opacity 0.2s ease-in-out;
   opacity: 0;
@@ -270,7 +285,6 @@
     position: absolute !important;
     top: 50px;
   }
-
 }
 
 .postFooter {

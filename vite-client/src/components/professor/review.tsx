@@ -18,7 +18,6 @@ export default function Review(review: ReviewAPI) {
 
     }, [review.id]);
 
-    console.log(review.id, review.created_at)
     return (
         <article className={styles.review}>
 

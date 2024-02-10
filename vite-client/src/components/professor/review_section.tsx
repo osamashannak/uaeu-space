@@ -3,31 +3,51 @@ import {ReviewAPI} from "../../typed/professor.ts";
 import styles from "../../styles/pages/professor.module.scss";
 import Review from "./review.tsx";
 import reviewStyles from "../../styles/components/professor/review.module.scss";
+import {pluralize} from "../../utils.tsx";
 
 enum SORT_BY {
-    rated,
+    relevant,
     newest
 }
 
 export default function ReviewSection (props: { professorReviews: ReviewAPI[] }) {
 
-    const [sortHidden, setSortHidden] = useState<boolean>(true);
-    const [sortBy, setSortBy] = useState<SORT_BY>(SORT_BY.newest);
-    const [reviews, setReviews] = useState(props.professorReviews);
+    const [sortBy, setSortBy] = useState<SORT_BY>(SORT_BY.relevant);
+    const [sortHidden, setSortHidden] = useState(true);
 
-    console.log(sortBy)
+    let reviews = props.professorReviews;
 
-    /*useEffect(() => {
-        if (reviews == null) {
-            return;
+    if (sortBy === SORT_BY.newest) {
+        reviews = reviews.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    } else {
+        reviews = reviews.sort((a, b) => {
+            const aDate = new Date(a.created_at).getTime();
+            const bDate = new Date(b.created_at).getTime();
+            const aLikes = a.likes - a.dislikes;
+            const bLikes = b.likes - b.dislikes;
+
+            if (aDate > Date.now() - 86400000 && bDate > Date.now() - 86400000) {
+                return bDate - aDate;
+            }
+            if (aDate > Date.now() - 86400000) {
+                return -1;
+            }
+            if (bDate > Date.now() - 86400000) {
+                return 1;
+            }
+            if (aLikes !== bLikes) {
+                return bLikes - aLikes;
+            }
+            return bDate - aDate;
+
+        });
+    }
+
+    window.onclick = (event) => {
+        if (!(event.target as HTMLElement).classList.contains(styles.sortButton)) {
+            setSortHidden(true);
         }
-
-        if (sortBy === SORT_BY.newest) {
-            setReviews(reviews.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-        } else {
-            setReviews(reviews.sort((a, b) => (b.likes - b.dislikes) - (a.likes - a.dislikes)));
-        }
-    }, [reviews, sortBy]);*/
+    }
 
     const reviewCount = reviews.length;
 
@@ -35,12 +55,12 @@ export default function ReviewSection (props: { professorReviews: ReviewAPI[] })
         <div className={styles.commentsSection}>
             <div className={styles.sortButtonWrapper}>
                 <div className={styles.commentsCount}>
-                    <span>{reviewCount} Comments</span>
+                    <span>{reviewCount} {pluralize(reviewCount, "Comment")}</span>
                 </div>
                 <div className={styles.sortButton}
                      onClick={(event) => {
-                         event.preventDefault();
-                         setSortHidden(!sortHidden);
+                         event.stopPropagation();
+                         setSortHidden(!sortHidden)
                      }}>
                     <div className={styles.sortIcon}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -53,23 +73,17 @@ export default function ReviewSection (props: { professorReviews: ReviewAPI[] })
                 </div>
             </div>
 
-            <div hidden={sortHidden} className={styles.sortByMenu}>
+            <div className={sortHidden ? styles.hiddenSortByMenu : styles.sortByMenu}>
                 <div className={styles.sortByMenuList}>
                     <div className={styles.sortByListItem}
                          onClick={() => {
-                             setReviews((prevReviews) =>
-                                 [...prevReviews].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                             );
-
+                             setSortBy(SORT_BY.rated);
                          }}>
-                        <span>Rated</span>
+                        <span>Relevant</span>
                     </div>
                     <div className={styles.sortByListItem}
                          onClick={() => {
-                             setReviews((prevReviews) =>
-                                 [...prevReviews].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                             );
-
+                             setSortBy(SORT_BY.newest);
                          }}>
                         <span>Newest</span>
                     </div>

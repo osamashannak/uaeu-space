@@ -23,6 +23,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   user-select: none;
+    -webkit-user-select: none;
   cursor: pointer;
   padding-top: 1rem;
   padding-left: 1rem;
@@ -51,6 +52,7 @@
   cursor: pointer;
   transition-duration: 0.2s;
   user-select: none;
+  -webkit-user-select: none;
   text-decoration: none;
   border-radius: 9999px;
 

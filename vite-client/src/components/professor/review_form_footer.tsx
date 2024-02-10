@@ -58,6 +58,7 @@ export default function ReviewFormFooter(props: {
                 if (emptySlots !== 4) continue;
 
                 addImage(image);
+                event.target.value = "";
 
                 return;
             }
@@ -95,9 +96,8 @@ export default function ReviewFormFooter(props: {
                 aspectRatio: video.videoHeight / video.videoWidth
             };
 
-            details.attachments.push(attachment);
+            setDetails(prevState => ({...prevState, attachments: [...prevState.attachments, attachment]}));
 
-            setDetails({...details});
 
             const id = await uploadVideoAttachment(file);
 
@@ -106,22 +106,6 @@ export default function ReviewFormFooter(props: {
 
         video.src = URL.createObjectURL(file);
 
-    }
-    async function verifyUpload(id: string | undefined, url: string) {
-        if (id === undefined) {
-            alert("Failed to upload the media file.");
-            setDetails((prevDetails) => ({
-                ...prevDetails,
-                attachments: prevDetails.attachments.filter((_) => _.url !== url),
-            }));
-            return;
-        }
-
-        const index = details.attachments.findIndex(attachment => attachment.url === url);
-
-        details.attachments[index].id = id;
-
-        setDetails({...details});
     }
 
     function addTenorGif(gif: string) {
@@ -136,9 +120,7 @@ export default function ReviewFormFooter(props: {
                 weight: 4
             };
 
-            details.attachments.push(attachment);
-
-            setDetails({...details});
+            setDetails(prevState => ({...prevState, attachments: [...prevState.attachments, attachment]}));
         }
     }
 
@@ -147,7 +129,6 @@ export default function ReviewFormFooter(props: {
         img.src = URL.createObjectURL(file);
 
         img.onload = async () => {
-
             if (img.height < 50 || img.width < 50) {
                 alert("Image must be at least 50 pixels in width and height.");
                 return;
@@ -159,20 +140,16 @@ export default function ReviewFormFooter(props: {
             }
 
             const attachment = {
-                id: "UPLOADING",
+                id: "READY",
                 url: img.src,
                 aspectRatio: img.height / img.width,
                 weight: 1,
                 src: file
             } as ImageAttachment;
 
-            details.attachments.push(attachment);
+            setDetails(prevState => ({...prevState, attachments: [...prevState.attachments, attachment]}));
 
-            setDetails({...details});
 
-            const id = await uploadAttachment(file);
-
-            await verifyUpload(id, attachment.url);
 
         }
     }

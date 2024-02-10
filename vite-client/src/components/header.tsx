@@ -24,7 +24,7 @@ export default function Header() {
 
     if (typeof window !== "undefined") {
         let scrollCounter = 0;
-        const updateInterval = 4;
+        const updateInterval = 6;
 
         window.onscroll = () => {
 

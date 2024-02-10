@@ -23,8 +23,7 @@ export const AppDataSource = createDataSource({
     host: process.env.POSTGRES_HOST,
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DB,
-    ssl: false,
+    database: process.env.POSTGRES_DB
 });
 export const RedisClient = createClient();
 

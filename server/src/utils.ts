@@ -5,7 +5,6 @@ import {Request, Response, NextFunction} from "express";
 import {AppDataSource, RedisClient} from "./app";
 import {Guest} from "@spaceread/database/entity/user/Guest";
 import {User} from "@spaceread/database/entity/user/User";
-import {type} from "node:os";
 
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 

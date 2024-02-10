@@ -22,7 +22,6 @@ export const AppDataSource = createDataSource({
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    ssl: false,
 });
 
 
@@ -42,9 +41,11 @@ app.use(function (req, res, next) {
 app.use(async function (req, res, next) {
     if (isbot(req.headers['user-agent'])) {
         next();
+        return;
     }
 
     let address = requestIp.getClientIp(req);
+    console.log("Address: ", address)
 
     if (!address) {
         res.status(444).send();
@@ -144,7 +145,7 @@ app.get('*', function (req, res) {
 
     await client.connect();
 
-    app.listen(3000);
-    console.log('Client Gate is running on port 3000');
+    app.listen(3001);
+    console.log('Client Gate is running on port 3001');
 })()
 
