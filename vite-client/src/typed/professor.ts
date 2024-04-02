@@ -15,7 +15,6 @@ export interface ReviewAPI {
     created_at: Date;
     likes: number;
     dislikes: number;
-    reviewed: boolean;
     attachments: {
         id: string;
         height: number;

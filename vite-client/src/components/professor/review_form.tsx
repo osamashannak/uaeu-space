@@ -4,7 +4,6 @@ import styles from "../../styles/components/professor/review_form.module.scss";
 import {ReviewFormDraft} from "../../typed/professor.ts";
 import {postReview, uploadAttachment} from "../../api/professor.ts";
 import {convertArabicNumeral} from "../../utils.tsx";
-import {Link} from "react-router-dom";
 import {LexicalComposer} from "@lexical/react/LexicalComposer";
 import {ContentEditable} from "@lexical/react/LexicalContentEditable";
 import {HistoryPlugin} from "@lexical/react/LexicalHistoryPlugin";
@@ -17,6 +16,8 @@ import {EditorRefPlugin} from "@lexical/react/LexicalEditorRefPlugin";
 import {useRef} from "react";
 import ReviewFormFooter from "./review_form_footer.tsx";
 import AttachmentSlider from "./attachment_slider.tsx";
+import {useDispatch} from "react-redux";
+import {addReview} from "../../redux/slice/professor_slice.ts";
 
 
 export default function ReviewForm(props: { professorEmail: string }) {
@@ -30,6 +31,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
     const [submitting, setSubmitting] = useState<boolean | null | "error" | "loading">(localStorage.getItem(`${props.professorEmail}-prof`) ? null : false);
     const {executeRecaptcha} = useGoogleReCaptcha();
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         function verifyUpload(id: string | undefined, url: string) {
@@ -45,9 +47,6 @@ export default function ReviewForm(props: { professorEmail: string }) {
             console.log(details.attachments)
 
             const index = details.attachments.findIndex(attachment => attachment.url === url);
-
-            console.log(index);
-            console.log(url)
 
             details.attachments[index].id = id;
 
@@ -127,6 +126,20 @@ export default function ReviewForm(props: { professorEmail: string }) {
             return;
         }
 
+        localStorage.setItem(`${props.professorEmail}-prof`, "true");
+
+        dispatch(addReview({
+            attachments: [],
+            author: "Anonymous",
+            created_at: new Date(),
+            dislikes: 0,
+            likes: 0,
+            comment: details.comment!.trim(),
+            score: details.score!,
+            positive: details.positive!,
+            id: -1
+        }));
+
         setSubmitting(null);
     }
 
@@ -188,7 +201,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
                 event.preventDefault();
             }}>
 
-            <div>
+            {/*<div>
                 <div className={styles.guestWarning} onClick={(e) => {
                     e.stopPropagation();
 
@@ -231,7 +244,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
                     </div>
 
                 </div>
-            </div>
+            </div>*/}
 
 
             <LexicalComposer initialConfig={{
@@ -293,14 +306,10 @@ export default function ReviewForm(props: { professorEmail: string }) {
 
                 <AttachmentSlider details={details} setDetails={setDetails}/>
 
-                {details.attachments && <div className={styles.imagesPreviewList}>
-
-                </div>}
                 <EmojiSelector/>
             </LexicalComposer>
 
             <ReviewFormFooter details={details} setDetails={setDetails}/>
-
 
             <div className={styles.formOptions}>
                 <div
@@ -373,7 +382,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
             </div>
 
             <div className={styles.submitButtonWrapper}>
-                <div title={"Submit"}
+                <div title={"Post"}
                      className={formFilled() ? styles.enabledFormSubmit : styles.disabledFormSubmit}
                      onClick={async event => {
                          event.stopPropagation();
@@ -396,7 +405,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
                          }
                          await handleSubmit();
                      }}>
-                    <span>Submit</span>
+                    <span>Post</span>
                 </div>
             </div>
 

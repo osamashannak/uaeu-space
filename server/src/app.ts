@@ -14,7 +14,6 @@ import VirusTotalClient from "./virustotal";
 import {createDataSource} from "@spaceread/database";
 import {Course} from "@spaceread/database/entity/course/Course";
 import {Professor} from "@spaceread/database/entity/professor/Professor";
-import {User} from "@spaceread/database/entity/user/User";
 import {createClient} from "redis";
 import cookies from "cookie-parser";
 

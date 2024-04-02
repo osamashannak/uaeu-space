@@ -62,7 +62,7 @@ export const validateProfessorComment = (body: CommentBody): CommentBody | null 
         return null;
     }
     if (body.comment) {
-        body.comment = body.comment.trimEnd();
+        body.comment = body.comment.trim();
 
         if ([...body.comment].length > 350) {
             return null;

@@ -164,14 +164,18 @@ export default function ReviewFormFooter(props: {
 
     function hideEmojiSelector() {
         const emojiSelector = document.querySelector(`.${styles.emojiSelector}`) as HTMLDivElement;
-        emojiSelector.style.opacity = "0";
-        emojiSelector.style.pointerEvents = "none";
+        if (emojiSelector) {
+            emojiSelector.style.opacity = "0";
+            emojiSelector.style.pointerEvents = "none";
+        }
     }
 
     function hideGifSelector() {
         const gifSelector = document.querySelector(`.${styles.gifSelector}`) as HTMLDivElement;
-        gifSelector.style.opacity = "0";
-        gifSelector.style.pointerEvents = "none";
+        if (gifSelector) {
+            gifSelector.style.opacity = "0";
+            gifSelector.style.pointerEvents = "none";
+        }
     }
 
 

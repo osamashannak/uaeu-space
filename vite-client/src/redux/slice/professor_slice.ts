@@ -1,5 +1,5 @@
-import {createSlice} from '@reduxjs/toolkit'
-import {ProfessorAPI} from "../../typed/professor.ts";
+import {createSlice, PayloadAction} from '@reduxjs/toolkit'
+import {ProfessorAPI, ReviewAPI} from "../../typed/professor.ts";
 
 
 interface ProfessorState {
@@ -58,10 +58,18 @@ export const professorSlice = createSlice({
                 });
             }
             state.professor.reviews = reviews;
-        }
-    }
-})
+        },
+        addReview: (state, action: PayloadAction<ReviewAPI>) => {
+            if (!state.professor) {
+                return;
+            }
 
-export const {setProfessor, clearProfessor, sortReviews} = professorSlice.actions
+            state.professor.reviews = [action.payload, ...state.professor.reviews];
+        }
+
+    }
+});
+
+export const {setProfessor, clearProfessor, sortReviews, addReview} = professorSlice.actions
 
 export default professorSlice.reducer;
