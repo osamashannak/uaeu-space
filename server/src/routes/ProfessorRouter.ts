@@ -53,9 +53,11 @@ const imageMulter = multer({
 
 const router = express.Router();
 
+router.use(getCredentials);
+
 router.get("/", find);
 router.get("/all", getAll);
-router.post("/rate", getCredentials, comment);
+router.post("/rate", comment);
 router.post("/rate/upload", imageMulter.single("file"), upload);
 // router.post("/rate/uploadVideo", videoMulter.single("file"), uploadVideo);
 

@@ -127,6 +127,11 @@
   text-align: initial;
 }
 
+.postContent[contenteditable=true] {
+  -moz-user-modify: read-write-plaintext-only;
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
 .postRTL {
   direction: rtl;
   text-align: right;
@@ -135,6 +140,11 @@
 .postLTR {
   direction: ltr;
   text-align: left;
+}
+
+.postLink {
+  color: rgb(29, 155, 240);
+
 }
 
 .postParagraph {
@@ -230,7 +240,7 @@
 }
 
 .noDisplay {
-    display: none !important;
+  display: none !important;
 
 }
 

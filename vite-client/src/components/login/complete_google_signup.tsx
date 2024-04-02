@@ -1,8 +1,9 @@
 import styles from "../../styles/pages/login.module.scss";
 import {GoogleSignUpProps} from "../../typed/user.ts";
 import {FormEvent, useEffect, useState} from "react";
-import {sendGoogleSignup, sendLonginRequest} from "../../api/auth.ts";
-import {isEmailValid, isPasswordValid, isUsernameValid} from "../../utils.tsx";
+import {sendGoogleSignup} from "../../api/auth.ts";
+import { isPasswordValid, isUsernameValid} from "../../utils.tsx";
+import CenterScreen from "../center_screen.tsx";
 
 
 export default function CompleteGoogleSignUp({autocomplete}: { autocomplete: GoogleSignUpProps }) {
@@ -50,8 +51,7 @@ export default function CompleteGoogleSignUp({autocomplete}: { autocomplete: Goo
     }
 
     return (
-        <div className={styles.completeSignUpScreen}>
-            <div className={styles.panel} onClick={e => e.stopPropagation()}>
+        <CenterScreen>
 
                 <div className={styles.panelTitle}>
                     <h2>Complete Sign Up</h2>
@@ -98,7 +98,6 @@ export default function CompleteGoogleSignUp({autocomplete}: { autocomplete: Goo
                     </div>
                 </form>
 
-            </div>
-        </div>
+        </CenterScreen>
     )
 }

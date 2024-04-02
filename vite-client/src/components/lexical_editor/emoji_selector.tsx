@@ -1,20 +1,78 @@
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
-import {$insertNodes} from "lexical";
-import {$createEmojiNode} from "./emoji_node.tsx";
+import {$insertNodes, type LexicalEditor, TextNode} from "lexical";
+import {$createEmojiNode, EmojiNode} from "./emoji_node.tsx";
 import {Twemoji} from "../../twemoji";
 import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data/sets/14/twitter.json'
+import {useEffect} from "react";
 
+function findAndTransformEmoji(node: TextNode): null | TextNode {
+    const text = node.getTextContent();
+
+    const unparsedEmojiExists = ((window.twemoji as Twemoji)).test(text);
+
+    if (!unparsedEmojiExists) {
+        return null;
+    }
+
+    const emojiRegex = /\p{Emoji}/ug;
+    const match = emojiRegex.exec(text);
+
+    if (match === null) {
+        return null;
+    }
+
+    const emoji = {
+        emoji: match[0],
+        firstIndex: match.index,
+        lastIndex: match.index + match[0].length
+    }
+
+    let targetNode;
+
+    if (emoji.firstIndex === 0) {
+        [targetNode] = node.splitText(emoji.lastIndex);
+    } else {
+        [, targetNode] = node.splitText(emoji.firstIndex, emoji.lastIndex);
+    }
+
+    const emojiNode = $createEmojiNode({
+        emoji: emoji.emoji,
+        imageUrl: ((window.twemoji as Twemoji)).parse(emoji.emoji).match(/src="([^"]*)"/)![1]
+    });
+
+    targetNode.replace(emojiNode);
+
+    return emojiNode;
+}
+
+function textNodeTransform(node: TextNode): void {
+    let targetNode: TextNode | null = node;
+
+    while (targetNode !== null) {
+        if (!targetNode.isSimpleText()) {
+            return;
+        }
+
+        targetNode = findAndTransformEmoji(targetNode);
+    }
+}
+
+function useEmojis(editor: LexicalEditor): void {
+    useEffect(() => {
+        if (!editor.hasNodes([EmojiNode])) {
+            throw new Error('EmojisPlugin: EmojiNode not registered on editor');
+        }
+
+        return editor.registerNodeTransform(TextNode, textNodeTransform);
+    }, [editor]);
+}
 
 export default function EmojiSelector() {
     const [editor] = useLexicalComposerContext();
 
-    let width = 400;
-
-    if (window.innerWidth < 444) {
-        width = window.innerWidth - 40;
-    }
+    useEmojis(editor);
 
     return (
         <div className={styles.emojiSelector} onClick={(e) => {
@@ -40,36 +98,8 @@ export default function EmojiSelector() {
 
                         editor.blur();
                     });
-
-
-
                 }}
             />
-            {/*<EmojiPicker
-                height={400}
-                width={width}
-                previewConfig={{showPreview: false}}
-                theme={Theme.LIGHT}
-                emojiStyle={EmojiStyle.TWITTER}
-                lazyLoadEmojis={true}
-                getEmojiUrl={(emoji) => {
-                    return ((window.twemoji as Twemoji)).base + "svg/" + emoji + '.svg';
-                }}
-                onEmojiClick={(emojiData, event) => {
-                    editor.update(() => {
-                        event.stopPropagation();
-
-                        const twemoji = ((window.twemoji as Twemoji)).parse(emojiData.emoji).match(/src="([^"]*)"/)![1];
-
-
-                        $insertNodes([$createEmojiNode({emoji: emojiData.emoji, imageUrl: twemoji})])
-
-                        editor.blur();
-
-                    });
-
-                }}
-            />*/}
         </div>
     )
 

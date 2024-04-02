@@ -1,0 +1,112 @@
+.ramadanLantern {
+  width: 200px;
+  margin: auto;
+}
+[id^="circle"] {
+  animation: rotate 15s linear infinite;
+  transition: all 0.3s ease;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+#circle4 {
+  animation: rotate 60s linear infinite;
+}
+#circlegreen1 {
+  animation: rotate 40s linear reverse infinite;
+}
+#lantern2 {
+  animation: swing 5s ease-in-out infinite alternate;
+  transition: all 0.3s ease;
+  transform-origin: top;
+  transform-box: fill-box;
+}
+
+@keyframes swing {
+  00% {
+    transform: rotate(-10deg);
+  }
+
+  100% {
+    transform: rotate(10deg);
+  }
+}
+
+#lantern1 {
+  animation: swing 3s ease-in-out infinite alternate;
+  transition: all 0.3s ease;
+  transform-origin: top;
+  transform-box: fill-box;
+}
+
+@keyframes swing {
+  00% {
+    transform: rotate(10deg);
+  }
+
+  100% {
+    transform: rotate(-10deg);
+  }
+}
+.st0 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: url(#SVGID_1_);
+}
+
+.st1 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: #ffffff;
+}
+
+.st2 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: #eef2f5;
+}
+
+.st3 {
+  fill: #9ccc54;
+}
+
+.st4 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: url(#SVGID_2_);
+}
+
+.st5 {
+  fill: #d9967f;
+}
+
+.st6 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: url(#SVGID_3_);
+}
+
+.st7 {
+  fill: #0072c5;
+}
+
+.st8 {
+  fill: #484746;
+}
+
+.st9 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: url(#SVGID_4_);
+}
+
+.st10 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: url(#SVGID_5_);
+}

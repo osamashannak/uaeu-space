@@ -13,6 +13,7 @@ import {sendGoogleLogin} from "../api/auth.ts";
 
 export default function Login() {
 
+    const [displayScreen, setDisplayScreen] = useState<"login" | "register" | undefined>();
     const [googleSignUp, setGoogleSignUp] = useState<GoogleSignUpProps | null>(null);
 
 
@@ -45,10 +46,6 @@ export default function Login() {
 
     const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
-    if (!googleClientId) {
-        console.error("Google Client ID not found in .env file");
-    }
-
     function getWidth() {
         console.log(innerWidth)
         if (window.innerWidth <= 415) {
@@ -67,8 +64,14 @@ export default function Login() {
                 <title>Login</title>
             </Helmet>
 
-            <LoginWithEmail/>
-            <RegisterForm/>
+            {
+                displayScreen === "register" && <RegisterForm setDisplayScreen={setDisplayScreen}/>
+            }
+
+            {
+                displayScreen === "login" && <LoginWithEmail setDisplayScreen={setDisplayScreen}/>
+            }
+
             {googleSignUp && <CompleteGoogleSignUp autocomplete={googleSignUp}/>}
 
 
@@ -83,23 +86,13 @@ export default function Login() {
 
                     <button className={styles.formButton} onClick={(e) => {
                         e.stopPropagation();
-                        const screen = document.querySelector(`.${styles.screen}`) as HTMLDivElement;
-                        screen.style.display = "flex";
-                        document.body.style.maxHeight = "100vh";
-                        document.body.style.overflow = "hidden";
-                        const html = document.querySelector("html") as HTMLHtmlElement;
-                        html.style.overscrollBehaviorY = "none";
+                        setDisplayScreen("login");
                     }}>Login with Email
                     </button>
 
                     <button className={styles.signUpButton} onClick={(e) => {
                         e.stopPropagation();
-                        const screen = document.querySelector(`.${styles.registerScreen}`) as HTMLDivElement;
-                        screen.style.display = "flex";
-                        document.body.style.maxHeight = "100vh";
-                        document.body.style.overflow = "hidden";
-                        const html = document.querySelector("html") as HTMLHtmlElement;
-                        html.style.overscrollBehaviorY = "none";
+                        setDisplayScreen("register");
                     }}>Create Account
                     </button>
 

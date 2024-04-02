@@ -1,6 +1,26 @@
 import icons from "./icons";
 import styles from "./styles/components/professor/review.module.scss";
 import {Twemoji} from "./twemoji";
+import tlds from "tlds";
+
+export const URL_REGEX = new RegExp(
+    "^" +
+    // Protocol part (optional)
+    "(?:(?:https?://)?)" +
+    // Subdomain part (optional)
+    "(?:[a-zA-Z0-9-]+\\.)*" +
+    // Domain name part
+    "(?:[a-zA-Z0-9-]+" +
+    // Top-level domain part
+    "(?:\\." + tlds.join("|\\.") + ")" +
+    ")" +
+    // Port part (optional)
+    "(?::\\d+)?" +
+    // Path part (optional)
+    "(?:/[a-zA-Z0-9-._~:/?#[\\]@!$&'()*+,;=%]*)?" +
+    "$"
+);
+
 
 const FullStar = () => (
     <svg className={styles.star} xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 24 24">

@@ -9,14 +9,17 @@ export default function ProfessorLookup() {
         <Layout>
             <div className={styles.searchPage}>
                 <h1>Rate a Professor</h1>
-                <p>Learn about your professors from other students and rate their performance</p>
+                <span>Learn about your professors from other students and rate their performance</span>
 
                 <div className={styles.searchBox}>
                     <SearchBox type={"professor"}/>
+                    <div className={styles.caution}>
+                        <p className={styles.caution}>Can't find your professor? DM us on <a href={"https://instagram.com/uaeu.space"}>Instagram</a></p>
+                    </div>
                 </div>
 
-
             </div>
+
         </Layout>
     )
 

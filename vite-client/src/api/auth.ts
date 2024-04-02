@@ -77,3 +77,22 @@ export async function sendGoogleSignup(googleId: string, email: string, username
 
     return response;
 }
+
+
+export async function whoAmI() {
+    let response;
+
+    try {
+        response = await fetch(HOST + "/gate/whoami", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        })
+    } catch (error) {
+        return undefined;
+    }
+
+    return response;
+}

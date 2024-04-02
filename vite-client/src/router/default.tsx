@@ -6,7 +6,7 @@ import Course from "../pages/course.tsx";
 import CourseLookup from "../pages/course_lookup.tsx";
 import Login from "../pages/login.tsx";
 import TermsOfService from "../pages/legal/tos.tsx";
-import Privacy from "../pages/legal/page.tsx";
+import Privacy from "../pages/legal/privacy.tsx";
 
 const Router = createBrowserRouter([
     {
@@ -20,10 +20,6 @@ const Router = createBrowserRouter([
     {
         path: "privacy",
         element: <Privacy/>
-    },
-    {
-        path: "login",
-        element: <Login/>
     },
     {
         path: "professor",

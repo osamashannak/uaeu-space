@@ -190,7 +190,7 @@ export default function ReviewFormFooter(props: {
                 }}>
 
                 <div className={styles.gifSelector} onClick={e => e.stopPropagation()}>
-                    <GifPicker tenorApiKey={""}
+                    <GifPicker tenorApiKey={"AIzaSyDmHmE9bzvu54NGyozlJFwHCwtpOFQiVng"}
                                contentFilter={ContentFilter.HIGH}
                                onGifClick={(gif) => {
                                    addTenorGif(gif.url);

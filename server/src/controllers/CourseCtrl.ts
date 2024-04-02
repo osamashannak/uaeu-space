@@ -17,20 +17,24 @@ export const find = async (req: Request, res: Response) => {
     const params = req.query;
 
     if (!params.tag) {
-        res.status(400).json({"request": "failed"});
+        res.status(400).json({success: false});
         return;
     }
 
-    const course = await AppDataSource.getRepository(Course).findOne({
+    const courseRepo = AppDataSource.getRepository(Course);
+
+    const course = await courseRepo.findOne({
         where: {tag: (params.tag as string).toLowerCase()},
         relations: ["files", "files.ratings"],
         order: {files: {created_at: "desc"}},
     });
 
     if (!course) {
-        res.status(404).json({error: "Course not found."});
+        res.status(404).json({success: false, message: "The course is not found."});
         return;
     }
+
+    const localUser: Guest | User | null = res.locals.user;
 
     const {views, ...courseWithoutViews} = course;
 
@@ -50,10 +54,19 @@ export const find = async (req: Request, res: Response) => {
             })
     };
 
-    if (params.viewed && params.viewed === "false") {
-        const userRepo = AppDataSource.getRepository(Course);
+    if (localUser && !localUser.visits.includes(course.tag)) {
         course.views += 1;
-        await userRepo.save(course);
+        await courseRepo.save(course);
+
+        localUser.visits.push(course.tag);
+
+        if (localUser instanceof Guest) {
+            const guestRepo = AppDataSource.getRepository(Guest);
+            await guestRepo.save(localUser);
+        } else {
+            const userRepo = AppDataSource.getRepository(User);
+            await userRepo.save(localUser);
+        }
     }
 
     res.status(200).json({course: newCourse});
@@ -74,7 +87,7 @@ export const uploadFile = async (req: Request, res: Response) => {
     const file = req.file;
 
     if (!(file && req.body.tag && req.body.name)) {
-        res.status(400).json({error: "File type is not allowed"});
+        res.status(400).json({success: false, message: "File type is not allowed"});
         return;
     }
 
@@ -90,7 +103,7 @@ export const uploadFile = async (req: Request, res: Response) => {
     const course = await AppDataSource.getRepository(Course).findOne({where: {tag: req.body.tag}});
 
     if (!course) {
-        res.status(400).json({error: "Course not found."});
+        res.status(400).json({success: false, message: "The course is not found."});
         return;
     }
 
@@ -115,7 +128,7 @@ export const uploadFile = async (req: Request, res: Response) => {
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);
 
-    res.status(200).json({result: "success"});
+    res.status(200).json({result: "success", courseFile: courseFile});
 
 }
 

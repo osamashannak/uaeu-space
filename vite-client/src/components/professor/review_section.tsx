@@ -1,55 +1,37 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {ReviewAPI} from "../../typed/professor.ts";
 import styles from "../../styles/pages/professor.module.scss";
+import {pluralize} from "../../utils.tsx";
 import Review from "./review.tsx";
 import reviewStyles from "../../styles/components/professor/review.module.scss";
-import {pluralize} from "../../utils.tsx";
+import {SORT_BY, sortReviews} from "../../redux/slice/professor_slice.ts";
+import {useDispatch} from "react-redux";
 
-enum SORT_BY {
-    relevant,
-    newest
-}
 
-export default function ReviewSection (props: { professorReviews: ReviewAPI[] }) {
+export default function ReviewSection(props: { professorReviews: ReviewAPI[] }) {
 
     const [sortBy, setSortBy] = useState<SORT_BY>(SORT_BY.relevant);
     const [sortHidden, setSortHidden] = useState(true);
 
-    let reviews = props.professorReviews;
+    const dispatch = useDispatch();
 
-    if (sortBy === SORT_BY.newest) {
-        reviews = reviews.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    } else {
-        reviews = reviews.sort((a, b) => {
-            const aDate = new Date(a.created_at).getTime();
-            const bDate = new Date(b.created_at).getTime();
-            const aLikes = a.likes - a.dislikes;
-            const bLikes = b.likes - b.dislikes;
-
-            if (aDate > Date.now() - 86400000 && bDate > Date.now() - 86400000) {
-                return bDate - aDate;
-            }
-            if (aDate > Date.now() - 86400000) {
-                return -1;
-            }
-            if (bDate > Date.now() - 86400000) {
-                return 1;
-            }
-            if (aLikes !== bLikes) {
-                return bLikes - aLikes;
-            }
-            return bDate - aDate;
-
-        });
-    }
-
-    window.onclick = (event) => {
-        if (!(event.target as HTMLElement).classList.contains(styles.sortButton)) {
-            setSortHidden(true);
-        }
-    }
-
+    const reviews = props.professorReviews;
     const reviewCount = reviews.length;
+
+    useEffect(() => {
+
+        window.onclick = (event) => {
+            if (!(event.target as HTMLElement).classList.contains(styles.sortButton)) {
+                setSortHidden(true);
+            }
+        }
+
+        return () => {
+            window.onclick = null;
+        }
+
+    }, []);
+
 
     return (
         <div className={styles.commentsSection}>
@@ -77,30 +59,31 @@ export default function ReviewSection (props: { professorReviews: ReviewAPI[] })
                 <div className={styles.sortByMenuList}>
                     <div className={styles.sortByListItem}
                          onClick={() => {
-                             setSortBy(SORT_BY.rated);
+                             dispatch(sortReviews(SORT_BY.relevant));
                          }}>
                         <span>Relevant</span>
                     </div>
                     <div className={styles.sortByListItem}
                          onClick={() => {
-                             setSortBy(SORT_BY.newest);
+                             dispatch(sortReviews(SORT_BY.newest));
                          }}>
                         <span>Newest</span>
                     </div>
                 </div>
             </div>
 
-            <section>
+            <div className={styles.commentsList}>
+
                 {
-                    reviewCount > 0 ? reviews.map((review) => (
-                        <>
-                            <Review key={review.id} {...review}/>
-                            {/*{Math.floor(reviewCount / 2) === index &&
-                                    <ResponsiveAdUnit slotId={8705186952}/>}*/}
-                        </>
-                    )) : <p className={reviewStyles.review}>{"There are no comments."}</p>
+                    reviewCount > 0 ?
+                        reviews.map(value =>
+                            <Review key={value.id} {...value}/>
+                        )
+                    : <div className={reviewStyles.review}><span>There are no comments.</span></div>
                 }
-            </section>
+
+
+            </div>
         </div>
     )
 }

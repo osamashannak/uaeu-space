@@ -1,9 +1,15 @@
 .searchPage {
   min-height: 50vh;
+  margin-top: 64px;
+  text-align: center;
 
   .searchBox {
-    margin-top: 18px;
+    margin-top: 32px;
     margin-bottom: 18px;
+
+    * {
+      margin: auto;
+    }
   }
 
   @media (max-width: 768px) {

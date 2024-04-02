@@ -5,19 +5,19 @@ import {Professor} from "@spaceread/database/entity/professor/Professor";
 import {ReviewAttachment} from "@spaceread/database/entity/professor/ReviewAttachment";
 import {Review} from "@spaceread/database/entity/professor/Review";
 import {RatingType} from "@spaceread/database/entity/professor/ReviewRating";
-import ffmpeg from "fluent-ffmpeg";
 import {promisify} from "util";
 import {AzureClient} from "../azure";
 import sizeOf from "image-size";
 import * as fs from "fs";
 import {Guest} from "@spaceread/database/entity/user/Guest";
 import {User} from "@spaceread/database/entity/user/User";
+import requestIp from "request-ip";
 
 export const comment = async (req: Request, res: Response) => {
     const body = validateProfessorComment(req.body);
-   // let address = requestIp.getClientIp(req);
+    let address = requestIp.getClientIp(req);
 
-    let address = '192.168.1.1';
+    // TODO add unique ids to errors
 
     if (!body) {
         res.status(400).json({
@@ -27,8 +27,7 @@ export const comment = async (req: Request, res: Response) => {
         return;
     }
 
-    //const valid = await createAssessment(body.recaptchaToken);
-    const valid = true;
+    const valid = await createAssessment(body.recaptchaToken);
 
     if (!address) {
         res.status(400).json({
@@ -42,11 +41,11 @@ export const comment = async (req: Request, res: Response) => {
         address = address.split(":").slice(-1).pop()!;
     }
 
-    const professor = await AppDataSource.getRepository(Professor).findOne({
+    const databaseProfessor = await AppDataSource.getRepository(Professor).findOne({
         where: {email: body.professorEmail}
     });
 
-    if (!professor) {
+    if (!databaseProfessor) {
         res.status(400).json({
             success: false,
             message: "There was an error submitting your review. Contact us if the problem persists."
@@ -69,30 +68,37 @@ export const comment = async (req: Request, res: Response) => {
         }
     }
 
-    const user: Guest | User = res.locals.user;
+    const localUser: Guest | User | null = res.locals.user;
 
     review.author = "Anonymous";
     review.comment = body.comment ?? "";
     review.score = body.score as number;
     review.positive = body.positive as boolean;
-    review.professor = professor;
+    review.professor = databaseProfessor;
     review.author_ip = address;
     review.visible = valid;
 
-    if (user instanceof Guest) {
-        review.guest = user;
-    } else {
-        review.user = user;
+    if (localUser instanceof Guest) {
+        review.guest = localUser;
+    } else if (localUser instanceof User) {
+        review.user = localUser;
     }
 
     await AppDataSource.getRepository(Review).save(review);
 
-    res.status(201).json({result: "success"});
+    let newReview;
+
+    if (localUser !== null) {
+        const {author_ip, visible, guest, reviewed, professor, user, ..._} = review;
+        newReview = _;
+    }
+
+    res.status(201).json({success: true, review: newReview});
 }
 
-const ffprobeAsync = promisify(ffmpeg.ffprobe);
 const unlinkAsync = promisify(fs.unlink)
 
+/*const ffprobeAsync = promisify(ffmpeg.ffprobe);
 export const uploadVideo = async (req: Request, res: Response) => {
     // let address = requestIp.getClientIp(req);
     let address = '192.168.1.1';
@@ -144,7 +150,7 @@ export const uploadVideo = async (req: Request, res: Response) => {
 
     await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
 
-}
+}*/
 
 export const upload = async (req: Request, res: Response) => {
     // let address = requestIp.getClientIp(req);
@@ -203,9 +209,11 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
-    const professor = await AppDataSource.getRepository(Professor).findOne({
+    const professorRepo = AppDataSource.getRepository(Professor);
+
+    const professor = await professorRepo.findOne({
         where: {email: (params.email as string).toLowerCase()},
-        relations: ["reviews", "reviews.ratings"],
+        relations: ["reviews", "reviews.ratings", "reviews.user"],
         order: {reviews: {created_at: "desc"}},
 
     });
@@ -218,18 +226,22 @@ export const find = async (req: Request, res: Response) => {
 
     const filteredReviews = professor.reviews.filter(review => review.visible);
 
+    const localUser: Guest | User | null = res.locals.user;
+
+    let userReview = null;
+
     const newProfessor = {
         ...professorWithoutVisible,
         reviews: await Promise.all(
             filteredReviews
-                .map(async ({ratings, reviewed, author_ip, visible, attachments, ...review}) => {
+                .map(async ({ratings, reviewed, author_ip, visible, attachments, user, guest,...review}) => {
                     const likesCount = ratings.filter(rating => rating.type === RatingType.LIKE).length;
                     const dislikesCount = ratings.filter(rating => rating.type === RatingType.DISLIKE).length;
 
-                    let newAttachment = null;
+                    let attachment = null;
 
                     if (attachments && attachments.length > 0) {
-                        newAttachment = await Promise.all(
+                        attachment = await Promise.all(
                             attachments.map(async attachment => {
                                 const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
                                     where: {id: attachment}
@@ -247,24 +259,57 @@ export const find = async (req: Request, res: Response) => {
                         );
                     }
 
+                    if (user && localUser instanceof User && user.username === localUser.username) {
+                        userReview = review.id;
+                    }
+
                     return {
                         ...review,
                         likes: likesCount,
                         dislikes: dislikesCount,
-                        attachments: newAttachment
+                        attachments: attachment
                     };
                 })),
         score: filteredReviews.reduce((sum, review) => sum + review.score, 0) / Math.max(filteredReviews.length, 1)
     };
 
+    newProfessor.reviews.sort((a, b) => {
+        const aDate = new Date(a.created_at).getTime();
+        const bDate = new Date(b.created_at).getTime();
+        const aLikes = a.likes - a.dislikes;
+        const bLikes = b.likes - b.dislikes;
 
-    if (params.viewed && params.viewed === "false") {
-        const userRepo = AppDataSource.getRepository(Professor);
+        if (aDate > Date.now() - 86400000 && bDate > Date.now() - 86400000) {
+            return bDate - aDate;
+        }
+        if (aDate > Date.now() - 86400000) {
+            return -1;
+        }
+        if (bDate > Date.now() - 86400000) {
+            return 1;
+        }
+        if (aLikes !== bLikes) {
+            return bLikes - aLikes;
+        }
+        return bDate - aDate;
+    });
+
+    if (localUser && !localUser.visits.includes(professor.email)) {
         professor.views += 1;
-        await userRepo.save(professor);
+        await professorRepo.save(professor);
+
+        localUser.visits.push(professor.email);
+
+        if (localUser instanceof Guest) {
+            const guestRepo = AppDataSource.getRepository(Guest);
+            await guestRepo.save(localUser);
+        } else {
+            const userRepo = AppDataSource.getRepository(User);
+            await userRepo.save(localUser);
+        }
     }
 
-    res.status(200).json({professor: newProfessor});
+    res.status(200).json({success: true, professor: newProfessor, userReview});
 }
 
 export const getAll = async (req: Request, res: Response) => {

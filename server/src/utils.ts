@@ -109,10 +109,6 @@ export const getCredentials = async (req: Request, res: Response, next: NextFunc
         next();
     }
 
-
-    res.status(401).send({
-        success: false,
-        message: "Try refreshing the page. If the problem persists, please contact us."
-    });
+    next();
 
 }

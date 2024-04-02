@@ -5,7 +5,6 @@ import {formatRelativeTime, parseText, ratingToIcon} from "../../utils.tsx";
 import {useEffect} from "react";
 import ReviewRating from "./review_rating.tsx";
 
-
 export default function Review(review: ReviewAPI) {
 
 
@@ -19,7 +18,7 @@ export default function Review(review: ReviewAPI) {
     }, [review.id]);
 
     return (
-        <article className={styles.review}>
+        <article className={styles.review} >
 
             <div className={styles.reviewInfo}>
                 <div className={styles.reviewInfoLeft}>

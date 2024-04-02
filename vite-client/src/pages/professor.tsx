@@ -1,12 +1,14 @@
 import Layout from "../layouts/layout.tsx";
-import einstein from "../assets/einstien.png";
-import {lazy, useEffect, useState} from "react";
+import einstein from "../assets/images/einstien.png";
+import {lazy, Suspense, useEffect} from "react";
 import styles from "../styles/pages/professor.module.scss";
 import {getProfessor} from "../api/professor.ts";
 import {useParams} from "react-router-dom";
-import {ProfessorAPI} from "../typed/professor.ts";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
+import {useDispatch, useSelector} from "react-redux";
+import {clearProfessor, setProfessor} from "../redux/slice/professor_slice.ts";
+import {ProfessorAPI} from "../typed/professor.ts";
 
 const ReviewForm = lazy(
     async () => await import("../components/professor/review_form.tsx")
@@ -20,20 +22,28 @@ const ReviewSkeleton = lazy(
 
 
 export default function Professor() {
-    const [professor, setProfessor] = useState<ProfessorAPI | undefined | null>();
     const {email} = useParams();
+
+    const dispatch = useDispatch();
+    const professorState = useSelector((state) => state.professor);
+
+    const professor = professorState.professor as ProfessorAPI | undefined | null;
+
 
     useEffect(() => {
         if (!email) {
-            setProfessor(null);
+            dispatch(setProfessor(null));
             return;
         }
 
         getProfessor(email).then((professor) => {
-            setProfessor(professor);
+            dispatch(setProfessor(professor));
         })
 
-    }, [email]);
+        return () => {
+            dispatch(clearProfessor());
+        }
+    }, [dispatch, email]);
 
     if (professor === undefined) {
         return (
@@ -103,9 +113,13 @@ export default function Professor() {
                 </section>
 
 
-                <ReviewForm professorEmail={professor.email}/>
+                <Suspense>
+                    <ReviewForm professorEmail={professor.email}/>
+                </Suspense>
 
-                <ReviewSection professorReviews={professor.reviews}/>
+                <Suspense>
+                    < ReviewSection professorReviews={professor.reviews}/>
+                </Suspense>
 
             </div>
         </Layout>

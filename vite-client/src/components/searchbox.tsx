@@ -7,7 +7,7 @@ import {Item} from "../typed/searchbox.ts";
 import {getCoursesList} from "../api/course.ts";
 import {getProfessorsList} from "../api/professor.ts";
 
-export default function SearchBox(props: { type: "professor" | "course" }) {
+export default function SearchBox(props: { type: "professor" | "course" | "restaurant"}) {
 
     const SearchBox = () => {
 
@@ -112,7 +112,7 @@ export default function SearchBox(props: { type: "professor" | "course" }) {
 
         return (
             <div className={styles.searchBox}>
-                <input placeholder={props.type === "course" ? "Search for a course..." : "Search for a professor..."}
+                <input placeholder={`Search for a ${props.type}...`}
                        className={styles.searchBar} {...getInputProps()}/>
                 <svg className={styles.searchIcon} xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                      viewBox="0 0 24 24">

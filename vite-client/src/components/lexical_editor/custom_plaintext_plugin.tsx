@@ -21,20 +21,15 @@ function usePlainTextSetup(editor: LexicalEditor): void {
             registerPlainText(editor),
             registerDragonSupport(editor),
         );
-
-        // We only do this for init
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editor]);
 }
 
 function canShowPlaceholderFromCurrentEditorState(
     editor: LexicalEditor,
 ): boolean {
-    const currentCanShowPlaceholder = editor
+    return editor
         .getEditorState()
         .read($canShowPlaceholderCurry(editor.isComposing()));
-
-    return currentCanShowPlaceholder;
 }
 
 function useCanShowPlaceholder(editor: LexicalEditor): boolean {

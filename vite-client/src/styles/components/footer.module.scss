@@ -35,6 +35,13 @@
 
 }
 
+.followButton {
+  @extend .loginButton;
+  display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
 .blockTitle {
   font-size: 18px;
   font-weight: 700;

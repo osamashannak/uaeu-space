@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {ReviewFormDraft} from "../../typed/professor.ts";
@@ -17,6 +17,7 @@ import {EditorRefPlugin} from "@lexical/react/LexicalEditorRefPlugin";
 import {useRef} from "react";
 import ReviewFormFooter from "./review_form_footer.tsx";
 import AttachmentSlider from "./attachment_slider.tsx";
+
 
 export default function ReviewForm(props: { professorEmail: string }) {
 
@@ -58,7 +59,6 @@ export default function ReviewForm(props: { professorEmail: string }) {
             })
         }
 
-        // get all attachments with status == ready
         const attachments = details.attachments.filter(attachment => attachment.id === "READY");
 
         for (const attachment of attachments) {
@@ -76,7 +76,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
                     }),
                 }));
                 uploadAttachment(attachment.src).then(id => {
-                    verifyUpload(id, attachment.url).then();
+                    verifyUpload(id, attachment.url);
                 })
             }
         }
@@ -92,7 +92,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
             details.positive !== undefined);
     }
 
-    const invalidRadioSubmission = (event: any) => {
+    const invalidRadioSubmission = (event: FormEvent<HTMLInputElement>) => {
         event.currentTarget.setCustomValidity("Please select one of these options.");
     }
 
@@ -222,7 +222,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
                             <p className={styles.element}>2. Delete your reviews at any time</p>
                         </div>
                         <h5>Your reviews will always be anonymous</h5>
-                        <Link className={styles.warningButton} onClick={(e) => {
+                        <Link className={styles.warningButton} onClick={() => {
                             const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
                             warningWindow.style.display = "none";
                             document.body.style.removeProperty("overflow");
@@ -240,6 +240,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
                     rtl: styles.postRTL,
                     ltr: styles.postLTR,
                     paragraph: styles.postParagraph,
+                    link: styles.postLink
                 },
                 nodes: [EmojiNode],
                 onError: (error) => console.log(error),
