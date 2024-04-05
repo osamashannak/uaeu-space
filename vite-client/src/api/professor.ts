@@ -57,8 +57,13 @@ export const uploadTenorAttachment = async (tenorGIFAttachment: TenorGIFAttachme
     try {
         const request = await fetch(HOST + "/professor/comment/attachment/uploadTenor", {
             method: "POST",
-            body: JSON.stringify(tenorGIFAttachment),
+            body: JSON.stringify({
+                url: tenorGIFAttachment.url,
+                height: tenorGIFAttachment.height,
+                width: tenorGIFAttachment.width
+            }),
             headers: {
+                'Content-Type': 'application/json',
                 'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
             }
         });
