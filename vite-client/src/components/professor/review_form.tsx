@@ -145,7 +145,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
         localStorage.setItem(`${props.professorEmail}-prof`, "true");
 
         dispatch(addReview({
-            attachments: status.review.attachments,
+            attachments: details.attachments,
             author: status.review.author,
             created_at: status.review.created_at,
             dislikes: 0,
