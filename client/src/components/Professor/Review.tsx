@@ -18,8 +18,6 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
     const flagReview = () => {
         setIsFlagged(true);
         closePopup();
-
-        // todo send flag to server
     }
 
     const flagReviewPopup = () => {
@@ -32,7 +30,7 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
         document.body.style.overflow = "auto";
     }
 
-    let attachment_url = "https://uaeuresources.blob.core.windows.net/attachments/" + props.attachment?.id;
+    const attachment = props.attachments && props.attachments.length > 0 ? props.attachments[0] : undefined;
 
     return (
         <article className={styles.review}>
@@ -73,14 +71,14 @@ const Review = (props: ReviewAPI | DashboardReviewAPI) => {
                 <p dir={"auto"}>{props.comment}</p>
                 <div className={styles.imageList}>
                     {
-                        props.attachment &&
+                        attachment &&
                         <div className={styles.attachment} onClick={() => {
-                            window.open(attachment_url, '_blank');
+                            window.open(attachment.url, '_blank');
                         }}>
-                            <div style={{paddingBottom: `${props.attachment.height/props.attachment.width * 100}%`}}></div>
-                            <div style={{backgroundImage: `url(${attachment_url})`}} className={styles.imageDiv}>
+                            <div style={{paddingBottom: `${attachment.height/attachment.width * 100}%`}}></div>
+                            <div style={{backgroundImage: `url(${attachment.url})`}} className={styles.imageDiv}>
                             </div>
-                            <NextImage src={attachment_url}
+                            <NextImage src={attachment.url}
                                        draggable={false}
                                        width={100}
                                        height={100}

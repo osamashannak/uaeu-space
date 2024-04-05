@@ -16,11 +16,12 @@ export interface ReviewAPI {
     likes: number;
     dislikes: number;
     reviewed: boolean;
-    attachment: {
+    attachments: {
         id: string;
         width: number;
         height: number;
-    } | null;
+        url: string;
+    }[] | null;
 }
 
 export interface ReviewFormAttachment {
