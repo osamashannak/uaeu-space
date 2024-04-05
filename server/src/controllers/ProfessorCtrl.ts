@@ -134,7 +134,9 @@ export const uploadTenor = async (req: Request, res: Response) => {
         width: number;
     };
 
-    if (!body.url || !body.height || !body.width) {
+    console.log(body)
+
+    if (!body.url || !body.url.startsWith("https://media.tenor.com/") || !body.height || !body.width) {
         res.status(400).json({error: "Invalid."});
         return;
     }
