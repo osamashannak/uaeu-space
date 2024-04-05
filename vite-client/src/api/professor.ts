@@ -1,4 +1,4 @@
-import {ProfessorAPI, ReviewAPI, ReviewFormAPI} from "../typed/professor.ts";
+import {ProfessorAPI, ReviewAPI, ReviewFormAPI, TenorGIFAttachment} from "../typed/professor.ts";
 import {ProfessorItem} from "../typed/searchbox.ts";
 
 
@@ -30,15 +30,34 @@ export const getProfessor = async (id: string) => {
     return response['professor'] as ProfessorAPI ?? null;
 }
 
-export const uploadAttachment = async (file: File | Blob) => {
+export const uploadImageAttachment = async (file: File | Blob) => {
     let response;
 
     try {
         const formData = new FormData();
         formData.append("file", file);
-        const request = await fetch(HOST + "/professor/comment/upload", {
+        const request = await fetch(HOST + "/professor/comment/comment/uploadImage", {
             method: "POST",
             body: formData,
+            headers: {
+                'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
+            }
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.id as string;
+}
+
+export const uploadTenorAttachment = async (tenorGIFAttachment: TenorGIFAttachment) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/professor/comment/comment/uploadTenor", {
+            method: "POST",
+            body: JSON.stringify(tenorGIFAttachment),
             headers: {
                 'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
             }

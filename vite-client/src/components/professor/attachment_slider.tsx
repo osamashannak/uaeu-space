@@ -1,7 +1,7 @@
 import Slider, {Settings} from "react-slick";
 import {ReviewFormDraft} from "../../typed/professor.ts";
 import styles from "../../styles/components/professor/review_form.module.scss";
-import {Dispatch, SetStateAction, useEffect} from "react";
+import {Dispatch, SetStateAction} from "react";
 import "../../styles/slider.scss";
 
 export default function AttachmentSlider(props: {details: ReviewFormDraft, setDetails: Dispatch<SetStateAction<ReviewFormDraft>>}) {

@@ -1,13 +1,13 @@
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {ChangeEvent, Dispatch, SetStateAction} from "react";
 import Compressor from "compressorjs";
-import {uploadAttachment, uploadVideoAttachment} from "../../api/professor.ts";
 import {
     ImageAttachment,
     ReviewFormDraft,
     TenorGIFAttachment, VideoAttachment
 } from "../../typed/professor.ts";
 import GifPicker, {ContentFilter} from "gif-picker-react";
+import {uploadVideoAttachment} from "../../api/professor.ts";
 
 
 export default function ReviewFormFooter(props: {
@@ -93,7 +93,8 @@ export default function ReviewFormFooter(props: {
                 url: video.src,
                 weight: 4,
                 videoSrc: file,
-                aspectRatio: video.videoHeight / video.videoWidth
+                height: video.videoHeight,
+                width: video.videoWidth,
             };
 
             setDetails(prevState => ({...prevState, attachments: [...prevState.attachments, attachment]}));
@@ -101,7 +102,7 @@ export default function ReviewFormFooter(props: {
 
             const id = await uploadVideoAttachment(file);
 
-            await verifyUpload(id, attachment.url);
+            //await verifyUpload(id, attachment.url);
         }
 
         video.src = URL.createObjectURL(file);
@@ -114,7 +115,7 @@ export default function ReviewFormFooter(props: {
 
         img.onload = async () => {
             const attachment: TenorGIFAttachment = {
-                id: gif,
+                id: "READY",
                 url: gif,
                 height: img.height,
                 width: img.width,

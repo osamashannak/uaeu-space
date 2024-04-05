@@ -2,7 +2,7 @@ import {FormEvent, useEffect, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {ReviewFormDraft} from "../../typed/professor.ts";
-import {postReview, uploadAttachment} from "../../api/professor.ts";
+import {postReview, uploadImageAttachment, uploadTenorAttachment} from "../../api/professor.ts";
 import {convertArabicNumeral} from "../../utils.tsx";
 import {LexicalComposer} from "@lexical/react/LexicalComposer";
 import {ContentEditable} from "@lexical/react/LexicalContentEditable";
@@ -74,9 +74,25 @@ export default function ReviewForm(props: { professorEmail: string }) {
                         return _;
                     }),
                 }));
-                uploadAttachment(attachment.src).then(id => {
+                uploadImageAttachment(attachment.src).then(id => {
                     verifyUpload(id, attachment.url);
                 })
+            } else {
+                setDetails((prevDetails) => ({
+                    ...prevDetails,
+                    attachments: prevDetails.attachments.map((_) => {
+                        if (_.url === attachment.url) {
+                            return {
+                                ..._,
+                                id: "UPLOADING",
+                            }
+                        }
+                        return _;
+                    }),
+                }));
+                uploadTenorAttachment(attachment).then(id => {
+                    verifyUpload(id, attachment.url);
+                });
             }
         }
 
