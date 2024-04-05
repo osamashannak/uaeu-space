@@ -1,0 +1,25 @@
+{
+  "name": "insecure-client-gate",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "ts-node src/app.ts",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "isbot": "^4.4.0",
+    "request-ip": "^3.3.0",
+    "dotenv": "^16.4.1"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.6",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.7",
+    "@types/request-ip": "^0.0.41",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/html">
+<head>
+    <style>
+        @font-face {
+            font-display: swap;
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 400;
+            src: url('https://s3.me-central-1.amazonaws.com/static.spaceread.net/montserrat-v26-latin-regular.X5gn8H2S.woff2') format('woff2');
+        }
+
+        @font-face {
+            font-display: swap;
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 500;
+            src: url('https://s3.me-central-1.amazonaws.com/static.spaceread.net/montserrat-v26-latin-500.jd4Q3y6r.woff2') format('woff2');
+        }
+
+        @font-face {
+            font-display: swap;
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 600;
+            src: url('https://s3.me-central-1.amazonaws.com/static.spaceread.net/montserrat-v26-latin-700.5MZcf8OG.woff2') format('woff2');
+        }
+
+        @font-face {
+            font-display: swap;
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 700;
+            src: url('https://s3.me-central-1.amazonaws.com/static.spaceread.net/montserrat-v26-latin-800.yJTIDJUR.woff2') format('woff2');
+        }
+    </style>
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+
+        }
+
+        .loading-screen svg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            margin: auto;
+
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+
+    </style>
+
+    <meta charset="UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=0, viewport-fit=cover"/>
+    <title>SpaceRead</title>
+
+    <meta name="theme-color" content="#ffffff"/>
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <meta name="apple-mobile-web-app-title" content="SpaceRead">
+    <meta name="apple-mobile-web-app-status-bar-style"
+          content="white">
+    <link rel="apple-touch-icon" sizes="192x192"
+          href="https://s3.me-central-1.amazonaws.com/static.spaceread.net/maskable512.png">
+
+    <link rel="manifest" href="https://s3.me-central-1.amazonaws.com/static.spaceread.net/manifest.json">
+
+    <link rel="mask-icon" sizes="any" href="https://s3.me-central-1.amazonaws.com/static.spaceread.net/logo.svg"
+          color="#0599E5">
+    <link rel="icon" sizes="32x32" href="https://s3.me-central-1.amazonaws.com/static.spaceread.net/logo32.png"
+          type="image/png"/>
+    <link rel="icon" sizes="192x192" href="https://s3.me-central-1.amazonaws.com/static.spaceread.net/logo192.png"
+          type="image/png"/>
+    <link rel="icon" sizes="512x512" href="https://s3.me-central-1.amazonaws.com/static.spaceread.net/logo512.png"
+          type="image/png"/>
+
+    <link rel="canonical" href="https://spaceread.net/">
+
+    <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@latest/dist/twemoji.min.js" crossorigin="anonymous"></script>
+    <script rel="preload" type="module"
+            src="https://s3.me-central-1.amazonaws.com/static.spaceread.net/index-i6zhgCTx.js"></script>
+    <script rel="preload" type="module"
+          src="https://s3.me-central-1.amazonaws.com/static.spaceread.net/vendor.Q85tgWCG.js"></script>
+    <link rel="stylesheet" crossorigin="anonymous"
+          href="https://s3.me-central-1.amazonaws.com/static.spaceread.net/index.Bs_tmyoT.css">
+</head>
+<body>
+<div id="root" style="width: 100%; display: flex">
+    <div class="loading-screen">
+
+        <svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="96" cy="96" r="96" fill="#0599E5"/>
+            <path d="M89.1191 141.493C79.9991 136.213 52.1591 119.701 50.7191 117.973C49.3751 116.533 48.6071 114.613 48.6071 109.813C48.6071 106.447 48.6071 105.013 48.6071 102.613C48.9911 102.613 55.5191 105.493 62.7191 108.373C69.3541 111.027 81.4391 116.053 81.4391 116.053C81.4391 116.053 72.3191 111.658 54.0791 100.213C29.5991 84.8526 25.2791 83.3816 29.5991 81.0126C44.4791 72.8526 42.5591 74.6271 60.3191 65.6526C91.9991 49.6442 93.7271 48.2766 95.8391 48.8526C95.8391 48.8526 95.8391 48.8526 162.559 81.4926C164.383 82.385 164.453 83.9054 163.519 84.3726C160.639 85.8126 163.519 84.3726 135.199 100.693C107.381 116.724 107.839 117.493 107.839 117.493C107.839 117.493 107.839 117.493 124.428 110.101C142.111 102.613 142.111 102.613 142.111 102.613C142.111 102.613 142.111 104.533 142.111 109.813C142.111 118.098 139.039 119.413 139.039 119.413C139.039 119.413 111.116 138.96 99.1991 142.933C97.7591 143.413 93.2646 143.893 89.1191 141.493Z"
+                  fill="white"/>
+            <path d="M146.239 117.973V101.077L153.919 97.8127C153.919 97.8127 153.919 106.069 153.919 116.053C153.919 126.133 153.919 133.333 153.919 134.293L150.079 131.893L146.239 134.293C146.239 134.293 146.239 134.293 146.239 117.973Z"
+                  fill="white"/>
+        </svg>
+
+
+    </div>
+</div>
+
+</body>
+</html>
