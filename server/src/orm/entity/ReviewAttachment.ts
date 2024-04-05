@@ -1,4 +1,4 @@
-import {Column, Entity, PrimaryColumn} from "typeorm";
+import {Column, CreateDateColumn, Entity, PrimaryColumn} from "typeorm";
 
 
 @Entity()
@@ -24,5 +24,8 @@ export class ReviewAttachment {
 
     @Column("inet")
     ip_address!: string;
+
+    @CreateDateColumn({nullable: true})
+    created_at!: Date;
 
 }

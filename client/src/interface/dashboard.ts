@@ -8,6 +8,7 @@ export interface AuthResponse {
 
 export interface DashboardReviewAPI extends ReviewAPI {
     author_ip: string | null;
+    visible: boolean;
     professor: ProfessorAPI;
 }
 

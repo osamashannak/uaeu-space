@@ -83,7 +83,7 @@ const PendingReviews = (props: {professor: string | null}) => {
                         <Review {...review}/>
                         <span>{review.id} | {review.professor.name} | {review.professor.email} | {review.author_ip ?? "Legacy"}</span>
                         <div>&nbsp;</div>
-                        {!review.reviewed && <div className={styles.buttons}>
+                        <div className={styles.buttons}>
                             <div className={styles.approveButton}
                                  onClick={reviewActionClick(review.id, "approve")}>Approve
                             </div>
@@ -95,7 +95,9 @@ const PendingReviews = (props: {professor: string | null}) => {
                                           d="M12 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6m-7 1l9-9m-5 0h5v5"/>
                                 </svg>
                             </div>
-                        </div>}
+                        </div>
+                        {review.reviewed ? <span>Reviewed</span> : <span>Not reviewed</span>}
+                        {review.visible ? <span>Visible</span> : <span>Hidden</span>}
                     </div>
                 ))
             }

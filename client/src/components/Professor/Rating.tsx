@@ -1,7 +1,7 @@
 import styles from "@/styles/components/Rating.module.scss";
 import {useEffect, useRef, useState} from "react";
 import {generateConfetti} from "@/utils";
-import {addRating, removeRating} from "@/api/shared";
+import {addRating, removeRating} from "@/api/professor";
 
 
 const Rating = (props: { id: number, likes: number, dislikes: number, type: "review" | "file" }) => {
@@ -115,9 +115,9 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
                 <div id={`like-button-${props.id}`} className={styles.buttonWrapper}>
                     {liked ?
                         <svg className={styles.filledRatingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path fill="currentColor" fill-rule="evenodd"
+                            <path fill="currentColor" fillRule="evenodd"
                                   d="M11.277 4.781A4 4 0 0 1 14.606 3h.213a2 2 0 0 1 1.973 2.329L16.18 9h2.38a3 3 0 0 1 2.942 3.588l-1.2 6A3 3 0 0 1 17.36 21H6a3 3 0 0 1-3-3v-8a1 1 0 0 1 1-1h3.93a1 1 0 0 0 .832-.445l2.515-3.774ZM7 11H5v7a1 1 0 0 0 1 1h1v-8Z"
-                                  clip-rule="evenodd"/>
+                                  clipRule="evenodd"/>
                         </svg> :
                         <svg className={styles.ratingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <g>
@@ -134,9 +134,9 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
                 <div className={styles.buttonWrapper}>
                     {liked === false ?
                         <svg className={styles.filledRatingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path fill="currentColor" fill-rule="evenodd"
+                            <path fill="currentColor" fillRule="evenodd"
                                   d="M11.277 19.219A4 4 0 0 0 14.606 21h.213a2 2 0 0 0 1.973-2.329L16.18 15h2.38a3 3 0 0 0 2.942-3.588l-1.2-6A3 3 0 0 0 17.36 3H6a3 3 0 0 0-3 3v8a1 1 0 0 0 1 1h3.93a1 1 0 0 1 .832.445l2.515 3.774ZM7 5v8H5V6a1 1 0 0 1 1-1h1Z"
-                                  clip-rule="evenodd"/>
+                                  clipRule="evenodd"/>
                         </svg> :
                         <svg className={styles.ratingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <g>

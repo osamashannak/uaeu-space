@@ -6,97 +6,130 @@ import {
     SASQueryParameters,
     StorageSharedKeyCredential
 } from "@azure/storage-blob";
+import {ComputerVisionClient} from "@azure/cognitiveservices-computervision";
+import {ApiKeyCredentials} from "@azure/ms-rest-js";
 
-let blobService: BlobServiceClient;
-let materialsClient: ContainerClient;
-let attachmentsClient: ContainerClient;
+export class AzureClient {
 
-const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
-const materialsContainer = process.env.AZURE_STORAGE_CONTAINER_MATERIALS;
-const attachmentsContainer = process.env.AZURE_STORAGE_CONTAINER_ATTACHMENTS;
+    static readonly accountName: string = process.env.AZURE_STORAGE_ACCOUNT_NAME!;
 
-if (!(materialsContainer && accountName && attachmentsContainer)) {
-    console.log(accountName);
-    console.log(materialsContainer);
-    console.log(attachmentsContainer);
-    throw Error('Missing configurations for Azure.');
-}
+    private materialsClient: ContainerClient;
+    private attachmentsClient: ContainerClient;
 
-const storageUrl = (container: string) => `https://${accountName}.blob.core.windows.net/${container}`;
+    private computerVisionClient: ComputerVisionClient;
 
-export const loadAzure = async () => {
-    blobService = new BlobServiceClient(`https://${accountName}.blob.core.windows.net/`, getKeyCredential())
-    materialsClient = blobService.getContainerClient(materialsContainer);
-    attachmentsClient = blobService.getContainerClient(attachmentsContainer);
-}
-
-const getBlobName = (originalName: string) => {
-    const identifier = Math.random().toString().replace(/0\./, '');
-    return `${identifier}-${originalName}`;
-};
+    constructor() {
+        const materialsContainer = process.env.AZURE_STORAGE_CONTAINER_MATERIALS;
+        const attachmentsContainer = process.env.AZURE_STORAGE_CONTAINER_ATTACHMENTS;
 
 
-const getKeyCredential = () => {
-    const accountKey1 = process.env.AZURE_STORAGE_ACCOUNT_KEY1;
-    const accountKey2 = process.env.AZURE_STORAGE_ACCOUNT_KEY2;
-    if (!(accountKey1 && accountKey2)) return;
-    return new StorageSharedKeyCredential(accountName, accountKey1 || accountKey2);
-}
+        if (!(materialsContainer && AzureClient.accountName && attachmentsContainer)) {
+            throw Error('Missing configurations for Azure.');
+        }
 
-export const getFileURL = (blobName: string, container: "attachments" | "materials", token: string="") => {
-    return `${storageUrl(container)}/${blobName}?${token}`;
-}
+        const blobService = new BlobServiceClient(`https://${AzureClient.accountName}.blob.core.windows.net/`, this.getKeyCredential())
+        this.materialsClient = blobService.getContainerClient(materialsContainer);
+        this.attachmentsClient = blobService.getContainerClient(attachmentsContainer);
 
+        const key = process.env.AZURE_VISION_KEY;
+        const endpoint = process.env.AZURE_VISION_ENDPOINT;
 
-export const uploadMaterial = async (fileName: string, filePath: string, mimeType: string) => {
-    const blobName = getBlobName(fileName);
+        if (!(key && endpoint)) {
+            throw Error('Missing configurations for Azure Computer Vision.');
+        }
 
-    const blobClient = materialsClient.getBlockBlobClient(blobName);
+        this.computerVisionClient = new ComputerVisionClient(new ApiKeyCredentials({inHeader: {'Ocp-Apim-Subscription-Key': key}}), endpoint);
 
-    if (mimeType.includes("video")) {
-        mimeType = "";
     }
 
-    const response = await blobClient.uploadFile(filePath, {
-        blobHTTPHeaders: {
-            blobContentType: mimeType,
-            blobCacheControl: 'max-age=31536000, immutable',
-            blobContentEncoding: 'gzip'
+    static storageUrl = (container: string) => `https://${AzureClient.accountName}.blob.core.windows.net/${container}`;
+
+
+    getBlobName(originalName: string) {
+        const identifier = Math.random().toString().replace(/0\./, '');
+        return `${identifier}-${originalName}`;
+    };
+
+
+    getKeyCredential() {
+        const accountKey1 = process.env.AZURE_STORAGE_ACCOUNT_KEY1;
+        const accountKey2 = process.env.AZURE_STORAGE_ACCOUNT_KEY2;
+        if (!(accountKey1 && accountKey2)) return;
+        return new StorageSharedKeyCredential(AzureClient.accountName, accountKey1 || accountKey2);
+    }
+
+    static getFileURL = (blobName: string, container: "attachments" | "materials", token: string = "") => {
+        return `${AzureClient.storageUrl(container)}/${blobName}?${token}`;
+    }
+
+    async uploadMaterial(fileName: string, filePath: string, mimeType: string) {
+        const blobName = this.getBlobName(fileName);
+
+        const blobClient = this.materialsClient.getBlockBlobClient(blobName);
+
+        if (mimeType.includes("video")) {
+            mimeType = "";
         }
-    });
 
-    console.log(response);
+        const response = await blobClient.uploadFile(filePath, {
+            blobHTTPHeaders: {
+                blobContentType: mimeType,
+                blobCacheControl: 'max-age=31536000, immutable',
+                blobContentEncoding: 'gzip'
+            }
+        });
 
-    return blobName;
-}
+        return blobName;
+    }
 
-export const uploadAttachment = async (blobName: string, file: Buffer, mimeType: string) => {
+    async uploadVideoAttachment(blobName: string, filePath: string, mimeType: string) {
 
-    const blobClient = attachmentsClient.getBlockBlobClient(blobName);
+        const blobClient = this.attachmentsClient.getBlockBlobClient(blobName);
 
-    const response = await blobClient.uploadData(file, {
-        blobHTTPHeaders: {
-            blobContentType: mimeType,
-            blobCacheControl: 'max-age=31536000, immutable'
-        }
-    });
+        const response = await blobClient.uploadFile(filePath, {
+            blobHTTPHeaders: {
+                blobContentType: mimeType,
+                blobCacheControl: 'max-age=31536000, immutable'
+            }
+        });
 
-    console.log(response);
+        return blobName;
+    }
 
-    return blobName;
-}
+    async uploadAttachment(blobName: string, file: Buffer, mimeType: string) {
 
-export const generateToken = (ipAddress: string, container: string): SASQueryParameters => {
+        const blobClient = this.attachmentsClient.getBlockBlobClient(blobName);
 
-    const expiry = new Date();
-    expiry.setMonth(expiry.getMonth() + 3); // three month from now (basically one semester)
-    //expiry.setHours(expiry.getHours() + 2); // two hours from now (for development)
+        const response = await blobClient.uploadData(file, {
+            blobHTTPHeaders: {
+                blobContentType: mimeType,
+                blobCacheControl: 'max-age=31536000, immutable'
+            }
+        });
 
-    return generateBlobSASQueryParameters({
-        expiresOn: expiry,
-        ipRange: {start: ipAddress, end: ipAddress},
-        containerName: container,
-        permissions: ContainerSASPermissions.parse("r"),
-    }, getKeyCredential()!);
+        return blobName;
+    }
 
+    generateToken(ipAddress: string, container: string): SASQueryParameters {
+
+        const expiry = new Date();
+        expiry.setMonth(expiry.getMonth() + 3); // three month from now (basically one semester)
+        //expiry.setHours(expiry.getHours() + 2); // two hours from now (for development)
+
+        return generateBlobSASQueryParameters({
+            expiresOn: expiry,
+            ipRange: {start: ipAddress, end: ipAddress},
+            containerName: container,
+            permissions: ContainerSASPermissions.parse("r"),
+        }, this.getKeyCredential()!);
+    }
+
+    async analyzeImage(url: string) {
+        const result = await this.computerVisionClient.analyzeImage(url,{visualFeatures: ["Adult"]});
+        return AzureClient.isSafe(result.adult);
+    }
+
+    static isSafe(adult: any) {
+        return !adult.isAdultContent && !adult.isRacyContent && !adult.isGoryContent;
+    }
 }

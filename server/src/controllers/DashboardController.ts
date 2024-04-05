@@ -102,7 +102,7 @@ export const getPendingReviews = async (req: Request, res: Response) => {
             where: {reviewed: false},
             relations: ["professor", "ratings"],
             order: {created_at: "desc"},
-            take: 10
+            take: 20
         });
     }
 
@@ -121,6 +121,7 @@ export const getPendingReviews = async (req: Request, res: Response) => {
             dislikes: dislikesCount
         };
     })
+
 
     res.status(200).json(reviews);
 
@@ -192,6 +193,8 @@ export const reviewAction = async (req: Request, res: Response) => {
 
     if (action === "hide") {
         review.visible = false;
+    } else {
+        review.visible = true;
     }
 
     await AppDataSource.getRepository(Review).save(review);

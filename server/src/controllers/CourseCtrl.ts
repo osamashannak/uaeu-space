@@ -5,11 +5,11 @@ import {Equal, ILike} from "typeorm";
 import {CourseFile} from "../orm/entity/CourseFile";
 import {FileAccessToken} from "../orm/entity/FileAccessToken";
 import requestIp from "request-ip";
-import {generateToken, getFileURL, uploadMaterial} from "../azure";
 import {promisify} from "util";
 import * as fs from "fs";
 import {compressFile, verifyJWTToken} from "../utils";
-import {VTClient} from "../app";
+import {Azure, VTClient} from "../app";
+import {AzureClient} from "../azure";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -85,7 +85,7 @@ export const uploadFile = async (req: Request, res: Response) => {
         return;
     }
 
-    const blobName = await uploadMaterial(req.body.name, filePath, file.mimetype);
+    const blobName = await Azure.uploadMaterial(req.body.name, filePath, file.mimetype);
 
     const course = await AppDataSource.getRepository(Course).findOne({where: {tag: req.body.tag}});
 
@@ -140,7 +140,7 @@ export const getFile = async (req: Request, res: Response) => {
     });
     
     if (!fileAccessToken) {
-        const queryParams = generateToken(address, "materials");
+        const queryParams = Azure.generateToken(address, "materials");
         
         fileAccessToken = new FileAccessToken();
         
@@ -150,7 +150,7 @@ export const getFile = async (req: Request, res: Response) => {
         
         await AppDataSource.getRepository(FileAccessToken).save(fileAccessToken);
     } else if (fileAccessToken.expires_on < new Date()) {
-        const queryParams = generateToken(address, "materials");
+        const queryParams = Azure.generateToken(address, "materials");
         
         fileAccessToken.url = queryParams.toString();
         fileAccessToken.expires_on = queryParams.expiresOn!;
@@ -177,7 +177,7 @@ export const getFile = async (req: Request, res: Response) => {
 
     await AppDataSource.getRepository(CourseFile).save(courseFile);
 
-    const fileUrl = getFileURL(courseFile.blob_name, "materials", fileAccessToken.url)
+    const fileUrl = AzureClient.getFileURL(courseFile.blob_name, "materials", fileAccessToken.url);
 
     res.status(200).redirect(fileUrl);
 

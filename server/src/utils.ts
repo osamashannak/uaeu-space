@@ -2,6 +2,7 @@ import {createReadStream, createWriteStream} from "fs";
 import {createGzip} from "zlib";
 import jwt from "jsonwebtoken";
 import {JWT_SECRET} from "./app";
+import {CommentBody} from "./typed/professor";
 
 export const compressFile = async (filePath: string) => {
     const stream = createReadStream(filePath);
@@ -16,28 +17,6 @@ export const compressFile = async (filePath: string) => {
 };
 
 
-export const ALLOWED_APPLICATION_TYPES = [
-    "application/pdf",
-    "application/vnd.ms-powerpoint",
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "text/csv",
-    "application/gzip",
-    "application/zip",
-    "application/x-7z-compressed",
-    "application/vnd.rar",
-    "application/x-compressed"
-
-]
-
-export const ALLOWED_TYPES = [
-    "image",
-    "audio",
-    "video"
-]
 
 export const ALLOWED_EMAILS = [process.env.DASHBOARD_EMAIL_1, process.env.DASHBOARD_EMAIL_2];
 
@@ -95,4 +74,23 @@ export const createAssessment = async (token: string) => {
 
     return response.riskAnalysis?.score > 0.5;
 
+}
+
+export const validateProfessorComment = (body: CommentBody): CommentBody | null => {
+    if (!body.professorEmail || (!body.comment && !body.attachments) || !body.score || typeof body.positive !== "boolean") {
+        return null;
+    }
+    if (body.comment) {
+        body.comment = body.comment.trim();
+
+        if ([...body.comment].length > 350) {
+            return null;
+        }
+    }
+
+    if (!Number.isInteger(body.score) || parseInt(body.score) < 1 || parseInt(body.score) > 5) {
+        return null;
+    }
+
+    return body;
 }

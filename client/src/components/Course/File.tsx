@@ -3,7 +3,6 @@ import styles from "@/styles/components/File.module.scss";
 import dayjs from "dayjs";
 import relativeTime from 'dayjs/plugin/relativeTime';
 import {CourseFileAPI} from "@/interface/course";
-import Rating from "@/components/Professor/Rating";
 
 dayjs.extend(relativeTime)
 

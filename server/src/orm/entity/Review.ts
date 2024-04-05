@@ -27,8 +27,8 @@ export class Review {
     @Column()
     comment!: string;
 
-    @Column({default: null, nullable: true})
-    attachment!: string;
+    @Column({type: "simple-array", default: null, nullable: true})
+    attachments!: string[];
 
     @OneToMany(() => ReviewRating, ratings => ratings.review)
     ratings!: ReviewRating[];

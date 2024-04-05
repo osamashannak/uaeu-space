@@ -9,7 +9,7 @@ import professorRouter from "./routes/ProfessorRouter";
 import dashboardRouter from "./routes/DashboardRouter";
 import bodyParser from "body-parser";
 import {AppDataSource} from "./orm/data-source";
-import {getFileURL, loadAzure} from "./azure";
+import {AzureClient} from "./azure";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
 import {Professor} from "./orm/entity/Professor";
@@ -17,15 +17,11 @@ import {Course} from "./orm/entity/Course";
 import {AdClick} from "./orm/entity/AdClick";
 import requestIp from "request-ip";
 import jwt from "jsonwebtoken";
-import sharedRouter from "./routes/SharedRouter";
 import VirusTotalClient from "./virustotal";
-import {CourseFile} from "./orm/entity/CourseFile";
-import {IsNull, LessThan} from "typeorm";
-import * as fs from "fs";
-import Axios from 'axios';
 
 export let JWT_SECRET: jwt.Secret;
 export let VTClient: VirusTotalClient;
+export let Azure: AzureClient;
 
 const app = express();
 
@@ -126,32 +122,29 @@ app.get("/sitemap.xml", async (req, res) => {
 app.use("/course", courseRouter);
 app.use("/professor", professorRouter);
 app.use("/dashboard", dashboardRouter);
-app.use("/shared", sharedRouter);
 
-const port = process.env.PORT || 4000;
+(async function main() {
+    const port = process.env.PORT;
 
-const main = (): void => {
+    if (!port) {
+        throw Error("Missing PORT environment variable.");
+    }
 
-    JWT_SECRET = require('crypto').randomBytes(32).toString('hex');
+    if (!process.env.JWT_SECRET) {
+        throw Error("Missing JWT_SECRET environment variable.");
+    }
+
+    JWT_SECRET = process.env.JWT_SECRET;
 
     VTClient = new VirusTotalClient();
 
-    loadAzure().then(r => console.log("Azure client loaded."));
+    Azure = new AzureClient();
+    console.log("Azure client loaded.")
 
-    AppDataSource.initialize().then(async () => {
-        console.log("Database connection established.")
-    }).catch(error => console.log(error))
-
-
-    /*console.log("Inserting a new user into the database...")
-    const files = await AppDataSource.manager.getRepository(CourseFile).find({relations: ['course']});
-    console.log(files)*/
+    await AppDataSource.initialize();
+    console.log("Connected to database.")
 
     app.listen(port, () => {
         console.log(`Socket is listening on port ${port}`);
     });
-}
-
-main();
-
-export default app;
+})()

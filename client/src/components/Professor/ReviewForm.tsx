@@ -124,12 +124,17 @@ const ReviewForm = (props: { professorEmail: string }) => {
 
     let lengthStyle = styles.commentLength;
 
-    if (details.comment && details.comment.length > 350) {
-        lengthStyle += ` ${styles.commentLengthWarning}`;
-    } else if (details.comment && details.comment.length == 350) {
-        lengthStyle += ` ${styles.commentLengthPerfect}`;
-    } else if (details.comment && details.comment.length < 350) {
-        lengthStyle += ` ${styles.commentLengthGood}`;
+    if ((details.comment ?? "").trim()) {
+        const length = (details.comment ?? "").trim().length;
+
+        if (length > 350) {
+            lengthStyle += ` ${styles.commentLengthWarning}`;
+        } else if (length === 350) {
+            lengthStyle += ` ${styles.commentLengthPerfect}`;
+        } else if (length < 350) {
+            lengthStyle += ` ${styles.commentLengthGood}`;
+        }
+
     }
 
     return (
@@ -144,22 +149,6 @@ const ReviewForm = (props: { professorEmail: string }) => {
                     input.focus();
                 }
             }}>
-
-            {/*<div className={styles.formHeader}>
-                <span className={styles.authorName}>Anonymous</span>
-                <div
-                    className={styles.infoHover}
-                    title={"The author of this review will be hidden."}
-                    onClick={event => {
-                        event.stopPropagation();
-                    }}
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24">
-                        <path fill="currentColor"
-                              d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8z"/>
-                    </svg>
-                </div>
-            </div>*/}
 
             <div className={styles.postEditor}>
                 <div>

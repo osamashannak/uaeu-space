@@ -4,38 +4,37 @@ import {Professor} from "../orm/entity/Professor";
 import {Equal, ILike} from "typeorm";
 import {Review} from "../orm/entity/Review";
 import requestIp from "request-ip";
-import {createAssessment} from "../utils";
-import {getFileURL, uploadAttachment} from "../azure";
+import {createAssessment, validateProfessorComment} from "../utils";
 import {ReviewAttachment} from "../orm/entity/ReviewAttachment";
-import {analyzeImage} from "../azure-vision";
 import crypto from "crypto";
+import {FileRating, Rating, ReviewRating} from "../orm/entity/Rating";
+import {CourseFile} from "../orm/entity/CourseFile";
+import {RatingBody} from "../typed/professor";
+import {Azure} from "../app";
+import {AzureClient} from "../azure";
 
 const sizeOf = require('image-size');
 
-type RateBody = {
-    positive: boolean,
-    comment: string,
-    score: number,
-    attachments: string[],
-    professorEmail: string,
-    recaptchaToken: string
-}
 
-export const rate = async (req: Request, res: Response) => {
-    const body: RateBody = req.body;
+export const comment = async (req: Request, res: Response) => {
+    const body = validateProfessorComment(req.body);
     let address = requestIp.getClientIp(req);
 
-    let valid: boolean = true;
-
-    if (body.recaptchaToken) {
-        const checkValidity = await createAssessment(body.recaptchaToken);
-        if (!checkValidity) {
-            valid = checkValidity;
-        }
+    if (!body) {
+        res.status(400).json({
+            success: false,
+            message: "There was an error submitting your review. Contact us if the problem persists."
+        });
+        return;
     }
 
+    const valid = await createAssessment(body.recaptchaToken);
+
     if (!address) {
-        res.status(400).json({error: "Invalid."});
+        res.status(400).json({
+            success: false,
+            message: "There was an error submitting your review. Contact us if the problem persists."
+        });
         return;
     }
 
@@ -43,38 +42,46 @@ export const rate = async (req: Request, res: Response) => {
         address = address.split(":").slice(-1).pop()!;
     }
 
-    const professor = await AppDataSource.getRepository(Professor).findOne({
+    const professorDB = await AppDataSource.getRepository(Professor).findOne({
         where: {email: Equal(body.professorEmail)}
     });
 
-    if (!professor || body.comment == undefined || !body.score || body.positive == undefined) {
-        res.status(200).json({success: "failed-nop"});
+    if (!professorDB) {
+        res.status(400).json({
+            success: false,
+            message: "There was an error submitting your review. Contact us if the problem persists."
+        });
         return;
     }
 
     const review = new Review();
 
-    if (body.attachments.length > 0) {
-        const attachmentId = body.attachments[0];
-        const attachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
-            where: {id: Equal(attachmentId)}
-        });
-        if (attachment) {
-            review.attachment = attachment.id;
+    if (body.attachments && body.attachments.length > 0) {
+        review.attachments = [];
+        for (const attachment of body.attachments) {
+            const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
+                where: {id: attachment}
+            });
+
+            if (reviewAttachment && reviewAttachment.visible) {
+                review.attachments.push(attachment);
+            }
         }
     }
 
     review.author = "Anonymous";
-    review.comment = body.comment;
+    review.comment = body.comment || "";
     review.score = body.score;
     review.positive = body.positive;
-    review.professor = professor;
+    review.professor = professorDB;
     review.author_ip = address;
     review.visible = valid;
 
     await AppDataSource.getRepository(Review).save(review);
 
-    res.status(200).json({result: "success"});
+    const {author_ip, visible, reviewed, professor, ..._} = review;
+
+    res.status(201).json({success: true, review: _});
 }
 
 export const upload = async (req: Request, res: Response) => {
@@ -101,7 +108,7 @@ export const upload = async (req: Request, res: Response) => {
 
     res.status(200).json({result: "success", id: blobName});
 
-    await uploadAttachment(blobName, file.buffer, file.mimetype);
+    await Azure.uploadAttachment(blobName, file.buffer, file.mimetype);
 
     const reviewAttachment = new ReviewAttachment();
 
@@ -114,10 +121,7 @@ export const upload = async (req: Request, res: Response) => {
 
     await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
 
-    const nsfwResult = await analyzeImage(getFileURL(blobName, "attachments"));
-
-    console.log(nsfwResult);
-    reviewAttachment.visible = nsfwResult;
+    reviewAttachment.visible = await Azure.analyzeImage(AzureClient.getFileURL(blobName, "attachments"));
 
     await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
 }
@@ -151,42 +155,63 @@ export const find = async (req: Request, res: Response) => {
         ...professorWithoutVisible,
         reviews: await Promise.all(
             filteredReviews
-                .map(async ({ratings, reviewed, author_ip, visible, attachment, ...review}) => {
+                .map(async ({ratings, reviewed, author_ip, visible, attachments, ...review}) => {
                     const likesCount = ratings.filter(rating => rating.is_positive).length;
                     const dislikesCount = ratings.filter(rating => !rating.is_positive).length;
 
-                    let newAttachment = null;
+                    let attachment = null;
 
-                    if (attachment) {
-                        const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
-                            where: {id: Equal(attachment)}
-                        });
-                        if (reviewAttachment && reviewAttachment.visible) {
-                            newAttachment = {
-                                id: reviewAttachment.id,
-                                width: reviewAttachment.width,
-                                height: reviewAttachment.height,
-                            };
-                        }
+                    if (attachments && attachments.length > 0) {
+                        attachment = await Promise.all(
+                            attachments.map(async attachment => {
+                                const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
+                                    where: {id: attachment}
+                                });
+
+                                if (reviewAttachment && reviewAttachment.visible) {
+                                    return {
+                                        id: attachment,
+                                        height: reviewAttachment.height,
+                                        width: reviewAttachment.width,
+                                        url: AzureClient.getFileURL(attachment, "attachments"),
+                                    };
+                                }
+                            })
+                        );
                     }
 
                     return {
                         ...review,
                         likes: likesCount,
                         dislikes: dislikesCount,
-                        attachment: newAttachment
+                        attachments: attachment
                     };
                 })),
         score: filteredReviews.reduce((sum, review) => sum + review.score, 0) / Math.max(filteredReviews.length, 1)
     };
 
-    if (params.viewed && params.viewed === "false") {
-        const userRepo = AppDataSource.getRepository(Professor);
-        professor.views += 1;
-        await userRepo.save(professor);
-    }
+    newProfessor.reviews.sort((a, b) => {
+        const aDate = new Date(a.created_at).getTime();
+        const bDate = new Date(b.created_at).getTime();
+        const aLikes = a.likes - a.dislikes;
+        const bLikes = b.likes - b.dislikes;
 
-    res.status(200).json({professor: newProfessor});
+        if (aDate > Date.now() - 86400000 && bDate > Date.now() - 86400000) {
+            return bDate - aDate;
+        }
+        if (aDate > Date.now() - 86400000) {
+            return -1;
+        }
+        if (bDate > Date.now() - 86400000) {
+            return 1;
+        }
+        if (aLikes !== bLikes) {
+            return bLikes - aLikes;
+        }
+        return bDate - aDate;
+    });
+
+    res.status(200).json({success: true, professor: newProfessor});
 }
 
 export const getAll = async (req: Request, res: Response) => {
@@ -197,4 +222,79 @@ export const getAll = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({professors: professors});
+}
+
+export const addRating = async (req: Request, res: Response) => {
+    const body = req.body as RatingBody;
+
+    let address = requestIp.getClientIp(req);
+
+    console.log(body)
+    console.log(address)
+
+    if (!body.id || body.positive === null || !body.request_key || !body.type || !address) {
+        res.status(400).json();
+        return;
+    }
+
+    let rating: ReviewRating | FileRating;
+
+    if (body.type === "review") {
+        const review = await AppDataSource.getRepository(Review).findOne({
+            where: {id: body.id}
+        });
+
+        if (!review) {
+            res.status(404).json();
+            return;
+        }
+
+        rating = new ReviewRating();
+        rating.review = review;
+        rating.is_positive = body.positive;
+        rating.request_key = body.request_key;
+        rating.ip_address = address;
+    } else {
+        const file = await AppDataSource.getRepository(CourseFile).findOne({
+            where: {id: body.id}
+        });
+
+        if (!file) {
+            res.status(404).json();
+            return;
+        }
+
+        rating = new FileRating();
+        rating.file = file;
+        rating.is_positive = body.positive;
+        rating.request_key = body.request_key;
+        rating.ip_address = address;
+    }
+
+    await AppDataSource.getRepository(Rating).save(rating);
+
+    res.status(200).json({result: "success"});
+}
+
+export const removeRating = async (req: Request, res: Response) => {
+    const key = req.query.key as string;
+    const type = req.query.type as "review" | "file";
+
+    if (!key || !type) {
+        res.status(400).json();
+        return;
+    }
+
+    let rating = await AppDataSource.getRepository(Rating).findOne({
+        where: {request_key: Equal(key)}
+    });
+
+    if (!rating) {
+        res.status(404).json();
+        return;
+    }
+
+    await AppDataSource.getRepository(Rating).remove(rating);
+
+    res.status(200).json({result: "success"});
 }
