@@ -34,7 +34,7 @@ export const uploadAttachment = async (file: File | Blob) => {
     try {
         const formData = new FormData();
         formData.append("file", file);
-        const request = await fetch(HOST + "/professor/comment/upload", {
+        const request = await fetch(HOST + "/professor/comment/attachment/uploadImage", {
             method: "POST",
             body: formData
         });

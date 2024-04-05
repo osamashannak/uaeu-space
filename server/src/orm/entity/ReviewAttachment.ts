@@ -10,7 +10,7 @@ export class ReviewAttachment {
     @Column()
     mime_type!: string;
 
-    @Column()
+    @Column({default: null, nullable: true})
     size!: number;
 
     @Column()
@@ -22,7 +22,7 @@ export class ReviewAttachment {
     @Column({default: null, nullable: true})
     visible!: boolean;
 
-    @Column("inet")
+    @Column("inet", {default: null, nullable: true})
     ip_address!: string;
 
     @CreateDateColumn({nullable: true})

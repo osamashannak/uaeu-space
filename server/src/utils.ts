@@ -80,12 +80,27 @@ export const validateProfessorComment = (body: CommentBody): CommentBody | null 
     if (!body.professorEmail || (!body.comment && !body.attachments) || !body.score || typeof body.positive !== "boolean") {
         return null;
     }
+
     if (body.comment) {
         body.comment = body.comment.trim();
 
         if ([...body.comment].length > 350) {
             return null;
         }
+    }
+
+    if (!body.attachments || !Array.isArray(body.attachments)) {
+        body.attachments = [];
+    }
+
+    if (body.attachments.length > 0) {
+        let attachments = body.attachments.filter((attachment: any) => typeof attachment === "string").slice(0, 4) as string[];
+
+        if (attachments.some((attachment) => attachment.includes("tenor"))) {
+            attachments = attachments.filter((attachment) => attachment.includes("tenor")).slice(0, 1);
+        }
+
+        body.attachments = attachments;
     }
 
     if (!Number.isInteger(body.score) || parseInt(body.score) < 1 || parseInt(body.score) > 5) {

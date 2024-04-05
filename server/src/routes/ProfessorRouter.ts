@@ -4,7 +4,7 @@ import {
     find,
     getAll,
     removeRating,
-    upload
+    uploadImage, uploadTenor
 } from "../controllers/ProfessorCtrl";
 import multer from "multer";
 
@@ -28,7 +28,8 @@ const router = express.Router();
 router.get("/", find);
 router.get("/all", getAll);
 router.post("/comment", comment);
-router.post("/comment/upload", uploadMulter.single("file"), upload);
+router.post("/comment/attachment/uploadImage", uploadMulter.single("file"), uploadImage);
+router.post("/comment/attachment/uploadTenor", uploadTenor);
 
 router.post("/comment/rating", addRating);
 router.delete("/comment/rating", removeRating);

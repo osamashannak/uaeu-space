@@ -12,6 +12,7 @@ import {CourseFile} from "../orm/entity/CourseFile";
 import {RatingBody} from "../typed/professor";
 import {Azure} from "../app";
 import {AzureClient} from "../azure";
+import exp from "node:constants";
 
 const sizeOf = require('image-size');
 
@@ -84,7 +85,7 @@ export const comment = async (req: Request, res: Response) => {
     res.status(201).json({success: true, review: _});
 }
 
-export const upload = async (req: Request, res: Response) => {
+export const uploadImage = async (req: Request, res: Response) => {
     const file = req.file;
     let address = requestIp.getClientIp(req);
 
@@ -126,6 +127,31 @@ export const upload = async (req: Request, res: Response) => {
     await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
 }
 
+export const uploadTenor = async (req: Request, res: Response) => {
+    const body = req.body as {
+        url: string;
+        height: number;
+        width: number;
+    };
+
+    if (!body.url || !body.height || !body.width) {
+        res.status(400).json({error: "Invalid."});
+        return;
+    }
+
+    res.status(200).json({result: "success", id: body.url});
+
+    const reviewAttachment = new ReviewAttachment();
+
+    reviewAttachment.mime_type = "image/gif";
+    reviewAttachment.height = body.height;
+    reviewAttachment.width = body.width;
+    reviewAttachment.visible = true;
+
+    await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
+
+}
+
 export const find = async (req: Request, res: Response) => {
 
     const params = req.query;
@@ -164,11 +190,21 @@ export const find = async (req: Request, res: Response) => {
                     if (attachments && attachments.length > 0) {
                         attachment = await Promise.all(
                             attachments.map(async attachment => {
+
                                 const reviewAttachment = await AppDataSource.getRepository(ReviewAttachment).findOne({
                                     where: {id: attachment}
                                 });
 
                                 if (reviewAttachment && reviewAttachment.visible) {
+                                    if (reviewAttachment.id.includes("tenor")) {
+                                        return {
+                                            id: attachment,
+                                            height: reviewAttachment.height,
+                                            width: reviewAttachment.width,
+                                            url: reviewAttachment.id,
+                                        };
+                                    }
+
                                     return {
                                         id: attachment,
                                         height: reviewAttachment.height,
