@@ -1,14 +1,13 @@
-import {ReactNode, useEffect} from "react";
+import {ReactNode} from "react";
 import styles from "../styles/layout.module.scss";
 import Header from "../components/header.tsx";
 import Footer from "../components/footer.tsx";
 import ScrollToTop from "../components/scrolltotop.tsx";
 import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
-import {useDispatch, useSelector} from "react-redux";
 
 export default function Layout({children}: { children: ReactNode }) {
 
-    const dispatch = useDispatch();
+    /*const dispatch = useDispatch();
     const user = useSelector((state) => state.user);
 
     useEffect(() => {
@@ -18,7 +17,7 @@ export default function Layout({children}: { children: ReactNode }) {
 
 
 
-    }, [user.status]);
+    }, [user.status]);*/
 
     return (
         <>

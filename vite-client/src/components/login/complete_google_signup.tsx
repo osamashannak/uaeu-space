@@ -6,7 +6,7 @@ import { isPasswordValid, isUsernameValid} from "../../utils.tsx";
 import CenterScreen from "../center_screen.tsx";
 
 
-export default function CompleteGoogleSignUp({autocomplete}: { autocomplete: GoogleSignUpProps }) {
+export default function CompleteGoogleSignUp({autocomplete, setDisplayScreen}: { autocomplete: GoogleSignUpProps, setDisplayScreen: (screen: "login" | "register" | undefined) => void }) {
 
     const [form, setForm] = useState(autocomplete);
     const [failedAttempt, setFailedAttempt] = useState(false);
@@ -51,7 +51,7 @@ export default function CompleteGoogleSignUp({autocomplete}: { autocomplete: Goo
     }
 
     return (
-        <CenterScreen>
+        <CenterScreen setDisplayScreen={setDisplayScreen}>
 
                 <div className={styles.panelTitle}>
                     <h2>Complete Sign Up</h2>

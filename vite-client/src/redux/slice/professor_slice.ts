@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit'
 import {ProfessorAPI, ReviewAPI} from "../../typed/professor.ts";
+import {RootState} from "../store.ts";
 
 
 interface ProfessorState {
@@ -71,5 +72,7 @@ export const professorSlice = createSlice({
 });
 
 export const {setProfessor, clearProfessor, sortReviews, addReview} = professorSlice.actions
+
+export const selectProfessor = (state: RootState) => state.professor
 
 export default professorSlice.reducer;

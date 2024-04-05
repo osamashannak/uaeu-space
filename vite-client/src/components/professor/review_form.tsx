@@ -287,6 +287,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
 
                             let f = "";
 
+                            // @ts-expect-error LexicalEditor types are not up to date
                             json.root.children[0].children.forEach((child) => {
                                 if (child.type === "linebreak") {
                                     f += "\n";
@@ -400,13 +401,13 @@ export default function ReviewForm(props: { professorEmail: string }) {
                              const score = invalidFields.find(field => field.id === "score-field");
 
                              if (score) {
-                                 // @ts-ignore
+                                 // @ts-expect-error types are not up to date
                                  score.reportValidity();
                                  return;
                              }
 
                              if (invalidFields.length > 1) {
-                                 // @ts-ignore
+                                 // @ts-expect-error types are not up to date
                                  invalidFields[0].reportValidity();
                              }
 

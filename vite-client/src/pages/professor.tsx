@@ -7,7 +7,7 @@ import {useParams} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import {useDispatch, useSelector} from "react-redux";
-import {clearProfessor, setProfessor} from "../redux/slice/professor_slice.ts";
+import {clearProfessor, selectProfessor, setProfessor} from "../redux/slice/professor_slice.ts";
 import {ProfessorAPI} from "../typed/professor.ts";
 
 const ReviewForm = lazy(
@@ -25,7 +25,7 @@ export default function Professor() {
     const {email} = useParams();
 
     const dispatch = useDispatch();
-    const professorState = useSelector((state) => state.professor);
+    const professorState = useSelector(selectProfessor);
 
     const professor = professorState.professor as ProfessorAPI | undefined | null;
 

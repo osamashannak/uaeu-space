@@ -1,22 +1,21 @@
 import styles from "../../styles/pages/login.module.scss";
 import {isEmailValid, isPasswordValid, isUsernameValid} from "../../utils.tsx";
 import {FormEvent, useEffect, useState} from "react";
-import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import {sendSignUpRequest} from "../../api/auth.ts";
 import CenterScreen from "../center_screen.tsx";
-import {useDispatch, useSelector} from "react-redux";
 
 
 export default function RegisterForm({setDisplayScreen}: { setDisplayScreen: (screen: "login" | "register" | undefined) => void }) {
 
-    const dispatch = useDispatch();
 
     const [form, setForm] = useState({
         email: "",
         username: "",
         password: ""
     });
-    const {executeRecaptcha} = useGoogleReCaptcha();
+
+    //const {executeRecaptcha} = useGoogleReCaptcha();
+
     const [validationMessage, setValidationMessage] = useState({
         username: "",
         password: "",

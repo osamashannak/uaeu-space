@@ -81,7 +81,7 @@ export class LinkNode extends ElementNode {
     }
 
     createDOM(config: EditorConfig): HTMLAnchorElement {
-        const element = document.createElement('span');
+        const element = document.createElement('a');
         element.href = this.sanitizeUrl(this.__url);
         if (this.__target !== null) {
             element.target = this.__target;
@@ -99,7 +99,6 @@ export class LinkNode extends ElementNode {
     updateDOM(
         prevNode: LinkNode,
         anchor: HTMLAnchorElement,
-        config: EditorConfig,
     ): boolean {
         const url = this.__url;
         const target = this.__target;
@@ -137,7 +136,7 @@ export class LinkNode extends ElementNode {
 
     static importDOM(): DOMConversionMap | null {
         return {
-            a: (node: Node) => ({
+            a: () => ({
                 conversion: convertAnchorElement,
                 priority: 1,
             }),
@@ -248,9 +247,8 @@ export class LinkNode extends ElementNode {
     }
 
     extractWithChild(
-        child: LexicalNode,
+        _child: LexicalNode,
         selection: BaseSelection,
-        destination: 'clone' | 'html',
     ): boolean {
         if (!$isRangeSelection(selection)) {
             return false;

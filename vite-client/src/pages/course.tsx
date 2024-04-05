@@ -70,9 +70,9 @@ export default function Course() {
     }
 
 
-    const files = course.files.length > 0 ? [...course.files].sort((a, b) => b.name.length -
+   /* const files = course.files.length > 0 ? [...course.files].sort((a, b) => b.name.length -
         a.name.length).slice(0, 3).map((value) => value.name) : [];
-    let filesString = files.length > 0 ? `Download ${files.join(", ")}` : "";
+    let filesString = files.length > 0 ? `Download ${files.join(", ")}` : "";*/
 
     const fileCount = course.files.length;
 

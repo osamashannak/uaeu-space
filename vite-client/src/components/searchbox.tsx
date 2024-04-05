@@ -93,7 +93,7 @@ export default function SearchBox(props: { type: "professor" | "course" | "resta
 
             },
             items,
-            isItemDisabled(item: Item, index: number): boolean {
+            isItemDisabled(item: Item): boolean {
                 return item.name === "Loading...";
             },
             itemToString(item) {

@@ -8,7 +8,9 @@ export default function AttachmentSlider(props: {details: ReviewFormDraft, setDe
     const {details, setDetails} = props;
 
 
-    if (!details.attachments) return;
+    if (!details.attachments) {
+        return (<></>);
+    }
 
 
     const settings: Settings = {

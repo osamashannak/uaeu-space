@@ -72,7 +72,7 @@ export default function Login() {
                 displayScreen === "login" && <LoginWithEmail setDisplayScreen={setDisplayScreen}/>
             }
 
-            {googleSignUp && <CompleteGoogleSignUp autocomplete={googleSignUp}/>}
+            {googleSignUp && <CompleteGoogleSignUp autocomplete={googleSignUp} setDisplayScreen={setDisplayScreen}/>}
 
 
             <div className={styles.loginPage}>

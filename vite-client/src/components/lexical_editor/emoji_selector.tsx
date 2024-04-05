@@ -10,6 +10,7 @@ import {useEffect} from "react";
 function findAndTransformEmoji(node: TextNode): null | TextNode {
     const text = node.getTextContent();
 
+    // @ts-expect-error twemoji does not have types
     const unparsedEmojiExists = ((window.twemoji as Twemoji)).test(text);
 
     if (!unparsedEmojiExists) {
@@ -39,6 +40,7 @@ function findAndTransformEmoji(node: TextNode): null | TextNode {
 
     const emojiNode = $createEmojiNode({
         emoji: emoji.emoji,
+        // @ts-expect-error twemoji does not have types
         imageUrl: ((window.twemoji as Twemoji)).parse(emoji.emoji).match(/src="([^"]*)"/)![1]
     });
 
@@ -92,6 +94,7 @@ export default function EmojiSelector() {
                 }}
                 onEmojiSelect={(emoji: { native: string; }) => {
                     editor.update(() => {
+                        // @ts-expect-error twemoji does not have types
                         const twemoji = ((window.twemoji as Twemoji)).parse(emoji.native).match(/src="([^"]*)"/)![1];
 
                         $insertNodes([$createEmojiNode({emoji: emoji.native, imageUrl: twemoji})])

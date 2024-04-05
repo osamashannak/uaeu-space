@@ -1,7 +1,6 @@
 import Layout from "../layouts/layout.tsx";
 import styles from "../styles/pages/home.module.scss";
 import RamadanLantern from "../components/ramadan_lantern.tsx";
-import SearchBox from "../components/searchbox.tsx";
 import {useNavigate} from "react-router-dom";
 
 export default function Root() {

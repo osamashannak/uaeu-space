@@ -4,10 +4,9 @@ import Compressor from "compressorjs";
 import {
     ImageAttachment,
     ReviewFormDraft,
-    TenorGIFAttachment, VideoAttachment
+    TenorGIFAttachment
 } from "../../typed/professor.ts";
 import GifPicker, {ContentFilter} from "gif-picker-react";
-import {uploadVideoAttachment} from "../../api/professor.ts";
 
 
 export default function ReviewFormFooter(props: {
@@ -77,7 +76,7 @@ export default function ReviewFormFooter(props: {
         event.target.value = "";
     }
 
-    function addVideo(file: File | Blob) {
+    /*function addVideo(file: File | Blob) {
 
         const video = document.createElement('video');
 
@@ -107,7 +106,7 @@ export default function ReviewFormFooter(props: {
 
         video.src = URL.createObjectURL(file);
 
-    }
+    }*/
 
     function addTenorGif(gif: string) {
         const img = new Image();
