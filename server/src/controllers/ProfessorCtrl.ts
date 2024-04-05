@@ -143,9 +143,18 @@ export const uploadTenor = async (req: Request, res: Response) => {
 
     res.status(200).json({result: "success", id: body.url});
 
+    const existing = await AppDataSource.getRepository(ReviewAttachment).findOne({
+        where: {id: body.url}
+    });
+
+    if (existing) {
+        return;
+    }
+
     const reviewAttachment = new ReviewAttachment();
 
     reviewAttachment.mime_type = "image/gif";
+    reviewAttachment.id = body.url;
     reviewAttachment.height = body.height;
     reviewAttachment.width = body.width;
     reviewAttachment.visible = true;
