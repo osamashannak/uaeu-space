@@ -36,7 +36,7 @@ export const uploadImageAttachment = async (file: File | Blob) => {
     try {
         const formData = new FormData();
         formData.append("file", file);
-        const request = await fetch(HOST + "/professor/comment/comment/uploadImage", {
+        const request = await fetch(HOST + "/professor/comment/attachment/uploadImage", {
             method: "POST",
             body: formData,
             headers: {
@@ -55,7 +55,7 @@ export const uploadTenorAttachment = async (tenorGIFAttachment: TenorGIFAttachme
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/comment/comment/uploadTenor", {
+        const request = await fetch(HOST + "/professor/comment/attachment/uploadTenor", {
             method: "POST",
             body: JSON.stringify(tenorGIFAttachment),
             headers: {
@@ -76,7 +76,7 @@ export const uploadVideoAttachment = async (file: File | Blob) => {
     try {
         const formData = new FormData();
         formData.append("file", file);
-        const request = await fetch(HOST + "/professor/comment/uploadVideo", {
+        const request = await fetch(HOST + "/professor/comment/attachment/uploadVideo", {
             method: "POST",
             body: formData,
             headers: {
