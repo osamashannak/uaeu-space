@@ -1,4 +1,4 @@
-import {ProfessorAPI, ReviewFormAPI} from "../typed/professor.ts";
+import {ProfessorAPI, ReviewAPI, ReviewFormAPI} from "../typed/professor.ts";
 import {ProfessorItem} from "../typed/searchbox.ts";
 
 
@@ -89,7 +89,7 @@ export const postReview = async (options: ReviewFormAPI) => {
         return undefined;
     }
 
-    return response.result === "success";
+    return response as { success: boolean, message: string, review: ReviewAPI };
 }
 
 export const addRating = async (id: number, positive: boolean, type: "review" | "file") => {

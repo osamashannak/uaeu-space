@@ -10,7 +10,6 @@ import {useDispatch} from "react-redux";
 
 export default function ReviewSection(props: { professorReviews: ReviewAPI[] }) {
 
-    const [sortBy, setSortBy] = useState<SORT_BY>(SORT_BY.relevant);
     const [sortHidden, setSortHidden] = useState(true);
 
     const dispatch = useDispatch();

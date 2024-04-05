@@ -116,7 +116,8 @@ export default function ReviewFormFooter(props: {
             const attachment: TenorGIFAttachment = {
                 id: gif,
                 url: gif,
-                aspectRatio: img.height / img.width,
+                height: img.height,
+                width: img.width,
                 weight: 4
             };
 
@@ -142,7 +143,8 @@ export default function ReviewFormFooter(props: {
             const attachment = {
                 id: "READY",
                 url: img.src,
-                aspectRatio: img.height / img.width,
+                height: img.height,
+                width: img.width,
                 weight: 1,
                 src: file
             } as ImageAttachment;

@@ -8,17 +8,17 @@ dayjs.extend(relativeTime);
 
 export default function File (props: CourseFileAPI) {
     return (
-        <div className={styles.file}>
+        <div className={styles.file} onClick={() => {
+            window.open("https://api.uaeu.space/course/file?id=" + props.id, "_blank");
+        }}>
             <div className={styles.fileIcon}>
                 {getIconFromMIME(props.type)}
             </div>
             <div className={styles.fileBody}>
                 <h3 className={styles.fileName}>
-                    <a target="_blank"
-                       style={{color: "#007fff"}}
+                    <span style={{color: "#007fff"}}
                        rel="noreferrer nofollow"
-                       href={"https://api.uaeu.space/course/file?id=" + props.id}
-                       title={props.name}>{props.name}</a>
+                          title={props.name}>{props.name}</span>
                 </h3>
                 <p className={"file-size"}>{formatBytes(props.size)}</p>
                 <time

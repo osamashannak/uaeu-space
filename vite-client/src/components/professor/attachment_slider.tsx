@@ -26,14 +26,15 @@ export default function AttachmentSlider(props: {details: ReviewFormDraft, setDe
         <Slider {...settings}>
             {[...details.attachments].reverse().map((attachment, index) => {
 
-                if ('videoSrc' in attachment) {
+                const aspectRatio = attachment.height / attachment.width;
 
+                if ('videoSrc' in attachment) {
 
                     return (
 
                         <div key={attachment.id + index} className={styles.videoPreview}
                              style={{
-                                 width: 1/attachment.aspectRatio * 680 + "px",
+                                 width: 1/aspectRatio * 680 + "px",
                              }}
                              onClick={event => {
                                  event.stopPropagation();
@@ -53,7 +54,7 @@ export default function AttachmentSlider(props: {details: ReviewFormDraft, setDe
                                           d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"/>
                                 </svg>
                             </div>
-                            <div style={{paddingBottom: `${attachment.aspectRatio * 100}%`}}></div>
+                            <div style={{paddingBottom: `${aspectRatio * 100}%`}}></div>
                             <div className={styles.videoDiv}>
                                 <video autoPlay loop controls playsInline muted>
                                     <source src={attachment.url} type={attachment.videoSrc.type}/>
@@ -86,7 +87,7 @@ export default function AttachmentSlider(props: {details: ReviewFormDraft, setDe
                                           d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"/>
                                 </svg>
                             </div>
-                            <div style={{paddingBottom: `${attachment.aspectRatio * 100}%`}}></div>
+                            <div style={{paddingBottom: `${aspectRatio * 100}%`}}></div>
                             <div style={{backgroundImage: `url(${attachment.url})`}}
                                  className={styles.imageDiv}>
                             </div>

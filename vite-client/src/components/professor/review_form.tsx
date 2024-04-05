@@ -121,7 +121,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
             attachments: details.attachments.map((attachment) => attachment.id)
         });
 
-        if (!status) {
+        if (!status || !status.success) {
             setSubmitting("error");
             return;
         }
@@ -129,15 +129,15 @@ export default function ReviewForm(props: { professorEmail: string }) {
         localStorage.setItem(`${props.professorEmail}-prof`, "true");
 
         dispatch(addReview({
-            attachments: [],
-            author: "Anonymous",
-            created_at: new Date(),
+            attachments: status.review.attachments,
+            author: status.review.author,
+            created_at: status.review.created_at,
             dislikes: 0,
             likes: 0,
-            comment: details.comment!.trim(),
-            score: details.score!,
-            positive: details.positive!,
-            id: -1
+            comment: status.review.comment,
+            score: status.review.score,
+            positive: status.review.positive,
+            id: status.review.id
         }));
 
         setSubmitting(null);
@@ -177,19 +177,12 @@ export default function ReviewForm(props: { professorEmail: string }) {
 
     let lengthStyle = styles.commentLength;
 
-
-    if ((details.comment ?? "").trim()) {
-
-        const length = [...(details.comment ?? "").trim()].length;
-
-        if (length > 350) {
-            lengthStyle += ` ${styles.commentLengthWarning}`;
-        } else if (length === 350) {
-            lengthStyle += ` ${styles.commentLengthPerfect}`;
-        } else if (length < 350) {
-            lengthStyle += ` ${styles.commentLengthGood}`;
-        }
-
+    if (details.comment && details.comment.length > 350) {
+        lengthStyle += ` ${styles.commentLengthWarning}`;
+    } else if (details.comment && details.comment.length == 350) {
+        lengthStyle += ` ${styles.commentLengthPerfect}`;
+    } else if (details.comment && details.comment.length < 350) {
+        lengthStyle += ` ${styles.commentLengthGood}`;
     }
 
 

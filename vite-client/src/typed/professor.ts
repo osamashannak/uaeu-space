@@ -27,7 +27,8 @@ export interface ReviewAPI {
 export interface ImageAttachment {
     id: string;
     url: string;
-    aspectRatio: number;
+    height: number;
+    width: number;
     weight: 1
     src: File | Blob;
 }
@@ -36,14 +37,16 @@ export interface VideoAttachment {
     id: string;
     url: string;
     weight: 4;
-    aspectRatio: number;
+    height: number;
+    width: number;
     videoSrc: File | Blob;
 }
 
 export interface TenorGIFAttachment {
     id: string;
     url: string;
-    aspectRatio: number;
+    height: number;
+    width: number;
     weight: 4;
 }
 
