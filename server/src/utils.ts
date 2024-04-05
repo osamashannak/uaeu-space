@@ -17,7 +17,6 @@ export const compressFile = async (filePath: string) => {
 };
 
 
-
 export const ALLOWED_EMAILS = [process.env.DASHBOARD_EMAIL_1, process.env.DASHBOARD_EMAIL_2];
 
 interface JwtPayload {
@@ -94,13 +93,7 @@ export const validateProfessorComment = (body: CommentBody): CommentBody | null 
     }
 
     if (body.attachments.length > 0) {
-        let attachments = body.attachments.filter((attachment: any) => typeof attachment === "string").slice(0, 4) as string[];
-
-        if (attachments.some((attachment) => attachment.includes("tenor"))) {
-            attachments = attachments.filter((attachment) => attachment.includes("tenor")).slice(0, 1);
-        }
-
-        body.attachments = attachments;
+        body.attachments = body.attachments.filter((attachment: any) => typeof attachment === "string").slice(0, 4) as string[];
     }
 
     if (!Number.isInteger(body.score) || parseInt(body.score) < 1 || parseInt(body.score) > 5) {
