@@ -27,20 +27,6 @@ export default function Root() {
 
             </div>
 
-
-            <div className={styles.centerBlock}>
-
-                <div className={styles.title}><span>Ramadan @ <span className={styles.redColor}>UAEU</span></span></div>
-
-                <p>For a limited time, rate your favorite iftar menus in UAEU during Ramadan</p>
-
-                <div className={styles.searchBox}>
-                    <SearchBox type={"restaurant"}/>
-                    <p className={styles.caution}>Something's missing? DM us on Instagram</p>
-                </div>
-
-
-            </div>
             <div className={styles.gotoBlock}>
 
                 <div className={styles.gotoButton} onClick={() => {

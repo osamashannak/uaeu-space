@@ -36,7 +36,7 @@ export const uploadAttachment = async (file: File | Blob) => {
     try {
         const formData = new FormData();
         formData.append("file", file);
-        const request = await fetch(HOST + "/professor/rate/upload", {
+        const request = await fetch(HOST + "/professor/comment/upload", {
             method: "POST",
             body: formData,
             headers: {
@@ -57,7 +57,7 @@ export const uploadVideoAttachment = async (file: File | Blob) => {
     try {
         const formData = new FormData();
         formData.append("file", file);
-        const request = await fetch(HOST + "/professor/rate/uploadVideo", {
+        const request = await fetch(HOST + "/professor/comment/uploadVideo", {
             method: "POST",
             body: formData,
             headers: {
@@ -76,7 +76,7 @@ export const postReview = async (options: ReviewFormAPI) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/rate", {
+        const request = await fetch(HOST + "/professor/comment", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -90,4 +90,41 @@ export const postReview = async (options: ReviewFormAPI) => {
     }
 
     return response.result === "success";
+}
+
+export const addRating = async (id: number, positive: boolean, type: "review" | "file") => {
+
+    const uuid = crypto.randomUUID();
+
+    try {
+        await fetch(HOST + "/professor/comment/rating", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: id,
+                positive: positive,
+                request_key: uuid,
+                type: type
+            })
+        });
+    } catch (error) {
+        return undefined;
+    }
+
+    return uuid;
+}
+
+export const removeRating = async (uuid: string, type: "review" | "file") => {
+
+    try {
+        await fetch(HOST + `/professor/comment/rating?key=${uuid}&type=${type}`, {
+            method: "DELETE"
+        });
+    } catch (error) {
+        return undefined;
+    }
+
+    return uuid;
 }

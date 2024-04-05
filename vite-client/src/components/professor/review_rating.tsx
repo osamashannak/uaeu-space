@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import styles from "../../styles/components/rating.module.scss";
-import {addRating, removeRating} from "../../api/shared.ts";
+import {addRating, removeRating} from "../../api/professor.ts";
 
 export default function ReviewRating(props: { id: number, likes: number, dislikes: number, type: "review" | "file" }) {
 
