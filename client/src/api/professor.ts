@@ -62,7 +62,7 @@ export const postReview = async (options: ReviewFormAPI) => {
         return undefined;
     }
 
-    return response.result === "success";
+    return response.success;
 }
 
 export const addRating = async (id: number, positive: boolean, type: "review" | "file") => {
