@@ -11,6 +11,7 @@ import requestIp from "request-ip";
 import {createDataSource} from "@spaceread/database";
 import crypto from "crypto";
 import {Guest} from "@spaceread/database/entity/user/Guest";
+import {getCountryFromIp} from "./api";
 
 const app = express();
 export const AppDataSource = createDataSource({
@@ -70,6 +71,7 @@ app.use(async function (req, res, next) {
     guest.user_agent = req.headers['user-agent'] ?? "";
     guest.token = crypto.randomBytes(20).toString('hex');
     guest.date_history = [new Date().toISOString()];
+    guest.country = await getCountryFromIp(address);
 
     await GuestRepository.save(guest);
 
