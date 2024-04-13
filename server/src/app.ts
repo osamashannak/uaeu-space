@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import cors from "cors";
 import courseRouter from "./routes/CourseRouter";
 import professorRouter from "./routes/ProfessorRouter";
 import dashboardRouter from "./routes/DashboardRouter";
@@ -19,6 +18,7 @@ import jwt from "jsonwebtoken";
 import VirusTotalClient from "./virustotal";
 import {createDataSource} from "@spaceread/database";
 import cookies from "cookie-parser";
+import cors from "cors";
 
 export let JWT_SECRET: jwt.Secret;
 export let VTClient: VirusTotalClient;
@@ -32,13 +32,25 @@ export const AppDataSource = createDataSource({
 
 const app = express();
 
-app.use(cors());
 app.use(cookies());
 app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
 
 app.post("/storeInCookies", (req, res) => {
-    res.cookie("mig", req.body.token, {httpOnly: true, secure: true, sameSite: "none"});
+    res.setHeader("Access-Control-Allow-Origin", "https://uaeu.space");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+
+    res.cookie("mig", req.body.token, {httpOnly: true, secure: true, sameSite: "none", expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365), domain: "uaeu.space"});
+
+    res.status(200).send();
+});
+
+app.options("/storeInCookies", (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "https://uaeu.space");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "POST");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
     res.status(200).send();
 });
 
@@ -131,9 +143,9 @@ app.get("/sitemap.xml", async (req, res) => {
 
 });
 
-app.use("/course", courseRouter);
-app.use("/professor", professorRouter);
-app.use("/dashboard", dashboardRouter);
+app.use("/course", cors(), courseRouter);
+app.use("/professor", cors(), professorRouter);
+app.use("/dashboard", cors(), dashboardRouter);
 
 (async function main() {
     const port = process.env.PORT;
