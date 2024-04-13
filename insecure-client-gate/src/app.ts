@@ -27,7 +27,6 @@ app.use(cookies());
 app.use(function (req, res, next) {
     console.log("Connection Started!")
     setHeaders(res);
-    console.log("Headers Set!")
     next();
 });
 
@@ -76,6 +75,7 @@ app.use(async function (req, res, next) {
 
     setSessionCookie(res, "gid", guest.token, false);
 
+    next();
 });
 
 app.get('*', function (req, res) {
