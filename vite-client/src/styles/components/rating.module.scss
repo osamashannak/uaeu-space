@@ -1,11 +1,12 @@
 .rating {
   display: flex;
   align-items: center;
+  pointer-events: none;
+  cursor: default;
 }
 
 .like {
   @extend .rating;
-  cursor: pointer;
 
   @media (min-width: 768px) {
     &:hover {
@@ -22,7 +23,6 @@
 
 .dislike {
   @extend .rating;
-  cursor: pointer;
   margin-left: 1rem;
 
   @media (min-width: 768px) {

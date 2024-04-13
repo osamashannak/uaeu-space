@@ -73,7 +73,7 @@ export default function Review(review: ReviewAPI) {
 
             <div className={styles.reviewFooter}>
                 <div>
-                    <ReviewRating dislikes={review.dislikes} likes={review.likes} id={review.id} type={"review"}/>
+                    <ReviewRating dislikes={review.dislikes} likes={review.likes} id={review.id}  self={review.selfRating}/>
                 </div>
             </div>
 

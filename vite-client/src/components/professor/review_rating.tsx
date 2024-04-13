@@ -2,9 +2,9 @@ import {useEffect, useRef, useState} from "react";
 import styles from "../../styles/components/rating.module.scss";
 import {addRating, removeRating} from "../../api/professor.ts";
 
-export default function ReviewRating(props: { id: number, likes: number, dislikes: number, type: "review" | "file" }) {
+export default function ReviewRating(props: { id: number, likes: number, dislikes: number, self: boolean | null }) {
 
-    const [liked, setLiked] = useState<boolean | null>();
+    const [liked, setLiked] = useState<boolean | null>(props.self);
 
     const [likes, setLikes] = useState<number>(0);
     const [dislikes, setDislikes] = useState<number>(0);
@@ -12,38 +12,10 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
     const running = useRef(false);
 
     useEffect(() => {
-        const hasLiked = localStorage.getItem(`${props.id}-rev`);
-        if (hasLiked == null) {
-            setLiked(null);
-        } else {
-            setLiked(hasLiked === 'true');
-        }
-        setLikes(props.likes - (hasLiked === 'true' ? 1 : 0));
-        setDislikes(props.dislikes - (hasLiked === 'false' ? 1 : 0));
-    }, [props.dislikes, props.id, props.likes]);
+        setLikes(props.likes - (liked ? 1 : 0));
+        setDislikes(props.dislikes - (liked === false ? 1 : 0));
+    }, [liked, props.dislikes, props.likes]);
 
-
-    const unLike = async () => {
-        const likeKey = localStorage.getItem(`like-request-${props.id}`);
-
-        if (likeKey) {
-            const request = await removeRating(likeKey, props.type);
-            if (!request) return;
-            localStorage.removeItem(`like-request-${props.id}`);
-            localStorage.removeItem(`${props.id}-rev`);
-        }
-    }
-
-    const unDislike = async () => {
-        const dislikeKey = localStorage.getItem(`dislike-request-${props.id}`);
-        if (dislikeKey) {
-            const request = await removeRating(dislikeKey, props.type);
-            if (!request) return;
-
-            localStorage.removeItem(`dislike-request-${props.id}`);
-            localStorage.removeItem(`${props.id}-rev`);
-        }
-    }
 
     const onLikeClick = async () => {
         if (running.current) return;
@@ -53,14 +25,14 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
         // Remove Like
         if (liked) {
             setLiked(null);
-            await unLike();
+            await removeRating(props.id);
             running.current = false;
             return;
         }
 
         // Replace dislike to like
         if (liked === false) {
-            await unDislike();
+            await removeRating(props.id);
         }
 
         setLiked(true);
@@ -78,14 +50,14 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
         // Remove dislike
         if (liked === false) {
             setLiked(null);
-            await unDislike();
+            await removeRating(props.id);
             running.current = false;
             return;
         }
 
         // Replace like to dislike
         if (liked) {
-            await unLike();
+            await removeRating(props.id);
         }
 
         setLiked(false);

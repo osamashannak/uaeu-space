@@ -140,10 +140,10 @@ export const addRating = async (reviewId: number, positive: boolean) => {
     return true;
 }
 
-export const removeRating = async (uuid: string, type: "review" | "file") => {
+export const removeRating = async (reviewId: number) => {
 
     try {
-        await fetch(HOST + `/professor/comment/rating?key=${uuid}&type=${type}`, {
+        await fetch(HOST + `/professor/comment/rating?reviewId=${reviewId}`, {
             method: "DELETE",
             credentials: "include"
         });

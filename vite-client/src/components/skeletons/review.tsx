@@ -35,7 +35,7 @@ export default function ReviewSkeleton() {
 
             <div className={reviewStyles.reviewFooter}>
                 <div>
-                    <ReviewRating dislikes={0} likes={0} id={0} type={"review"}/>
+                    <ReviewRating dislikes={0} likes={0} id={0} self={null}/>
                 </div>
             </div>
 
