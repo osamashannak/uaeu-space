@@ -106,7 +106,8 @@ export const postReview = async (options: ReviewFormAPI) => {
                 'Content-Type': 'application/json',
                 'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
             },
-            body: JSON.stringify(options)
+            body: JSON.stringify(options),
+            credentials: "include"
         });
         response = await request.json();
     } catch (error) {
@@ -116,9 +117,7 @@ export const postReview = async (options: ReviewFormAPI) => {
     return response as { success: boolean, message: string, review: ReviewAPI };
 }
 
-export const addRating = async (id: number, positive: boolean, type: "review" | "file") => {
-
-    const uuid = crypto.randomUUID();
+export const addRating = async (id: number, positive: boolean) => {
 
     try {
         await fetch(HOST + "/professor/comment/rating", {
@@ -129,26 +128,26 @@ export const addRating = async (id: number, positive: boolean, type: "review" | 
             body: JSON.stringify({
                 id: id,
                 positive: positive,
-                request_key: uuid,
-                type: type
-            })
+            }),
+            credentials: "include"
         });
     } catch (error) {
-        return undefined;
+        return false;
     }
 
-    return uuid;
+    return true;
 }
 
 export const removeRating = async (uuid: string, type: "review" | "file") => {
 
     try {
         await fetch(HOST + `/professor/comment/rating?key=${uuid}&type=${type}`, {
-            method: "DELETE"
+            method: "DELETE",
+            credentials: "include"
         });
     } catch (error) {
-        return undefined;
+        return false;
     }
 
-    return uuid;
+    return true;
 }
