@@ -1,8 +1,6 @@
 import Layout from "../layouts/layout.tsx";
 import styles from "../styles/pages/home.module.scss";
-import RamadanLantern from "../components/ramadan_lantern.tsx";
 import {useNavigate} from "react-router-dom";
-import Calculator from "../components/calculator.tsx";
 
 export default function Root() {
 
