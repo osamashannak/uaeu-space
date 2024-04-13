@@ -2,6 +2,7 @@ import Layout from "../layouts/layout.tsx";
 import styles from "../styles/pages/home.module.scss";
 import RamadanLantern from "../components/ramadan_lantern.tsx";
 import {useNavigate} from "react-router-dom";
+import Calculator from "../components/calculator.tsx";
 
 export default function Root() {
 
@@ -13,16 +14,15 @@ export default function Root() {
 
             <div className={styles.head}>
                 <div>
-                    <div className={styles.title}><span>Ramadan Kareem 🌙</span></div>
+                    <div className={styles.title}><span>UAEU Space is now <span className={styles.spaceread}>SpaceRead</span></span></div>
 
                     <p>
-                        Wishing you and your family a Ramadan mubarak with peace, joy, and prosperity
+                        We have renamed UAEU Space to better reflect our mission. Still the same platform you know and love
                     </p>
 
 
                 </div>
 
-                <RamadanLantern/>
 
             </div>
 

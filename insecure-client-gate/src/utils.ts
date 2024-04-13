@@ -14,3 +14,26 @@ export function setHeaders(res: Response) {
     res.removeHeader("Keep-Alive");
     res.removeHeader("Transfer-Encoding");
 }
+
+export function setSessionCookie(res: Response, name: string, value: string, sessionOnly: boolean) {
+    const options = {
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
+        maxAge: 1000 * 60 * 60 * 24,
+        domain: process.env.DOMAIN,
+        secure: true
+    } as {
+        httpOnly: boolean,
+        expires: Date | undefined,
+        maxAge: number | undefined,
+        domain: string | undefined,
+        secure: boolean
+    }
+
+    if (sessionOnly) {
+        delete options.expires;
+        delete options.maxAge;
+    }
+
+    res.cookie(name, value, options);
+}
