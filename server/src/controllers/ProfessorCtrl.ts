@@ -5,7 +5,7 @@ import requestIp from "request-ip";
 import {createAssessment, validateProfessorComment} from "../utils";
 import {ReviewAttachment} from "@spaceread/database/entity/professor/ReviewAttachment";
 import crypto from "crypto";
-import {RatingType, ReviewRating} from "@spaceread/database/entity/professor/ReviewRating";
+import {ReviewRating} from "@spaceread/database/entity/professor/ReviewRating";
 import {RatingBody} from "../typed/professor";
 import {AppDataSource, Azure} from "../app";
 import {AzureClient} from "../azure";
@@ -159,7 +159,7 @@ export const find = async (req: Request, res: Response) => {
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
         where: {email: email},
-        relations: ["reviews", "reviews.ratings"],
+        relations: ["reviews", "reviews.ratings", "reviews.guest"],
         order: {reviews: {created_at: "desc"}},
 
     });
@@ -168,6 +168,10 @@ export const find = async (req: Request, res: Response) => {
         res.status(404).json({error: "Professor not found."});
         return;
     }
+
+    const guest: Guest = res.locals.user;
+
+    const selfReview = guest && professor.reviews.find(review => review.guest.token === guest.token)?.id;
 
     const {visible, views, ...professorWithoutVisible} = professor;
 
@@ -178,13 +182,10 @@ export const find = async (req: Request, res: Response) => {
         reviews: await Promise.all(
             filteredReviews
                 .map(async ({guest, ratings, reviewed, author_ip, visible, attachments, ...review}) => {
-                    const likesCount = ratings.filter(rating => rating.type === RatingType.LIKE).length;
-                    const dislikesCount = ratings.filter(rating => rating.type === RatingType.DISLIKE).length;
+                    const likesCount = ratings.filter(rating => rating.value).length;
+                    const dislikesCount = ratings.filter(rating => !rating.value).length;
 
                     let attachment = null;
-
-
-
 
                     if (attachments && attachments.length > 0) {
                         attachment = await Promise.all(
@@ -220,7 +221,8 @@ export const find = async (req: Request, res: Response) => {
                         author: "User",
                         likes: likesCount,
                         dislikes: dislikesCount,
-                        attachments: attachment
+                        attachments: attachment,
+                        self: review.id === selfReview
                     };
                 })),
         score: filteredReviews.reduce((sum, review) => sum + review.score, 0) / Math.max(filteredReviews.length, 1)
@@ -287,7 +289,9 @@ export const find = async (req: Request, res: Response) => {
         }
     });
 
-    res.status(200).json({success: true, professor: newProfessor});
+    const canReview = guest && !professor.reviews.some(review => review.guest.token === guest.token) && !guest.rated_professors.includes(professor.email);
+
+    res.status(200).json({success: true, professor: newProfessor, canReview});
 }
 
 export const getAll = async (req: Request, res: Response) => {
@@ -325,7 +329,7 @@ export const addRating = async (req: Request, res: Response) => {
 
     rating.guest = guest;
     rating.review = review;
-    rating.type = body.positive ? RatingType.LIKE : RatingType.DISLIKE;
+    rating.value = body.positive;
 
     await AppDataSource.getRepository(ReviewRating).save(rating);
 

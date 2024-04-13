@@ -19,11 +19,11 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
-    const courseTag = (params.tag as string).toLowerCase();
+    const courseTag = (params.tag as string);
 
     const course = await AppDataSource.getRepository(Course).findOne({
         where: {tag: courseTag },
-        relations: ["files", "files"],
+        relations: ["files"],
         order: {files: {created_at: "desc"}},
     });
 
@@ -44,12 +44,6 @@ export const find = async (req: Request, res: Response) => {
                 };
             })
     };
-
-    if (params.viewed && params.viewed === "false") {
-        const userRepo = AppDataSource.getRepository(Course);
-        course.views += 1;
-        await userRepo.save(course);
-    }
 
     res.status(200).json({course: newCourse});
 }

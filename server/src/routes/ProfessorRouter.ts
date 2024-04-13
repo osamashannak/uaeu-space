@@ -26,7 +26,7 @@ const uploadMulter = multer({
 
 const router = express.Router();
 
-router.get("/", find);
+router.get("/", getCredentials, find);
 router.get("/all", getAll);
 router.post("/comment", getCredentials, comment);
 router.post("/comment/attachment/uploadImage", uploadMulter.single("file"), uploadImage);

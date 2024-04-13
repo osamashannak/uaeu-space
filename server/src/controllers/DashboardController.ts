@@ -3,7 +3,6 @@ import jwt, {JwtPayload} from "jsonwebtoken";
 import {OAuth2Client} from "google-auth-library";
 import {AppDataSource, JWT_SECRET} from "../app";
 import {Review} from "@spaceread/database/entity/professor/Review";
-import {RatingType} from "@spaceread/database/entity/professor/ReviewRating";
 import {ALLOWED_EMAILS, verifyJWTToken} from "../utils";
 import {CourseFile} from "@spaceread/database/entity/course/CourseFile";
 import {Professor} from "@spaceread/database/entity/professor/Professor";
@@ -112,8 +111,8 @@ export const getPendingReviews = async (req: Request, res: Response) => {
     }
 
     const reviews = pendingReviews.map(({ratings, ...review}) => {
-        const likesCount = ratings.filter(rating => rating.type === RatingType.LIKE).length;
-        const dislikesCount = ratings.filter(rating => rating.type === RatingType.DISLIKE).length;
+        const likesCount = ratings.filter(rating => rating.value).length;
+        const dislikesCount = ratings.filter(rating => !rating.value).length;
 
         return {
             ...review,
