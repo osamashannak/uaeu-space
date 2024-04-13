@@ -28,7 +28,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         positive: undefined,
         attachments: [],
     });
-    const [submitting, setSubmitting] = useState<boolean | null | "error" | "loading">(props.canReview ? null : false);
+    const [submitting, setSubmitting] = useState<boolean | null | "error" | "loading">(!props.canReview ? null : false);
     const {executeRecaptcha} = useGoogleReCaptcha();
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const dispatch = useDispatch();

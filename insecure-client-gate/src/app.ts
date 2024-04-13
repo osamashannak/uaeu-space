@@ -104,7 +104,7 @@ app.use(async function (req, res, next) {
                     console.log(key, value)
                     const rating = await AppDataSource.getRepository(ReviewRating).findOne({where: {id: value}});
 
-                    if (rating) {
+                    if (rating && !rating.guest) {
                         rating.guest = guest!;
 
                         await AppDataSource.getRepository(ReviewRating).save(rating);
