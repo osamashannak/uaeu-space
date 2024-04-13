@@ -143,7 +143,7 @@ export const getPendingFiles = async (req: Request, res: Response) => {
 
     const pendingFiles = await AppDataSource.getRepository(CourseFile).find({
         where: {reviewed: false, visible: false},
-        relations: ["course", "ratings"],
+        relations: ["course"],
         order: {created_at: "desc"}
     });
 

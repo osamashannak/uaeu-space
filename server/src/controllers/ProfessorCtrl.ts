@@ -4,12 +4,12 @@ import {Review} from "@spaceread/database/entity/professor/Review";
 import requestIp from "request-ip";
 import {createAssessment, validateProfessorComment} from "../utils";
 import {ReviewAttachment} from "@spaceread/database/entity/professor/ReviewAttachment";
-import crypto from "crypto";
 import {ReviewRating} from "@spaceread/database/entity/professor/ReviewRating";
 import {RatingBody} from "../typed/professor";
 import {AppDataSource, Azure} from "../app";
 import {AzureClient} from "../azure";
 import {Guest} from "@spaceread/database/entity/user/Guest";
+import * as crypto from "crypto";
 
 const sizeOf = require('image-size');
 
@@ -324,7 +324,11 @@ export const addRating = async (req: Request, res: Response) => {
         where: {id: body.reviewId}
     });
 
-    if (!review) {
+    const existingRating = await AppDataSource.getRepository(ReviewRating).findOne({
+        where: {guest: {token: guest.token}, review: {id: body.reviewId}}
+    });
+
+    if (!review || existingRating) {
         res.status(404).json();
         return;
     }
@@ -334,6 +338,7 @@ export const addRating = async (req: Request, res: Response) => {
     rating.guest = guest;
     rating.review = review;
     rating.value = body.positive;
+    rating.id = crypto.randomUUID();
 
     await AppDataSource.getRepository(ReviewRating).save(rating);
 

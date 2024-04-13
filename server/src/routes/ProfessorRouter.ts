@@ -40,21 +40,20 @@ router.options("/", (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', 'https://spaceread.net');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
-    res.setHeader('Access-Control-Allow-Headers', 'Authorization');
     res.status(200).send();
 });
 router.options("/comment", (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', 'https://spaceread.net');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'POST');
-    res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'content-type, x-csrf-token');
     res.status(200).send();
 });
 router.options("/comment/rating", (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', 'https://spaceread.net');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'content-type, x-csrf-token');
     res.status(200).send();
 });
 
