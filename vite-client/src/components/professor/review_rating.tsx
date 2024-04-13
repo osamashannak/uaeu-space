@@ -65,12 +65,7 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
 
         setLiked(true);
 
-        const requestKey = await addRating(props.id, true, props.type);
-
-        if (requestKey) {
-            localStorage.setItem(`like-request-${props.id}`, requestKey);
-            localStorage.setItem(`${props.id}-rev`, 'true');
-        }
+        await addRating(props.id, true);
 
         running.current = false;
     }
@@ -95,12 +90,7 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
 
         setLiked(false);
 
-        const requestKey = await addRating(props.id, false, props.type);
-
-        if (requestKey) {
-            localStorage.setItem(`${props.id}-rev`, 'false');
-            localStorage.setItem(`dislike-request-${props.id}`, requestKey);
-        }
+        await addRating(props.id, false);
 
         running.current = false;
     }

@@ -18,7 +18,7 @@ export default function Review(review: ReviewAPI) {
     }, [review.id]);
 
     return (
-        <article className={`${styles.review} ${review.id === -1 ? styles.fadeIn : ''}`}>
+        <article className={`${styles.review} ${review.fadeIn ? styles.fadeIn : ''}`}>
             <div className={styles.reviewInfo}>
                 <div className={styles.reviewInfoLeft}>
                     <div className={styles.authorName}>

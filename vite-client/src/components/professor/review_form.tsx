@@ -20,7 +20,7 @@ import {useDispatch} from "react-redux";
 import {addReview} from "../../redux/slice/professor_slice.ts";
 
 
-export default function ReviewForm(props: { professorEmail: string }) {
+export default function ReviewForm(props: { professorEmail: string, canReview: boolean }) {
 
     const [details, setDetails] = useState<ReviewFormDraft>({
         score: undefined,
@@ -28,7 +28,7 @@ export default function ReviewForm(props: { professorEmail: string }) {
         positive: undefined,
         attachments: [],
     });
-    const [submitting, setSubmitting] = useState<boolean | null | "error" | "loading">(localStorage.getItem(`${props.professorEmail}-prof`) ? null : false);
+    const [submitting, setSubmitting] = useState<boolean | null | "error" | "loading">(props.canReview ? null : false);
     const {executeRecaptcha} = useGoogleReCaptcha();
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const dispatch = useDispatch();
@@ -145,6 +145,9 @@ export default function ReviewForm(props: { professorEmail: string }) {
         localStorage.setItem(`${props.professorEmail}-prof`, "true");
 
         dispatch(addReview({
+            fadeIn: true,
+            self: true, 
+            selfRating: null,
             attachments: details.attachments,
             author: status.review.author,
             created_at: status.review.created_at,

@@ -1,9 +1,11 @@
+
 export interface ProfessorAPI {
     email: string;
     name: string;
     college: string;
     reviews: ReviewAPI[];
     score: number;
+    canReview: boolean;
 }
 
 export interface ReviewAPI {
@@ -15,6 +17,9 @@ export interface ReviewAPI {
     created_at: Date;
     likes: number;
     dislikes: number;
+    self: boolean;
+    selfRating: boolean | null;
+    fadeIn: boolean;
     attachments: {
         id: string;
         height: number;

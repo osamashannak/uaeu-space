@@ -114,11 +114,11 @@ export default function Professor() {
 
 
                 <Suspense>
-                    <ReviewForm professorEmail={professor.email}/>
+                    <ReviewForm professorEmail={professor.email} canReview={professor.canReview}/>
                 </Suspense>
 
                 <Suspense>
-                    < ReviewSection professorReviews={professor.reviews}/>
+                    <ReviewSection professorReviews={professor.reviews}/>
                 </Suspense>
 
             </div>

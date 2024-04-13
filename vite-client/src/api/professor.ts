@@ -21,7 +21,9 @@ export const getProfessor = async (id: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor?email=" + id);
+        const request = await fetch(HOST + "/professor?email=" + id, {
+            credentials: "include",
+        });
         response = await request.json();
     } catch (error) {
         return null;
@@ -117,7 +119,7 @@ export const postReview = async (options: ReviewFormAPI) => {
     return response as { success: boolean, message: string, review: ReviewAPI };
 }
 
-export const addRating = async (id: number, positive: boolean) => {
+export const addRating = async (reviewId: number, positive: boolean) => {
 
     try {
         await fetch(HOST + "/professor/comment/rating", {
@@ -126,8 +128,8 @@ export const addRating = async (id: number, positive: boolean) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: id,
-                positive: positive,
+                reviewId,
+                positive
             }),
             credentials: "include"
         });
