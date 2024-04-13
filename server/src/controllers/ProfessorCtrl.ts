@@ -17,14 +17,20 @@ const sizeOf = require('image-size');
 export const comment = async (req: Request, res: Response) => {
     const body = validateProfessorComment(req.body);
 
-    const guest: Guest = res.locals.user;
+    const guestID: Guest = res.locals.user;
 
-    if (!body || !guest) {
+    let address = requestIp.getClientIp(req);
+
+    if (!body || !guestID || !address) {
         res.status(400).json({
             success: false,
             message: "There was an error submitting your review. Contact us if the problem persists."
         });
         return;
+    }
+
+    if (address.includes(":")) {
+        address = address.split(":").slice(-1).pop()!;
     }
 
     const valid = await createAssessment(body.recaptchaToken);
@@ -60,12 +66,13 @@ export const comment = async (req: Request, res: Response) => {
     review.score = body.score;
     review.positive = body.positive;
     review.professor = professorDB;
-    review.guest = guest;
+    review.author_ip = address;
+    review.guest = guestID;
     review.visible = valid;
 
     await AppDataSource.getRepository(Review).save(review);
 
-    const {author_ip, visible, reviewed, professor, ..._} = review;
+    const {author_ip, visible, reviewed, professor, guest, ..._} = review;
 
     res.status(201).json({success: true, review: _});
 }
@@ -313,9 +320,15 @@ export const addRating = async (req: Request, res: Response) => {
 
     const guest: Guest = res.locals.user;
 
-    if (!body.reviewId || body.positive === null || !guest) {
+    let address = requestIp.getClientIp(req);
+
+    if (!body.reviewId || body.positive === null || !guest || !address) {
         res.status(400).json();
         return;
+    }
+
+    if (address.includes(":")) {
+        address = address.split(":").slice(-1).pop()!;
     }
 
     let rating: ReviewRating;
@@ -338,6 +351,7 @@ export const addRating = async (req: Request, res: Response) => {
     rating.guest = guest;
     rating.review = review;
     rating.value = body.positive;
+    rating.ip_address = address;
     rating.id = crypto.randomUUID();
 
     await AppDataSource.getRepository(ReviewRating).save(rating);
