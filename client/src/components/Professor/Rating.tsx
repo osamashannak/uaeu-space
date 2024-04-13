@@ -1,7 +1,5 @@
 import styles from "@/styles/components/Rating.module.scss";
-import {useEffect, useRef, useState} from "react";
-import {generateConfetti} from "@/utils";
-import {addRating, removeRating} from "@/api/professor";
+import {useEffect, useState} from "react";
 
 
 const Rating = (props: { id: number, likes: number, dislikes: number, type: "review" | "file" }) => {
@@ -11,7 +9,6 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
     const [likes, setLikes] = useState<number>(0);
     const [dislikes, setDislikes] = useState<number>(0);
 
-    const running = useRef(false);
 
     useEffect(() => {
         const hasLiked = localStorage.getItem(`${props.id}-rev`);
@@ -25,93 +22,9 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
     }, [props.dislikes, props.id, props.likes]);
 
 
-    const unLike = async () => {
-        const likeKey = localStorage.getItem(`like-request-${props.id}`);
-
-        if (likeKey) {
-            const request = await removeRating(likeKey, props.type);
-            if (!request) return;
-            localStorage.removeItem(`like-request-${props.id}`);
-            localStorage.removeItem(`${props.id}-rev`);
-        }
-    }
-
-    const unDislike = async () => {
-        const dislikeKey = localStorage.getItem(`dislike-request-${props.id}`);
-        if (dislikeKey) {
-            const request = await removeRating(dislikeKey, props.type);
-            if (!request) return;
-
-            localStorage.removeItem(`dislike-request-${props.id}`);
-            localStorage.removeItem(`${props.id}-rev`);
-        }
-    }
-
-    const onLikeClick = async () => {
-        if (running.current) return;
-
-        running.current = true;
-
-        // Remove Like
-        if (liked) {
-            setLiked(null);
-            await unLike();
-            running.current = false;
-            return;
-        }
-
-        // Replace dislike to like
-        if (liked === false) {
-            await unDislike();
-        }
-
-        setLiked(true);
-        generateConfetti(`like-button-${props.id}`);
-
-        const requestKey = await addRating(props.id, true, props.type);
-
-        if (requestKey) {
-            localStorage.setItem(`like-request-${props.id}`, requestKey);
-            localStorage.setItem(`${props.id}-rev`, 'true');
-        }
-
-        running.current = false;
-    }
-
-    const onDislikeClick = async () => {
-        if (running.current) return;
-
-        running.current = true;
-
-        // Remove dislike
-        if (liked === false) {
-            setLiked(null);
-            await unDislike();
-            running.current = false;
-            return;
-        }
-
-        // Replace like to dislike
-        if (liked) {
-            await unLike();
-        }
-
-        setLiked(false);
-
-        const requestKey = await addRating(props.id, false, props.type);
-
-        if (requestKey) {
-            localStorage.setItem(`${props.id}-rev`, 'false');
-            localStorage.setItem(`dislike-request-${props.id}`, requestKey);
-        }
-
-        running.current = false;
-    }
-
-
     return (
         <div className={styles.rating}>
-            <div className={styles.like} onClick={onLikeClick} title={"Like"}>
+            <div className={styles.like} title={"Like"}>
                 <div id={`like-button-${props.id}`} className={styles.buttonWrapper}>
                     {liked ?
                         <svg className={styles.filledRatingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -130,7 +43,7 @@ const Rating = (props: { id: number, likes: number, dislikes: number, type: "rev
                 </div>
                 <span className={styles.ratingCount}>{likes + (liked ? 1 : 0)}</span>
             </div>
-            <div className={styles.dislike} onClick={onDislikeClick} title={"Dislike"}>
+            <div className={styles.dislike} title={"Dislike"}>
                 <div className={styles.buttonWrapper}>
                     {liked === false ?
                         <svg className={styles.filledRatingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

@@ -1,12 +1,12 @@
 import {Request, Response} from 'express';
 import jwt, {JwtPayload} from "jsonwebtoken";
 import {OAuth2Client} from "google-auth-library";
-import {JWT_SECRET} from "../app";
-import {AppDataSource} from "../orm/data-source";
-import {Review} from "../orm/entity/Review";
+import {AppDataSource, JWT_SECRET} from "../app";
+import {Review} from "@spaceread/database/entity/professor/Review";
+import {RatingType} from "@spaceread/database/entity/professor/ReviewRating";
 import {ALLOWED_EMAILS, verifyJWTToken} from "../utils";
-import {CourseFile} from "../orm/entity/CourseFile";
-import {Professor} from "../orm/entity/Professor";
+import {CourseFile} from "@spaceread/database/entity/course/CourseFile";
+import {Professor} from "@spaceread/database/entity/professor/Professor";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -112,8 +112,8 @@ export const getPendingReviews = async (req: Request, res: Response) => {
     }
 
     const reviews = pendingReviews.map(({ratings, ...review}) => {
-        const likesCount = ratings.filter(rating => rating.is_positive).length;
-        const dislikesCount = ratings.filter(rating => !rating.is_positive).length;
+        const likesCount = ratings.filter(rating => rating.type === RatingType.LIKE).length;
+        const dislikesCount = ratings.filter(rating => rating.type === RatingType.DISLIKE).length;
 
         return {
             ...review,
@@ -148,14 +148,9 @@ export const getPendingFiles = async (req: Request, res: Response) => {
         order: {created_at: "desc"}
     });
 
-    const files = pendingFiles.map(({ratings, visible, ...review}) => {
-        const likesCount = ratings.filter(rating => rating.is_positive).length;
-        const dislikesCount = ratings.filter(rating => !rating.is_positive).length;
-
+    const files = pendingFiles.map(({visible, ...review}) => {
         return {
-            ...review,
-            likes: likesCount,
-            dislikes: dislikesCount
+            ...review
         };
     });
 
@@ -191,11 +186,7 @@ export const reviewAction = async (req: Request, res: Response) => {
 
     review.reviewed = true;
 
-    if (action === "hide") {
-        review.visible = false;
-    } else {
-        review.visible = true;
-    }
+    review.visible = action !== "hide";
 
     await AppDataSource.getRepository(Review).save(review);
 

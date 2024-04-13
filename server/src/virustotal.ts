@@ -2,9 +2,9 @@ import * as fs from "fs";
 import {promisify} from "util";
 import {scheduleJob} from "node-schedule";
 import axios from "axios";
-import {CourseFile} from "./orm/entity/CourseFile";
-import {AppDataSource} from "./orm/data-source";
 import FormData from "form-data";
+import {AppDataSource} from "./app";
+import {CourseFile} from "@spaceread/database/entity/course/CourseFile";
 
 const unlinkAsync = promisify(fs.unlink);
 

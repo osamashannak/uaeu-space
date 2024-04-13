@@ -1,15 +1,13 @@
 import {Request, Response} from 'express';
-import {AppDataSource} from "../orm/data-source";
-import {Course} from "../orm/entity/Course";
-import {Equal, ILike} from "typeorm";
-import {CourseFile} from "../orm/entity/CourseFile";
-import {FileAccessToken} from "../orm/entity/FileAccessToken";
 import requestIp from "request-ip";
 import {promisify} from "util";
 import * as fs from "fs";
 import {compressFile, verifyJWTToken} from "../utils";
-import {Azure, VTClient} from "../app";
+import {AppDataSource, Azure, VTClient} from "../app";
 import {AzureClient} from "../azure";
+import {Course} from "@spaceread/database/entity/course/Course";
+import {CourseFile} from "@spaceread/database/entity/course/CourseFile";
+import {FileAccessToken} from "@spaceread/database/entity/FileAccessToken";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -21,9 +19,11 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
+    const courseTag = (params.tag as string).toLowerCase();
+
     const course = await AppDataSource.getRepository(Course).findOne({
-        where: {tag: ILike(params.tag as string)},
-        relations: ["files", "files.ratings"],
+        where: {tag: courseTag },
+        relations: ["files", "files"],
         order: {files: {created_at: "desc"}},
     });
 
@@ -38,14 +38,9 @@ export const find = async (req: Request, res: Response) => {
         ...courseWithoutViews,
         files: course.files
             .filter(value => value.visible)
-            .map(({ratings, downloads, reviewed, visible, ...file}) => {
-                const likesCount = ratings.filter(rating => rating.is_positive).length;
-                const dislikesCount = ratings.filter(rating => !rating.is_positive).length;
-
+            .map(({ guest, downloads, reviewed, visible, ...file}) => {
                 return {
-                    ...file,
-                    likes: likesCount,
-                    dislikes: dislikesCount
+                    ...file
                 };
             })
     };
@@ -160,7 +155,7 @@ export const getFile = async (req: Request, res: Response) => {
 
     let courseFile = await AppDataSource.getRepository(CourseFile).findOne({
         where: {
-            id: Equal(parseInt(params.id as string))
+            id: parseInt(params.id as string)
         }
     });
 

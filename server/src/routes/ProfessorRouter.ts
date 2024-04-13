@@ -7,6 +7,7 @@ import {
     uploadImage, uploadTenor
 } from "../controllers/ProfessorCtrl";
 import multer from "multer";
+import {getCredentials} from "../utils";
 
 const uploadMulter = multer({
     storage: multer.memoryStorage(),
@@ -27,11 +28,11 @@ const router = express.Router();
 
 router.get("/", find);
 router.get("/all", getAll);
-router.post("/comment", comment);
+router.post("/comment", getCredentials, comment);
 router.post("/comment/attachment/uploadImage", uploadMulter.single("file"), uploadImage);
 router.post("/comment/attachment/uploadTenor", uploadTenor);
 
-router.post("/comment/rating", addRating);
-router.delete("/comment/rating", removeRating);
+router.post("/comment/rating", getCredentials, addRating);
+router.delete("/comment/rating", getCredentials, removeRating);
 
 export default router;

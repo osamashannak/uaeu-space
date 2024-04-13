@@ -1,8 +1,11 @@
 import {createReadStream, createWriteStream} from "fs";
 import {createGzip} from "zlib";
 import jwt from "jsonwebtoken";
-import {JWT_SECRET} from "./app";
+import {AppDataSource, JWT_SECRET} from "./app";
 import {CommentBody} from "./typed/professor";
+import {Request, Response, NextFunction} from "express";
+import {Guest} from "@spaceread/database/entity/user/Guest";
+
 
 export const compressFile = async (filePath: string) => {
     const stream = createReadStream(filePath);
@@ -101,4 +104,24 @@ export const validateProfessorComment = (body: CommentBody): CommentBody | null 
     }
 
     return body;
+}
+
+export const getCredentials = async (req: Request, res: Response, next: NextFunction) => {
+
+    const token: string | undefined = req.cookies.gid;
+
+    if (!token) {
+        next();
+        return;
+    }
+
+    const guest = await AppDataSource.getRepository(Guest).findOne({where: {token: token}});
+
+    if (guest) {
+        res.locals.user = guest;
+        next();
+    }
+
+    next();
+
 }

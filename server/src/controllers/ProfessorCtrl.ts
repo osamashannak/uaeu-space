@@ -1,27 +1,25 @@
 import {Request, Response} from 'express';
-import {AppDataSource} from "../orm/data-source";
-import {Professor} from "../orm/entity/Professor";
-import {Equal, ILike} from "typeorm";
-import {Review} from "../orm/entity/Review";
+import {Professor} from "@spaceread/database/entity/professor/Professor";
+import {Review} from "@spaceread/database/entity/professor/Review";
 import requestIp from "request-ip";
 import {createAssessment, validateProfessorComment} from "../utils";
-import {ReviewAttachment} from "../orm/entity/ReviewAttachment";
+import {ReviewAttachment} from "@spaceread/database/entity/professor/ReviewAttachment";
 import crypto from "crypto";
-import {FileRating, Rating, ReviewRating} from "../orm/entity/Rating";
-import {CourseFile} from "../orm/entity/CourseFile";
+import {RatingType, ReviewRating} from "@spaceread/database/entity/professor/ReviewRating";
 import {RatingBody} from "../typed/professor";
-import {Azure} from "../app";
+import {AppDataSource, Azure} from "../app";
 import {AzureClient} from "../azure";
-import exp from "node:constants";
+import {Guest} from "@spaceread/database/entity/user/Guest";
 
 const sizeOf = require('image-size');
 
 
 export const comment = async (req: Request, res: Response) => {
     const body = validateProfessorComment(req.body);
-    let address = requestIp.getClientIp(req);
 
-    if (!body) {
+    const guest: Guest = res.locals.user;
+
+    if (!body || !guest) {
         res.status(400).json({
             success: false,
             message: "There was an error submitting your review. Contact us if the problem persists."
@@ -31,20 +29,8 @@ export const comment = async (req: Request, res: Response) => {
 
     const valid = await createAssessment(body.recaptchaToken);
 
-    if (!address) {
-        res.status(400).json({
-            success: false,
-            message: "There was an error submitting your review. Contact us if the problem persists."
-        });
-        return;
-    }
-
-    if (address.includes(":")) {
-        address = address.split(":").slice(-1).pop()!;
-    }
-
     const professorDB = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: Equal(body.professorEmail)}
+        where: {email: body.professorEmail}
     });
 
     if (!professorDB) {
@@ -70,12 +56,11 @@ export const comment = async (req: Request, res: Response) => {
         }
     }
 
-    review.author = "Anonymous";
     review.comment = body.comment || "";
     review.score = body.score;
     review.positive = body.positive;
     review.professor = professorDB;
-    review.author_ip = address;
+    review.guest = guest;
     review.visible = valid;
 
     await AppDataSource.getRepository(Review).save(review);
@@ -134,8 +119,6 @@ export const uploadTenor = async (req: Request, res: Response) => {
         width: number;
     };
 
-    console.log(body)
-
     if (!body.url || !body.url.startsWith("https://media.tenor.com/") || !body.height || !body.width) {
         res.status(400).json({error: "Invalid."});
         return;
@@ -172,8 +155,10 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
+    const email = (params.email as string).toLowerCase();
+
     const professor = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: ILike(params.email as string)},
+        where: {email: email},
         relations: ["reviews", "reviews.ratings"],
         order: {reviews: {created_at: "desc"}},
 
@@ -192,11 +177,14 @@ export const find = async (req: Request, res: Response) => {
         ...professorWithoutVisible,
         reviews: await Promise.all(
             filteredReviews
-                .map(async ({ratings, reviewed, author_ip, visible, attachments, ...review}) => {
-                    const likesCount = ratings.filter(rating => rating.is_positive).length;
-                    const dislikesCount = ratings.filter(rating => !rating.is_positive).length;
+                .map(async ({guest, ratings, reviewed, author_ip, visible, attachments, ...review}) => {
+                    const likesCount = ratings.filter(rating => rating.type === RatingType.LIKE).length;
+                    const dislikesCount = ratings.filter(rating => rating.type === RatingType.DISLIKE).length;
 
                     let attachment = null;
+
+
+
 
                     if (attachments && attachments.length > 0) {
                         attachment = await Promise.all(
@@ -229,6 +217,7 @@ export const find = async (req: Request, res: Response) => {
 
                     return {
                         ...review,
+                        author: "User",
                         likes: likesCount,
                         dislikes: dislikesCount,
                         attachments: attachment
@@ -314,66 +303,47 @@ export const getAll = async (req: Request, res: Response) => {
 export const addRating = async (req: Request, res: Response) => {
     const body = req.body as RatingBody;
 
-    let address = requestIp.getClientIp(req);
+    const guest: Guest = res.locals.user;
 
-    console.log(body)
-    console.log(address)
-
-    if (!body.id || body.positive === null || !body.request_key || !body.type || !address) {
+    if (!body.reviewId || body.positive === null || !guest) {
         res.status(400).json();
         return;
     }
 
-    let rating: ReviewRating | FileRating;
+    let rating: ReviewRating;
 
-    if (body.type === "review") {
-        const review = await AppDataSource.getRepository(Review).findOne({
-            where: {id: body.id}
-        });
+    const review = await AppDataSource.getRepository(Review).findOne({
+        where: {id: body.reviewId}
+    });
 
-        if (!review) {
-            res.status(404).json();
-            return;
-        }
-
-        rating = new ReviewRating();
-        rating.review = review;
-        rating.is_positive = body.positive;
-        rating.request_key = body.request_key;
-        rating.ip_address = address;
-    } else {
-        const file = await AppDataSource.getRepository(CourseFile).findOne({
-            where: {id: body.id}
-        });
-
-        if (!file) {
-            res.status(404).json();
-            return;
-        }
-
-        rating = new FileRating();
-        rating.file = file;
-        rating.is_positive = body.positive;
-        rating.request_key = body.request_key;
-        rating.ip_address = address;
+    if (!review) {
+        res.status(404).json();
+        return;
     }
 
-    await AppDataSource.getRepository(Rating).save(rating);
+    rating = new ReviewRating();
+
+    rating.guest = guest;
+    rating.review = review;
+    rating.type = body.positive ? RatingType.LIKE : RatingType.DISLIKE;
+
+    await AppDataSource.getRepository(ReviewRating).save(rating);
 
     res.status(200).json({result: "success"});
 }
 
 export const removeRating = async (req: Request, res: Response) => {
-    const key = req.query.key as string;
-    const type = req.query.type as "review" | "file";
+    const reviewId = req.body.reviewId as number;
 
-    if (!key || !type) {
+    const guest: Guest = res.locals.user;
+
+    if (!guest || !reviewId) {
         res.status(400).json();
         return;
     }
 
-    let rating = await AppDataSource.getRepository(Rating).findOne({
-        where: {request_key: Equal(key)}
+    let rating = await AppDataSource.getRepository(ReviewRating).findOne({
+        where: {review: {id: reviewId}, guest: {token: guest.token}}
     });
 
     if (!rating) {
@@ -381,7 +351,7 @@ export const removeRating = async (req: Request, res: Response) => {
         return;
     }
 
-    await AppDataSource.getRepository(Rating).remove(rating);
+    await AppDataSource.getRepository(ReviewRating).remove(rating);
 
     res.status(200).json({result: "success"});
 }

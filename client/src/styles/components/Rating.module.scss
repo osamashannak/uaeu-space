@@ -1,41 +1,18 @@
 .rating {
   display: flex;
   align-items: center;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .like {
   @extend .rating;
-  cursor: pointer;
-
-  @media (min-width: 768px) {
-    &:hover {
-      color: #049AE5;
-
-      .ratingIconBg {
-        background-color: rgba(4, 154, 229, 0.1);
-        border-radius: 50%;
-
-      }
-    }
-  }
 }
 
 .dislike {
   @extend .rating;
-  cursor: pointer;
   margin-left: 1rem;
-
-  @media (min-width: 768px) {
-    &:hover {
-      color: #049AE5;
-
-      .ratingIconBg {
-        background-color: rgba(4, 154, 229, 0.1);
-        border-radius: 50%;
-
-      }
-    }
-  }
 }
 
 .ratingIconBg {

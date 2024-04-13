@@ -6,9 +6,8 @@ import Image from "next/image";
 import {ProfessorAPI} from "@/interface/professor";
 import {GetServerSidePropsContext} from "next";
 import {getProfessor} from "@/api/professor";
-import {ResponsiveAdUnit} from "@/components/ResponsiveAdUnit";
-import ReviewForm from "@/components/Professor/ReviewForm";
 import Review from "@/components/Professor/Review";
+import ReviewForm from "@/components/Professor/ReviewForm";
 
 const Professor = (props: ProfessorAPI | {}) => {
 
@@ -101,7 +100,7 @@ const Professor = (props: ProfessorAPI | {}) => {
                     </div>
                 </section>
 
-                <ReviewForm professorEmail={props.email}/>
+                <ReviewForm  professorEmail={props.email}/>
 
                 {/*<ResponsiveAdUnit slotId={4212296223}/>*/}
 

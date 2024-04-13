@@ -1,5 +1,72 @@
 @use "../form";
 
+.dform {
+  margin: 3rem auto auto;
+  font-size: 15px;
+  width: 100%;
+  max-width: 600px;
+
+  @media (max-width: 815px) {
+    max-width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    margin-top: 1rem;
+  }
+}
+
+.spaceread {
+  font-weight: 700;
+  background: rgb(5, 154, 229);
+  background: linear-gradient(to right, rgba(5, 154, 229, 1) 0%, rgba(173, 216, 255, 1) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: underline;
+  text-decoration-color: #049AE5;
+  cursor: pointer;
+}
+
+.d {
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  margin-bottom: 1rem;
+
+  // cover it with a transparent layer
+    &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.1);
+        z-index: 2;
+        border-radius: 6px;
+    }
+
+  * {
+    opacity: 0.7;
+  }
+
+  @media (max-width: 815px) {
+    max-width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    margin-top: 1rem;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.075);
+    border-top: solid 1px rgba(0, 0, 0, 0.075);
+
+    &::before {
+        border-radius: 0;
+    }
+  }
+}
+
 
 .formHeader {
   display: flex;
@@ -59,9 +126,9 @@
   margin-top: 8px;
 
   // if on mobile, center the images
-    @media (max-width: 812px) {
-        justify-content: center;
-    }
+  @media (max-width: 812px) {
+    justify-content: center;
+  }
 }
 
 .imagePreview {
@@ -248,7 +315,7 @@
   color: $color;
   font-weight: 500;
   font-size: 0.8rem;
-  transition: color 0.2s ease-in-out, transform  0.4s ease-in-out;
+  transition: color 0.2s ease-in-out, transform 0.4s ease-in-out;
   transform-origin: right;
   display: flex;
   justify-content: flex-end;

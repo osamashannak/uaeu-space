@@ -9,8 +9,6 @@ export interface CommentBody {
 }
 
 export interface RatingBody {
-    id: number,
+    reviewId: number,
     positive: boolean,
-    request_key: string,
-    type: "review" | "file"
 }

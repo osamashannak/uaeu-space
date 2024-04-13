@@ -8,27 +8,39 @@ import courseRouter from "./routes/CourseRouter";
 import professorRouter from "./routes/ProfessorRouter";
 import dashboardRouter from "./routes/DashboardRouter";
 import bodyParser from "body-parser";
-import {AppDataSource} from "./orm/data-source";
 import {AzureClient} from "./azure";
 import {SitemapStream, streamToPromise} from "sitemap";
 import {createGzip} from "zlib";
-import {Professor} from "./orm/entity/Professor";
-import {Course} from "./orm/entity/Course";
-import {AdClick} from "./orm/entity/AdClick";
+import {Professor} from "@spaceread/database/entity/professor/Professor";
+import {Course} from "@spaceread/database/entity/course/Course";
+import {AdClick} from "@spaceread/database/entity/AdClick";
 import requestIp from "request-ip";
 import jwt from "jsonwebtoken";
 import VirusTotalClient from "./virustotal";
+import {createDataSource} from "@spaceread/database";
+import cookies from "cookie-parser";
 
 export let JWT_SECRET: jwt.Secret;
 export let VTClient: VirusTotalClient;
 export let Azure: AzureClient;
+export const AppDataSource = createDataSource({
+    host: process.env.POSTGRES_HOST,
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+});
 
 const app = express();
 
 app.use(cors());
+app.use(cookies());
 app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
 
+app.post("/storeInCookies", (req, res) => {
+    res.cookie("mig", req.body.token, {httpOnly: true, secure: true, sameSite: "none"});
+    res.status(200).send();
+});
 
 app.get("/advertisement", async (req, res) => {
     res.redirect("https://www.88studies.com/");
@@ -45,16 +57,16 @@ app.get("/advertisement", async (req, res) => {
 
     const adClickRepo = AppDataSource.getRepository(AdClick);
 
-    const adClick = await adClickRepo.findOne({where: {ipAddress: address}});
+    const adClick = await adClickRepo.findOne({where: {ip_address: address}});
 
     if (!adClick) {
         const newAdClick = new AdClick();
-        newAdClick.ipAddress = address;
+        newAdClick.ip_address = address;
         await adClickRepo.save(newAdClick);
         return;
     }
 
-    adClick.lastVisit = new Date();
+    adClick.last_visit = new Date();
     adClick.visits += 1;
 
     await adClickRepo.save(adClick);
