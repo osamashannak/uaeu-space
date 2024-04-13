@@ -149,7 +149,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             self: true, 
             selfRating: null,
             attachments: details.attachments,
-            author: status.review.author,
+            author: "User",
             created_at: status.review.created_at,
             dislikes: 0,
             likes: 0,
