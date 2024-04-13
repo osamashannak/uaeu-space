@@ -1,4 +1,5 @@
 import env from "dotenv";
+
 env.config();
 
 import express from 'express';
@@ -11,6 +12,7 @@ import requestIp from "request-ip";
 import {createDataSource} from "@spaceread/database";
 import crypto from "crypto";
 import {Guest} from "@spaceread/database/entity/user/Guest";
+import {ReviewRating} from "@spaceread/database/entity/professor/ReviewRating";
 import {getCountryFromIp} from "./api";
 
 const app = express();
@@ -49,35 +51,73 @@ app.use(async function (req, res, next) {
         address = address.split(":").slice(-1).pop()!;
     }
 
-    let guestSession = req.cookies.gid ? await GuestRepository.findOne({where: {token: req.cookies.gid}}) : null;
+    let guest = req.cookies.gid ? await GuestRepository.findOne({where: {token: req.cookies.gid}}) : null;
 
-    if (guestSession) {
-        next();
-
-        if (!guestSession.ip_address_history.includes(address)) {
-            guestSession.ip_address_history.push(address);
+    if (guest) {
+        if (!guest.ip_address_history.includes(address)) {
+            guest.ip_address_history.push(address);
         }
 
-        guestSession.date_history.push(new Date().toISOString());
+        guest.date_history.push(new Date().toISOString());
 
-        await GuestRepository.save(guestSession);
+        await GuestRepository.save(guest);
 
-        return;
+    } else {
+        guest = new Guest();
+
+        guest.ip_address_history = [address];
+        guest.user_agent = req.headers['user-agent'] ?? "";
+        guest.token = crypto.randomBytes(20).toString('hex');
+        guest.date_history = [new Date().toISOString()];
+        guest.country = await getCountryFromIp(address);
+        guest.rated_professors= ["~"];
+
+        await GuestRepository.save(guest);
+
+        setSessionCookie(res, "gid", guest.token, false);
     }
 
-    const guest = new Guest();
-
-    guest.ip_address_history = [address];
-    guest.user_agent = req.headers['user-agent'] ?? "";
-    guest.token = crypto.randomBytes(20).toString('hex');
-    guest.date_history = [new Date().toISOString()];
-    guest.country = await getCountryFromIp(address);
-
-    await GuestRepository.save(guest);
-
-    setSessionCookie(res, "gid", guest.token, false);
-
     next();
+
+    let mig = req.query.mig;
+
+    if (mig && typeof mig === "string") {
+        mig = atob(mig);
+
+        try {
+            mig = JSON.parse(mig) as { key: string, value: string }[];
+
+            for (const {key, value} of mig) {
+
+                if (typeof key !== "string" || typeof value !== "string") {
+                    continue;
+                }
+
+                if (key.endsWith("-prof")) {
+                    const email = key.replace("-prof", "");
+
+                    if (!guest!.rated_professors.includes(email)) {
+                        guest!.rated_professors.push(email);
+                    }
+
+                } else if (key.startsWith("like-request") || key.startsWith("dislike-request")) {
+                    console.log(key, value)
+                    const rating = await AppDataSource.getRepository(ReviewRating).findOne({where: {id: value}});
+
+                    if (rating) {
+                        rating.guest = guest!;
+
+                        await AppDataSource.getRepository(ReviewRating).save(rating);
+                    }
+                }
+            }
+
+            await AppDataSource.getRepository(Guest).save(guest!);
+        } catch (e) {
+            return;
+        }
+    }
+
 });
 
 app.get('*', function (req, res) {
