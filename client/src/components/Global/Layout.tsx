@@ -1,17 +1,11 @@
 import Head from "next/head";
 import Script from 'next/script'
-import {ReactNode, useEffect} from "react";
+import {ReactNode} from "react";
 import Footer from "@/components/Global/Footer";
 import Header from "@/components/Global/Header";
-import {saveCookies} from "@/api/general";
 
 
 const Layout = (props: { children: ReactNode }) => {
-
-    useEffect(() => {
-        saveCookies().then();
-    }, []);
-
 
     return (
         <>

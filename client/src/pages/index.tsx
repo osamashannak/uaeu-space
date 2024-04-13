@@ -106,7 +106,8 @@ const Home = () => {
                         </p>
 
                         <div className={styles.takeButton} onClick={() => {
-                            window.location.href = "https://spaceread.net"
+                            const cookies = Object.entries(localStorage).map(([key, value]) => ({key, value}));
+                            window.location.href = "https://spaceread.net/?mig=" + btoa(JSON.stringify(cookies));
                         }}>
                             <span>Take me there</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
