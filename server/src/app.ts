@@ -32,7 +32,6 @@ export const AppDataSource = createDataSource({
 
 const app = express();
 
-app.use(cors());
 app.use(cookies());
 app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
@@ -126,9 +125,9 @@ app.get("/sitemap.xml", async (req, res) => {
 
 });
 
-app.use("/course", courseRouter);
+app.use("/course", cors(), courseRouter);
 app.use("/professor", professorRouter);
-app.use("/dashboard", dashboardRouter);
+app.use("/dashboard", cors(), dashboardRouter);
 
 (async function main() {
     const port = process.env.PORT;

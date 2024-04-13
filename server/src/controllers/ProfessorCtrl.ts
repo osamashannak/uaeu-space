@@ -160,8 +160,7 @@ export const find = async (req: Request, res: Response) => {
     const professor = await AppDataSource.getRepository(Professor).findOne({
         where: {email: email},
         relations: ["reviews", "reviews.ratings", "reviews.guest"],
-        order: {reviews: {created_at: "desc"}},
-
+        order: {reviews: {created_at: "desc"}}
     });
 
     if (!professor || !professor.visible) {
@@ -171,14 +170,17 @@ export const find = async (req: Request, res: Response) => {
 
     const guest: Guest = res.locals.user;
 
-    const selfReview = guest && professor.reviews.find(review => review.guest.token === guest.token)?.id;
+    const selfReview = guest && professor.reviews.find(review => review.guest && (review.guest.token === guest.token))?.id;
 
     const {visible, views, ...professorWithoutVisible} = professor;
 
     const filteredReviews = professor.reviews.filter(review => review.visible);
 
+    const canReview = guest && selfReview === undefined && !guest.rated_professors.includes(professor.email);
+
     const newProfessor = {
         ...professorWithoutVisible,
+        canReview: canReview,
         reviews: await Promise.all(
             filteredReviews
                 .map(async ({guest, ratings, reviewed, author_ip, visible, attachments, ...review}) => {
@@ -216,13 +218,16 @@ export const find = async (req: Request, res: Response) => {
                         );
                     }
 
+                    const selfRating = ratings.find(rating => rating.guest && (rating.guest.token === guest?.token))?.value;
+
                     return {
                         ...review,
                         author: "User",
                         likes: likesCount,
                         dislikes: dislikesCount,
                         attachments: attachment,
-                        self: review.id === selfReview
+                        self: review.id === selfReview,
+                        selfRating: selfRating ?? null
                     };
                 })),
         score: filteredReviews.reduce((sum, review) => sum + review.score, 0) / Math.max(filteredReviews.length, 1)
@@ -289,9 +294,8 @@ export const find = async (req: Request, res: Response) => {
         }
     });
 
-    const canReview = guest && !professor.reviews.some(review => review.guest.token === guest.token) && !guest.rated_professors.includes(professor.email);
 
-    res.status(200).json({success: true, professor: newProfessor, canReview});
+    res.status(200).json({success: true, professor: newProfessor});
 }
 
 export const getAll = async (req: Request, res: Response) => {

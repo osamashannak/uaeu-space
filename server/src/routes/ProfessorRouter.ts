@@ -8,6 +8,7 @@ import {
 } from "../controllers/ProfessorCtrl";
 import multer from "multer";
 import {getCredentials} from "../utils";
+import cors from "cors";
 
 const uploadMulter = multer({
     storage: multer.memoryStorage(),
@@ -27,12 +28,34 @@ const uploadMulter = multer({
 const router = express.Router();
 
 router.get("/", getCredentials, find);
-router.get("/all", getAll);
+router.get("/all", cors(), getAll);
 router.post("/comment", getCredentials, comment);
-router.post("/comment/attachment/uploadImage", uploadMulter.single("file"), uploadImage);
-router.post("/comment/attachment/uploadTenor", uploadTenor);
+router.post("/comment/attachment/uploadImage", cors(), uploadMulter.single("file"), uploadImage);
+router.post("/comment/attachment/uploadTenor", cors(), uploadTenor);
 
 router.post("/comment/rating", getCredentials, addRating);
 router.delete("/comment/rating", getCredentials, removeRating);
+
+router.options("/", (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://spaceread.net');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+    res.status(200).send();
+});
+router.options("/comment", (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://spaceread.net');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'POST');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+    res.status(200).send();
+});
+router.options("/comment/rating", (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://spaceread.net');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization');
+    res.status(200).send();
+});
 
 export default router;

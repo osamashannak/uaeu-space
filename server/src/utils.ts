@@ -107,6 +107,8 @@ export const validateProfessorComment = (body: CommentBody): CommentBody | null 
 }
 
 export const getCredentials = async (req: Request, res: Response, next: NextFunction) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://spaceread.net');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     const token: string | undefined = req.cookies.gid;
 
@@ -119,9 +121,7 @@ export const getCredentials = async (req: Request, res: Response, next: NextFunc
 
     if (guest) {
         res.locals.user = guest;
-        next();
     }
 
     next();
-
 }
