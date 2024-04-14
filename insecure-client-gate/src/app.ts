@@ -11,7 +11,7 @@ import {isbot} from "isbot";
 import requestIp from "request-ip";
 import {createDataSource} from "@spaceread/database";
 import crypto from "crypto";
-import {Guest} from "@spaceread/database/entity/user/Guest";
+import {Guest, IPAddress} from "@spaceread/database/entity/user/Guest";
 import {ReviewRating} from "@spaceread/database/entity/professor/ReviewRating";
 import {getCountryFromIp} from "./api";
 
@@ -24,6 +24,7 @@ export const AppDataSource = createDataSource({
 });
 
 export const GuestRepository = AppDataSource.getRepository(Guest);
+export const IPRepository = AppDataSource.getRepository(IPAddress);
 
 app.use(cookies());
 
@@ -51,28 +52,47 @@ app.use(async function (req, res, next) {
         address = address.split(":").slice(-1).pop()!;
     }
 
-    let guest = req.cookies.gid ? await GuestRepository.findOne({where: {token: req.cookies.gid}}) : null;
+    let guest = req.cookies.gid ? await GuestRepository.findOne({where: {token: req.cookies.gid}, relations: ["ip_history"]}) : null;
+
+
+    const date = new Date().toISOString();
 
     if (guest) {
-        if (!guest.ip_address_history.includes(address)) {
-            guest.ip_address_history.push(address);
+
+        const lastIp: IPAddress | undefined = guest.ip_history[guest.ip_history.length - 1];
+
+        if (!lastIp || lastIp.ip_address !== address) {
+            const ip = new IPAddress();
+
+            ip.ip_address = address;
+            ip.guest = guest;
+            ip.country = await getCountryFromIp(address);
+
+            await IPRepository.save(ip);
         }
 
-        guest.date_history.push(new Date().toISOString());
+        guest.date_history.push(date);
 
         await GuestRepository.save(guest);
 
     } else {
         guest = new Guest();
 
-        guest.ip_address_history = [address];
         guest.user_agent = req.headers['user-agent'] ?? "";
         guest.token = crypto.randomBytes(20).toString('hex');
         guest.date_history = [new Date().toISOString()];
-        guest.country = await getCountryFromIp(address);
-        guest.rated_professors= ["~"];
+        guest.rated_professors = ["~"];
 
         await GuestRepository.save(guest);
+
+        const ip = new IPAddress();
+
+        ip.ip_address = address;
+        ip.guest = guest;
+        ip.country = await getCountryFromIp(address);
+
+        await IPRepository.save(ip);
+
 
         setSessionCookie(res, "gid", guest.token, false);
     }
