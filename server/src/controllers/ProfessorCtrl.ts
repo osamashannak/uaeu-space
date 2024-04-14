@@ -166,7 +166,7 @@ export const find = async (req: Request, res: Response) => {
 
     const professor = await AppDataSource.getRepository(Professor).findOne({
         where: {email: email},
-        relations: ["reviews", "reviews.ratings", "reviews.guest"],
+        relations: ["reviews", "reviews.ratings", "reviews.guest", "reviews.ratings.guest"],
         order: {reviews: {created_at: "desc"}}
     });
 
@@ -175,15 +175,15 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
-    const guest: Guest = res.locals.user;
+    const guestId: Guest = res.locals.user;
 
-    const selfReview = guest && professor.reviews.find(review => review.guest && (review.guest.token === guest.token))?.id;
+    const selfReview = guestId && professor.reviews.find(review => review.guest && (review.guest.token === guestId.token))?.id;
 
     const {visible, views, ...professorWithoutVisible} = professor;
 
     const filteredReviews = professor.reviews.filter(review => review.visible);
 
-    const canReview = guest && selfReview === undefined && !guest.rated_professors.includes(professor.email);
+    const canReview = guestId && selfReview === undefined && !guestId.rated_professors.includes(professor.email);
 
     const newProfessor = {
         ...professorWithoutVisible,
@@ -225,7 +225,14 @@ export const find = async (req: Request, res: Response) => {
                         );
                     }
 
-                    const selfRating = ratings.find(rating => rating.guest && (rating.guest.token === guest?.token))?.value;
+                    let selfRating = null;
+
+                    if (guestId) {
+                        const rating = ratings.find(rating => rating.guest?.token === guestId.token);
+                        if (rating) {
+                            selfRating = rating.value;
+                        }
+                    }
 
                     return {
                         ...review,
@@ -234,7 +241,7 @@ export const find = async (req: Request, res: Response) => {
                         dislikes: dislikesCount,
                         attachments: attachment,
                         self: review.id === selfReview,
-                        selfRating: selfRating ?? null
+                        selfRating: selfRating
                     };
                 })),
         score: filteredReviews.reduce((sum, review) => sum + review.score, 0) / Math.max(filteredReviews.length, 1)
@@ -360,7 +367,7 @@ export const addRating = async (req: Request, res: Response) => {
 }
 
 export const removeRating = async (req: Request, res: Response) => {
-    const reviewId = req.body.reviewId as number;
+    const reviewId = parseInt(<string>req.query.reviewId);
 
     const guest: Guest = res.locals.user;
 

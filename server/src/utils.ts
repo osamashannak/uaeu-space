@@ -117,7 +117,7 @@ export const getCredentials = async (req: Request, res: Response, next: NextFunc
         return;
     }
 
-    const guest = await AppDataSource.getRepository(Guest).findOne({where: {token: token}});
+    const guest = await AppDataSource.getRepository(Guest).findOne({where: {token: token}, relations: ["course_files", "reviews", "review_rating"]});
 
     if (guest) {
         res.locals.user = guest;
