@@ -1,8 +1,7 @@
 .rating {
   display: flex;
   align-items: center;
-  pointer-events: none;
-  cursor: default;
+  cursor: pointer;
 }
 
 .like {

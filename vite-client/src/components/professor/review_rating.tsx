@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useRef, useState} from "react";
 import styles from "../../styles/components/rating.module.scss";
 import {addRating, removeRating} from "../../api/professor.ts";
 
@@ -6,16 +6,7 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
 
     const [liked, setLiked] = useState<boolean | null>(props.self);
 
-    const [likes, setLikes] = useState<number>(0);
-    const [dislikes, setDislikes] = useState<number>(0);
-
     const running = useRef(false);
-
-    useEffect(() => {
-        setLikes(props.likes - (liked ? 1 : 0));
-        setDislikes(props.dislikes - (liked === false ? 1 : 0));
-    }, [liked, props.dislikes, props.likes]);
-
 
     const onLikeClick = async () => {
         if (running.current) return;
@@ -87,7 +78,7 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
                         </svg>}
                     <div className={styles.ratingIconBg}></div>
                 </div>
-                <span className={styles.ratingCount}>{likes + (liked ? 1 : 0)}</span>
+                <span className={styles.ratingCount}>{props.likes + (liked ? 1 : 0) - (props.self ? 1 : 0)}</span>
             </div>
             <div className={styles.dislike} onClick={onDislikeClick} title={"Dislike"}>
                 <div className={styles.buttonWrapper}>
@@ -106,7 +97,7 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
                         </svg>}
                     <div className={styles.ratingIconBg}></div>
                 </div>
-                <span className={styles.ratingCount}>{dislikes + (liked == false ? 1 : 0)}</span>
+                <span className={styles.ratingCount}>{props.dislikes + (liked == false ? 1 : 0) - (props.self === false ? 1 : 0)}</span>
             </div>
         </div>
     );
