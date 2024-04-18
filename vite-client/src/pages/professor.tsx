@@ -9,6 +9,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import {useDispatch, useSelector} from "react-redux";
 import {clearProfessor, selectProfessor, setProfessor} from "../redux/slice/professor_slice.ts";
 import {ProfessorAPI} from "../typed/professor.ts";
+import {Helmet} from "react-helmet-async";
 
 const ReviewForm = lazy(
     async () => await import("../components/professor/review_form.tsx")
@@ -79,6 +80,17 @@ export default function Professor() {
     if (professor === null) {
         return (
             <Layout>
+                <Helmet>
+                    <title>SpaceRead</title>
+                    <meta name="description"
+                          content={mostLengthReview || `Rate ${professor.name} or learn from other students about their performance.`}/>
+                    <link rel="canonical" href={`https://spaceread.net/professor/${professor.email}`}/>
+                    <meta property="og:title" content={`Discover {professor.name}'s Reviews and Ratings - SpaceRead`}/>
+                    <meta property="og:description"
+                          content={mostLengthReview || `Rate ${professor.name} or learn from other students about their performance.`}/>
+                    <meta property="og:url" content={`https://spaceread.net/professor/${professor.email}`}/>
+                </Helmet>
+
                 <div className={styles.professorNotFound}>
                     <div>
                         <span>Professor not found :(</span>
@@ -92,8 +104,21 @@ export default function Professor() {
 
     const score = parseFloat(professor.score.toFixed(1));
 
+    const mostLengthReview = professor.reviews.length > 0 ? professor.reviews.reduce((prev, current) => (prev.comment.length > current.comment.length) ? prev : current).comment : "";
+
     return (
         <Layout>
+            <Helmet>
+                <title>Discover {professor.name}'s Reviews and Ratings - SpaceRead</title>
+                <meta name="description"
+                      content={mostLengthReview || `Rate ${professor.name} or learn from other students about their performance.`}/>
+                <link rel="canonical" href={`https://spaceread.net/professor/${professor.email}`}/>
+                <meta property="og:title" content={`Discover {professor.name}'s Reviews and Ratings - SpaceRead`}/>
+                <meta property="og:description"
+                      content={mostLengthReview || `Rate ${professor.name} or learn from other students about their performance.`}/>
+                <meta property="og:url" content={`https://spaceread.net/professor/${professor.email}`}/>
+            </Helmet>
+
             <div className={styles.profPage}>
                 <section className={styles.profInfoHead}>
                     <div className={styles.profInfoLeft}>

@@ -48,24 +48,6 @@ export default function Root() {
 
 
             </div>
-            {/*<ResponsiveAdUnit slotId={4492620959}/>*/}
-
-            {/*<div className={styles.helpusWrapper}>
-                    <div className={styles.helpUs}>
-                        <span>💙</span>
-                        <p>Uploading materials and rating professors will help students like you succeed in the
-                            university.</p>
-                    </div>
-                </div>*/}
-            {/*<h3 className={styles.phrase}>It&apos;s time to transform your academic journey.</h3>*/}
-
-
-            {/*<div className={styles.adCover}>
-                <Image onClick={adClick} className={styles.adImage1} src={"/ad/ad.jpeg"} alt={""} width={800}
-                       height={100}/>
-                <Image onClick={adClick} className={styles.adImage2} src={"/ad/adPhone.jpeg"} alt={""} width={300}
-                       height={100}/>
-            </div>*/}
         </Layout>
     )
 }
