@@ -2,7 +2,7 @@ import {Request, Response} from 'express';
 import {Professor} from "@spaceread/database/entity/professor/Professor";
 import {Review} from "@spaceread/database/entity/professor/Review";
 import requestIp from "request-ip";
-import {createAssessment, validateProfessorComment} from "../utils";
+import {createAssessment, isUAEUIp, validateProfessorComment} from "../utils";
 import {ReviewAttachment} from "@spaceread/database/entity/professor/ReviewAttachment";
 import {ReviewRating} from "@spaceread/database/entity/professor/ReviewRating";
 import {RatingBody} from "../typed/professor";
@@ -10,8 +10,7 @@ import {AppDataSource, Azure} from "../app";
 import {AzureClient} from "../azure";
 import {Guest} from "@spaceread/database/entity/user/Guest";
 import * as crypto from "crypto";
-
-const sizeOf = require('image-size');
+import sizeOf from 'image-size';
 
 
 export const comment = async (req: Request, res: Response) => {
@@ -108,8 +107,8 @@ export const uploadImage = async (req: Request, res: Response) => {
     reviewAttachment.id = blobName;
     reviewAttachment.mime_type = file.mimetype;
     reviewAttachment.size = file.size;
-    reviewAttachment.height = dimensions.height;
-    reviewAttachment.width = dimensions.width;
+    reviewAttachment.height = dimensions.height!;
+    reviewAttachment.width = dimensions.width!;
     reviewAttachment.ip_address = address;
 
     await AppDataSource.getRepository(ReviewAttachment).save(reviewAttachment);
@@ -241,7 +240,8 @@ export const find = async (req: Request, res: Response) => {
                         dislikes: dislikesCount,
                         attachments: attachment,
                         self: review.id === selfReview,
-                        selfRating: selfRating
+                        selfRating: selfRating,
+                        uaeuOrigin: isUAEUIp(author_ip)
                     };
                 })),
         score: filteredReviews.reduce((sum, review) => sum + review.score, 0) / Math.max(filteredReviews.length, 1)

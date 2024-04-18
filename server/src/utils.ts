@@ -5,6 +5,7 @@ import {AppDataSource, JWT_SECRET} from "./app";
 import {CommentBody} from "./typed/professor";
 import {Request, Response, NextFunction} from "express";
 import {Guest} from "@spaceread/database/entity/user/Guest";
+import {isInSubnet} from 'is-in-subnet';
 
 
 export const compressFile = async (filePath: string) => {
@@ -25,6 +26,31 @@ export const ALLOWED_EMAILS = [process.env.DASHBOARD_EMAIL_1, process.env.DASHBO
 interface JwtPayload {
     email: string;
     name: string;
+}
+
+const IPV4_UAEU_SUBNETS = [
+    "178.250.248.0/21",
+    "178.250.248.0/22",
+    "178.250.248.0/23",
+    "178.250.250.0/23",
+    "178.250.252.0/22",
+    "178.250.252.0/23",
+    "178.250.254.0/23",
+    "194.69.1.0/24"
+]
+
+const IPV6_UAEU_SUBNETS = [
+    "2a02:1718::/32"
+]
+
+export const isUAEUIp = (ip: string| null) => {
+    if (!ip) return false;
+
+    if (!ip.includes(":")) {
+        return isInSubnet(ip, IPV4_UAEU_SUBNETS);
+    }
+
+    return isInSubnet(ip, IPV6_UAEU_SUBNETS);
 }
 
 export const verifyJWTToken = (token: string) => {
@@ -117,7 +143,10 @@ export const getCredentials = async (req: Request, res: Response, next: NextFunc
         return;
     }
 
-    const guest = await AppDataSource.getRepository(Guest).findOne({where: {token: token}, relations: ["course_files", "reviews", "review_rating"]});
+    const guest = await AppDataSource.getRepository(Guest).findOne({
+        where: {token: token},
+        relations: ["course_files", "reviews", "review_rating"]
+    });
 
     if (guest) {
         res.locals.user = guest;
