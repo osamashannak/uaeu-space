@@ -6,7 +6,6 @@ import Layout from "../layouts/layout.tsx";
 import Skeleton from "react-loading-skeleton";
 import styles from "../styles/pages/course.module.scss";
 import fileStyles from "../styles/components/course/file.module.scss";
-import {Helmet} from "react-helmet-async";
 
 
 const FileSkeleton = lazy(
@@ -70,25 +69,10 @@ export default function Course() {
         )
     }
 
-
-    const files = course.files.length > 0 ? [...course.files].sort((a, b) => b.name.length - a.name.length).slice(0, 3).map((value) => value.name) : [];
-    const filesString = files.length > 0 ? `Download ${files.join(", ")}` : "";
-
     const fileCount = course.files.length;
 
     return (
         <Layout>
-            <Helmet>
-                <title>${course.name} - UAE University - UAEU Space</title>
-                <meta name="description"
-                      content={filesString || `Find and upload materials for ${course.tag} to help other students at UAEU.`}/>
-                <link rel="canonical" href={`https://spaceread.net/course/${course.tag}`}/>
-                <meta property="og:title" content={`${course.name} - UAEU Space`}/>
-                <meta property="og:description"
-                      content={filesString || `Find and upload materials for ${course.tag} to help other students at UAEU.`}/>
-                <meta property="og:url" content={`https://spaceread.net/course/${course.tag}`}/>
-            </Helmet>
-
             <div className={styles.coursePage}>
                 <section className={styles.courseInfoHead}>
                     <h2>{course.tag}</h2>

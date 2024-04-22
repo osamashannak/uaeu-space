@@ -142,9 +142,8 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             return;
         }
 
-        localStorage.setItem(`${props.professorEmail}-prof`, "true");
-
         dispatch(addReview({
+            uaeuOrigin: status.review.uaeuOrigin,
             fadeIn: true,
             self: true, 
             selfRating: null,
@@ -208,7 +207,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
     return (
 
         <section
-            className={styles.form}
+            className={styles.reviewForm}
             onClick={event => {
                 event.preventDefault();
             }}>

@@ -20,6 +20,11 @@
   }
 }
 
+.reviewForm {
+  @extend .form;
+  min-height: 382px;
+}
+
 .submitButtonWrapper {
   display: flex;
 }

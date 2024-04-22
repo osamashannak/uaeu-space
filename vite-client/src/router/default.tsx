@@ -6,11 +6,13 @@ import Course from "../pages/course.tsx";
 import CourseLookup from "../pages/course_lookup.tsx";
 import TermsOfService from "../pages/legal/tos.tsx";
 import Privacy from "../pages/legal/privacy.tsx";
+import Error from "../pages/error.tsx";
 
 const Router = createBrowserRouter([
     {
         path: "/",
         element: <Root/>,
+        errorElement: <Error/>
     },
     {
         path: "terms-of-service",

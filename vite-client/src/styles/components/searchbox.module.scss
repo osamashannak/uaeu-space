@@ -1,14 +1,16 @@
 
 .bgBlueOption {
-  // hovered on option, it should be a light color
-    background-color: rgba(232, 77, 77, 0.1);
+  background-color: rgba(247, 249, 249, 1);
 
 }
 
 .searchBox {
   position: relative;
-  width: 18rem;
-  height: 2rem;
+  width:  calc(100% - 40px);
+    max-width: 25rem;
+  height: 32px;
+
+  margin: 0 auto;
 
   * {
     text-align: center;
@@ -43,7 +45,7 @@
     border: 1px solid #add8ff;
 
     &::placeholder {
-        color: transparent;
+      color: transparent;
     }
 
   }
@@ -64,7 +66,7 @@
     margin-top: 0.2rem;
     width: 100%;
     max-width: 25rem;
-    max-height: 15rem;
+    max-height: 270px;
     overflow-x: hidden;
     outline: 0;
     transition: opacity .1s ease;
@@ -75,14 +77,45 @@
 }
 
 .datalistOption {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   cursor: pointer;
   text-align: left;
-  padding: 12px;
+  padding: 12px 16px;
+  transition: background-color 0.2s;
 }
 
 .dashboardSearchBox {
   @extend .searchBox;
   display: inline-block;
   margin: 0;
+}
+
+.professorName {
+  font-weight: 600;
+  text-align: left;
+}
+
+.professorItem {
+    display: flex;
+  flex-direction: column;
+  * {
+    text-align: left;
+  }
+
+
+    .professorName {
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+
+    .email {
+      color: rgb(83, 100, 113);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+
+    }
 }

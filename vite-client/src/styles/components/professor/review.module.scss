@@ -12,12 +12,27 @@
 }
 
 @keyframes fadeIn {
-  0% {opacity: 0;}
-  100% {opacity: 1;}
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .fadeIn {
   animation: fadeIn 1s;
+}
+
+.uaeuOrigin {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+
+  svg {
+    margin-right: 2px;
+  }
+
 }
 
 .reviewInfo {
@@ -30,15 +45,20 @@
 
 .reviewInfoLeft {
   width: 100%;
-  display: flex;
   align-items: baseline;
+
+  .reviewInfoLeftTop {
+    display: flex;
+    align-items: baseline;
+
+  }
 }
 
 .authorName {
   font-weight: 600;
 }
 
-.time {
+.time, .uaeuOrigin {
   color: rgb(139, 152, 165);
 }
 

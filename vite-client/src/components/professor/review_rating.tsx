@@ -61,7 +61,16 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
 
     return (
         <div className={styles.rating}>
-            <div className={styles.like} onClick={onLikeClick} title={"Like"}>
+            <div className={styles.like} onClick={onLikeClick} title={"Like"} onMouseDown={() => {
+                const likeButton = document.getElementById(`like-button-${props.id}`);
+                likeButton?.classList.add(styles.ratingClick);
+            }} onMouseUp={() => {
+                const likeButton = document.getElementById(`like-button-${props.id}`);
+                likeButton?.classList.remove(styles.ratingClick);
+            }} onMouseOut={() => {
+                const likeButton = document.getElementById(`like-button-${props.id}`);
+                likeButton?.classList.remove(styles.ratingClick);
+            }}>
                 <div id={`like-button-${props.id}`} className={styles.buttonWrapper}>
                     {liked ?
                         <svg className={styles.filledRatingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -80,8 +89,17 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
                 </div>
                 <span className={styles.ratingCount}>{props.likes + (liked ? 1 : 0) - (props.self ? 1 : 0)}</span>
             </div>
-            <div className={styles.dislike} onClick={onDislikeClick} title={"Dislike"}>
-                <div className={styles.buttonWrapper}>
+            <div className={styles.dislike} onClick={onDislikeClick} title={"Dislike"} onMouseDown={() => {
+                const likeButton = document.getElementById(`dislike-button-${props.id}`);
+                likeButton?.classList.add(styles.ratingClick);
+            }} onMouseUp={() => {
+                const likeButton = document.getElementById(`dislike-button-${props.id}`);
+                likeButton?.classList.remove(styles.ratingClick);
+            }} onMouseOut={() => {
+                const likeButton = document.getElementById(`dislike-button-${props.id}`);
+                likeButton?.classList.remove(styles.ratingClick);
+            }}>
+                <div id={`dislike-button-${props.id}`}className={styles.buttonWrapper}>
                     {liked === false ?
                         <svg className={styles.filledRatingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path fill="currentColor" fillRule="evenodd"

@@ -8,14 +8,10 @@
   cursor: pointer;
   transition: background-color 0.2s;
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.03);
-  }
-
   @media (max-width: 815px) {
     border-radius: 0;
     box-shadow: none;
-    margin-top: 0.5rem;
+
   }
 }
 

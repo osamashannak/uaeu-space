@@ -8,18 +8,6 @@ import {Helmet} from "react-helmet-async";
 
 export default function Layout({children}: { children: ReactNode }) {
 
-    /*const dispatch = useDispatch();
-    const user = useSelector((state) => state.user);
-
-    useEffect(() => {
-
-        if (user.status !== null) return;
-
-
-
-
-    }, [user.status]);*/
-
     return (
         <>
             <Helmet>

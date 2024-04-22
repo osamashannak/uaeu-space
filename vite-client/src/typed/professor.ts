@@ -20,6 +20,7 @@ export interface ReviewAPI {
     self: boolean;
     selfRating: boolean | null;
     fadeIn: boolean;
+    uaeuOrigin: boolean;
     attachments: {
         id: string;
         height: number;

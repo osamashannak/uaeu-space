@@ -88,6 +88,10 @@
   display: none;
 }
 
+.navLinkLoginReversed {
+    display: none;
+}
+
 .mobileNav {
   position: fixed;
   bottom: 0;
@@ -102,6 +106,13 @@
   width: 100%;
   justify-content: space-around;
   align-items: center;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 1300px) {
+  .navLinkLogin {
+    display: flex;
+  }
 }
 
 
@@ -120,6 +131,10 @@
   }
 
   .navLinkLogin {
+    display: none;
+  }
+
+  .navLinkLoginReversed {
     display: flex;
   }
 }

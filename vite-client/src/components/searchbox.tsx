@@ -7,7 +7,7 @@ import {Item} from "../typed/searchbox.ts";
 import {getCoursesList} from "../api/course.ts";
 import {getProfessorsList} from "../api/professor.ts";
 
-export default function SearchBox(props: { type: "professor" | "course" | "restaurant"}) {
+export default function SearchBox(props: { type: "professor" | "course" | "restaurant" }) {
 
     const SearchBox = () => {
 
@@ -131,8 +131,25 @@ export default function SearchBox(props: { type: "professor" | "course" | "resta
                                     item: element,
                                     index,
                                 })} >
-                                    {'tag' in element && <span>{element.tag}<br/></span>}
-                                    <span className={"course-name"}>{element.name}</span>
+                                    {
+                                        !(('tag' in element) || ('email' in element)) &&
+                                        <span>{element.name}</span>
+                                    }
+                                    {'tag' in element &&
+                                        <>
+                                            <span>
+                                                {element.tag}<br/>
+                                            </span>
+                                            <span>{element.name}</span>
+                                        </>
+                                    }
+                                    {'email' in element &&
+                                        <div className={styles.professorItem}>
+                                                <span className={styles.professorName}>{element.name}</span>
+                                                <span className={styles.email}>
+                                                    {element.email}
+                                                </span>
+                                        </div>}
                                 </li>
                             ))
                         }

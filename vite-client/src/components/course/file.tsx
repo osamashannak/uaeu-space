@@ -6,19 +6,19 @@ import styles from "../../styles/components/course/file.module.scss";
 
 dayjs.extend(relativeTime);
 
-export default function File (props: CourseFileAPI) {
+export default function File(props: CourseFileAPI) {
     return (
-        <div className={styles.file} onClick={() => {
-            window.open("https://api.uaeu.space/course/file?id=" + props.id, "_blank");
-        }}>
+        <div className={styles.file}>
             <div className={styles.fileIcon}>
                 {getIconFromMIME(props.type)}
             </div>
             <div className={styles.fileBody}>
                 <h3 className={styles.fileName}>
-                    <span style={{color: "#007fff"}}
+                    <a style={{color: "#007fff"}}
+                       target="_blank"
+                       href={"https://api.uaeu.space/course/file?id=" + props.id}
                        rel="noreferrer nofollow"
-                          title={props.name}>{props.name}</span>
+                       title={props.name}>{props.name}</a>
                 </h3>
                 <p className={"file-size"}>{formatBytes(props.size)}</p>
                 <time
