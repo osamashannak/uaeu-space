@@ -1,5 +1,5 @@
 import styles from "../../styles/components/professor/review_form.module.scss";
-import {ChangeEvent, Dispatch, SetStateAction} from "react";
+import {ChangeEvent, Dispatch, SetStateAction, useEffect} from "react";
 import Compressor from "compressorjs";
 import {
     ImageAttachment,
@@ -151,8 +151,6 @@ export default function ReviewFormFooter(props: {
 
             setDetails(prevState => ({...prevState, attachments: [...prevState.attachments, attachment]}));
 
-
-
         }
     }
 
@@ -180,11 +178,32 @@ export default function ReviewFormFooter(props: {
         }
     }
 
-
-    document.body.onclick = () => {
-        hideEmojiSelector();
-        hideGifSelector();
+    function toggleEmojiSelector() {
+        const emojiSelector = document.querySelector(`.${styles.emojiSelector}`) as HTMLDivElement;
+        if (emojiSelector) {
+            emojiSelector.style.opacity = emojiSelector.style.opacity === "0" ? "1" : "0";
+            emojiSelector.style.pointerEvents = emojiSelector.style.pointerEvents === "none" ? "all" : "none";
+        }
     }
+
+    function toggleGifSelector() {
+        const gifSelector = document.querySelector(`.${styles.gifSelector}`) as HTMLDivElement;
+        if (gifSelector) {
+            gifSelector.style.opacity = gifSelector.style.opacity === "0" ? "1" : "0";
+            gifSelector.style.pointerEvents = gifSelector.style.pointerEvents === "none" ? "all" : "none";
+        }
+    }
+
+    useEffect(() => {
+        document.body.onclick = () => {
+            hideEmojiSelector();
+            hideGifSelector();
+        }
+
+        return () => {
+            document.body.onclick = null;
+        }
+    }, []);
 
 
     return (
@@ -211,6 +230,10 @@ export default function ReviewFormFooter(props: {
                         </svg>
                     </label>
                     <input className={styles.imageUploadHTML}
+                           onClick={() => {
+                               hideEmojiSelector();
+                               hideGifSelector();
+                           }}
                            onChange={(event) => {
                                uploadImage(event);
                            }}
@@ -218,12 +241,9 @@ export default function ReviewFormFooter(props: {
                            tabIndex={-1} type={"file"} id={"upload-images"}/>
                 </div>
                 <div className={canAddGif() ? styles.buttonIconWrapper : styles.disabledButton}>
-                    <div className={styles.buttonLabel} onClick={(e) => {
-                        e.stopPropagation();
+                    <div className={styles.buttonLabel} onClick={() => {
                         hideEmojiSelector();
-                        const gifSelector = document.querySelector(`.${styles.gifSelector}`) as HTMLDivElement;
-                        gifSelector.style.opacity = "1";
-                        gifSelector.style.pointerEvents = "all";
+                        toggleGifSelector();
                     }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <path fill="currentColor"
@@ -232,12 +252,9 @@ export default function ReviewFormFooter(props: {
                     </div>
                 </div>
                 <div className={styles.buttonIconWrapper}>
-                    <div className={styles.buttonLabel} onClick={(e) => {
-                        e.stopPropagation();
+                    <div className={styles.buttonLabel} onClick={() => {
                         hideGifSelector();
-                        const emojiSelector = document.querySelector(`.${styles.emojiSelector}`) as HTMLDivElement;
-                        emojiSelector.style.opacity = "1";
-                        emojiSelector.style.pointerEvents = "all";
+                        toggleEmojiSelector();
                     }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <g fill="none">

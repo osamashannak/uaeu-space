@@ -10,10 +10,10 @@ export default function Privacy() {
                 </section>
 
                 <section className={styles.body}>
-                    <p>Last Updated: 22nd of May, 2023</p>
+                    <p>Last Updated: 5th of May, 2024</p>
 
                     <p>
-                        UAEU Space (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is a platform designed to facilitate
+                        SpaceRead (formerly UAEU Space) (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) is a platform designed to facilitate
                         the sharing of course
                         materials and professor ratings among students at UAEU. We are committed to protecting the privacy
                         of our users and ensuring the confidentiality and security of their personal information.
@@ -39,7 +39,7 @@ export default function Privacy() {
                     <p>We collect information through the following means:</p>
                     <ul>
                         <li>Direct Collection: We collect device information, including IP addresses, automatically when you
-                            access UAEU Space.
+                            access SpaceRead.
                         </li>
                         <li>Third-Party Services: We use Google Analytics and Microsoft Clarity to gather website usage
                             statistics. These services may collect additional non-personal information according to their
@@ -53,7 +53,7 @@ export default function Privacy() {
                     <ul>
                         <li>
                             Security and Spam Prevention: Personal information, such as device information and IP addresses, is
-                            used to maintain a safe and secure environment on UAEU Space, protect against spam, prevent
+                            used to maintain a safe and secure environment on SpaceRead, protect against spam, prevent
                             malicious activities, and identify and address security vulnerabilities.
                         </li>
                         <li>
@@ -73,7 +73,7 @@ export default function Privacy() {
                     <ul>
                         <li>
                             Third-Party Service Providers: We may engage trusted third-party service providers to assist in
-                            the operation and maintenance of UAEU Space. These providers have access to personal information
+                            the operation and maintenance of SpaceRead. These providers have access to personal information
                             only to the extent necessary to perform their services and are obligated to keep it
                             confidential.
                         </li>
@@ -101,13 +101,13 @@ export default function Privacy() {
 
                     <h3>Children&apos;s Privacy</h3>
                     <p>
-                        UAEU Space does not target or knowingly collect personal information from individuals under the age
+                        SpaceRead does not target or knowingly collect personal information from individuals under the age
                         of 17. If we become aware that personal information of a minor has been inadvertently collected, we
                         will take steps to delete it as soon as possible.
                     </p>
 
                     <p>
-                        If you have any questions or concerns regarding this privacy policy or UAEU Space&apos;s privacy
+                        If you have any questions or concerns regarding this privacy policy or SpaceRead&apos;s privacy
                         practices, please contact us at <a href={"mailto:uaeuspace@gmail.com"}>uaeuspace@gmail.com</a>.
                     </p>
 

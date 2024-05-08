@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 
 
 export default function Footer() {
+
     return (
         <footer>
             {/*<section className={styles.footerBlock}>
@@ -37,7 +38,7 @@ export default function Footer() {
                 </div>
             </section>
             <section className={styles.footerEnd}>
-                <p className={styles.copyright}>© 2023 SpaceRead. Not affiliated with United Arab Emirates
+                <p className={styles.copyright}>© 2024 SpaceRead. Not affiliated with United Arab Emirates
                     University (Student-operated). Emojis by <a href={"https://github.com/twitter/twemoji"}
                                                                 rel="noreferrer" target={"_blank"}>Twemoji</a>.</p>
                 <ul className={styles.links}>

@@ -7,6 +7,7 @@ import CourseLookup from "../pages/course_lookup.tsx";
 import TermsOfService from "../pages/legal/tos.tsx";
 import Privacy from "../pages/legal/privacy.tsx";
 import Error from "../pages/error.tsx";
+import Login from "../pages/login.tsx";
 
 const Router = createBrowserRouter([
     {
@@ -37,6 +38,10 @@ const Router = createBrowserRouter([
     {
         path: "course/:tag",
         element: <Course/>,
+    },
+    {
+        path: "login",
+        element: <Login/>
     }
 ]);
 

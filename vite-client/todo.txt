@@ -1,8 +1,1 @@
 // TODO implement hyperlinks to reviews
-// TODO immediately show the review after submitting it
-// TODO SERVER:
-//  - for reviews, return if the user has already reviewed
-//  - for reviews, return the user's review id
-
-
-// FIXME review attachment slider is not working properly

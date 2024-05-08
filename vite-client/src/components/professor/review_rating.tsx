@@ -87,7 +87,7 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
                         </svg>}
                     <div className={styles.ratingIconBg}></div>
                 </div>
-                <span className={styles.ratingCount}>{props.likes + (liked ? 1 : 0) - (props.self ? 1 : 0)}</span>
+                <span className={styles.ratingCount}>{(props.likes + (liked ? 1 : 0) - (props.self ? 1 : 0)) || ""}</span>
             </div>
             <div className={styles.dislike} onClick={onDislikeClick} title={"Dislike"} onMouseDown={() => {
                 const likeButton = document.getElementById(`dislike-button-${props.id}`);
@@ -115,7 +115,7 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
                         </svg>}
                     <div className={styles.ratingIconBg}></div>
                 </div>
-                <span className={styles.ratingCount}>{props.dislikes + (liked == false ? 1 : 0) - (props.self === false ? 1 : 0)}</span>
+                <span className={styles.ratingCount}>{(props.dislikes + (liked === false ? 1 : 0) - (props.self === false ? 1 : 0)) || ""}</span>
             </div>
         </div>
     );

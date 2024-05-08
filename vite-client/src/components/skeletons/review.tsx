@@ -12,9 +12,6 @@ export default function ReviewSkeleton() {
                     <div className={reviewStyles.authorName} style={{width: "93px"}}>
                         <span><Skeleton/></span>
                     </div>
-                    <div className={"text-separator"}>
-                        <span>·</span>
-                    </div>
                     <div className={reviewStyles.time} style={{width: "20px"}}>
                         <span><Skeleton/></span>
                     </div>
@@ -31,12 +28,6 @@ export default function ReviewSkeleton() {
 
             <div className={reviewStyles.reviewBody}>
                 <p dir={"auto"}><Skeleton count={3}/></p>
-            </div>
-
-            <div className={reviewStyles.reviewFooter}>
-                <div>
-                    <ReviewRating dislikes={0} likes={0} id={0} self={null}/>
-                </div>
             </div>
 
         </article>

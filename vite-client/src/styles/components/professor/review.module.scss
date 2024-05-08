@@ -27,7 +27,8 @@
 .uaeuOrigin {
   display: flex;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 12px;
+  opacity: 0.7;
 
   svg {
     margin-right: 2px;
@@ -49,13 +50,26 @@
 
   .reviewInfoLeftTop {
     display: flex;
-    align-items: baseline;
 
+    .authorName {
+      font-weight: 600;
+    }
+  }
+
+  .new {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 10px;
+    margin-left: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 4px;
+    font-weight: 500;
   }
 }
 
-.authorName {
-  font-weight: 600;
+.recommendation {
+  font-weight: 400;
+  color: rgba(110, 112, 114, 1);
 }
 
 .time, .uaeuOrigin {
@@ -64,10 +78,16 @@
 
 .reviewInfoRight {
   font-weight: 600;
-  text-align: right;
   white-space: nowrap;
-  user-select: none;
-  -webkit-user-select: none;
+  display: flex;
+  margin-top: 0.5rem;
+
+  .reviewStars {
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+  }
+
 }
 
 .reviewBody {
@@ -138,7 +158,6 @@
 
 .reviewFooter {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   font-size: 0.85rem;
   color: rgba(0, 0, 0, 0.5);
@@ -150,10 +169,6 @@
 .star {
   color: #049AE5;
 }
-
-/*.stars {
-  filter: invert(44%) sepia(62%) saturate(5705%) hue-rotate(196deg) brightness(99%) contrast(109%);
-}*/
 
 .flagReview {
   filter: invert(50%);

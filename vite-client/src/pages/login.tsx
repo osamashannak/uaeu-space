@@ -3,7 +3,7 @@ import Layout from "../layouts/layout.tsx";
 import dayjs from "dayjs";
 import {CredentialResponse, GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 import {Helmet} from "react-helmet-async";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import LoginWithEmail from "../components/login/login_with_email.tsx";
 import RegisterForm from "../components/login/register_form.tsx";
 import CompleteGoogleSignUp from "../components/login/complete_google_signup.tsx";
@@ -15,6 +15,7 @@ export default function Login() {
 
     const [displayScreen, setDisplayScreen] = useState<"login" | "register" | undefined>();
     const [googleSignUp, setGoogleSignUp] = useState<GoogleSignUpProps | null>(null);
+    const [width, setWidth] = useState<number>(getWidth());
 
 
     function googleSignInSuccess(response: CredentialResponse) {
@@ -41,14 +42,24 @@ export default function Login() {
 
         });
 
-
     }
+
+    useEffect(() => {
+        window.onresize = () => {
+            setWidth(getWidth());
+        }
+
+        return () => {
+            window.onresize = null;
+        }
+    }, []);
 
     const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string;
 
     function getWidth() {
-        console.log(innerWidth)
-        if (window.innerWidth <= 415) {
+        if (window.innerWidth <= 332) {
+            return 290;
+        } else if (window.innerWidth <= 415) {
             return window.innerWidth-46;
         } else if (window.innerWidth <= 768) {
             return 370;
@@ -104,7 +115,7 @@ export default function Login() {
 
                         <GoogleOAuthProvider clientId={googleClientId}>
                             <GoogleLogin
-                                width={getWidth()}
+                                width={width}
                                 type={"standard"}
                                 theme={"outline"}
                                 size={"large"}

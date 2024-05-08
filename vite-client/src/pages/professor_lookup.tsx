@@ -11,10 +11,20 @@ export default function ProfessorLookup() {
                 <h1>Rate a Professor</h1>
                 <span>Learn about your professors from other students and rate their performance</span>
 
+                <div className={styles.universitySelect}>
+                    <span>Selected university: </span>
+                    <span className={styles.selected}>United Arab Emirates University</span>
+                    <div className={styles.change}>
+                        <span>Change</span>
+                    </div>
+                </div>
+
+
                 <div className={styles.searchBox}>
                     <SearchBox type={"professor"}/>
                     <div className={styles.caution}>
-                        <p className={styles.caution}>Can't find your professor? DM us on <a href={"https://instagram.com/uaeu.space"}>Instagram</a></p>
+                        <p className={styles.caution}>Can't find your professor? DM us on <a
+                            href={"https://instagram.com/uaeu.space"}>Instagram</a></p>
                     </div>
                 </div>
 

@@ -10,17 +10,25 @@ import {useDispatch, useSelector} from "react-redux";
 import {clearProfessor, selectProfessor, setProfessor} from "../redux/slice/professor_slice.ts";
 import {ProfessorAPI} from "../typed/professor.ts";
 import LoadingSuspense from "../components/loading_suspense.tsx";
+import ReviewSkeleton from "../components/skeletons/review.tsx";
+import DisabledReviewForm from "../components/professor/disabled_review_form.tsx";
 
-const ReviewForm = lazy(
-    async () => await import("../components/professor/review_form.tsx")
-);
-const ReviewSection = lazy(
-    async () => await import("../components/professor/review_section.tsx")
-);
-const ReviewSkeleton = lazy(
-    async () => await import("../components/skeletons/review.tsx")
-);
 
+const ReviewForm = lazy(async () => {
+    const [moduleExports] = await Promise.all([
+        await import("../components/professor/review_form.tsx"),
+        new Promise(resolve => setTimeout(resolve, 500))
+    ]);
+    return moduleExports;
+});
+
+const ReviewSection = lazy(async () => {
+    const [moduleExports] = await Promise.all([
+        await import("../components/professor/review_section.tsx"),
+        new Promise(resolve => setTimeout(resolve, 1000))
+    ]);
+    return moduleExports;
+});
 
 export default function Professor() {
     const {email} = useParams();
@@ -50,7 +58,7 @@ export default function Professor() {
             <Layout>
                 <div className={styles.profPage}>
 
-                    <section className={styles.profInfoHead}>
+                    <section className={styles.profInfoHead} style={{borderBottom: "none"}}>
                         <div className={styles.profInfoLeft}>
                             <h1 style={{width: "100px"}}><Skeleton/></h1>
                             <p style={{width: "200px"}}><Skeleton/></p>
@@ -97,25 +105,29 @@ export default function Professor() {
     return (
         <Layout>
             <div className={styles.profPage}>
+
                 <section className={styles.profInfoHead}>
-                    <div className={styles.profInfoLeft}>
-                        <h1>{professor.name}</h1>
-                        <p>{professor.college}</p>
+
+                    <div className={styles.infoLeft}>
+                        {score > 0 ?
+                            <div className={styles.infoLeftScore}>
+                                <span className={styles.score}>{score}</span>
+                                <span className={styles.outOf}>/5</span>
+                            </div>
+                            :
+                            <span className={styles.score}>N/A</span>}
                     </div>
 
-                    <div className={styles.profInfoRight}>
-                        {score > 0 ?
-                            <>
-                                <p className={styles.score}>{score}</p>
-                                <span className={styles.outOf}>/5</span>
-                            </>
-                            :
-                            <p className={styles.score}>N/A</p>}
+                    <div className={styles.infoRight}>
+                        <p className={styles.universityName}>United Arab Emirates University</p>
+                        <h1>{professor.name}</h1>
+                        <span className={styles.collegeName}>{professor.college}</span>
                     </div>
+
                 </section>
 
 
-                <Suspense fallback={<LoadingSuspense/>}>
+                <Suspense fallback={<DisabledReviewForm/>}>
                     <ReviewForm professorEmail={professor.email} canReview={professor.canReview}/>
                 </Suspense>
 

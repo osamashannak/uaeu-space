@@ -31,6 +31,6 @@ export default defineConfig(({command, mode}) => {
       },
       modulePreload: true,
     },
-    base: env.VITE_ASSETS_URL,
+    base: mode === 'production' ? env.VITE_ASSETS_URL : '/',
   }
 })

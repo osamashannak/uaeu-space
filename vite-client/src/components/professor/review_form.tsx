@@ -18,6 +18,8 @@ import ReviewFormFooter from "./review_form_footer.tsx";
 import AttachmentSlider from "./attachment_slider.tsx";
 import {useDispatch} from "react-redux";
 import {addReview} from "../../redux/slice/professor_slice.ts";
+import ProgressBar from "progressbar.js";
+import Line from "progressbar.js/line";
 
 
 export default function ReviewForm(props: { professorEmail: string, canReview: boolean }) {
@@ -28,10 +30,11 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         positive: undefined,
         attachments: [],
     });
-    const [submitting, setSubmitting] = useState<boolean | null | "error" | "loading">(!props.canReview ? null : false);
+    const [submitting, setSubmitting] = useState<boolean | null | "error">(!props.canReview ? null : false);
     const {executeRecaptcha} = useGoogleReCaptcha();
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const dispatch = useDispatch();
+    const lineRef = useRef<Line | null>(null);
 
     useEffect(() => {
         function verifyUpload(id: string | undefined, url: string) {
@@ -98,6 +101,18 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
 
     }, [details.attachments]);
 
+    useEffect(() => {
+        if (submitting === null || submitting === "error") {
+            return;
+        }
+
+        lineRef.current = new ProgressBar.Line('#line-container', {
+            color: '#87CEFA',
+            strokeWidth: 0.7,
+
+        });
+    }, [submitting]);
+
     const formFilled = () => {
         return (
             (details.comment
@@ -113,6 +128,12 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
 
     const handleSubmit = async () => {
         setSubmitting(true);
+
+        lineRef.current!.animate(1, {
+            duration: 3000,
+        });
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         const uploadingAttachmentsCount = details.attachments.filter(attachment => attachment.id === "UPLOADING").length;
 
@@ -142,10 +163,12 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             return;
         }
 
+        setSubmitting(null);
+
         dispatch(addReview({
             uaeuOrigin: status.review.uaeuOrigin,
             fadeIn: true,
-            self: true, 
+            self: true,
             selfRating: null,
             attachments: details.attachments,
             author: "User",
@@ -158,7 +181,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             id: status.review.id
         }));
 
-        setSubmitting(null);
+        lineRef.current?.destroy();
     }
 
     if (submitting === null) {
@@ -177,22 +200,6 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         )
     }
 
-    if (submitting === "loading") {
-        return (
-            <section className={styles.form}>
-                <span>Loading...</span>
-            </section>
-        )
-    }
-
-    if (submitting) {
-        return (
-            <section className={styles.form}>
-                <span>Submitting your review...</span>
-            </section>
-        )
-    }
-
     let lengthStyle = styles.commentLength;
 
     if (details.comment && details.comment.length > 350) {
@@ -203,16 +210,19 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         lengthStyle += ` ${styles.commentLengthGood}`;
     }
 
+    const width = window.innerWidth > 768 ? 600 : window.innerWidth;
 
     return (
 
-        <section
-            className={styles.reviewForm}
-            onClick={event => {
-                event.preventDefault();
-            }}>
+        <>
+            <div id={"line-container"} style={{width: width}}></div>
+            <section
+                className={styles.reviewForm}
+                onClick={event => {
+                    event.preventDefault();
+                }}>
 
-            {/*<div>
+                {/*<div>
                 <div className={styles.guestWarning} onClick={(e) => {
                     e.stopPropagation();
 
@@ -258,175 +268,180 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             </div>*/}
 
 
-            <LexicalComposer initialConfig={{
-                namespace: 'lexical',
-                theme: {
-                    rtl: styles.postRTL,
-                    ltr: styles.postLTR,
-                    paragraph: styles.postParagraph,
-                    link: styles.postLink
-                },
-                nodes: [EmojiNode],
-                onError: (error) => console.log(error),
-            }}>
+                <LexicalComposer initialConfig={{
+                    namespace: 'lexical',
+                    theme: {
+                        rtl: styles.postRTL,
+                        ltr: styles.postLTR,
+                        paragraph: styles.postParagraph,
+                        link: styles.postLink
+                    },
+                    editable: !submitting,
+                    nodes: [EmojiNode],
+                    onError: (error) => console.log(error),
+                }}>
 
-                <div onClick={() => commentRef.current?.focus()}>
-                    <div className={styles.postEditor}>
-                        <CustomPlainTextPlugin
-                            placeholder={<div className={styles.postPlaceholder}>What was your experience?</div>}
-                            contentEditable={
-                                <div className={styles.postContentContainer}>
-                                    <ContentEditable style={{outline: "none"}} role={"textbox"} spellCheck={"true"}
-                                                     className={styles.postContent}/>
-                                </div>
-                            }
-                        />
-                        <HistoryPlugin/>
-                        <EditorRefPlugin editorRef={commentRef}/>
-                        <OnChangePlugin onChange={(editor) => {
-
-                            const json = editor.toJSON();
-
-                            let f = "";
-
-                            // @ts-expect-error LexicalEditor types are not up to date
-                            json.root.children[0].children.forEach((child) => {
-                                if (child.type === "linebreak") {
-                                    f += "\n";
-                                } else {
-                                    f += child.text;
+                    <div onClick={() => commentRef.current?.focus()}>
+                        <div className={styles.postEditor}>
+                            <CustomPlainTextPlugin
+                                placeholder={<div className={styles.postPlaceholder}>What was your experience?</div>}
+                                contentEditable={
+                                    <div className={styles.postContentContainer}>
+                                        <ContentEditable style={{outline: "none"}} role={"textbox"} spellCheck={"true"}
+                                                         className={styles.postContent}/>
+                                    </div>
                                 }
-                            });
+                            />
+                            <HistoryPlugin/>
+                            <EditorRefPlugin editorRef={commentRef}/>
+                            <OnChangePlugin onChange={(editor) => {
+                                const json = editor.toJSON();
 
-                            setDetails((prevDetails) => ({
-                                ...prevDetails,
-                                comment: f,
-                            }));
+                                let f = "";
+
+                                // @ts-expect-error LexicalEditor types are not up to date
+                                json.root.children[0].children.forEach((child) => {
+                                    if (child.type === "linebreak") {
+                                        f += "\n";
+                                    } else {
+                                        f += child.text;
+                                    }
+                                });
+
+                                setDetails((prevDetails) => ({
+                                    ...prevDetails,
+                                    comment: f,
+                                }));
+                            }}/>
+                        </div>
 
 
-                        }}/>
-                    </div>
-
-
-                    <div className={lengthStyle}>
-                        <div>
-                            <span>{[...(details.comment ?? "").trim()].length > 0 ? [...details.comment].length : 0}</span>
-                            <span>/ 350</span>
+                        <div className={lengthStyle}>
+                            <div>
+                                <span>{[...(details.comment ?? "").trim()].length > 0 ? [...details.comment].length : 0}</span>
+                                <span>/ 350</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <AttachmentSlider details={details} setDetails={setDetails}/>
+                    <AttachmentSlider details={details} setDetails={setDetails}/>
 
-                <EmojiSelector/>
-            </LexicalComposer>
+                    <EmojiSelector/>
+                </LexicalComposer>
 
-            <ReviewFormFooter details={details} setDetails={setDetails}/>
+                {!submitting && <ReviewFormFooter details={details} setDetails={setDetails}/>}
 
-            <div className={styles.formOptions}>
-                <div
-                    onClick={event => {
-                        event.stopPropagation();
-                    }}
-                    className={styles.score}>
-                    <span>Score: </span>
-                    <input
-                        required maxLength={1}
-                        id={"score-field"}
-                        inputMode={"numeric"}
-                        placeholder={"#"}
-                        onChange={
-                            event => {
-                                event.target.value = convertArabicNumeral(event.target.value);
-                                if ((/[^1-5]/g.test(event.target.value))) {
-                                    event.target.setCustomValidity("Enter a number 1-5.");
-                                    event.target.value = event.target.value.replace(/[^1-5]/g, '')
-                                    details.score = undefined;
-                                    setDetails({...details});
-                                } else {
-                                    event.target.setCustomValidity("");
-                                    details.score = parseInt(event.target.value);
-                                    setDetails({...details});
-                                }
-                                event.target.reportValidity();
-                            }
-                        }
-                        type={"text"}
-                        className={styles.reviewFormScore}/>
-                    <span> /5</span>
-                </div>
-
-                <ul className={styles.reviewFormPositivityList}
-                    onClick={event => {
-                        event.stopPropagation();
-                    }}>
-                    <li>
-                        <label>
-                            <input required
-                                   id={"main-rec-radio"}
-                                   onChange={() => {
-                                       details.positive = true;
-                                       setDetails({...details});
-                                   }}
-                                   onInvalid={invalidRadioSubmission}
-                                   type="radio"
-                                   className={styles.radioOne}
-                                   name="recommendation"
-                                   value="positive"/>
-                            Recommend
-                        </label>
-                    </li>
-                    <li>
-                        <label>
+                <div className={submitting ? styles.disabledFormOptions : styles.formOptions}>
+                    <div
+                        onClick={event => {
+                            event.stopPropagation();
+                        }}
+                        className={styles.score}>
+                        <span className={styles.scoreTitle}>Score: </span>
+                        <div className={styles.reviewScoreContainer} onClick={(e) => {
+                            e.stopPropagation();
+                            const input = document.getElementById("score-field") as HTMLInputElement;
+                            input.focus();
+                        }}>
                             <input
-                                onChange={() => {
-                                    details.positive = false;
-                                    setDetails({...details});
-                                }}
-                                type="radio"
-                                className={styles.radioTwo}
-                                name="recommendation"
-                                value="negative"/>
-                            Not recommended
-                        </label>
-                    </li>
-                </ul>
-            </div>
+                                required maxLength={1}
+                                id={"score-field"}
+                                inputMode={"numeric"}
+                                placeholder={"#"}
+                                onChange={
+                                    event => {
+                                        event.target.value = convertArabicNumeral(event.target.value);
+                                        if ((/[^1-5]/g.test(event.target.value))) {
+                                            event.target.setCustomValidity("Enter a number 1-5.");
+                                            event.target.value = event.target.value.replace(/[^1-5]/g, '')
+                                            details.score = undefined;
+                                            setDetails({...details});
+                                        } else {
+                                            event.target.setCustomValidity("");
+                                            details.score = parseInt(event.target.value);
+                                            setDetails({...details});
+                                        }
+                                        event.target.reportValidity();
+                                    }
+                                }
+                                type={"text"}
+                                className={styles.reviewFormScore}/>
+                            <span> /5</span>
+                        </div>
+                    </div>
 
-            <div className={styles.submitButtonWrapper}>
-                <div title={"Post"}
-                     className={formFilled() ? styles.enabledFormSubmit : styles.disabledFormSubmit}
-                     onClick={async event => {
-                         event.stopPropagation();
-                         if (!formFilled()) {
-                             const invalidFields = Array.from(document.querySelectorAll("input:invalid"));
-                             const score = invalidFields.find(field => field.id === "score-field");
+                    <ul className={styles.reviewFormPositivityList}
+                        onClick={event => {
+                            event.stopPropagation();
+                        }}>
+                        <li>
+                            <label>
+                                <input required
+                                       id={"main-rec-radio"}
+                                       onChange={() => {
+                                           details.positive = true;
+                                           setDetails({...details});
+                                       }}
+                                       onInvalid={invalidRadioSubmission}
+                                       type="radio"
+                                       className={styles.radioOne}
+                                       name="recommendation"
+                                       value="positive"/>
+                                Recommend
+                            </label>
+                        </li>
+                        <li>
+                            <label>
+                                <input
+                                    onChange={() => {
+                                        details.positive = false;
+                                        setDetails({...details});
+                                    }}
+                                    type="radio"
+                                    className={styles.radioTwo}
+                                    name="recommendation"
+                                    value="negative"/>
+                                Do not recommend
+                            </label>
+                        </li>
+                    </ul>
+                </div>
 
-                             if (score) {
-                                 // @ts-expect-error types are not up to date
-                                 score.reportValidity();
+                <div className={styles.submitButtonWrapper}>
+                    <div title={"Post"}
+                         className={submitting ? styles.veryDisabledFormSubmit : formFilled() ? styles.enabledFormSubmit : styles.disabledFormSubmit}
+                         onClick={async event => {
+                             event.stopPropagation();
+                             if (!formFilled()) {
+                                 const invalidFields = Array.from(document.querySelectorAll("input:invalid"));
+                                 const score = invalidFields.find(field => field.id === "score-field");
+
+                                 if (score) {
+                                     // @ts-expect-error types are not up to date
+                                     score.reportValidity();
+                                     return;
+                                 }
+
+                                 if (invalidFields.length > 1) {
+                                     // @ts-expect-error types are not up to date
+                                     invalidFields[0].reportValidity();
+                                 }
+
                                  return;
                              }
-
-                             if (invalidFields.length > 1) {
-                                 // @ts-expect-error types are not up to date
-                                 invalidFields[0].reportValidity();
-                             }
-
-                             return;
-                         }
-                         await handleSubmit();
-                     }}>
-                    <span>Post</span>
+                             await handleSubmit();
+                         }}>
+                        <span>Post</span>
+                    </div>
                 </div>
-            </div>
 
-            <div className={styles.disclaimer}>
-                This site is protected by reCAPTCHA and the Google <a
-                href="https://policies.google.com/privacy" target={"_blank"}>Privacy Policy</a> and <a
-                href="https://policies.google.com/terms" target={"_blank"}>Terms of Service</a> apply.
-            </div>
-        </section>
+                <div className={styles.disclaimer} onClick={e => e.stopPropagation()}>
+                    This site is protected by reCAPTCHA and the Google <a
+                    href="https://policies.google.com/privacy" target={"_blank"}>Privacy Policy</a> and <a
+                    href="https://policies.google.com/terms" target={"_blank"}>Terms of Service</a> apply.
+                </div>
+            </section>
+        </>
     );
 }
 

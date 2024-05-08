@@ -111,6 +111,11 @@
   width: 100%;
 }
 
+.disabledPostEditor {
+  @extend .postEditor;
+  pointer-events: none;
+}
+
 .postContentContainer {
   padding-bottom: 2px;
   padding-top: 2px;
@@ -374,7 +379,15 @@
   margin-top: 12px;
 }
 
+.disabledFormOptions {
+  @extend .formOptions;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 .score {
+  display: flex;
+  align-items: baseline;
   margin-bottom: 20px;
   width: fit-content;
   user-select: none;
@@ -383,7 +396,7 @@
 
 .reviewFormScore {
   border: none;
-  background-color: white;
+  background-color: transparent;
   font-size: 15px;
   padding: 0 0rem 0.5rem 1rem;
   border-radius: 2px;
@@ -393,6 +406,19 @@
   &:focus {
     outline: none;
   }
+}
+
+.scoreTitle {
+  margin-right: 0.5rem;
+  font-weight: 500;
+}
+
+.reviewScoreContainer {
+  border: 1px solid #E5E5E5;
+  padding-top: 0.5rem;
+  padding-right: 0.5rem;
+  border-radius: 8px;
+  cursor: text;
 }
 
 .reviewFormPositivityList {

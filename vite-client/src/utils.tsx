@@ -133,6 +133,11 @@ export const formatRelativeTime = (inputDate: Date) => {
     }
 
     const diffSeconds = Math.floor(diff / (1000));
+
+    if (diffSeconds < 10) {
+        return "now";
+    }
+
     return diffSeconds + "s";
 }
 

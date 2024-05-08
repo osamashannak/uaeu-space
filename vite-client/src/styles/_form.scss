@@ -22,7 +22,6 @@
 
 .reviewForm {
   @extend .form;
-  min-height: 382px;
 }
 
 .submitButtonWrapper {
@@ -38,7 +37,7 @@
   font-weight: 600;
 
   user-select: none;
-    -webkit-user-select: none;
+  -webkit-user-select: none;
 }
 
 .enabledFormSubmit {
@@ -57,6 +56,13 @@
   background-color: #87CEFA;
   opacity: 0.5;
   cursor: default;
+}
+
+.veryDisabledFormSubmit {
+  @extend .disabledFormSubmit;
+    background-color: #374964;
+    opacity: 0.2;
+
 }
 
 .disclaimer {
