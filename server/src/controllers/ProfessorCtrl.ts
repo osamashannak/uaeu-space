@@ -161,15 +161,14 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
-    const email = (params.email as string).toLowerCase();
-
     const professor = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: email},
+        where: {email: (params.email as string).toLowerCase(), visible: true},
         relations: ["reviews", "reviews.ratings", "reviews.guest", "reviews.ratings.guest"],
-        order: {reviews: {created_at: "desc"}}
+        order: {reviews: {created_at: "desc"}},
+        select: ["name", "email", "college", "university"]
     });
 
-    if (!professor || !professor.visible) {
+    if (!professor) {
         res.status(404).json({error: "Professor not found."});
         return;
     }
@@ -178,14 +177,12 @@ export const find = async (req: Request, res: Response) => {
 
     const selfReview = guestId && professor.reviews.find(review => review.guest && (review.guest.token === guestId.token))?.id;
 
-    const {visible, views, ...professorWithoutVisible} = professor;
-
-    const filteredReviews = professor.reviews.filter(review => review.visible);
+    const filteredReviews = professor.reviews.filter(review => review.visible || review.id === selfReview);
 
     const canReview = guestId && selfReview === undefined && !guestId.rated_professors.includes(professor.email);
 
     const newProfessor = {
-        ...professorWithoutVisible,
+        ...professor,
         canReview: canReview,
         reviews: await Promise.all(
             filteredReviews
@@ -241,6 +238,7 @@ export const find = async (req: Request, res: Response) => {
                         attachments: attachment,
                         self: review.id === selfReview,
                         selfRating: selfRating,
+                        hidden: !visible && review.id === selfReview || undefined,
                         uaeuOrigin: isUAEUIp(author_ip)
                     };
                 })),
@@ -314,9 +312,8 @@ export const find = async (req: Request, res: Response) => {
 
 export const getAll = async (req: Request, res: Response) => {
     const professors = await AppDataSource.getRepository(Professor).find({
-        where: {visible: true},
-        select: {name: true, email: true},
-        order: {views: "desc"}
+        where: {visible: true, university: "United Arab Emirates University"},
+        select: {name: true, email: true}
     });
 
     res.status(200).json({professors: professors});
