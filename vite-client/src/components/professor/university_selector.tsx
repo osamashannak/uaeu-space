@@ -8,7 +8,7 @@ export default function UniversitySelector() {
     const {university, setUniversity} = useContext(UniversityContext);
 
     return (
-        <div>
+        <div className={styles.pickUniversityParent}>
             <div className={styles.pickUniversityText}>
                 <span>Select your university</span>
             </div>
@@ -26,11 +26,11 @@ export default function UniversitySelector() {
                     <span>Khalifa University</span>
                 </div>
 
-                <div
+                {/*<div
                     onClick={() => setUniversity('University of Sharjah')}
                     className={university === 'University of Sharjah' ? styles.selected : styles.university}>
                     <span>University of Sharjah</span>
-                </div>
+                </div>*/}
 
             </div>
         </div>

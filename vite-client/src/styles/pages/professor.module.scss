@@ -1,8 +1,8 @@
 .searchPage {
 
-  min-height: 50vh;
   margin-top: 64px;
   text-align: center;
+
 
   .title {
     font-size: 28px;
@@ -38,7 +38,7 @@
     .caution {
       font-size: 11px;
       color: #86868b;
-      margin-top: 12px;
+      margin-bottom: 12px;
 
       a {
         text-decoration: underline;
@@ -57,46 +57,118 @@
   }
 }
 
-.pickUniversityText {
-  margin-top: 32px;
-  font-size: 19px;
-  font-weight: 500;
+.pickUniversityParent {
 
-  @media (max-width: 768px) {
-    font-size: 17px;
+  max-width: 400px;
+  margin: 64px auto auto;
+
+
+  .pickUniversityText {
+    margin-top: 32px;
+    font-weight: 600;
+    font-size: 15px;
+    text-align: left;
+
+  }
+
+  .pickUniversity {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+
+    .university {
+      padding: 8px 16px;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      color: #495057;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      user-select: none;
+      -webkit-user-select: none;
+
+      @media (min-width: 768px) {
+        &:hover {
+          background-color: #e9ecef;
+        }
+      }
+    }
+
+    .selected {
+      @extend .university;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
   }
 
 }
 
-.pickUniversity {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 16px;
 
-  .university {
-    padding: 8px 16px;
-    border-radius: 8px;
-    background-color: #f8f9fa;
-    color: #495057;
+.prevProfs {
+  padding-left: 12px;
+  padding-right: 12px;
+  max-width: 400px;
+  margin: 64px auto auto;
+
+  .historyTitle {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 12px;
+    font-weight: 500;
     font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    color: rgb(92, 101, 110);
+  }
 
-    @media (min-width: 768px) {
-      &:hover {
-        background-color: #e9ecef;
+  .professorCard {
+    margin-bottom: 12px;
+    display: flex;
+    color: rgb(139, 152, 165);
+    font-size: 12px;
+    gap: 4px;
+
+    .time {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .professorInfo {
+      display: flex;
+      gap: 4px;
+
+      .profName {
+        font-weight: 500;
+        color: #007bff;
+        white-space: nowrap;
+      }
+
+      .profUniversityParent {
+
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+      }
+
+      .profUniversity {
+        font-weight: 500;
+
+        display: table-cell;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+
       }
     }
   }
 
-  .selected {
-    @extend .university;
-    // outer glow
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  @media (max-width: 768px) {
+    .professorCard {
+    }
   }
+
 }
 
 .profPage {

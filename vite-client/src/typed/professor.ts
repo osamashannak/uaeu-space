@@ -9,6 +9,7 @@ export interface ProfessorAPI {
     canReview: boolean;
 }
 
+
 export interface ReviewAPI {
     id: number;
     author: string;
@@ -71,4 +72,11 @@ export interface ReviewFormAPI {
     positive: boolean;
     comment: string;
     attachments: string[];
+}
+
+export interface ProfessorHistory {
+    name: string;
+    email: string;
+    university: string;
+    date: Date;
 }
