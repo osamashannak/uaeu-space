@@ -106,7 +106,7 @@ export default function Header() {
                                     </svg>
 
                                 }
-                                <div>
+                                <div className={styles.hide}>
                                     <span className={styles.navLinkText}>Course Materials</span>
                                     <div className={styles.forUAEU}><span>for UAEU</span></div>
                                 </div>

@@ -11,6 +11,18 @@
   }
 }
 
+.noComments {
+  border-top: solid 1px rgb(239, 243, 244);
+  color: rgba(0, 0, 0, 0.5);
+  padding-top: 12px;
+
+  span {
+    display: block;
+    margin: 0 auto;
+    width: fit-content;
+  }
+}
+
 @keyframes fadeIn {
   0% {
     opacity: 0;

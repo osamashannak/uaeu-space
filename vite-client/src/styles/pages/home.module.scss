@@ -1,48 +1,89 @@
 
 .head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 
   padding-right: 12px;
   padding-left: 12px;
   padding-bottom: 16px;
 
-  p {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  width: fit-content;
+    margin: auto;
+
+  .universityList {
     font-size: 18px;
     margin-top: 8px;
     margin-bottom: 8px;
+  }
+
+  .universityName {
+    margin-bottom: 8px;
+
+
+  }
+
+  .moreComingSoon {
+    font-size: 14px;
     color: rgb(139, 152, 165);
   }
 
+  .writingPuppy {
+    flex: 1 0 50px; /* or 1 0 100px, and no more need in min-width at all */
+    max-width: 200px;
+    min-width: 50px;
+  }
+
   @media (max-width: 768px) {
+    justify-content: center;
+
     .title {
       font-size: 15px;
+      text-align: center;
     }
 
-    p {
+    .universityList {
       font-size: 14px;
+      text-align: center;
     }
+
+    .writingPuppy {
+      flex: 1;
+      max-width: 200px;
+      min-width: 200px;
+    }
+
   }
 
 }
 
+.callToAction {
+  font-size: 18px;
+  font-weight: 500;
+
+  width: fit-content;
+  margin: 42px auto auto;
+
+  @media (max-width: 768px) {
+    margin-left: 25%;
+  }
+
+  @media (max-width: 417px) {
+    margin-right: 0;
+  }
+
+}
 
 .title {
   font-size: 22px;
   font-weight: 600;
   margin-top: 32px;
+  margin-bottom: 16px;
 
-}
-
-.spaceread {
-  background: rgb(5, 154, 229);
-  background: linear-gradient(to right, rgba(5, 154, 229, 1) 0%, rgba(173, 216, 255, 1) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 1.2em;
-  font-weight: 700;
-  align-items: center;
+  svg {
+    margin-right: 8px;
+  }
 
 }
 
@@ -50,7 +91,6 @@
   padding-right: 12px;
   padding-left: 12px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgb(239, 243, 244);
 
 
   &:not(:first-child) {
@@ -70,47 +110,20 @@
 
 }
 
-.centerBlock {
-  @extend .block;
-
-  .title {
-    text-align: center;
-  }
-
-  p {
-    max-width: fit-content;
-    margin: 12px auto 8px;
-  }
-}
-
-.searchBox {
-  z-index: 122;
-  padding-top: 32px;
-  padding-bottom: 32px;
-
-  * {
-    margin: auto;
-  }
-}
-
-.caution {
-  font-size: 12px !important;
-  color: rgb(139, 152, 165);
-
-}
-
-.redColor {
-  color: rgb(232, 77, 77);
-}
 
 .gotoBlock {
   padding-right: 12px;
   padding-left: 12px;
   display: flex;
-  margin-top: 32px;
-  margin-bottom: 32px;
   flex-wrap: wrap;
   gap: 32px;
+
+  width: fit-content;
+  margin: auto auto 32px;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 
   .gotoButton {
     display: flex;

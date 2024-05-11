@@ -4,11 +4,11 @@ import {ProfessorItem} from "../typed/searchbox.ts";
 
 const HOST = import.meta.env.VITE_SERVER_ENDPOINT;
 
-export const getProfessorsList = async () => {
+export const getProfessorsList = async (university: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/all");
+        const request = await fetch(HOST + "/professor/all?university=" + university);
         response = await request.json();
     } catch (error) {
         return undefined;

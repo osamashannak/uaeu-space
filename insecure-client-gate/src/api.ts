@@ -1,11 +1,19 @@
 import axios from "axios";
 
-const IP_LOOKUP_API = "https://api.iplocation.net";
+const enpoint = (ip: string) => `https://api.findip.net/${ip}/?token=b09dc3f5a9574c6a80745a3351cf8de1`;
 
 export async function getCountryFromIp(ip: string) {
-    const response = await axios.get(`${IP_LOOKUP_API}/?ip=${ip}`);
+    let response;
+
+    try {
+        response = await axios.get(enpoint(ip));
+    } catch (e) {
+        return "Unknown";
+    }
+
     if (response.status !== 200) {
         return "Unknown";
     }
-    return response.data.country_name;
+
+    return response.data.country.names.en;
 }

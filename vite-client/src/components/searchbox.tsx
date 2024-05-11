@@ -1,20 +1,25 @@
 import {useCombobox} from "downshift";
-import {useRef, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import Fuse from "fuse.js";
 import {useNavigate} from "react-router-dom";
 import styles from "../styles/components/searchbox.module.scss";
 import {Item} from "../typed/searchbox.ts";
 import {getCoursesList} from "../api/course.ts";
 import {getProfessorsList} from "../api/professor.ts";
+import {UniversityContext} from "../pages/professor_lookup.tsx";
 
 export default function SearchBox(props: { type: "professor" | "course" | "restaurant" }) {
+    const {university, setUniversity} = useContext(UniversityContext);
 
     const SearchBox = () => {
+
 
         const [items, setItems] = useState<Item[]>([]);
         const [allItems, setAllItems] = useState<Item[]>([]);
         const lastInputValue = useRef<string>();
+        const previousUniversity = useRef<string>();
         const navigate = useNavigate();
+
 
         const {
             inputValue,
@@ -37,7 +42,8 @@ export default function SearchBox(props: { type: "professor" | "course" | "resta
                     return
                 }
 
-                if (!allItems.length) {
+                if (!allItems.length || university !== previousUniversity.current) {
+                    previousUniversity.current = university;
                     setItems([{name: "Loading..."}] as Item[]);
 
                     let datalist: undefined | Item[];
@@ -45,7 +51,7 @@ export default function SearchBox(props: { type: "professor" | "course" | "resta
                     if (props.type === "course") {
                         datalist = await getCoursesList();
                     } else {
-                        datalist = await getProfessorsList();
+                        datalist = await getProfessorsList(university);
                     }
 
                     if (!datalist) return;

@@ -1,5 +1,14 @@
 @use "../../form";
 
+.lineContainer {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto auto;
+
+  @media (max-width: 815px) {
+    max-width: 100%;
+  }
+}
 
 .formHeader {
   display: flex;
@@ -280,7 +289,6 @@
   opacity: 0;
   z-index: 999;
   pointer-events: none;
-  width: fit-content;
 
   & > div {
     position: absolute;

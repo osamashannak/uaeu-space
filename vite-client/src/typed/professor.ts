@@ -3,6 +3,7 @@ export interface ProfessorAPI {
     email: string;
     name: string;
     college: string;
+    university: string;
     reviews: ReviewAPI[];
     score: number;
     canReview: boolean;

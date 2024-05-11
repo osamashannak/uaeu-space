@@ -3,11 +3,11 @@ import styles from "../../styles/components/professor/review_form.module.scss";
 
 export default function DisabledReviewForm() {
 
-    const width = window.innerWidth > 768 ? 600 : window.innerWidth;
-
     return (
         <>
-            <div style={{width: width, height: "2px"}}></div>
+            <div className={styles.lineContainer}>
+                <div style={{height: "2px"}}></div>
+            </div>
             <section
                 className={styles.reviewForm}
                 onClick={event => {

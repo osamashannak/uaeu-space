@@ -32,7 +32,7 @@ export default function ReviewSection(props: { professorReviews: ReviewAPI[] }) 
                         reviews.map(value =>
                             <Review key={value.id} {...value}/>
                         )
-                        : <div className={reviewStyles.review}><span>There are no comments.</span></div>
+                        : <div className={reviewStyles.noComments}><span>There are no comments.</span></div>
                 }
 
 

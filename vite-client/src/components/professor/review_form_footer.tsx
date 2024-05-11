@@ -205,6 +205,12 @@ export default function ReviewFormFooter(props: {
         }
     }, []);
 
+    let width ;
+
+    if (window.innerWidth < 360) {
+        width = "300px";
+    }
+
 
     return (
         <div className={styles.postFooter}>
@@ -215,12 +221,15 @@ export default function ReviewFormFooter(props: {
                 }}>
 
                 <div className={styles.gifSelector} onClick={e => e.stopPropagation()}>
-                    <GifPicker tenorApiKey={"AIzaSyDmHmE9bzvu54NGyozlJFwHCwtpOFQiVng"}
-                               contentFilter={ContentFilter.HIGH}
-                               onGifClick={(gif) => {
-                                   addTenorGif(gif.url);
-                                   hideGifSelector();
-                               }}/>
+                    <div className={styles.container2}>
+                        <GifPicker tenorApiKey={"AIzaSyDmHmE9bzvu54NGyozlJFwHCwtpOFQiVng"}
+                                   contentFilter={ContentFilter.HIGH}
+                                   width={width}
+                                   onGifClick={(gif) => {
+                                       addTenorGif(gif.url);
+                                       hideGifSelector();
+                                   }}/>
+                    </div>
                 </div>
                 <div className={canAddMoreAttachments() ? styles.buttonIconWrapper : styles.disabledButton}>
                     <label className={styles.buttonLabel} htmlFor={"upload-images"}>

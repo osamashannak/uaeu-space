@@ -210,12 +210,12 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         lengthStyle += ` ${styles.commentLengthGood}`;
     }
 
-    const width = window.innerWidth > 768 ? 600 : window.innerWidth;
-
     return (
 
         <>
-            <div id={"line-container"} style={{width: width}}></div>
+            <div className={styles.lineContainer}>
+                <div id={"line-container"}></div>
+            </div>
             <section
                 className={styles.reviewForm}
                 onClick={event => {
@@ -223,49 +223,49 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
                 }}>
 
                 {/*<div>
-                <div className={styles.guestWarning} onClick={(e) => {
-                    e.stopPropagation();
-
-                    const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
-                    warningWindow.style.display = "flex";
-                    document.body.style.overflow = "hidden";
-                    document.body.style.height = `calc(100vh - 160px)`;
-                }}>
-                    <span>You are not logged in</span>
-                    <div className={styles.infoButton}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-                            <path fill="currentColor"
-                                  d="M11 17h2v-6h-2zm1-8q.425 0 .713-.288T13 8q0-.425-.288-.712T12 7q-.425 0-.712.288T11 8q0 .425.288.713T12 9m0 13q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12q0-3.35-2.325-5.675T12 4Q8.65 4 6.325 6.325T4 12q0 3.35 2.325 5.675T12 20m0-8"/>
-                        </svg>
-                    </div>
-                </div>
-
-                <div className={styles.fullscreenWarning} onClick={(e) => {
-                    e.stopPropagation();
-                    const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
-                    warningWindow.style.display = "none";
-                    document.body.style.removeProperty("overflow");
-                    document.body.style.removeProperty("height");
-                }}>
-                    <div className={styles.warningWindow} onClick={(e) => {
+                    <div className={styles.guestWarning} onClick={(e) => {
                         e.stopPropagation();
+
+                        const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
+                        warningWindow.style.display = "flex";
+                        document.body.style.overflow = "hidden";
+                        document.body.style.height = `calc(100vh - 160px)`;
                     }}>
-                        <h3>Logging in will allow you to:</h3>
-                        <div className={styles.list}>
-                            <p className={styles.element}>1. Edit your reviews 12 hours after submitting</p>
-                            <p className={styles.element}>2. Delete your reviews at any time</p>
+                        <span>You are not logged in</span>
+                        <div className={styles.infoButton}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                      d="M11 17h2v-6h-2zm1-8q.425 0 .713-.288T13 8q0-.425-.288-.712T12 7q-.425 0-.712.288T11 8q0 .425.288.713T12 9m0 13q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12q0-3.35-2.325-5.675T12 4Q8.65 4 6.325 6.325T4 12q0 3.35 2.325 5.675T12 20m0-8"/>
+                            </svg>
                         </div>
-                        <h5>Your reviews will always be anonymous</h5>
-                        <Link className={styles.warningButton} onClick={() => {
-                            const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
-                            warningWindow.style.display = "none";
-                            document.body.style.removeProperty("overflow");
-                            document.body.style.removeProperty("height");
-                        }} to={"/login"}>Login</Link>
                     </div>
 
-                </div>
-            </div>*/}
+                    <div className={styles.fullscreenWarning} onClick={(e) => {
+                        e.stopPropagation();
+                        const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
+                        warningWindow.style.display = "none";
+                        document.body.style.removeProperty("overflow");
+                        document.body.style.removeProperty("height");
+                    }}>
+                        <div className={styles.warningWindow} onClick={(e) => {
+                            e.stopPropagation();
+                        }}>
+                            <h3>Logging in will allow you to:</h3>
+                            <div className={styles.list}>
+                                <p className={styles.element}>1. Edit your reviews 12 hours after submitting</p>
+                                <p className={styles.element}>2. Delete your reviews at any time</p>
+                            </div>
+                            <h5>Your reviews will always be anonymous</h5>
+                            <Link className={styles.warningButton} onClick={() => {
+                                const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
+                                warningWindow.style.display = "none";
+                                document.body.style.removeProperty("overflow");
+                                document.body.style.removeProperty("height");
+                            }} to={"/login"}>Login</Link>
+                        </div>
+
+                    </div>
+                </div>*/}
 
 
                 <LexicalComposer initialConfig={{
@@ -284,10 +284,12 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
                     <div onClick={() => commentRef.current?.focus()}>
                         <div className={styles.postEditor}>
                             <CustomPlainTextPlugin
-                                placeholder={<div className={styles.postPlaceholder}>What was your experience?</div>}
+                                placeholder={<div className={styles.postPlaceholder}>What was your
+                                    experience?</div>}
                                 contentEditable={
                                     <div className={styles.postContentContainer}>
-                                        <ContentEditable style={{outline: "none"}} role={"textbox"} spellCheck={"true"}
+                                        <ContentEditable style={{outline: "none"}} role={"textbox"}
+                                                         spellCheck={"true"}
                                                          className={styles.postContent}/>
                                     </div>
                                 }
