@@ -311,8 +311,11 @@ export const find = async (req: Request, res: Response) => {
 }
 
 export const getAll = async (req: Request, res: Response) => {
+
+    const university = req.query.university as string ?? "United Arab Emirates University";
+
     const professors = await AppDataSource.getRepository(Professor).find({
-        where: {visible: true, university: "United Arab Emirates University"},
+        where: {visible: true, university: university},
         select: {name: true, email: true}
     });
 
