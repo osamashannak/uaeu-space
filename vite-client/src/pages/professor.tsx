@@ -38,7 +38,7 @@ export default function Professor() {
 
     const professor = professorState.professor as ProfessorAPI | undefined | null;
 
-    /*useEffect(() => {
+    useEffect(() => {
         if (!email) {
             dispatch(setProfessor(null));
             return;
@@ -51,27 +51,11 @@ export default function Professor() {
         return () => {
             dispatch(clearProfessor());
         }
-    }, [dispatch, email]);*/
+    }, [dispatch, email]);
 
     useEffect(() => {
-        dispatch(setProfessor({
-            "email": "sdsadsagopadfdsfdflan@uaeu.ac.ae",
-            "name": "Sasidaran Gopalan",
-            "college": "College of Business and Economics",
-            "university": "United Arab Emirates University",
-            "reviews": [],
-            "canReview": true,
-            "score": 4.625
-        }));
-    }, []);
-
-    useEffect(() => {
-        // save professor history to local storage
         if (professor) {
             const professorHistory = JSON.parse(localStorage.getItem("professorHistory") || "[]");
-
-            console.log(professorHistory)
-            console.log(professor.email)
 
             const professorIndex = professorHistory.findIndex((prof: { email: string; }) => prof.email === professor.email);
             if (professorIndex === -1) {
