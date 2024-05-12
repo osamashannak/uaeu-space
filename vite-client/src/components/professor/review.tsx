@@ -2,10 +2,13 @@ import dayjs from "dayjs";
 import {ReviewAPI} from "../../typed/professor.ts";
 import styles from "../../styles/components/professor/review.module.scss";
 import {formatRelativeTime, parseText, ratingToIcon} from "../../utils.tsx";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import ReviewRating from "./review_rating.tsx";
+import ReviewDeletionModal from "./review_deletion_modal.tsx";
 
 export default function Review(review: ReviewAPI) {
+
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
 
 
     useEffect(() => {
@@ -28,22 +31,25 @@ export default function Review(review: ReviewAPI) {
             <div className={styles.reviewInfo}>
 
                 <div className={styles.reviewInfoLeft}>
-                    <div className={styles.reviewInfoLeftTop}>
-                        <div className={styles.authorName}>
-                            {review.self ? "You" : review.author}
-                        </div>
-                        <div className={"text-separator"}>
-                            <span>·</span>
-                        </div>
-                        <time
-                            dateTime={review.created_at.toString()}
-                            title={dayjs(review.created_at).format("MMM D, YYYY h:mm A")}
-                            className={styles.time}
-                        >{formatRelativeTime(new Date(review.created_at))}</time>
+                    <div className={styles.reviewHead}>
+                        <div className={styles.reviewInfoLeftTop}>
+                            <div className={styles.authorName}>
+                                {review.self ? "You" : review.author}
+                            </div>
+                            <div className={"text-separator"}>
+                                <span>·</span>
+                            </div>
+                            <time
+                                dateTime={review.created_at.toString()}
+                                title={dayjs(review.created_at).format("MMM D, YYYY h:mm A")}
+                                className={styles.time}
+                            >{formatRelativeTime(new Date(review.created_at))}</time>
 
-                        {diffDays <= 7 && <div className={styles.new}>
-                            <span>NEW</span>
-                        </div>}
+                            {diffDays <= 7 && <div className={styles.new}>
+                                <span>NEW</span>
+                            </div>}
+                        </div>
+
                     </div>
                     <div className={styles.reviewInfoRight}>
                         <div className={styles.reviewStars}>
@@ -92,6 +98,28 @@ export default function Review(review: ReviewAPI) {
                     <ReviewRating dislikes={review.dislikes} likes={review.likes} id={review.id}
                                   self={review.selfRating}/>
                 </div>
+
+                {/*<div className={styles.commentButton}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={styles.icon} viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 21a9 9 0 1 0-9-9c0 1.488.36 2.89 1 4.127L3 21l4.873-1c1.236.639 2.64 1 4.127 1"/>
+                    </svg>
+                    <div className={styles.iconBackground}></div>
+                </div>*/}
+
+                {review.self && <div className={styles.deleteButton} onClick={() => {
+                    setDeleteConfirm(true);
+                    // disable scrolling
+                    document.body.style.overflow = "hidden";
+                }}>
+                    <svg className={styles.icon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <path fill="currentColor"
+                              d="M216 50h-42V40a22 22 0 0 0-22-22h-48a22 22 0 0 0-22 22v10H40a6 6 0 0 0 0 12h10v146a14 14 0 0 0 14 14h128a14 14 0 0 0 14-14V62h10a6 6 0 0 0 0-12M94 40a10 10 0 0 1 10-10h48a10 10 0 0 1 10 10v10H94Zm100 168a2 2 0 0 1-2 2H64a2 2 0 0 1-2-2V62h132Zm-84-104v64a6 6 0 0 1-12 0v-64a6 6 0 0 1 12 0m48 0v64a6 6 0 0 1-12 0v-64a6 6 0 0 1 12 0"/>
+                    </svg>
+                    <div className={styles.iconBackground}></div>
+                </div>}
+
+                {deleteConfirm && <ReviewDeletionModal setDeleteConfirm={setDeleteConfirm}/>}
 
 
                 {review.uaeuOrigin &&

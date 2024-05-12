@@ -55,45 +55,31 @@ export default function Professor() {
 
     useEffect(() => {
         dispatch(setProfessor({
-            "email": "alig@uaeu.ac.ae",
-            "name": "Ali Gargoum",
+            "email": "maqsoods@uaeu.ac.ae",
+            "name": "Maqsood Sandhu",
             "college": "College of Business and Economics",
             "university": "United Arab Emirates University",
             "reviews": [
                 {
-                    "id": 5494,
-                    "score": 2,
-                    "positive": false,
-                    "comment": "عصوبي وشرحه خايس  \nHe’s teaching is so bad and boring and makes it harder and more complicated to understand , the quizzes and the midterm exam level was totally different , in my opinion it wasn’t easy at all , I don’t recommend this doctor unless  you are good in math and you are able to teach your self \n- Statistics 180 -",
-                    "created_at": "2023-11-27T11:07:44.539Z",
-                    "author": "User",
-                    "likes": 0,
-                    "dislikes": 0,
-                    "attachments": null,
-                    "self": false,
-                    "selfRating": null,
-                    "uaeuOrigin": true
-                },
-                {
-                    "id": 5440,
-                    "score": 4,
+                    "id": 9310,
+                    "score": 5,
                     "positive": true,
-                    "comment": "to be honest, everything was alright, till midterms came along it was hard and it required a lot of practice. \nHe doesn't give bonuses but drops some quizzes and assignment. \nHe tries to understand, but if you can find someone else to teach you the course I recommend you that especially if you're bad at maths and problem solving. ",
-                    "created_at": "2023-11-26T13:11:21.151Z",
+                    "comment": "Good and fun Dr, really helpful",
+                    "created_at": "2024-04-30T18:21:18.565Z",
                     "author": "User",
                     "likes": 0,
                     "dislikes": 0,
                     "attachments": null,
-                    "self": false,
+                    "self": true,
                     "selfRating": null,
-                    "uaeuOrigin": true
+                    "uaeuOrigin": false
                 },
                 {
-                    "id": 4870,
-                    "score": 2,
-                    "positive": false,
-                    "comment": "no one in class understands his explanation, he makes the course more complicated + he doesn’t listen to our opinions. his class is boring too and if u don’t understand a point he will make u feel like ur stupid.. honestly i would rate him 1.5/5",
-                    "created_at": "2023-11-14T17:42:34.536Z",
+                    "id": 7915,
+                    "score": 5,
+                    "positive": true,
+                    "comment": "I could say it was one of they few courses I actually benefited from. It was great, his classes are never boring! I'm so glad I was taught by him.",
+                    "created_at": "2024-03-10T16:28:50.338Z",
                     "author": "User",
                     "likes": 0,
                     "dislikes": 0,
@@ -103,11 +89,25 @@ export default function Professor() {
                     "uaeuOrigin": false
                 },
                 {
-                    "id": 3788,
-                    "score": 4,
+                    "id": 3070,
+                    "score": 5,
                     "positive": true,
-                    "comment": "good at explaining. fair grades (gives you what you deserve). too many assignments and quizzes which is a good thing and his quizzes are not bad they're somewhat easy. strict which I like and I think is fair. \nthat's it. ",
-                    "created_at": "2023-10-30T22:18:22.959Z",
+                    "comment": "The best doctor, I took with him 3 courses and I got an A in all the courses, very helpful he encourage us to participate. He also, the only thing is the courses with him has to much work, but he gives grades fairly and his finals are really easy and from what he told us on the course ",
+                    "created_at": "2023-08-27T11:20:32.686Z",
+                    "author": "User",
+                    "likes": 0,
+                    "dislikes": 0,
+                    "attachments": null,
+                    "self": false,
+                    "selfRating": null,
+                    "uaeuOrigin": false
+                },
+                {
+                    "id": 886,
+                    "score": 3,
+                    "positive": false,
+                    "comment": " بس متساهل في الدرجات\n اكثر دكتور يكرف",
+                    "created_at": "2023-04-06T12:35:47.139Z",
                     "author": "User",
                     "likes": 0,
                     "dislikes": 0,
@@ -118,7 +118,7 @@ export default function Professor() {
                 }
             ],
             "canReview": true,
-            "score": 3
+            "score": 4.5
         }))
     }, []);
 

@@ -48,6 +48,143 @@
 
 }
 
+.commentButton {
+  display: flex;
+  align-content: center;
+
+  position: relative;
+
+  cursor: pointer;
+}
+
+.deleteButton {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  margin-right: 12px;
+  margin-left: 12px;
+
+  font-size: 18px;
+  border-radius: 50%;
+
+  position: relative;
+
+  transition: background-color 0.2s ease-in-out;
+
+  @media (min-width: 768px) {
+
+    &:hover {
+      color: rgb(249, 24, 128);
+
+      .iconBackground {
+        background-color: rgba(249, 24, 128, 0.1);
+        border-radius: 50%;
+
+      }
+    }
+  }
+
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.iconBackground {
+  position: absolute;
+  margin: -8px;
+  outline-style: none;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+  border-radius: 9999px;
+  transition-duration: 0.2s;
+}
+
+.deleteConfirm {
+  background-color: rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+
+  .deleteConfirmModal {
+    background-color: white;
+    border-radius: 6px;
+    padding: 12px;
+    max-width: 80%;
+    min-width: 300px;
+
+    position: fixed;
+    z-index: 100;
+
+    .title {
+      color: black;
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .caution {
+      margin-top: 12px;
+    }
+
+    .button {
+      display: block;
+      width: fit-content;
+      padding: 10px 15px;
+      border: none;
+      //red button
+        background-color: red;
+      cursor: pointer;
+      font-weight: 500;
+      color: white;
+      font-size: 12px;
+      transition: opacity 0.2s ease-in-out;
+      border-radius: 20px;
+      user-select: none;
+      -webkit-user-select: none;
+      margin-top: 24px;
+
+    }
+
+    .cancel {
+      display: block;
+      width: fit-content;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: 500;
+      color: black;
+
+      border: 2px solid black;
+      font-size: 12px;
+      border-radius: 20px;
+      user-select: none;
+      -webkit-user-select: none;
+      margin-top: 24px;
+
+      transition: all 0.2s ease-in-out;
+
+      &:hover{
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+
+  }
+}
+
 .reviewInfo {
   width: 100%;
   display: flex;
@@ -59,6 +196,11 @@
 .reviewInfoLeft {
   width: 100%;
   align-items: baseline;
+
+  .reviewHead {
+    display: flex;
+    justify-content: space-between;
+  }
 
   .reviewInfoLeftTop {
     display: flex;

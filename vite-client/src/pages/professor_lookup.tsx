@@ -6,6 +6,7 @@ import {createContext, useEffect, useState} from "react";
 import {ProfessorHistory} from "../typed/professor.ts";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import {Link} from "react-router-dom";
 
 dayjs.extend(relativeTime);
 
@@ -76,7 +77,7 @@ export default function ProfessorLookup() {
                                 <span title={dayjs(professor.date).format("MMM D, YYYY h:mm A")}>{dayjs(professor.date).fromNow()}</span>
                             </div>
                             <div className={styles.professorInfo}>
-                                <a className={styles.profName} href={`https://spaceread.net/professor/${professor.email}`}>{professor.name}</a>
+                                <Link className={styles.profName} to={`/professor/${professor.email}`}>{professor.name}</Link>
                                 <div className={styles.profUniversityParent}>
                                     <span className={styles.profUniversity}>{professor.university}</span>
                                 </div>

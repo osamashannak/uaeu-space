@@ -119,6 +119,26 @@ export const postReview = async (options: ReviewFormAPI) => {
     return response as { success: boolean, message: string, review: ReviewAPI };
 }
 
+export const deleteReview = async (reviewId: number) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/professor/comment?id=" + reviewId, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
+            },
+            credentials: "include"
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    return response as { success: boolean, message: string };
+}
+
 export const addRating = async (reviewId: number, positive: boolean) => {
 
     try {

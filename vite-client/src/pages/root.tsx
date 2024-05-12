@@ -2,6 +2,7 @@ import Layout from "../layouts/layout.tsx";
 import styles from "../styles/pages/home.module.scss";
 import {useNavigate} from "react-router-dom";
 import writingPuppy from "../assets/images/writing_puppy.gif";
+import FilteredReviews from "../components/filtered_reviews.tsx";
 
 export default function Root() {
 
@@ -70,9 +71,9 @@ export default function Root() {
                               d="M8.293 2.293a1 1 0 0 1 1.414 0l4.5 4.5a1 1 0 0 1 0 1.414l-4.5 4.5a1 1 0 0 1-1.414-1.414L11 8.5H1.5a1 1 0 0 1 0-2H11L8.293 3.707a1 1 0 0 1 0-1.414"/>
                     </svg>
                 </div>
-
-
             </div>
+
+            <FilteredReviews/>
         </Layout>
     )
 }
