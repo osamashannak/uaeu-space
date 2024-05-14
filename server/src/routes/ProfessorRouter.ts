@@ -1,6 +1,6 @@
 import * as express from "express";
 import {
-    addRating, comment,
+    addRating, comment, deleteComment,
     find,
     getAll,
     removeRating,
@@ -30,6 +30,7 @@ const router = express.Router();
 router.get("/", getCredentials, find);
 router.get("/all", cors(), getAll);
 router.post("/comment", getCredentials, comment);
+router.delete("/comment", getCredentials, deleteComment);
 router.post("/comment/attachment/uploadImage", cors(), uploadMulter.single("file"), uploadImage);
 router.post("/comment/attachment/uploadTenor", cors(), uploadTenor);
 

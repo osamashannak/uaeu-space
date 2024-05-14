@@ -13,6 +13,30 @@ import * as crypto from "crypto";
 import sizeOf from 'image-size';
 
 
+export const deleteComment = async (req: Request, res: Response) => {
+    const reviewId = parseInt(<string>req.query.id);
+
+    const guest: Guest = res.locals.user;
+
+    if (!guest || !reviewId) {
+        res.status(400).json();
+        return;
+    }
+
+    let review = await AppDataSource.getRepository(Review).findOne({
+        where: {id: reviewId, guest: {token: guest.token}}
+    });
+
+    if (!review) {
+        res.status(404).json();
+        return;
+    }
+
+    await AppDataSource.getRepository(Review).remove(review);
+
+    res.status(200).json({success: true, message: null});
+}
+
 export const comment = async (req: Request, res: Response) => {
     const body = validateProfessorComment(req.body);
 
