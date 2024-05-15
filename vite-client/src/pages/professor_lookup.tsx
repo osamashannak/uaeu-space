@@ -32,7 +32,7 @@ export default function ProfessorLookup() {
     const professorHistory = JSON.parse(localStorage.getItem('professorHistory') || '[]') as ProfessorHistory[];
 
     return (
-        <Layout>
+        <>
             <div className={styles.searchPage}>
                 <div className={styles.title}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 20 20">
@@ -74,10 +74,12 @@ export default function ProfessorLookup() {
                         <div key={index} className={styles.professorCard}>
                             <div className={styles.time}>
                                 <span>•</span>
-                                <span title={dayjs(professor.date).format("MMM D, YYYY h:mm A")}>{dayjs(professor.date).fromNow()}</span>
+                                <span
+                                    title={dayjs(professor.date).format("MMM D, YYYY h:mm A")}>{dayjs(professor.date).fromNow()}</span>
                             </div>
                             <div className={styles.professorInfo}>
-                                <Link className={styles.profName} to={`/professor/${professor.email}`}>{professor.name}</Link>
+                                <Link className={styles.profName}
+                                      to={`/professor/${professor.email}`}>{professor.name}</Link>
                                 <div className={styles.profUniversityParent}>
                                     <span className={styles.profUniversity}>{professor.university}</span>
                                 </div>
@@ -88,7 +90,7 @@ export default function ProfessorLookup() {
                 }
 
             </div>}
-        </Layout>
+        </>
     )
 
 }

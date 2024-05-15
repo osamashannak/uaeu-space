@@ -8,40 +8,46 @@ import TermsOfService from "../pages/legal/tos.tsx";
 import Privacy from "../pages/legal/privacy.tsx";
 import Error from "../pages/error.tsx";
 import Login from "../pages/login.tsx";
+import Layout from "../layouts/layout.tsx";
 
 const Router = createBrowserRouter([
     {
-        path: "/",
-        element: <Root/>,
-        errorElement: <Error/>
-    },
-    {
-        path: "terms-of-service",
-        element: <TermsOfService/>
-    },
-    {
-        path: "privacy",
-        element: <Privacy/>
-    },
-    {
-        path: "professor",
-        element: <ProfessorLookup/>
-    },
-    {
-        path: "professor/:email",
-        element: <Professor/>,
-    },
-    {
-        path: "course",
-        element: <CourseLookup/>
-    },
-    {
-        path: "course/:tag",
-        element: <Course/>,
-    },
-    {
-        path: "login",
-        element: <Login/>
+        element: <Layout/>,
+        children: [
+            {
+                path: "/",
+                element: <Root/>,
+                errorElement: <Error/>
+            },
+            {
+                path: "terms-of-service",
+                element: <TermsOfService/>
+            },
+            {
+                path: "privacy",
+                element: <Privacy/>
+            },
+            {
+                path: "professor",
+                element: <ProfessorLookup/>
+            },
+            {
+                path: "professor/:email",
+                element: <Professor/>,
+            },
+            {
+                path: "course",
+                element: <CourseLookup/>
+            },
+            {
+                path: "course/:tag",
+                element: <Course/>,
+            },
+            {
+                path: "login",
+                element: <Login/>
+            }
+        ]
     }
 ]);
 

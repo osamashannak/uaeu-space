@@ -9,7 +9,7 @@ import {getProfessorsList} from "../api/professor.ts";
 import {UniversityContext} from "../pages/professor_lookup.tsx";
 
 export default function SearchBox(props: { type: "professor" | "course" | "restaurant" }) {
-    const {university, setUniversity} = useContext(UniversityContext);
+    const {university} = useContext(UniversityContext);
 
     const SearchBox = () => {
 
@@ -107,6 +107,10 @@ export default function SearchBox(props: { type: "professor" | "course" | "resta
             },
             onSelectedItemChange: ({selectedItem: newSelectedItem}) => {
                 if (!newSelectedItem) return;
+
+                const input = document.querySelector("input");
+                input?.blur();
+
                 if ('email' in newSelectedItem) {
                     navigate(`/professor/${newSelectedItem.email}`);
                 } else {
@@ -137,10 +141,6 @@ export default function SearchBox(props: { type: "professor" | "course" | "resta
                                     item: element,
                                     index,
                                 })} >
-                                    {
-                                        !(('tag' in element) || ('email' in element)) &&
-                                        <span>{element.name}</span>
-                                    }
                                     {'tag' in element &&
                                         <>
                                             <span>

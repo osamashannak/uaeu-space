@@ -6,6 +6,7 @@ import Router from "./router/default.tsx";
 import {HelmetProvider} from "react-helmet-async";
 import store from "./redux/store.ts";
 import {Provider} from "react-redux";
+import Layout from "./layouts/layout.tsx";
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

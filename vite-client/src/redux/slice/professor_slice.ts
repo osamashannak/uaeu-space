@@ -107,12 +107,18 @@ export const professorSlice = createSlice({
             }
 
             state.professor.reviews = [action.payload, ...state.professor.reviews];
-        }
+        },
+        removeReview: (state, action: PayloadAction<number>) => {
+            if (!state.professor) {
+                return;
+            }
 
+            state.professor.reviews = state.professor.reviews.filter(review => review.id !== action.payload);
+        }
     }
 });
 
-export const {setProfessor, clearProfessor, sortReviews, addReview} = professorSlice.actions
+export const {setProfessor, clearProfessor, sortReviews, addReview, removeReview} = professorSlice.actions
 
 export const selectProfessor = (state: RootState) => state.professor
 

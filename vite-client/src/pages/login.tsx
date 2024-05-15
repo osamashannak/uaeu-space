@@ -69,11 +69,7 @@ export default function Login() {
 
 
     return (
-        <Layout>
-
-            <Helmet>
-                <title>Login</title>
-            </Helmet>
+        <>
 
             {
                 displayScreen === "register" && <RegisterForm setDisplayScreen={setDisplayScreen}/>
@@ -139,7 +135,7 @@ export default function Login() {
                 </div>
 
             </div>
-        </Layout>
+        </>
     )
 
 }

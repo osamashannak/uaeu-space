@@ -1,4 +1,4 @@
-import {ProfessorAPI, ReviewAPI, ReviewFormAPI, TenorGIFAttachment} from "../typed/professor.ts";
+import {ProfessorAPI, ReviewAPI, ReviewFormAPI, ReviewReplyAPI, TenorGIFAttachment} from "../typed/professor.ts";
 import {ProfessorItem} from "../typed/searchbox.ts";
 
 
@@ -31,6 +31,7 @@ export const getProfessor = async (id: string) => {
 
     return response['professor'] as ProfessorAPI ?? null;
 }
+
 
 export const uploadImageAttachment = async (file: File | Blob) => {
     let response;
@@ -96,6 +97,59 @@ export const uploadVideoAttachment = async (file: File | Blob) => {
     }
 
     return response.id as string;
+}
+
+export const getReplyName = async (id: number) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/professor/comment/reply/name?reviewId=" + id);
+        response = await request.json();
+    } catch (error) {
+        return null;
+    }
+
+    return response['name'] as string ?? null;
+}
+
+export const getReviewReplies = async (id: number, after: number = 1) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + `/professor/comment/reply?reviewId=${id}&after=${after}`, {
+            credentials: "include",
+        });
+        response = await request.json();
+    } catch (error) {
+        return null;
+    }
+
+    return response as { replies: ReviewReplyAPI[], comments: number } ?? null;
+}
+
+export const postReply = async (reviewId: number, comment: string, mention?: string) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/professor/comment/reply", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
+            },
+            body: JSON.stringify({
+                reviewId,
+                comment,
+                mention
+            }),
+            credentials: "include"
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    return response as { success: boolean, message: string, reply: ReviewReplyAPI };
 }
 
 export const postReview = async (options: ReviewFormAPI) => {

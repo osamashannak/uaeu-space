@@ -9,15 +9,17 @@ export default function CenterScreen({children, setDisplayScreen}: {
     useEffect(() => {
         const screen = document.querySelector(`.${styles.screen}`) as HTMLDivElement;
         screen.style.display = "flex";
-        document.body.style.maxHeight = "100vh";
-        document.body.style.overflow = "hidden";
+
+        const body = document.querySelector("body") as HTMLBodyElement;
+        body.style.maxHeight = "100vh";
+        body.style.overflow = "hidden";
 
         const html = document.querySelector("html") as HTMLHtmlElement;
         html.style.overscrollBehaviorY = "none";
 
         return () => {
-            document.body.style.removeProperty("max-height");
-            document.body.style.removeProperty("overflow");
+            body.style.removeProperty("max-height");
+            body.style.removeProperty("overflow");
             const html = document.querySelector("html") as HTMLHtmlElement;
             html.style.overscrollBehaviorY = "auto";
         }

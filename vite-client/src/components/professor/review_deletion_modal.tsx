@@ -1,9 +1,13 @@
 import {useEffect} from "react";
 import styles from "../../styles/components/professor/review.module.scss";
 import {deleteReview} from "../../api/professor.ts";
+import {useDispatch} from "react-redux";
+import {removeReview} from "../../redux/slice/professor_slice.ts";
 
 
 export default function ReviewDeletionModal({reviewId, setDeleteConfirm}: { reviewId: number, setDeleteConfirm: (value: boolean) => void }) {
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const screen = document.querySelector(`.${styles.deleteConfirm}`) as HTMLDivElement;
@@ -11,10 +15,13 @@ export default function ReviewDeletionModal({reviewId, setDeleteConfirm}: { revi
 
         const html = document.querySelector("html") as HTMLHtmlElement;
         html.style.overflow = "hidden";
+        html.style.marginRight = "11px";
+
 
         return () => {
             screen.style.display = "none";
             html.style.removeProperty("overflow");
+            html.style.removeProperty("margin-right");
         }
 
     }, []);
@@ -35,8 +42,12 @@ export default function ReviewDeletionModal({reviewId, setDeleteConfirm}: { revi
                             cancelButton.style.pointerEvents = "none";
                             cancelButton.style.opacity = "0.5";
 
-                            await deleteReview(reviewId);
-                            setDeleteConfirm(false);
+                            const status = await deleteReview(reviewId);
+
+                            if (status?.success) {
+                                dispatch(removeReview(reviewId));
+                                setDeleteConfirm(false);
+                            }
                         }}>Delete
                         </div>
                         <div className={styles.cancel} onClick={() => {

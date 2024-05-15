@@ -170,6 +170,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             fadeIn: true,
             self: true,
             selfRating: null,
+            comments: 0,
             attachments: details.attachments,
             author: "User",
             created_at: status.review.created_at,
@@ -419,13 +420,13 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
                                  const score = invalidFields.find(field => field.id === "score-field");
 
                                  if (score) {
-                                     // @ts-expect-error types are not up to date
+                                     // @ts-expect-error types are not up-to-date
                                      score.reportValidity();
                                      return;
                                  }
 
                                  if (invalidFields.length > 1) {
-                                     // @ts-expect-error types are not up to date
+                                     // @ts-expect-error types are not up-to-date
                                      invalidFields[0].reportValidity();
                                  }
 

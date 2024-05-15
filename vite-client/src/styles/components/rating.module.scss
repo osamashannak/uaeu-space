@@ -30,7 +30,6 @@
 
 .dislike {
   @extend .rating;
-  margin-left: 1rem;
 
   @media (min-width: 768px) {
     &:hover {
@@ -60,6 +59,7 @@
 .ratingCount {
   padding-left: 12px;
   padding-right: 12px;
+  min-width: 40px;
 
 }
 

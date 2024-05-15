@@ -356,7 +356,6 @@
   align-items: center;
   justify-content: center;
   height: 36px;
-
 }
 
 .labelBackground {
@@ -452,7 +451,6 @@
   margin-top: 1rem;
 }
 
-// create mixin with argument color
 @mixin commentLength($color) {
   color: $color;
   font-weight: 500;

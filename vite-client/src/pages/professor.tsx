@@ -1,4 +1,3 @@
-import Layout from "../layouts/layout.tsx";
 import einstein from "../assets/images/einstien.png";
 import {lazy, Suspense, useEffect} from "react";
 import styles from "../styles/pages/professor.module.scss";
@@ -61,20 +60,6 @@ export default function Professor() {
             "university": "United Arab Emirates University",
             "reviews": [
                 {
-                    "id": 9310,
-                    "score": 5,
-                    "positive": true,
-                    "comment": "Good and fun Dr, really helpful",
-                    "created_at": "2024-04-30T18:21:18.565Z",
-                    "author": "User",
-                    "likes": 0,
-                    "dislikes": 0,
-                    "attachments": null,
-                    "self": true,
-                    "selfRating": null,
-                    "uaeuOrigin": false
-                },
-                {
                     "id": 7915,
                     "score": 5,
                     "positive": true,
@@ -86,36 +71,9 @@ export default function Professor() {
                     "attachments": null,
                     "self": false,
                     "selfRating": null,
-                    "uaeuOrigin": false
+                    "uaeuOrigin": true,
+                    "comments": 10
                 },
-                {
-                    "id": 3070,
-                    "score": 5,
-                    "positive": true,
-                    "comment": "The best doctor, I took with him 3 courses and I got an A in all the courses, very helpful he encourage us to participate. He also, the only thing is the courses with him has to much work, but he gives grades fairly and his finals are really easy and from what he told us on the course ",
-                    "created_at": "2023-08-27T11:20:32.686Z",
-                    "author": "User",
-                    "likes": 0,
-                    "dislikes": 0,
-                    "attachments": null,
-                    "self": false,
-                    "selfRating": null,
-                    "uaeuOrigin": false
-                },
-                {
-                    "id": 886,
-                    "score": 3,
-                    "positive": false,
-                    "comment": " بس متساهل في الدرجات\n اكثر دكتور يكرف",
-                    "created_at": "2023-04-06T12:35:47.139Z",
-                    "author": "User",
-                    "likes": 0,
-                    "dislikes": 0,
-                    "attachments": null,
-                    "self": false,
-                    "selfRating": null,
-                    "uaeuOrigin": false
-                }
             ],
             "canReview": true,
             "score": 4.5
@@ -152,47 +110,44 @@ export default function Professor() {
 
     if (professor === undefined) {
         return (
-            <Layout>
-                <div className={styles.profPage}>
 
-                    <section className={styles.profInfoHead} style={{borderBottom: "none"}}>
-                        <div className={styles.profInfoLeft}>
-                            <h1 style={{width: "100px"}}><Skeleton/></h1>
-                            <p style={{width: "200px"}}><Skeleton/></p>
-                        </div>
+            <div className={styles.profPage}>
 
-                        <div className={styles.profInfoRight}>
-                            <p className={styles.score}><Skeleton/></p>
-                        </div>
-                    </section>
-
-                    <div className={styles.commentsSection}>
-
-
-                        <ReviewSkeleton/>
-                        <ReviewSkeleton/>
-                        <ReviewSkeleton/>
-                        <ReviewSkeleton/>
-
+                <section className={styles.profInfoHead} style={{borderBottom: "none"}}>
+                    <div className={styles.profInfoLeft}>
+                        <h1 style={{width: "100px"}}><Skeleton/></h1>
+                        <p style={{width: "200px"}}><Skeleton/></p>
                     </div>
 
+                    <div className={styles.profInfoRight}>
+                        <p className={styles.score}><Skeleton/></p>
+                    </div>
+                </section>
+
+                <div className={styles.commentsSection}>
+
+
+                    <ReviewSkeleton/>
+                    <ReviewSkeleton/>
+                    <ReviewSkeleton/>
+                    <ReviewSkeleton/>
+
                 </div>
-            </Layout>
+
+            </div>
         );
     }
 
     if (professor === null) {
         return (
-            <Layout>
 
-                <div className={styles.professorNotFound}>
-                    <div>
-                        <span>Professor not found :(</span>
-                        <p>Please DM us on Instagram to add them to the website.</p>
-                    </div>
-                    <img src={einstein} alt={""}/>
+            <div className={styles.professorNotFound}>
+                <div>
+                    <span>Professor not found :(</span>
+                    <p>Please DM us on Instagram to add them to the website.</p>
                 </div>
-            </Layout>
+                <img src={einstein} alt={""}/>
+            </div>
         );
     }
 
@@ -200,39 +155,37 @@ export default function Professor() {
 
 
     return (
-        <Layout>
-            <div className={styles.profPage}>
+        <div className={styles.profPage}>
 
-                <section className={styles.profInfoHead}>
+            <section className={styles.profInfoHead}>
 
-                    <div className={styles.infoLeft}>
-                        {score > 0 ?
-                            <div className={styles.infoLeftScore}>
-                                <span className={styles.score}>{score}</span>
-                                <span className={styles.outOf}>/5</span>
-                            </div>
-                            :
-                            <span className={styles.score}>N/A</span>}
-                    </div>
+                <div className={styles.infoLeft}>
+                    {score > 0 ?
+                        <div className={styles.infoLeftScore}>
+                            <span className={styles.score}>{score}</span>
+                            <span className={styles.outOf}>/5</span>
+                        </div>
+                        :
+                        <span className={styles.score}>N/A</span>}
+                </div>
 
-                    <div className={styles.infoRight}>
-                        <p className={styles.universityName}>{professor.university}</p>
-                        <h1>{professor.name}</h1>
-                        <span className={styles.collegeName}>{professor.college}</span>
-                    </div>
+                <div className={styles.infoRight}>
+                    <p className={styles.universityName}>{professor.university}</p>
+                    <h1>{professor.name}</h1>
+                    <span className={styles.collegeName}>{professor.college}</span>
+                </div>
 
-                </section>
+            </section>
 
 
-                <Suspense fallback={<DisabledReviewForm/>}>
-                    <ReviewForm professorEmail={professor.email} canReview={professor.canReview}/>
-                </Suspense>
+            <Suspense fallback={<DisabledReviewForm/>}>
+                <ReviewForm professorEmail={professor.email} canReview={professor.canReview}/>
+            </Suspense>
 
-                <Suspense fallback={<LoadingSuspense/>}>
-                    <ReviewSection professorReviews={professor.reviews}/>
-                </Suspense>
+            <Suspense fallback={<LoadingSuspense/>}>
+                <ReviewSection professorReviews={professor.reviews}/>
+            </Suspense>
 
-            </div>
-        </Layout>
+        </div>
     );
 }

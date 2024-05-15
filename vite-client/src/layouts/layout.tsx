@@ -2,11 +2,11 @@ import {ReactNode} from "react";
 import styles from "../styles/layout.module.scss";
 import Header from "../components/header.tsx";
 import Footer from "../components/footer.tsx";
-import ScrollToTop from "../components/scrolltotop.tsx";
 import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
 import {Helmet} from "react-helmet-async";
+import {Outlet, ScrollRestoration} from "react-router-dom";
 
-export default function Layout({children}: { children: ReactNode }) {
+export default function Layout() {
 
     return (
         <>
@@ -37,7 +37,7 @@ export default function Layout({children}: { children: ReactNode }) {
 
             <Header/>
 
-            <ScrollToTop/>
+            <ScrollRestoration/>
 
             <main>
                 <div className={styles.main}>
@@ -47,7 +47,7 @@ export default function Layout({children}: { children: ReactNode }) {
                         scriptProps={{
                             async: true
                         }}>
-                        {children}
+                        <Outlet/>
                     </GoogleReCaptchaProvider>
                 </div>
             </main>

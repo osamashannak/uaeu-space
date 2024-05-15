@@ -10,7 +10,6 @@
   flex-wrap: wrap;
 
   width: fit-content;
-  margin: auto;
 
   .universityList {
     font-size: 18px;
@@ -20,8 +19,6 @@
 
   .universityName {
     margin-bottom: 8px;
-
-
   }
 
   .moreComingSoon {
@@ -36,7 +33,7 @@
   }
 
   @media (max-width: 768px) {
-    justify-content: center;
+    margin: auto;
 
     .title {
       font-size: 15px;

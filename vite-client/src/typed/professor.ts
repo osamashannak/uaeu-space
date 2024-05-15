@@ -19,6 +19,7 @@ export interface ReviewAPI {
     created_at: Date;
     likes: number;
     dislikes: number;
+    comments: number;
     self: boolean;
     selfRating: boolean | null;
     fadeIn: boolean;
@@ -29,6 +30,18 @@ export interface ReviewAPI {
         width: number;
         url: string;
     }[];
+}
+
+export interface ReviewReplyAPI {
+    id: number;
+    author: string;
+    comment: string;
+    mention?: string;
+    likes: number;
+    self: boolean;
+    selfLike: boolean;
+    op: boolean;
+    created_at: Date;
 }
 
 
