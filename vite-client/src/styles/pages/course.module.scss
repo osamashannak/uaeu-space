@@ -2,14 +2,36 @@
   margin-top: 64px;
   text-align: center;
 
-  .searchBox {
-    margin-top: 32px;
-    margin-bottom: 18px;
+  .title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
 
-    * {
-      margin: auto;
+    @media (max-width: 768px) {
+      font-size: 24px;
     }
   }
+
+  .about {
+    font-weight: 700;
+    font-size: 16px;
+    color: rgb(139, 152, 165);
+
+    .uaeuOnly {
+      color: #ff0000;
+    }
+
+
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
+  }
+
+  .searchBox {
+    font-size: 28px;
+    margin-bottom: 18px;
+  }
+
 
   @media (max-width: 768px) {
     padding-left: 12px;
@@ -38,6 +60,12 @@
     margin-top: 0.5rem;
   }
 }
+
+.searchBox {
+  margin-top: 32px;
+  margin-bottom: 18px;
+}
+
 
 .fileList {
   margin: 2rem auto auto;

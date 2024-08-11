@@ -4,8 +4,12 @@ import styles from "../styles/pages/course.module.scss";
 export default function CourseLookup() {
     return (
         <div className={styles.searchPage}>
-            <h1>Course Materials</h1>
-            <p>Share and find materials you need to help you succeed in your courses</p>
+            <div className={styles.title}>
+                <span>Course Materials</span>
+            </div>
+            <div className={styles.about}>
+                <span>Share and find materials for your courses <span className={styles.uaeuOnly}>(for UAEU)</span></span>
+            </div>
 
             <div className={styles.searchBox}>
                 <SearchBox type={"course"}/>

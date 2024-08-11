@@ -33,3 +33,9 @@ client-gate/node_modules/
 auth-server/
 
 spaceread-database
+
+ku_faculty.csv
+ku_scraper.py
+normalize.py
+uaeu_scraper.py
+uos_scraper.py

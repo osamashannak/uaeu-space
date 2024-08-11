@@ -37,7 +37,7 @@ export default function Professor() {
 
     const professor = professorState.professor as ProfessorAPI | undefined | null;
 
-    /*useEffect(() => {
+    useEffect(() => {
         if (!email) {
             dispatch(setProfessor(null));
             return;
@@ -50,35 +50,8 @@ export default function Professor() {
         return () => {
             dispatch(clearProfessor());
         }
-    }, [dispatch, email]);*/
+    }, [dispatch, email]);
 
-    useEffect(() => {
-        dispatch(setProfessor({
-            "email": "maqsoods@uaeu.ac.ae",
-            "name": "Maqsood Sandhu",
-            "college": "College of Business and Economics",
-            "university": "United Arab Emirates University",
-            "reviews": [
-                {
-                    "id": 7915,
-                    "score": 5,
-                    "positive": true,
-                    "comment": "I could say it was one of they few courses I actually benefited from. It was great, his classes are never boring! I'm so glad I was taught by him.",
-                    "created_at": "2024-03-10T16:28:50.338Z",
-                    "author": "User",
-                    "likes": 0,
-                    "dislikes": 0,
-                    "attachments": null,
-                    "self": false,
-                    "selfRating": null,
-                    "uaeuOrigin": true,
-                    "comments": 10
-                },
-            ],
-            "canReview": true,
-            "score": 4.5
-        }))
-    }, []);
 
     useEffect(() => {
         if (professor) {
@@ -103,8 +76,6 @@ export default function Professor() {
             }
 
             localStorage.setItem("professorHistory", JSON.stringify(professorHistory));
-
-
         }
     }, [professor]);
 
@@ -139,6 +110,8 @@ export default function Professor() {
     }
 
     if (professor === null) {
+        // @ts-expect-error Clarity is not defined
+        clarity("set", "NoProfessor", "true");
         return (
 
             <div className={styles.professorNotFound}>

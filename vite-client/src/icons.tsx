@@ -27,9 +27,9 @@ const EXCEL = (
         <defs>
             <linearGradient id="vscodeIconsFileTypeExcel0" x1="4.494" x2="13.832" y1="-2092.086" y2="-2075.914"
                             gradientTransform="translate(0 2100)" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#18884f"/>
-                <stop offset=".5" stop-color="#117e43"/>
-                <stop offset="1" stop-color="#0b6631"/>
+                <stop offset="0" stopColor="#18884f"/>
+                <stop offset=".5" stopColor="#117e43"/>
+                <stop offset="1" stopColor="#0b6631"/>
             </linearGradient>
         </defs>
         <path fill="#185c37"
@@ -82,9 +82,9 @@ const POWERPOINT = (
         <defs>
             <linearGradient id="vscodeIconsFileTypePowerpoint0" x1="4.494" x2="13.832" y1="-1748.086" y2="-1731.914"
                             gradientTransform="translate(0 1756)" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#ca4c28"/>
-                <stop offset=".5" stop-color="#c5401e"/>
-                <stop offset="1" stop-color="#b62f14"/>
+                <stop offset="0" stopColor="#ca4c28"/>
+                <stop offset=".5" stopColor="#c5401e"/>
+                <stop offset="1" stopColor="#b62f14"/>
             </linearGradient>
         </defs>
         <path fill="#ed6c47" d="M18.93 17.3L16.977 3h-.146A12.9 12.9 0 0 0 3.953 15.854V16Z"/>
@@ -114,9 +114,9 @@ const WORD = (
         <defs>
             <linearGradient id="vscodeIconsFileTypeWord0" x1="4.494" x2="13.832" y1="-1712.086" y2="-1695.914"
                             gradientTransform="translate(0 1720)" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#2368c4"/>
-                <stop offset=".5" stop-color="#1a5dbe"/>
-                <stop offset="1" stop-color="#1146ac"/>
+                <stop offset="0" stopColor="#2368c4"/>
+                <stop offset=".5" stopColor="#1a5dbe"/>
+                <stop offset="1" stopColor="#1146ac"/>
             </linearGradient>
         </defs>
         <path fill="#41a5ee"
@@ -144,9 +144,9 @@ const ZIP = (
         <defs>
             <linearGradient id="vscodeIconsFileTypeZip0" x1="17.65" x2="21.099" y1="26.056" y2="26.056"
                             gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#4d4d4d"/>
-                <stop offset=".5" stop-color="#fff"/>
-                <stop offset="1" stop-color="#4d4d4d"/>
+                <stop offset="0" stopColor="#4d4d4d"/>
+                <stop offset=".5" stopColor="#fff"/>
+                <stop offset="1" stopColor="#4d4d4d"/>
             </linearGradient>
             <linearGradient id="vscodeIconsFileTypeZip1" x1="17.65" x2="21.099" y1="23.756" y2="23.756"
                             href="#vscodeIconsFileTypeZip0"/>

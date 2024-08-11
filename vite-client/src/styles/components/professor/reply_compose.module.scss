@@ -23,7 +23,7 @@
 .replyFormModal {
   background-color: white;
   border-radius: 8px;
-  padding: 48px 32px 32px 32px;
+  padding: 64px 32px 32px 32px;
   max-width: 550px;
   width: 100%;
 
@@ -31,27 +31,18 @@
 }
 
 .closeButton {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 1;
-    margin: 8px;
-    cursor: pointer;
-    transition-duration: 0.2s;
-    transition-property: background-color, box-shadow;
-    border-radius: 9999px;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 28px;
-    width: 28px;
+  position: absolute;
+  top: 25px;
+  z-index: 50;
+  cursor: pointer;
+  height: 28px;
+  width: 28px;
 }
 
 .replyingTo {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 500;
-  color: rgba(110, 112, 114, 1);
+  margin-top: 64px;
 
   .replyAuthor {
     font-weight: 600;
@@ -151,10 +142,11 @@
   cursor: text;
   max-height: 60vh;
   min-height: 50px;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 24px;
   font-weight: 400;
   width: 100%;
+  margin-top: 12px;
 }
 
 @media (max-width: 768px) {
@@ -162,6 +154,21 @@
     max-width: 100%;
     height: 100%;
     border-radius: 0;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 84px;
   }
 
+}
+
+.error {
+  display: none;
+}
+
+.showError {
+  display: flex;
+  color: #FF0000;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 12px;
 }

@@ -7,12 +7,15 @@ import {HistoryPlugin} from "@lexical/react/LexicalHistoryPlugin";
 import {EditorRefPlugin} from "@lexical/react/LexicalEditorRefPlugin";
 import {OnChangePlugin} from "@lexical/react/LexicalOnChangePlugin";
 import {LexicalComposer} from "@lexical/react/LexicalComposer";
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import {LexicalEditor} from "lexical";
 import dayjs from "dayjs";
 import {formatRelativeTime} from "../../utils.tsx";
-import {useLocation, useNavigate} from "react-router-dom";
 import {getReplyName, postReply} from "../../api/professor.ts";
+import EmojiSelector from "../lexical_editor/emoji_selector.tsx";
+import {CommentsContext} from "../../context/comments.ts";
+import {useDispatch} from "react-redux";
+import {addReply} from "../../redux/slice/professor_slice.ts";
 
 
 interface ReviewComposeProps {
@@ -20,7 +23,9 @@ interface ReviewComposeProps {
     reviewId: number;
     author: string;
     comment: string;
-    mention?: string;
+    replyMention?: string;
+    mention?: number;
+    op: boolean;
     created_at: Date;
     showReplyCompose: (show: boolean) => void;
 }
@@ -33,41 +38,37 @@ export default function ReplyCompose(props: ReviewComposeProps) {
     const [submitting, setSubmitting] = useState(false);
     const [name, setName] = useState<string | null>(null);
 
+    const context = useContext(CommentsContext);
 
-    const navigate = useNavigate();
-    const location = useLocation();
+    const dispatch = useDispatch();
 
-    useEffect(() => {
-        const handlePopState = (e) => {
-            navigate(location.pathname, {replace: true});
-            props.showReplyCompose(false);
-        }
 
-        window.addEventListener("popstate", (e) => {
-            e.preventDefault();
-            handlePopState(e);
-        });
-
-        return () => {
-            window.removeEventListener("popstate", handlePopState);
-        }
-
-    }, [location.pathname, navigate, props]);
+    const scrollPosition = useRef(window.scrollY);
 
 
     useEffect(() => {
-        const body = document.querySelector("body") as HTMLBodyElement;
-        body.style.maxHeight = "100vh";
-        body.style.overflow = "hidden";
+        // @ts-expect-error Clarity not defined
+        clarity("set", "ReplyView", "true");
+
+        scrollPosition.current = window.scrollY;
+
+        const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
 
         const html = document.querySelector("html") as HTMLHtmlElement;
+        html.style.overflow = "hidden";
         html.style.overscrollBehaviorY = "none";
+        html.style.marginRight = `${scrollBarWidth}px`;
 
         return () => {
-            body.style.removeProperty("max-height");
-            body.style.removeProperty("overflow");
-            const html = document.querySelector("html") as HTMLHtmlElement;
-            html.style.overscrollBehaviorY = "auto";
+            html.style.removeProperty("overflow");
+            html.style.removeProperty("margin-right");
+            html.style.removeProperty("overscroll-behavior-y");
+
+
+            const body = document.querySelector("body") as HTMLBodyElement;
+            body.style.removeProperty("position");
+
+            window.scrollTo(0, scrollPosition.current);
         }
 
     }, []);
@@ -93,13 +94,44 @@ export default function ReplyCompose(props: ReviewComposeProps) {
     }
 
     const handleSubmit = async () => {
+        // @ts-expect-error Clarity not defined
+        clarity("set", "ReplySubmitted", "true");
+
+        const error = document.getElementById(`error-${props.reviewId}`);
+        error?.classList.remove(styles.showError);
+
         setSubmitting(true);
 
-        postReply(props.reviewId, comment, props.mention).then((response) => {
-            if (response) {
-                window.location.reload();
-            }
-        });
+        const reply = await postReply(props.reviewId, comment, props.mention);
+
+        if (!reply?.success) {
+            setSubmitting(false);
+            // @ts-expect-error Clarity not defined
+            clarity("set", "ReplyFailed", "true");
+            const error = document.getElementById(`error-${props.reviewId}`);
+            error?.classList.add(styles.showError);
+            return;
+        }
+
+        dispatch(addReply({reviewId: props.reviewId}));
+
+        context.setComments(old => {
+            return [...old, {
+                id: reply.reply.id,
+                reviewId: props.reviewId,
+                comment: reply.reply.comment,
+                mention: reply.reply.mention,
+                created_at: reply.reply.created_at,
+                author: reply.reply.author,
+                self: true,
+                likes: 0,
+                selfLike: false,
+                fadeIn: true,
+                op: props.op
+            }];
+        })
+
+        props.showReplyCompose(false);
 
     }
 
@@ -120,6 +152,12 @@ export default function ReplyCompose(props: ReviewComposeProps) {
         )
     }
 
+
+    if (window.innerWidth <= 768) {
+        const body = document.querySelector("body") as HTMLBodyElement;
+        body.style.position = "fixed";
+    }
+
     return (
         <div className={styles.replyForm} onClick={(e) => {
             e.stopPropagation();
@@ -134,7 +172,7 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                     </svg>
                 </div>
 
-                <div className={reviewStyles.reply}>
+                <div className={reviewStyles.replyPreview}>
                     <div className={reviewStyles.replyAuthor}>
                         <span>{props.author}</span>
                         <div className={"text-separator"}>
@@ -147,12 +185,13 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                         >{formatRelativeTime(new Date(props.created_at))}</time>
                     </div>
                     <div>
-                        <p dir={"auto"} className={reviewStyles.replyText}>{props.mention &&
-                            <span className={reviewStyles.mention}>@{props.mention} </span>}{props.comment}</p>
+                        <p dir={"auto"} className={reviewStyles.replyText}>{props.replyMention &&
+                            <span className={reviewStyles.mention}>@{props.replyMention} </span>}{props.comment}</p>
                     </div>
                 </div>
                 <div className={styles.replyingTo}>
-                    <span>Replying as <span className={reviewStyles.replyAuthor}>{name}</span> to @{props.author}</span>
+                    <span>You are replying as <span
+                        className={styles.replyAuthor}>{name}{props.op && " (Author)"}</span></span>
                 </div>
                 <LexicalComposer initialConfig={{
                     namespace: 'lexical',
@@ -166,7 +205,7 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                     onError: (error) => console.log(error),
                 }}>
 
-                    <div>
+                    <div onClick={() => commentRef.current?.focus()}>
                         <div className={styles.postEditor}>
                             <CustomPlainTextPlugin
                                 placeholder={<div className={styles.postPlaceholder}>Write a reply</div>}
@@ -206,6 +245,7 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                             </div>
                         </div>
                     </div>
+                    <EmojiSelector/>
                 </LexicalComposer>
 
                 <div className={styles.submitButtonWrapper}>
@@ -213,11 +253,19 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                          className={submitting ? styles.veryDisabledFormSubmit : formFilled() ? styles.enabledFormSubmit : styles.disabledFormSubmit}
                          onClick={async event => {
                              event.stopPropagation();
+                             if (!formFilled()) {
+                                 return;
+                             }
                              await handleSubmit();
                          }}>
                         <span>Post</span>
                     </div>
                 </div>
+
+                <div id={`error-${props.reviewId}`} className={styles.error}>
+                    <span>Reply failed to post. Please try again later.</span>
+                </div>
+
             </div>
         </div>
     )

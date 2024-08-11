@@ -141,6 +141,10 @@ export default function SearchBox(props: { type: "professor" | "course" | "resta
                                     item: element,
                                     index,
                                 })} >
+                                    {
+                                        /* @ts-expect-error this should work*/
+                                        !(('tag' in element) || ('email' in element)) && <span>{element.name}</span>
+                                    }
                                     {'tag' in element &&
                                         <>
                                             <span>

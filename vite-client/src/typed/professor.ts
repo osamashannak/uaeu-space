@@ -42,6 +42,7 @@ export interface ReviewReplyAPI {
     selfLike: boolean;
     op: boolean;
     created_at: Date;
+    fadeIn?: boolean;
 }
 
 

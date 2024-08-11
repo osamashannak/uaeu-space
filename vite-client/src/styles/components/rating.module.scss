@@ -1,46 +1,26 @@
 .rating {
   display: flex;
   align-items: center;
-  cursor: pointer;
+  justify-content: space-between;
 }
 
-.like {
-  @extend .rating;
+.emptySeparator {
+  width: 8px;
+}
 
-  @media (min-width: 768px) {
-    &:hover {
-      color: #049AE5;
+.like, .dislike {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
 
-      .ratingIconBg {
-        background-color: rgba(4, 154, 229, 0.1);
-        border-radius: 50%;
-
-      }
-    }
-
-
-  }
+.ratingIconTemp {
+  background-color: rgba(4, 154, 229, 0.2) !important;
 }
 
 .ratingClick {
   .ratingIconBg {
     background-color: rgba(4, 154, 229, 0.2) !important;
-  }
-}
-
-.dislike {
-  @extend .rating;
-
-  @media (min-width: 768px) {
-    &:hover {
-      color: #049AE5;
-
-      .ratingIconBg {
-        background-color: rgba(4, 154, 229, 0.1);
-        border-radius: 50%;
-
-      }
-    }
   }
 }
 
@@ -56,12 +36,34 @@
   transition-duration: 0.2s;
 }
 
+.ratingCountWrapper {
+  min-width: calc(1em + 24px);
+}
+
+.emptyRatingCount {
+  padding-left: 8px;
+}
+
+
 .ratingCount {
-  padding-left: 12px;
-  padding-right: 12px;
-  min-width: 40px;
+  @extend .emptyRatingCount;
+  cursor: pointer;
+
+  @media (min-width: 768px) {
+    &:hover {
+      color: #049AE5;
+    }
+  }
 
 }
+
+
+.ratingIconBgHover {
+  background-color: rgba(4, 154, 229, 0.1);
+  border-radius: 50%;
+
+}
+
 
 .ratingIcon {
   width: 20px;
@@ -76,5 +78,23 @@
 .buttonWrapper {
   position: relative;
   display: flex;
+  width: fit-content;
+  cursor: pointer;
+
+  transition-property: color, background-color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+
+  @media (min-width: 768px) {
+    &:hover {
+      color: #049AE5;
+
+      .ratingIconBg {
+        background-color: rgba(4, 154, 229, 0.1);
+        border-radius: 50%;
+
+      }
+    }
+  }
 
 }

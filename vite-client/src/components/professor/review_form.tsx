@@ -129,6 +129,11 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
     const handleSubmit = async () => {
         setSubmitting(true);
 
+        // @ts-expect-error Clarity is not defined
+        clarity("set", "ReviewSubmitted", "true");
+
+        window.scrollTo(0, 0);
+
         lineRef.current!.animate(1, {
             duration: 3000,
         });
@@ -143,6 +148,8 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         }
 
         if (!executeRecaptcha) {
+            // @ts-expect-error Clarity is not defined
+            clarity("set", "ReviewFailed", "true");
             setSubmitting("error");
             return;
         }
@@ -159,6 +166,8 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         });
 
         if (!status || !status.success) {
+            // @ts-expect-error Clarity is not defined
+            clarity("set", "ReviewFailed", "true");
             setSubmitting("error");
             return;
         }
@@ -415,6 +424,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
                          className={submitting ? styles.veryDisabledFormSubmit : formFilled() ? styles.enabledFormSubmit : styles.disabledFormSubmit}
                          onClick={async event => {
                              event.stopPropagation();
+                             if (submitting || !props.canReview) return;
                              if (!formFilled()) {
                                  const invalidFields = Array.from(document.querySelectorAll("input:invalid"));
                                  const score = invalidFields.find(field => field.id === "score-field");

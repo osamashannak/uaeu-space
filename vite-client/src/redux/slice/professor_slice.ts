@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit'
-import {ProfessorAPI, ReviewAPI} from "../../typed/professor.ts";
+import {ProfessorAPI, ReviewAPI, ReviewReplyAPI} from "../../typed/professor.ts";
 import {RootState} from "../store.ts";
 
 
@@ -114,11 +114,59 @@ export const professorSlice = createSlice({
             }
 
             state.professor.reviews = state.professor.reviews.filter(review => review.id !== action.payload);
+        },
+        addReply: (state, action: PayloadAction<{ reviewId: number }>) => {
+            if (!state.professor) {
+                return;
+            }
+
+            const review = state.professor.reviews.find(review => review.id === action.payload.reviewId);
+
+            if (!review) {
+                return;
+            }
+
+            review.comments += 1;
+        },
+        removeReply: (state, action: PayloadAction<{ reviewId: number }>) => {
+            if (!state.professor) {
+                return;
+            }
+
+            const review = state.professor.reviews.find(review => review.id === action.payload.reviewId);
+
+            if (!review) {
+                return;
+            }
+
+            review.comments -= 1;
+        },
+        changeRepliesCount: (state, action: PayloadAction<{ reviewId: number, count: number }>) => {
+            if (!state.professor) {
+                return;
+            }
+
+            const review = state.professor.reviews.find(review => review.id === action.payload.reviewId);
+
+            if (!review) {
+                return;
+            }
+
+            review.comments = action.payload.count;
         }
     }
 });
 
-export const {setProfessor, clearProfessor, sortReviews, addReview, removeReview} = professorSlice.actions
+export const {
+    setProfessor,
+    clearProfessor,
+    sortReviews,
+    addReview,
+    removeReview,
+    addReply,
+    removeReply,
+    changeRepliesCount
+} = professorSlice.actions
 
 export const selectProfessor = (state: RootState) => state.professor
 

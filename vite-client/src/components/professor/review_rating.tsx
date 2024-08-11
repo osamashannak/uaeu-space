@@ -58,20 +58,68 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
         running.current = false;
     }
 
+    const likeCount = (props.likes + (liked ? 1 : 0) - (props.self ? 1 : 0));
+    const dislikeCount = (props.dislikes + (liked === false ? 1 : 0) - (props.self === false ? 1 : 0));
+
+    function dislikeRatingClick(id: number) {
+        return {
+            onMouseDown: () => {
+                const likeButton = document.getElementById(`dislike-button-${id}`);
+                likeButton?.classList.add(styles.ratingClick);
+            },
+            onMouseUp: () => {
+                const likeButton = document.getElementById(`dislike-button-${id}`);
+                likeButton?.classList.remove(styles.ratingClick);
+                const bg = document.getElementById(`bg-dislike-${id}`);
+                bg?.classList.remove(styles.ratingIconBgHover)
+            },
+            onMouseOut: () => {
+                const likeButton = document.getElementById(`dislike-button-${id}`);
+                likeButton?.classList.remove(styles.ratingClick);
+                const bg = document.getElementById(`bg-dislike-${id}`);
+                bg?.classList.remove(styles.ratingIconBgHover)
+            }
+        }
+    }
+
+    function likeRatingClick(id: number) {
+        return {
+            onMouseDown: () => {
+                const likeButton = document.getElementById(`like-button-${id}`);
+                likeButton?.classList.add(styles.ratingClick);
+            },
+            onMouseUp: () => {
+                const likeButton = document.getElementById(`like-button-${id}`);
+                likeButton?.classList.remove(styles.ratingClick);
+                const bg = document.getElementById(`bg-like-${id}`);
+                bg?.classList.remove(styles.ratingIconBgHover)
+            },
+            onMouseOut: () => {
+                const likeButton = document.getElementById(`like-button-${id}`);
+                likeButton?.classList.remove(styles.ratingClick);
+                const bg = document.getElementById(`bg-like-${id}`);
+                bg?.classList.remove(styles.ratingIconBgHover)
+            }
+        }
+    }
+
+    function hoverShowBg(id: string) {
+        return {
+            onMouseEnter: () => {
+                const bg = document.getElementById(id);
+                bg?.classList.add(styles.ratingIconBgHover);
+            },
+            onMouseLeave: () => {
+                const bg = document.getElementById(id);
+                bg?.classList.remove(styles.ratingIconBgHover);
+            }
+        }
+    }
 
     return (
         <div className={styles.rating}>
-            <div className={styles.like} onClick={onLikeClick} title={"Like"} onMouseDown={() => {
-                const likeButton = document.getElementById(`like-button-${props.id}`);
-                likeButton?.classList.add(styles.ratingClick);
-            }} onMouseUp={() => {
-                const likeButton = document.getElementById(`like-button-${props.id}`);
-                likeButton?.classList.remove(styles.ratingClick);
-            }} onMouseOut={() => {
-                const likeButton = document.getElementById(`like-button-${props.id}`);
-                likeButton?.classList.remove(styles.ratingClick);
-            }}>
-                <div id={`like-button-${props.id}`} className={styles.buttonWrapper}>
+            <div className={styles.like} title={"Like"}>
+                <div id={`like-button-${props.id}`} onClick={onLikeClick} {...likeRatingClick(props.id)} className={styles.buttonWrapper}>
                     {liked ?
                         <svg className={styles.filledRatingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path fill="currentColor" fillRule="evenodd"
@@ -85,21 +133,16 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
                                 <path stroke="currentColor" d="M8 10v10"/>
                             </g>
                         </svg>}
-                    <div className={styles.ratingIconBg}></div>
+                    <div id={`bg-like-${props.id}`} className={styles.ratingIconBg}></div>
                 </div>
-                <span className={styles.ratingCount}>{(props.likes + (liked ? 1 : 0) - (props.self ? 1 : 0)) || ""}</span>
+                <div className={styles.ratingCountWrapper}>
+                    {likeCount > 0 ?
+                        <span className={styles.ratingCount} {...hoverShowBg(`bg-like-${props.id}`)} onClick={onLikeClick} {...likeRatingClick(props.id)}>{likeCount || ""}</span> :
+                        <span className={styles.emptyRatingCount}></span>}
+                </div>
             </div>
-            <div className={styles.dislike} onClick={onDislikeClick} title={"Dislike"} onMouseDown={() => {
-                const likeButton = document.getElementById(`dislike-button-${props.id}`);
-                likeButton?.classList.add(styles.ratingClick);
-            }} onMouseUp={() => {
-                const likeButton = document.getElementById(`dislike-button-${props.id}`);
-                likeButton?.classList.remove(styles.ratingClick);
-            }} onMouseOut={() => {
-                const likeButton = document.getElementById(`dislike-button-${props.id}`);
-                likeButton?.classList.remove(styles.ratingClick);
-            }}>
-                <div id={`dislike-button-${props.id}`}className={styles.buttonWrapper}>
+            <div className={styles.dislike} title={"Dislike"}>
+                <div id={`dislike-button-${props.id}`} onClick={onDislikeClick} {...dislikeRatingClick(props.id)} className={styles.buttonWrapper}>
                     {liked === false ?
                         <svg className={styles.filledRatingIcon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path fill="currentColor" fillRule="evenodd"
@@ -113,9 +156,13 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
                                 <path stroke="currentColor" d="M8 14V4"/>
                             </g>
                         </svg>}
-                    <div className={styles.ratingIconBg}></div>
+                    <div id={`bg-dislike-${props.id}`} className={styles.ratingIconBg}></div>
                 </div>
-                <span className={styles.ratingCount}>{(props.dislikes + (liked === false ? 1 : 0) - (props.self === false ? 1 : 0)) || ""}</span>
+                <div className={styles.ratingCountWrapper}>
+                    {dislikeCount > 0 ?
+                        <span className={styles.ratingCount} {...hoverShowBg(`bg-dislike-${props.id}`)} onClick={onDislikeClick} {...dislikeRatingClick(props.id)}>{dislikeCount}</span> :
+                        <span className={styles.emptyRatingCount}></span>}
+                </div>
             </div>
         </div>
     );

@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {ReviewAPI} from "../../typed/professor.ts";
+import {ReviewAPI, ReviewReplyAPI} from "../../typed/professor.ts";
 import styles from "../../styles/components/professor/review.module.scss";
 import {formatRelativeTime, parseText, ratingToIcon} from "../../utils.tsx";
 import {useEffect, useState} from "react";
@@ -7,11 +7,15 @@ import ReviewRating from "./review_rating.tsx";
 import ReviewDeletionModal from "./review_deletion_modal.tsx";
 import ReplySection from "./reply_section.tsx";
 import ReplyCompose from "./reply_compose.tsx";
+import CommentButton from "../comment_button.tsx";
+import {CommentsContext} from "../../context/comments.ts";
+
 
 export default function Review(review: ReviewAPI) {
 
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [replyCompose, showReplyCompose] = useState(false);
+    const [comments, setComments] = useState<ReviewReplyAPI[]>([]);
 
 
     useEffect(() => {
@@ -30,7 +34,7 @@ export default function Review(review: ReviewAPI) {
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
     return (
-        <>
+        <div className={styles.reviewWrapper}>
             <article className={`${styles.review} ${review.fadeIn ? styles.fadeIn : ''}`}>
                 <div className={styles.reviewInfo}>
 
@@ -103,24 +107,23 @@ export default function Review(review: ReviewAPI) {
                                       self={review.selfRating}/>
                     </div>
 
-                    <div className={styles.comment} onMouseDown={(e) => {
+                    <div className={styles.comment} onClick={() => {
+                        showReplyCompose(true);
+                    }} onMouseDown={(e) => {
                         e.currentTarget.classList.add(styles.buttonClick);
                     }} onMouseUp={(e) => {
                         e.currentTarget.classList.remove(styles.buttonClick);
                     }} onMouseOut={(e) => {
                         e.currentTarget.classList.remove(styles.buttonClick);
                     }}>
-                        <div className={styles.commentButton} onClick={() => {
-                            showReplyCompose(true);
-                        }}>
+                        <div className={styles.commentButton}>
                             <svg className={styles.icon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                                       d="M12 21a9 9 0 1 0-9-9c0 1.488.36 2.89 1 4.127L3 21l4.873-1c1.236.639 2.64 1 4.127 1"/>
                             </svg>
                             <div className={styles.iconBackground}></div>
                         </div>
-                        <span className={styles.commentCount}>{review.comments}</span>
-
+                        {review.comments > 0 && <span className={styles.commentCount}>{review.comments}</span>}
                     </div>
 
                     {review.self && <div className={styles.deleteButton} onClick={() => {
@@ -147,11 +150,17 @@ export default function Review(review: ReviewAPI) {
                 </div>
 
             </article>
+            <CommentsContext.Provider value={{comments, setComments}}>
+                {replyCompose &&
+                    <ReplyCompose id={review.id} author={review.author} comment={review.comment} op={review.self}
+                                  created_at={review.created_at} showReplyCompose={showReplyCompose}
+                                  reviewId={review.id}/>}
 
-            {replyCompose && <ReplyCompose id={review.id} author={review.author} comment={review.comment}
-                           created_at={review.created_at} showReplyCompose={showReplyCompose} reviewId={review.id}/>}
+                {review.comments > 0 &&
+                    <ReplySection reviewId={review.id} comments={review.comments} op={review.self}/>}
 
-            {review.comments > 0 && <ReplySection reviewId={review.id} comments={review.comments}/>}
-        </>
+            </CommentsContext.Provider>
+
+        </div>
     );
 }

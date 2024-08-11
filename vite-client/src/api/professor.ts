@@ -103,7 +103,9 @@ export const getReplyName = async (id: number) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/comment/reply/name?reviewId=" + id);
+        const request = await fetch(HOST + "/professor/comment/reply/name?id=" + id, {
+            credentials: "include",
+        });
         response = await request.json();
     } catch (error) {
         return null;
@@ -112,11 +114,11 @@ export const getReplyName = async (id: number) => {
     return response['name'] as string ?? null;
 }
 
-export const getReviewReplies = async (id: number, after: number = 1) => {
+export const getReviewReplies = async (id: number, current: number[]) => {
     let response;
 
     try {
-        const request = await fetch(HOST + `/professor/comment/reply?reviewId=${id}&after=${after}`, {
+        const request = await fetch(HOST + `/professor/comment/reply?id=${id}&current=${current.join(",")}`, {
             credentials: "include",
         });
         response = await request.json();
@@ -127,7 +129,7 @@ export const getReviewReplies = async (id: number, after: number = 1) => {
     return response as { replies: ReviewReplyAPI[], comments: number } ?? null;
 }
 
-export const postReply = async (reviewId: number, comment: string, mention?: string) => {
+export const postReply = async (reviewId: number, comment: string, replyId?: number) => {
     let response;
 
     try {
@@ -140,7 +142,7 @@ export const postReply = async (reviewId: number, comment: string, mention?: str
             body: JSON.stringify({
                 reviewId,
                 comment,
-                mention
+                replyId
             }),
             credentials: "include"
         });
@@ -150,6 +152,43 @@ export const postReply = async (reviewId: number, comment: string, mention?: str
     }
 
     return response as { success: boolean, message: string, reply: ReviewReplyAPI };
+}
+
+export const likeReply = async (replyId: number) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/professor/comment/reply/like?id=" + replyId, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
+            },
+            credentials: "include"
+        });
+        response = await request.json();
+    } catch (error) {
+        return false;
+    }
+
+    return response.success as boolean;
+
+}
+
+export const removeLikeReply = async (replyId: number) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + `/professor/comment/reply/like?id=${replyId}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+        response = await request.json();
+    } catch (error) {
+        return false;
+    }
+
+    return response.success as boolean;
 }
 
 export const postReview = async (options: ReviewFormAPI) => {
@@ -178,6 +217,26 @@ export const deleteReview = async (reviewId: number) => {
 
     try {
         const request = await fetch(HOST + "/professor/comment?id=" + reviewId, {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
+            },
+            credentials: "include"
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    return response as { success: boolean, message: string };
+}
+
+export const deleteReply = async (replyId: number) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/professor/comment/reply?id=" + replyId, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',

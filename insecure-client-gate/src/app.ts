@@ -141,7 +141,13 @@ app.use(async function (req, res, next) {
 });
 
 app.get('*', function (req, res) {
-    fs.readFile('./views/default.html', 'utf8', (err, text) => {
+    let fileParts = './views/default.html';
+
+    if (req.query.dev === 'true') {
+        fileParts = './views/dev.html';
+    }
+
+    fs.readFile(fileParts, 'utf8', (err, text) => {
 
         if (err) {
             return res.status(503).send('Service Unavailable');

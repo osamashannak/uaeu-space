@@ -1,13 +1,21 @@
 .review {
   background-color: white;
   font-size: 15px;
-  padding: 12px 24px;
+  padding: 12px 18px;
   transition: opacity 0.3s ease-out 0s;
   border-top: solid 1px rgb(239, 243, 244);
+
 
   @media (max-width: 815px) {
     border-radius: 0;
     box-shadow: none;
+  }
+}
+
+
+.reviewWrapper {
+  &:last-of-type {
+    margin-bottom: 40px;
   }
 }
 
@@ -54,10 +62,11 @@
 
   cursor: pointer;
 
+  margin-right: 12px;
+
   .commentCount {
     padding-left: 12px;
     padding-right: 12px;
-    min-width: 5px;
   }
 
 
@@ -362,7 +371,7 @@
   .line {
     background-color: rgb(207, 217, 222);
     width: 4px;
-    margin-left: 22px;
+    margin-left: 16px;
     margin-right: 18px;
   }
 
@@ -374,7 +383,7 @@
 
 .reply {
 
-  font-size: 14px;
+  font-size: 13px;
   padding-bottom: 24px;
 
   .replyAuthor {
@@ -407,16 +416,26 @@
     color: rgba(110, 112, 114, 1);
     justify-content: space-between;
 
+    .footerButtons {
+      display: flex;
+      align-items: center;
+    }
+
     .likeButton {
       display: flex;
       align-items: center;
+      cursor: pointer;
     }
 
     .ratingIcon {
       width: 16px;
       height: 16px;
       margin-right: 8px;
-      cursor: pointer;
+    }
+
+    .filledRatingIcon {
+      @extend .ratingIcon;
+      color: #049AE5;
     }
 
     .likeCount {
@@ -436,10 +455,16 @@
     padding-bottom: 0;
   }
 
-  .mention {
-    color: #049AE5;
-  }
+}
 
+.replyPreview {
+  @extend .reply;
+  font-size: 16px;
+  padding-bottom: 0;
+}
+
+.mention {
+  color: #049AE5;
 }
 
 .viewMoreButton {

@@ -1,33 +1,32 @@
 .searchPage {
 
-  margin-top: 64px;
-  text-align: center;
 
+  min-height: 110vh;
+  max-width: 420px;
+  margin: 64px auto auto;
+  text-align: center;
 
   .title {
     font-size: 28px;
     font-weight: 700;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-bottom: 4px;
 
-    svg {
-      margin-bottom: 7px;
-      margin-left: 2px;
-    }
 
     @media (max-width: 768px) {
+      text-align: center;
       font-size: 24px;
     }
 
   }
 
   .about {
-    font-size: 18px;
+    font-weight: 700;
+    font-size: 16px;
+    color: rgb(139, 152, 165);
 
 
     @media (max-width: 768px) {
-      font-size: 15px;
+      font-size: 12px;
     }
   }
 
@@ -64,16 +63,24 @@
 
 
   .pickUniversityText {
+    display: flex;
+    gap: 8px;
+
     margin-top: 32px;
     font-weight: 600;
-    font-size: 15px;
-    text-align: left;
+    font-size: 16px;
+    width: fit-content;
+
+    @media (max-width: 768px) {
+      margin: auto;
+    }
 
   }
 
   .pickUniversity {
     display: flex;
-    gap: 6px;
+    column-gap: 6px;
+    row-gap: 12px;
     flex-wrap: wrap;
     margin-top: 16px;
 
@@ -82,18 +89,35 @@
       border-radius: 8px;
       background-color: #f8f9fa;
       color: #495057;
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 13px;
+      font-weight: 600;
       cursor: pointer;
       transition: background-color 0.3s;
       user-select: none;
       -webkit-user-select: none;
 
+      display: flex;
+      justify-content: center;
+
+      img {
+        margin-right: 4px;
+        width: 16px;
+        margin-right: 8px;
+      }
+
       @media (min-width: 768px) {
         &:hover {
           background-color: #e9ecef;
         }
+
+        &:active {
+          background-color: #dee2e6;
+        }
       }
+    }
+
+    @media (max-width: 768px) {
+      justify-content: center;
     }
 
     .selected {
@@ -160,7 +184,15 @@
         text-overflow: ellipsis;
         overflow: hidden;
 
+        text-align: left;
+
       }
+    }
+  }
+
+  @media (max-width: 768px) {
+    * {
+      font-size: 12px;
     }
   }
 

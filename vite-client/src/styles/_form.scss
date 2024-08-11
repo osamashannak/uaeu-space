@@ -60,8 +60,9 @@
 
 .veryDisabledFormSubmit {
   @extend .disabledFormSubmit;
-    background-color: #374964;
-    opacity: 0.2;
+  pointer-events: none;
+  background-color: #374964;
+  opacity: 0.2;
 
 }
 

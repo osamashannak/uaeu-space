@@ -14,5 +14,6 @@ export interface CourseFileAPI {
     size: number;
     likes: number;
     dislikes: number;
+    downloads: number;
     created_at: Date;
 }

@@ -8,6 +8,8 @@ export default function FileUpload(props: { courseTag: string }) {
     const [finished, setFinished] = useState<File[]>([]);
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        // @ts-expect-error Clarity is not defined
+        clarity("set", "FilesUpload", "true");
         event.preventDefault();
         if (details.length < 1) {
             alert("You need to select files to upload first.");

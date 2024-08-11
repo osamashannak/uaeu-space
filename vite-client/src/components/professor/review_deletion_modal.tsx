@@ -15,12 +15,14 @@ export default function ReviewDeletionModal({reviewId, setDeleteConfirm}: { revi
 
         const html = document.querySelector("html") as HTMLHtmlElement;
         html.style.overflow = "hidden";
+        html.style.overscrollBehaviorY = "none";
         html.style.marginRight = "11px";
 
 
         return () => {
             screen.style.display = "none";
             html.style.removeProperty("overflow");
+            html.style.removeProperty("overscroll-behavior-y");
             html.style.removeProperty("margin-right");
         }
 

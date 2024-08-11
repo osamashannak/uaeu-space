@@ -1,8 +1,5 @@
-import Layout from "../layouts/layout.tsx";
 import styles from "../styles/pages/home.module.scss";
 import {useNavigate} from "react-router-dom";
-import writingPuppy from "../assets/images/writing_puppy.gif";
-import FilteredReviews from "../components/filtered_reviews.tsx";
 
 export default function Root() {
 
@@ -18,9 +15,9 @@ export default function Root() {
                         <span>We now support more universities!</span>
                     </div>
                     <div className={styles.universityList}>
-                        <div className={styles.universityName}>
+                        {/*<div className={styles.universityName}>
                             <span>• Khalifa University</span>
-                        </div>
+                        </div>*/}
 
                         <div className={styles.universityName}>
                             <span>• University of Sharjah</span>
@@ -35,6 +32,19 @@ export default function Root() {
                 </div>
 
             </div>
+            {/*<div className={styles.head}>
+                <div>
+                    <div className={styles.title}><span>UAEU Space is now <span
+                        className={styles.spaceread}>SpaceRead</span></span></div>
+
+                    <p>
+                        We have renamed UAEU Space to better reflect our mission. Still the same platform you know and
+                        love
+                    </p>
+                </div>
+
+            </div>*/}
+
 
             <div className={styles.gotoBlock}>
 
@@ -59,7 +69,7 @@ export default function Root() {
                 </div>
             </div>
 
-            <FilteredReviews/>
+            {/*<FilteredReviews/>*/}
         </div>
     )
 }
