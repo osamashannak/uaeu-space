@@ -24,6 +24,11 @@
   @extend .form;
 }
 
+.timelineForm {
+  @extend .form;
+  max-width: 100%;
+}
+
 .submitButtonWrapper {
   display: flex;
 }

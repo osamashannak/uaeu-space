@@ -1,0 +1,149 @@
+.rating {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.emptySeparator {
+  width: 8px;
+}
+
+.like, .dislike {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
+.ratingIconTemp {
+  background-color: rgba(4, 154, 229, 0.2) !important;
+}
+
+.ratingClick {
+  .ratingIconBg {
+    background-color: rgba(4, 154, 229, 0.2) !important;
+  }
+}
+
+.ratingIconBg {
+  position: absolute;
+  margin: -8px;
+  outline-style: none;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+  border-radius: 9999px;
+  transition-duration: 0.2s;
+}
+
+.ratingCountWrapper {
+  min-width: calc(1em + 24px);
+}
+
+.emptyRatingCount {
+  padding-left: 8px;
+}
+
+
+.ratingCount {
+  @extend .emptyRatingCount;
+  cursor: pointer;
+
+  @media (min-width: 768px) {
+    &:hover {
+      color: #049AE5;
+    }
+  }
+
+}
+
+
+.ratingIconBgHover {
+  background-color: rgba(4, 154, 229, 0.1);
+  border-radius: 50%;
+
+}
+
+
+.ratingIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.filledRatingIcon {
+  @extend .ratingIcon;
+  color: #049AE5;
+}
+
+.buttonWrapper {
+  position: relative;
+  display: flex;
+  width: fit-content;
+  cursor: pointer;
+
+  transition-property: color, background-color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+
+  @media (min-width: 768px) {
+    &:hover {
+      color: #049AE5;
+
+      .ratingIconBg {
+        background-color: rgba(4, 154, 229, 0.1);
+        border-radius: 50%;
+
+      }
+    }
+  }
+
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.iconBackground {
+  position: absolute;
+  margin: -8px;
+  outline-style: none;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+  bottom: 0px;
+  border-radius: 9999px;
+  transition-duration: 0.2s;
+}
+
+.comment {
+  display: flex;
+  align-items: center;
+
+  cursor: pointer;
+
+  margin-right: 12px;
+
+  .commentCount {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+
+  @media (min-width: 768px) {
+    &:hover {
+      color: #049AE5;
+
+      .iconBackground {
+        background-color: rgba(4, 154, 229, 0.1);
+        border-radius: 50%;
+
+      }
+    }
+  }
+}
+
+.commentButton {
+  display: flex;
+  position: relative;
+}

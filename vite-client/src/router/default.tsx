@@ -1,5 +1,5 @@
 import {createBrowserRouter} from "react-router-dom";
-import Root from "../pages/root.tsx";
+import Home from "../pages/home.tsx";
 import Professor from "../pages/professor.tsx";
 import ProfessorLookup from "../pages/professor_lookup.tsx";
 import Course from "../pages/course.tsx";
@@ -9,6 +9,8 @@ import Privacy from "../pages/legal/privacy.tsx";
 import Error from "../pages/error.tsx";
 import Login from "../pages/login.tsx";
 import Layout from "../layouts/layout.tsx";
+import Notifications from "../pages/notifications.tsx";
+import Post from "../pages/post.tsx";
 
 const Router = createBrowserRouter([
     {
@@ -16,8 +18,12 @@ const Router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Root/>,
+                element: <Home/>,
                 errorElement: <Error/>
+            },
+            {
+                path: "notifications",
+                element: <Notifications/>
             },
             {
                 path: "terms-of-service",
@@ -30,6 +36,10 @@ const Router = createBrowserRouter([
             {
                 path: "professor",
                 element: <ProfessorLookup/>
+            },
+            {
+                path: "post/:id",
+                element: <Post/>,
             },
             {
                 path: "professor/:email",

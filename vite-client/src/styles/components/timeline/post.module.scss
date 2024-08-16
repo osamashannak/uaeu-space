@@ -1,0 +1,143 @@
+.postWrapper {
+  padding-bottom: 12px;
+  padding-top: 12px;
+  border-bottom: 1px solid #E5E5E5;
+
+  &:last-of-type {
+    margin-bottom: 40px;
+    border-bottom: none;
+  }
+}
+
+.post {
+  background-color: white;
+  font-size: 15px;
+  padding: 2px 18px;
+  transition: opacity 0.3s ease-out 0s;
+
+  cursor: pointer;
+
+  border-radius: 8px;
+
+  @media (min-width: 815px) {
+    &:hover {
+      background-color: #F6F8F9;
+    }
+  }
+
+  @media (max-width: 815px) {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+.postHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+
+  .postInfo {
+    width: 100%;
+    align-items: baseline;
+    font-size: 12px;
+    display: flex;
+
+
+    .authorName {
+      font-weight: 500;
+    }
+  }
+
+  .postOptions {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 9999px;
+    padding: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    &:active {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+
+.postBody {
+  margin: 16px 0;
+  font-size: 18px;
+
+  p {
+    font-weight: 500;
+    line-height: 20px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+}
+
+.imageList {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 12px;
+
+  @media (max-width: 812px) {
+    justify-content: center;
+  }
+}
+
+.attachment {
+  position: relative;
+  cursor: pointer;
+
+  width: 600px;
+  height: 100%;
+  max-height: 680px;
+
+  border-radius: 16px;
+  border: 1px solid #E5E5E5;
+
+  overflow: hidden;
+  z-index: 1;
+
+
+  .imageDiv {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  img {
+    inset: 0px;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+    -webkit-user-drag: none;
+    overflow-clip-margin: content-box;
+    overflow: clip;
+  }
+}
+
+.postFooter {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.5);
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+
+}

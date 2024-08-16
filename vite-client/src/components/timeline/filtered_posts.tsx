@@ -1,8 +1,8 @@
-import styles from "../styles/pages/home.module.scss";
+import styles from "../../styles/pages/home.module.scss";
 import {useState} from "react";
 
 
-export default function FilteredReviews() {
+export default function FilteredPosts() {
 
     const [selected, setSelected] = useState("rated");
 
@@ -10,17 +10,14 @@ export default function FilteredReviews() {
         <div>
             <div className={styles.filterButtons}>
                 <div className={selected === "rated" ? styles.selected : styles.button} onClick={() => setSelected("rated")}>
-                    <span>Rated</span>
+                    <span>Recent Questions</span>
                 </div>
 
                 <div className={selected === "my" ? styles.selected : styles.button} onClick={() => setSelected("my")}>
-                    <span>My Reviews</span>
+                    <span>My Questions</span>
                 </div>
             </div>
 
-            <div className={styles.filterList}>
-                <span className={styles.emptyText}>Nothing to see here.</span>
-            </div>
         </div>
     )
 }
