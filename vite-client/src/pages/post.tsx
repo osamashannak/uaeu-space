@@ -5,8 +5,6 @@ import dayjs from "dayjs";
 import {formatRelativeTime} from "../utils.tsx";
 import PostInteractions from "../components/timeline/post_interactions.tsx";
 import {PostAPI} from "../typed/timeline.ts";
-import {EmojiNode} from "../components/lexical_editor/emoji_node.tsx";
-import {LexicalComposer} from "@lexical/react/LexicalComposer";
 import ReplyField from "../components/timeline/reply_field.tsx";
 
 export default function Post() {
