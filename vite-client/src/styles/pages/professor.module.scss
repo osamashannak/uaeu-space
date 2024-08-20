@@ -199,7 +199,13 @@
 }
 
 .profPage {
+  max-width: 600px;
   padding-bottom: 12px;
+  margin: 0 auto auto;
+
+  @media (min-width: 768px) {
+    padding-top: 8px;
+  }
 }
 
 .profInfoHead {
@@ -209,7 +215,6 @@
   padding: 1rem;
   margin: auto;
   background-color: white;
-  max-width: 600px;
   width: 100%;
   border-bottom: 1px solid rgb(239, 243, 244);
 

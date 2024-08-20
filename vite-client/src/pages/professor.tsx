@@ -2,7 +2,7 @@ import einstein from "../assets/images/einstien.png";
 import {lazy, Suspense, useEffect} from "react";
 import styles from "../styles/pages/professor.module.scss";
 import {getProfessor} from "../api/professor.ts";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import {useDispatch, useSelector} from "react-redux";
@@ -11,6 +11,7 @@ import {ProfessorAPI, ProfessorHistory} from "../typed/professor.ts";
 import LoadingSuspense from "../components/loading_suspense.tsx";
 import ReviewSkeleton from "../components/skeletons/review.tsx";
 import DisabledReviewForm from "../components/professor/disabled_review_form.tsx";
+import BackArrow from "../components/backarrow.tsx";
 
 
 const ReviewForm = lazy(async () => {
@@ -37,7 +38,7 @@ export default function Professor() {
 
     const professor = professorState.professor as ProfessorAPI | undefined | null;
 
-    useEffect(() => {
+    /*useEffect(() => {
         if (!email) {
             dispatch(setProfessor(null));
             return;
@@ -50,7 +51,36 @@ export default function Professor() {
         return () => {
             dispatch(clearProfessor());
         }
-    }, [dispatch, email]);
+    }, [dispatch, email]);*/
+
+    useEffect(() => {
+        dispatch(setProfessor({
+            "email": "esraa@uaeu.ac.ae",
+            "name": "Esraa Gasim",
+            "college": "College of Information Technology",
+            "university": "United Arab Emirates University",
+            "reviews": [
+                {
+                    "id": 11481,
+                    "score": 1,
+                    "positive": false,
+                    "comment": "$%#@??///",
+                    "soft_delete": false,
+                    "created_at": "2024-08-15T15:21:13.427Z",
+                    "author": "User",
+                    "likes": 0,
+                    "dislikes": 0,
+                    "comments": 0,
+                    "attachments": null,
+                    "self": false,
+                    "selfRating": null,
+                    "uaeuOrigin": false
+                }
+            ],
+            "canReview": true,
+            "score": 1
+        }))
+    }, []);
 
 
     useEffect(() => {
@@ -129,6 +159,7 @@ export default function Professor() {
 
     return (
         <div className={styles.profPage}>
+            <BackArrow text={"Professor"} url={"/professor"}/>
 
             <section className={styles.profInfoHead}>
 
