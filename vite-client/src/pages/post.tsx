@@ -34,7 +34,7 @@ export default function Post() {
                     </svg>
                 </div>
 
-                <h2>Question</h2>
+                <h2 className={styles.topText}>Question</h2>
             </div>
 
             <article className={styles.postBody}>
@@ -105,9 +105,13 @@ export default function Post() {
 
             <ReplyField/>
 
-            <div className={styles.noReplies}>
-                <span>Be the first to answer the question!</span>
+            <div className={styles.replies}>
+
             </div>
+
+            {/*<div className={styles.noReplies}>
+                <span>Be the first to answer the question!</span>
+            </div>*/}
         </div>
     )
 
