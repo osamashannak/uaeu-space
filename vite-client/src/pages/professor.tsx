@@ -12,6 +12,8 @@ import LoadingSuspense from "../components/loading_suspense.tsx";
 import ReviewSkeleton from "../components/skeletons/review.tsx";
 import DisabledReviewForm from "../components/professor/disabled_review_form.tsx";
 import BackArrow from "../components/backarrow.tsx";
+import {Helmet} from "react-helmet-async";
+import ad from "../assets/ad/88students.jpg";
 
 
 const ReviewForm = lazy(async () => {
@@ -38,7 +40,7 @@ export default function Professor() {
 
     const professor = professorState.professor as ProfessorAPI | undefined | null;
 
-    /*useEffect(() => {
+    useEffect(() => {
         if (!email) {
             dispatch(setProfessor(null));
             return;
@@ -51,36 +53,7 @@ export default function Professor() {
         return () => {
             dispatch(clearProfessor());
         }
-    }, [dispatch, email]);*/
-
-    useEffect(() => {
-        dispatch(setProfessor({
-            "email": "esraa@uaeu.ac.ae",
-            "name": "Esraa Gasim",
-            "college": "College of Information Technology",
-            "university": "United Arab Emirates University",
-            "reviews": [
-                {
-                    "id": 11481,
-                    "score": 1,
-                    "positive": false,
-                    "comment": "$%#@??///",
-                    "soft_delete": false,
-                    "created_at": "2024-08-15T15:21:13.427Z",
-                    "author": "User",
-                    "likes": 0,
-                    "dislikes": 0,
-                    "comments": 0,
-                    "attachments": null,
-                    "self": false,
-                    "selfRating": null,
-                    "uaeuOrigin": false
-                }
-            ],
-            "canReview": true,
-            "score": 1
-        }))
-    }, []);
+    }, [dispatch, email]);
 
 
     useEffect(() => {
@@ -155,41 +128,48 @@ export default function Professor() {
     }
 
     const score = parseFloat(professor.score.toFixed(1));
-
+    const longestReview = professor.reviews.length > 0 ? professor.reviews.reduce((prev, current) => (prev.comment.length > current.comment.length) ? prev : current).comment : undefined;
 
     return (
-        <div className={styles.profPage}>
-            <BackArrow text={"Professor"} url={"/professor"}/>
+        <>
+            <Helmet>
+                <title>{professor.name} - {professor.university} - SpaceRead</title>
+                <meta name={"description"}
+                      content={longestReview ?? `Rate ${professor.name} from ${professor.university}!`}/>
+            </Helmet>
+            <div className={styles.profPage}>
+                <BackArrow text={"Professor"} url={"/professor"}/>
 
-            <section className={styles.profInfoHead}>
+                <section className={styles.profInfoHead}>
 
-                <div className={styles.infoLeft}>
-                    {score > 0 ?
-                        <div className={styles.infoLeftScore}>
-                            <span className={styles.score}>{score}</span>
-                            <span className={styles.outOf}>/5</span>
-                        </div>
-                        :
-                        <span className={styles.score}>N/A</span>}
-                </div>
+                    <div className={styles.infoLeft}>
+                        {score > 0 ?
+                            <div className={styles.infoLeftScore}>
+                                <span className={styles.score}>{score}</span>
+                                <span className={styles.outOf}>/5</span>
+                            </div>
+                            :
+                            <span className={styles.score}>N/A</span>}
+                    </div>
 
-                <div className={styles.infoRight}>
-                    <p className={styles.universityName}>{professor.university}</p>
-                    <h1>{professor.name}</h1>
-                    <span className={styles.collegeName}>{professor.college}</span>
-                </div>
+                    <div className={styles.infoRight}>
+                        <p className={styles.universityName}>{professor.university}</p>
+                        <h1>{professor.name}</h1>
+                        <span className={styles.collegeName}>{professor.college}</span>
+                    </div>
 
-            </section>
+                </section>
 
 
-            <Suspense fallback={<DisabledReviewForm/>}>
-                <ReviewForm professorEmail={professor.email} canReview={professor.canReview}/>
-            </Suspense>
+                <Suspense fallback={<DisabledReviewForm/>}>
+                    <ReviewForm professorEmail={professor.email} canReview={professor.canReview}/>
+                </Suspense>
 
-            <Suspense fallback={<LoadingSuspense/>}>
-                <ReviewSection professorReviews={professor.reviews}/>
-            </Suspense>
+                <Suspense fallback={<LoadingSuspense/>}>
+                    <ReviewSection professorReviews={professor.reviews}/>
+                </Suspense>
 
-        </div>
+            </div>
+        </>
     );
 }

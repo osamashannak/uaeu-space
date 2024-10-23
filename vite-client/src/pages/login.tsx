@@ -71,6 +71,11 @@ export default function Login() {
     return (
         <>
 
+            <Helmet>
+                <title>Login - SpaceRead</title>
+                <meta name={"description"} content={"Login or sign up to SpaceRead."}/>
+            </Helmet>
+
             {
                 displayScreen === "register" && <RegisterForm setDisplayScreen={setDisplayScreen}/>
             }

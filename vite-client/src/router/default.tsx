@@ -1,4 +1,4 @@
-import {createBrowserRouter} from "react-router-dom";
+import {createBrowserRouter, Navigate} from "react-router-dom";
 import Home from "../pages/home.tsx";
 import Professor from "../pages/professor.tsx";
 import ProfessorLookup from "../pages/professor_lookup.tsx";
@@ -18,8 +18,7 @@ const Router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Home/>,
-                errorElement: <Error/>
+                element: <Navigate to={"/professor"}/>
             },
             {
                 path: "notifications",
@@ -56,6 +55,10 @@ const Router = createBrowserRouter([
             {
                 path: "login",
                 element: <Login/>
+            },
+            {
+                path: "*",
+                element: <Error/>
             }
         ]
     }

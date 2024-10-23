@@ -64,7 +64,6 @@ export default function ReplyCompose(props: ReviewComposeProps) {
             html.style.removeProperty("margin-right");
             html.style.removeProperty("overscroll-behavior-y");
 
-
             const body = document.querySelector("body") as HTMLBodyElement;
             body.style.removeProperty("position");
 

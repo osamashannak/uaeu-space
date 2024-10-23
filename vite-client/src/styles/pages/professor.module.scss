@@ -1,38 +1,43 @@
 .searchPage {
 
-
   min-height: 110vh;
-  max-width: 420px;
-  margin: 64px auto auto;
-  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .searchPageHead {
+    padding-left: 12px;
+    padding-right: 12px;
+
+  }
 
   .title {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 700;
-    margin-bottom: 4px;
-
+    margin-bottom: 8px;
 
     @media (max-width: 768px) {
-      text-align: center;
-      font-size: 24px;
+      font-size: 18px;
     }
 
   }
 
   .about {
-    font-weight: 700;
+    font-weight: 500;
     font-size: 16px;
-    color: rgb(139, 152, 165);
+    color: rgb(92, 101, 110);
 
 
     @media (max-width: 768px) {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
+
 
   .searchBox {
     margin-top: 64px;
     margin-bottom: 18px;
+    padding-left: 12px;
+    padding-right: 12px;
 
     .caution {
       font-size: 11px;
@@ -51,16 +56,41 @@
   }
 
   @media (max-width: 768px) {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-top: 16px;
   }
 }
 
+.featureList {
+  display: flex;
+
+  font-size: 12px;
+  text-align: center;
+  justify-content: center;
+
+  padding-top: 32px;
+
+
+  .listItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    font-weight: 600;
+    max-width: 200px;
+
+    svg {
+      color: #059AE5;
+    }
+
+  }
+}
+
+
 .pickUniversityParent {
-
-  max-width: 400px;
-  margin: 64px auto auto;
-
+  margin-top: 32px;
+  padding-left: 12px;
+  padding-right: 12px;
 
   .pickUniversityText {
     display: flex;
@@ -68,12 +98,9 @@
 
     margin-top: 32px;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 15px;
     width: fit-content;
 
-    @media (max-width: 768px) {
-      margin: auto;
-    }
 
   }
 
@@ -117,7 +144,6 @@
     }
 
     @media (max-width: 768px) {
-      justify-content: center;
     }
 
     .selected {
@@ -270,6 +296,21 @@
 
 }
 
+.imageAd {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    max-width: 400px;
+  }
+
+}
+
 
 .score {
   font-weight: 600;
@@ -335,6 +376,8 @@
   transition-duration: 0.2s;
   transition-property: opacity;
   transition-timing-function: ease;
+  z-index: 200;
+
 }
 
 .hiddenSortByMenu {
@@ -356,7 +399,6 @@
   background-color: #fff;
   border-radius: 8px;
   box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
-  z-index: 1;
   overscroll-behavior: contain;
   user-select: none;
   -webkit-user-select: none;

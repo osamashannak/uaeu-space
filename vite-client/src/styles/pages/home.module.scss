@@ -9,7 +9,6 @@
   padding-left: 12px;
   padding-bottom: 16px;
 
-  border-bottom: 1px solid #E5E5E5;
 
   p {
     font-size: 18px;
@@ -43,15 +42,14 @@
 
   @media (max-width: 768px) {
     margin: auto;
+    padding-top: 16px;
 
     .title {
       font-size: 15px;
-      text-align: center;
     }
 
     .universityList {
       font-size: 14px;
-      text-align: center;
     }
 
     .writingPuppy {
@@ -93,8 +91,7 @@
 
 .title {
   font-size: 22px;
-  font-weight: 600;
-  margin-top: 32px;
+  font-weight: 700;
   margin-bottom: 16px;
 
   .spaceread {
@@ -142,8 +139,11 @@
   padding-left: 12px;
   display: flex;
   flex-wrap: wrap;
+  gap: 32px;
 
   width: fit-content;
+  margin-top: 32px;
+  margin-bottom: 32px;
 
   @media (max-width: 768px) {
     justify-content: center;
@@ -159,13 +159,15 @@
     padding: 8px 16px;
     border-radius: 20px;
     color: #87CEFA;
+    border: 2px solid #87CEFA;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: background-color 0.3s;
 
     &:hover {
-      transform: scale(1.05);
+      background-color: #87CEFA;
+      color: white;
     }
 
     @media (max-width: 768px) {

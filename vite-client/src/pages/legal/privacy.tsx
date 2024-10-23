@@ -1,9 +1,12 @@
 import styles from "../../styles/pages/legal.module.scss";
-import Layout from "../../layouts/layout.tsx";
+import {Helmet} from "react-helmet-async";
 
 export default function Privacy() {
     return (
-        <Layout>
+        <>
+            <Helmet>
+                <title>Privacy Policy - SpaceRead</title>
+            </Helmet>
             <div className={styles.page}>
                 <section>
                     <h1>Privacy Policy</h1>
@@ -114,6 +117,6 @@ export default function Privacy() {
 
                 </section>
             </div>
-        </Layout>
+        </>
     )
 }

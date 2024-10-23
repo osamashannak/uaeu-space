@@ -28,12 +28,18 @@ const uploadMulter = multer({
 
 const router = express.Router();
 
+router.use(cors({
+    origin: "https://spaceread.net",
+    credentials: true
+}));
+
 router.get("/", getCredentials, find);
 router.get("/all", cors(), getAll);
 router.post("/comment", getCredentials, comment);
 router.delete("/comment", getCredentials, deleteComment);
-router.post("/comment/attachment/uploadImage", cors(), uploadMulter.single("file"), uploadImage);
-router.post("/comment/attachment/uploadTenor", cors(), uploadTenor);
+router.post("/comment/attachment/uploadImage", uploadMulter.single("file"), uploadImage);
+router.post("/comment/attachment/uploadTenor", uploadTenor);
+
 
 router.post("/comment/rating", getCredentials, addRating);
 router.delete("/comment/rating", getCredentials, removeRating);

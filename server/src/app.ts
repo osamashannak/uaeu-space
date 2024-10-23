@@ -37,7 +37,7 @@ app.use(bodyParser.urlencoded({extended: true, limit: "100mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
 
 app.get("/advertisement", async (req, res) => {
-    res.redirect("https://www.88studies.com/");
+    res.redirect("https://wa.me/qr/37BIBC2LRMFRB1");
 
     let address = requestIp.getClientIp(req);
 

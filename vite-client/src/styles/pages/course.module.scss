@@ -1,29 +1,32 @@
 .searchPage {
-  margin-top: 64px;
-  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding-left: 12px;
+  padding-right: 12px;
 
   .title {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 700;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 
     @media (max-width: 768px) {
-      font-size: 24px;
+      font-size: 18px;
     }
   }
 
   .about {
-    font-weight: 700;
+    font-weight: 500;
     font-size: 16px;
-    color: rgb(139, 152, 165);
+    color: rgb(92, 101, 110);
 
     .uaeuOnly {
       color: #ff0000;
+      font-weight: 600;
+
     }
 
-
     @media (max-width: 768px) {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
 
@@ -34,14 +37,46 @@
 
 
   @media (max-width: 768px) {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-top: 16px;
   }
 }
 
 .coursePage {
-  padding-bottom: 1rem;
+  max-width: 600px;
+  padding-bottom: 12px;
+  margin: 0 auto auto;
+  @media (min-width: 768px) {
+    padding-top: 8px;
+  }
 }
+
+.featureList {
+  display: flex;
+
+  font-size: 12px;
+  text-align: center;
+  justify-content: center;
+
+  padding-top: 32px;
+
+
+
+  .listItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    font-weight: 600;
+    max-width: 200px;
+
+    svg {
+      color: #059AE5;
+    }
+
+  }
+}
+
 
 .courseInfoHead {
   padding: 1rem;

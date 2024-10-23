@@ -93,9 +93,9 @@ app.use(async function (req, res, next) {
 
         await IPRepository.save(ip);
 
-
-        setSessionCookie(res, "gid", guest.token, false);
     }
+
+    setSessionCookie(res, "gid", guest.token, false);
 
     next();
 

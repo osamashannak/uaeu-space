@@ -5,6 +5,8 @@ import {getCourse} from "../api/course.ts";
 import Skeleton from "react-loading-skeleton";
 import styles from "../styles/pages/course.module.scss";
 import fileStyles from "../styles/components/course/file.module.scss";
+import {Helmet} from "react-helmet-async";
+import BackArrow from "../components/backarrow.tsx";
 
 
 const FileSkeleton = lazy(
@@ -67,25 +69,31 @@ export default function Course() {
     const fileCount = course.files.length;
 
     return (
-        <div className={styles.coursePage}>
-            <section className={styles.courseInfoHead}>
-                <h2>{course.tag}</h2>
-                <h1>{course.name}</h1>
-            </section>
+        <>
+            <Helmet>
+                <title>{course.name} - United Arab Emirates University - SpaceRead</title>
+            </Helmet>
+            <div className={styles.coursePage}>
+                <BackArrow url={"/course"} text={"Course"}/>
+                <section className={styles.courseInfoHead}>
+                    <h2>{course.tag}</h2>
+                    <h1>{course.name}</h1>
+                </section>
 
-            <section>
-                <FileUpload courseTag={course.tag}/>
-            </section>
+                <section>
+                    <FileUpload courseTag={course.tag}/>
+                </section>
 
-            <section className={styles.fileList}>
-                {
-                    fileCount > 0 ? course.files.map((value, index) => (
-                        <File key={index} {...value}/>
-                    )) : <p className={fileStyles.file}>{"There are no files."}</p>
-                }
-            </section>
+                <section className={styles.fileList}>
+                    {
+                        fileCount > 0 ? course.files.map((value, index) => (
+                            <File key={index} {...value}/>
+                        )) : <p className={fileStyles.file}>{"There are no files."}</p>
+                    }
+                </section>
 
-        </div>
+            </div>
+        </>
     );
 }
 

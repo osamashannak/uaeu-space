@@ -6,11 +6,8 @@
 
 .searchBox {
   position: relative;
-  width:  calc(100% - 40px);
-    max-width: 25rem;
   height: 32px;
 
-  margin: 0 auto;
 
   * {
     text-align: center;
@@ -65,7 +62,6 @@
     position: absolute;
     margin-top: 0.2rem;
     width: 100%;
-    max-width: 25rem;
     max-height: 270px;
     overflow-x: hidden;
     outline: 0;

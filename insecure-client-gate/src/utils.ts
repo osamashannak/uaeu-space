@@ -18,8 +18,8 @@ export function setHeaders(res: Response) {
 export function setSessionCookie(res: Response, name: string, value: string, sessionOnly: boolean) {
     const options = {
         httpOnly: true,
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24),
-        maxAge: 1000 * 60 * 60 * 24,
+        expires: new Date(Date.now() + 365 * 1000 * 60 * 60 * 24),
+        maxAge: 365 * 1000 * 60 * 60 * 24,
         domain: process.env.DOMAIN,
         secure: true
     } as {

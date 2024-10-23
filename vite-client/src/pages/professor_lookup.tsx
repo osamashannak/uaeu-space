@@ -1,12 +1,11 @@
 import styles from "../styles/pages/professor.module.scss";
-import Layout from "../layouts/layout.tsx";
 import SearchBox from "../components/searchbox.tsx";
 import UniversitySelector from "../components/professor/university_selector.tsx";
 import {createContext, useEffect, useState} from "react";
 import {ProfessorHistory} from "../typed/professor.ts";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {Link} from "react-router-dom";
+import {Helmet} from "react-helmet-async";
 
 dayjs.extend(relativeTime);
 
@@ -35,17 +34,42 @@ export default function ProfessorLookup() {
 
     return (
         <>
+            <Helmet>
+                <title>Rate a Professor - SpaceRead</title>
+            </Helmet>
             <div className={styles.searchPage}>
-                <div className={styles.title}>
-                    <span>Rate a Professor </span>
+                <div className={styles.searchPageHead}>
+                    <div className={styles.title}>
+                        <span>Rate a Professor </span>
+                    </div>
+                    <span className={styles.about}>Take advice from other students and share yours</span>
+
                 </div>
-                <span className={styles.about}>Take advice from other students and share yours</span>
+
+                <div className={styles.featureList}>
+
+                    <div className={styles.listItem}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                  d="M21 11c0 5.55-3.84 10.74-9 12c-5.16-1.26-9-6.45-9-12V5l9-4l9 4zm-9 10c3.75-1 7-5.46 7-9.78V6.3l-7-3.12L5 6.3v4.92C5 15.54 8.25 20 12 21"/>
+                        </svg>
+                        <span>Your reviews are 100% anonymous</span>
+                    </div>
+
+                    <div className={styles.listItem}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                                  d="m14.06 9l.94.94L5.92 19H5v-.92zm3.6-6c-.25 0-.51.1-.7.29l-1.83 1.83l3.75 3.75l1.83-1.83c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29m-3.6 3.19L3 17.25V21h3.75L17.81 9.94z"/>
+                        </svg>
+                        <span>Delete your reviews whenever</span>
+                    </div>
+                </div>
 
 
                 <UniversityContext.Provider value={{university, setUniversity}}>
                     <UniversitySelector/>
 
-                    { university && <div className={styles.searchBox}>
+                    {university && <div className={styles.searchBox}>
                         <div className={styles.caution}>
                             <p className={styles.caution}>Can't find your professor? DM us on <a
                                 href={"https://instagram.com/uaeu.space"}>Instagram</a></p>
