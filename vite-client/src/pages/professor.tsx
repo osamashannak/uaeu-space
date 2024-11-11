@@ -2,7 +2,7 @@ import einstein from "../assets/images/einstien.png";
 import {lazy, Suspense, useEffect} from "react";
 import styles from "../styles/pages/professor.module.scss";
 import {getProfessor} from "../api/professor.ts";
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import {useDispatch, useSelector} from "react-redux";
@@ -13,7 +13,7 @@ import ReviewSkeleton from "../components/skeletons/review.tsx";
 import DisabledReviewForm from "../components/professor/disabled_review_form.tsx";
 import BackArrow from "../components/backarrow.tsx";
 import {Helmet} from "react-helmet-async";
-import ad from "../assets/ad/88students.jpg";
+import RelatedReviews from "../components/professor/related_reviews.tsx";
 
 
 const ReviewForm = lazy(async () => {
@@ -46,15 +46,17 @@ export default function Professor() {
             return;
         }
 
-        getProfessor(email).then((professor) => {
+        const abortController = new AbortController();
+
+        getProfessor(email, abortController).then((professor) => {
             dispatch(setProfessor(professor));
         })
 
         return () => {
+            abortController.abort();
             dispatch(clearProfessor());
         }
     }, [dispatch, email]);
-
 
     useEffect(() => {
         if (professor) {
@@ -160,10 +162,11 @@ export default function Professor() {
 
                 </section>
 
-
                 <Suspense fallback={<DisabledReviewForm/>}>
                     <ReviewForm professorEmail={professor.email} canReview={professor.canReview}/>
                 </Suspense>
+
+                {professor.similarlyRated.length > 0 && <RelatedReviews reviews={professor.similarlyRated}/>}
 
                 <Suspense fallback={<LoadingSuspense/>}>
                     <ReviewSection professorReviews={professor.reviews}/>

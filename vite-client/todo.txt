@@ -1,3 +1,2 @@
 // TODO implement hyperlinks to reviews
 // "Students who viewed this professor also viewed"
-// HTML title for each page

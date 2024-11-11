@@ -17,12 +17,13 @@ export const getProfessorsList = async (university: string) => {
     return response['professors'] as ProfessorItem[];
 }
 
-export const getProfessor = async (id: string) => {
+export const getProfessor = async (id: string, abortController: AbortController) => {
     let response;
 
     try {
         const request = await fetch(HOST + "/professor?email=" + id, {
             credentials: "include",
+            signal: abortController.signal
         });
         response = await request.json();
     } catch (error) {

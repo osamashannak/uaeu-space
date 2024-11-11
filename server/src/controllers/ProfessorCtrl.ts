@@ -15,6 +15,8 @@ import {Guest} from "@spaceread/database/entity/user/Guest";
 import * as crypto from "crypto";
 import sizeOf from 'image-size';
 
+const cache = new Map<string, any[]>();
+const scoreCache = new Map<string, number>();
 
 export const deleteComment = async (req: Request, res: Response) => {
     const reviewId = parseInt(<string>req.query.id);
@@ -201,8 +203,10 @@ export const find = async (req: Request, res: Response) => {
         return;
     }
 
+    const email = (params.email as string).toLowerCase();
+
     const professor = await AppDataSource.getRepository(Professor).findOne({
-        where: {email: (params.email as string).toLowerCase(), visible: true},
+        where: {email, visible: true},
         relations: ["reviews", "reviews.ratings", "reviews.guest", "reviews.replies", "reviews.ratings.guest"],
         order: {reviews: {created_at: "desc"}},
         select: ["name", "email", "college", "university"]
@@ -223,8 +227,74 @@ export const find = async (req: Request, res: Response) => {
 
     const canReview = guestId && selfReview === undefined && !guestId.rated_professors.includes(professor.email);
 
+    let professorsRatedBySameGuests = cache.get(email);
+
+    const reviewsGuestToken = professor.reviews.map(review => review.guest?.token).filter(Boolean);
+
+    if (!professorsRatedBySameGuests && reviewsGuestToken.length > 0) {
+
+        const university = professor.university;
+
+        professorsRatedBySameGuests = await AppDataSource.getRepository(Professor)
+            .createQueryBuilder("professor")
+            .leftJoin("professor.reviews", "review")
+            .leftJoin("review.guest", "guest")
+            .where("guest.token IN (:...reviewsGuestToken)", { reviewsGuestToken })
+            .andWhere("professor.email != :email", { email })
+            .andWhere("professor.university = :university", { university })
+            .andWhere("professor.visible")
+            .andWhere("review.visible")
+            .groupBy("professor.email")
+            .select([
+                "professor.email",
+                "professor.name",
+                "professor.college"
+            ])
+            .orderBy("COUNT(DISTINCT guest.token)", "DESC")
+            .limit(3)
+            .getRawMany();
+
+        for (let i = 0; i < professorsRatedBySameGuests.length; i++) {
+            const relatedProf = professorsRatedBySameGuests[i];
+
+            const profReviews = await AppDataSource.getRepository(Review)
+                .createQueryBuilder("review")
+                .where("review.professorEmail = :professorEmail", { professorEmail: relatedProf.professor_email })
+                .andWhere("review.visible = true")
+                .andWhere("review.soft_delete = false")
+                .getMany();
+
+            relatedProf.reviewCount = profReviews.length;
+
+            relatedProf.score = profReviews.reduce((sum, review) => sum + review.score, 0) / Math.max(profReviews.length, 1);
+
+            const highlyRatedReview = await AppDataSource.getRepository(Review)
+                .createQueryBuilder("review")
+                .leftJoin("review.ratings", "rating")
+                .where("review.professorEmail = :professorEmail", { professorEmail: relatedProf.professor_email })
+                .groupBy("review.id")
+                .andWhere("review.visible = true")
+                .andWhere("review.soft_delete = false")
+                .orderBy("SUM(CASE WHEN rating.value THEN 1 ELSE 0 END) - SUM(CASE WHEN rating.value = false THEN 1 ELSE 0 END)", "DESC") // Like-dislike ratio
+                .addOrderBy("LENGTH(review.comment)", "DESC") // Prefer longer reviews
+                .getOne();
+
+            if (!highlyRatedReview) {
+                professorsRatedBySameGuests.splice(i, 1);
+                i--;
+                continue;
+            }
+
+            relatedProf.review = highlyRatedReview ? highlyRatedReview.comment : "";
+        }
+
+        cache.set(email, professorsRatedBySameGuests);
+
+    }
+
     const newProfessor = {
         ...professor,
+        similarlyRated: professorsRatedBySameGuests || [],
         canReview: canReview,
         reviews: await Promise.all(
             filteredReviews

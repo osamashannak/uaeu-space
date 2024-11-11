@@ -7,8 +7,17 @@ export interface ProfessorAPI {
     reviews: ReviewAPI[];
     score: number;
     canReview: boolean;
+    similarlyRated: SimilarProfessors[]
 }
 
+export interface SimilarProfessors {
+    professor_email: string;
+    professor_name: string;
+    professor_college: string;
+    reviewCount: number;
+    review: string;
+    score: number;
+}
 
 export interface ReviewAPI {
     id: number;
