@@ -8,6 +8,7 @@ import {
 } from "@azure/storage-blob";
 import {ComputerVisionClient} from "@azure/cognitiveservices-computervision";
 import {ApiKeyCredentials} from "@azure/ms-rest-js";
+import {config} from "../config";
 
 export class AzureClient {
 
@@ -19,20 +20,23 @@ export class AzureClient {
     private computerVisionClient: ComputerVisionClient;
 
     constructor() {
-        const materialsContainer = process.env.AZURE_STORAGE_CONTAINER_MATERIALS;
-        const attachmentsContainer = process.env.AZURE_STORAGE_CONTAINER_ATTACHMENTS;
-
-
-        if (!(materialsContainer && AzureClient.accountName && attachmentsContainer)) {
-            throw Error('Missing configurations for Azure.');
+        if (!config.azure.attachmentsContainer || !config.azure.materialsContainer) {
+            throw Error('The Azure container names are not set.');
         }
+
+        const materialsContainer = config.azure.materialsContainer;
+        const attachmentsContainer = config.azure.attachmentsContainer;
 
         const blobService = new BlobServiceClient(`https://${AzureClient.accountName}.blob.core.windows.net/`, this.getKeyCredential())
         this.materialsClient = blobService.getContainerClient(materialsContainer);
         this.attachmentsClient = blobService.getContainerClient(attachmentsContainer);
 
-        const key = process.env.AZURE_VISION_KEY;
-        const endpoint = process.env.AZURE_VISION_ENDPOINT;
+        if (!config.azure.visionKey || !config.azure.visionEndpoint) {
+            throw Error('The Azure Vision configurations are not set.');
+        }
+
+        const key = config.azure.visionKey;
+        const endpoint = config.azure.visionEndpoint;
 
         if (!(key && endpoint)) {
             throw Error('Missing configurations for Azure Computer Vision.');
@@ -40,6 +44,7 @@ export class AzureClient {
 
         this.computerVisionClient = new ComputerVisionClient(new ApiKeyCredentials({inHeader: {'Ocp-Apim-Subscription-Key': key}}), endpoint);
 
+        console.log("Azure client initialized.")
     }
 
     static storageUrl = (container: string) => `https://${AzureClient.accountName}.blob.core.windows.net/${container}`;
@@ -71,7 +76,7 @@ export class AzureClient {
             mimeType = "";
         }
 
-        const response = await blobClient.uploadFile(filePath, {
+        await blobClient.uploadFile(filePath, {
             blobHTTPHeaders: {
                 blobContentType: mimeType,
                 blobCacheControl: 'max-age=31536000, immutable',
@@ -82,25 +87,11 @@ export class AzureClient {
         return blobName;
     }
 
-    async uploadVideoAttachment(blobName: string, filePath: string, mimeType: string) {
-
-        const blobClient = this.attachmentsClient.getBlockBlobClient(blobName);
-
-        const response = await blobClient.uploadFile(filePath, {
-            blobHTTPHeaders: {
-                blobContentType: mimeType,
-                blobCacheControl: 'max-age=31536000, immutable'
-            }
-        });
-
-        return blobName;
-    }
-
     async uploadAttachment(blobName: string, file: Buffer, mimeType: string) {
 
         const blobClient = this.attachmentsClient.getBlockBlobClient(blobName);
 
-        const response = await blobClient.uploadData(file, {
+        await blobClient.uploadData(file, {
             blobHTTPHeaders: {
                 blobContentType: mimeType,
                 blobCacheControl: 'max-age=31536000, immutable'

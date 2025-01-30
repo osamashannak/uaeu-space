@@ -121,8 +121,7 @@ export default function Professor() {
 
             <div className={styles.professorNotFound}>
                 <div>
-                    <span>Professor not found :(</span>
-                    <p>Please DM us on Instagram to add them to the website.</p>
+                    <span>Professor not found</span>
                 </div>
                 <img src={einstein} alt={""}/>
             </div>

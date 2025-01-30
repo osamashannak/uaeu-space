@@ -28,17 +28,14 @@ export default function Footer() {
                     <ul className={styles.blockList}>
                         <li><span>SpaceRead is a multi-purpose platform for university students to prepare them during their studies.</span>
                         </li>
-                        <li>
-                            <span>Course and professor data is collected from the university&apos;s official website.</span>
-                        </li>
-                        <li><span>Source code for this website is available on <a target="_blank"
+                        <li><span>The source code is available on <a target="_blank"
                                                                                   href="https://github.com/Am4nso/uaeu-space">GitHub</a>.</span>
                         </li>
                     </ul>
                 </div>
             </section>
             <section className={styles.footerEnd}>
-                <p className={styles.copyright}>© 2024 SpaceRead. Not affiliated with any university (Student-operated). Emojis by <a href={"https://github.com/twitter/twemoji"}
+                <p className={styles.copyright}>© 2025 SpaceRead. Not affiliated with any university (Student-operated). Emojis by <a href={"https://github.com/twitter/twemoji"}
                                                                 rel="noreferrer" target={"_blank"}>Twemoji</a>.</p>
                 <ul className={styles.links}>
                     <li><Link to={"/terms-of-service"}>Terms of Service</Link></li>

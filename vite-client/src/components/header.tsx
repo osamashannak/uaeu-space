@@ -90,7 +90,9 @@ export default function Header() {
                                     </svg>
 
                                 }
-                                <span className={styles.navLinkText}>Rate Professor</span>
+                                <div className={styles.hide}>
+                                    <span className={styles.navLinkText}>Rate Professor</span>
+                                </div>
                             </Link>
 
                             {/*<Link className={styles.navLink} to={"/"} title={"Home"}>
@@ -117,7 +119,7 @@ export default function Header() {
                                     </svg> :
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
                                          viewBox="0 0 256 256">
-                                        <path fill="currentColor"
+                                        <path fill="currentColor" strokeWidth="0.5"
                                               d="M208 26H72a30 30 0 0 0-30 30v168a6 6 0 0 0 6 6h144a6 6 0 0 0 0-12H54v-2a18 18 0 0 1 18-18h136a6 6 0 0 0 6-6V32a6 6 0 0 0-6-6Zm-6 160H72a29.87 29.87 0 0 0-18 6V56a18 18 0 0 1 18-18h130Z"/>
                                     </svg>
 
@@ -127,7 +129,24 @@ export default function Header() {
                                     <div className={styles.forUAEU}><span>for UAEU</span></div>
                                 </div>
                             </Link>
+                            {/*<Link className={styles.navLink} to={"/swap"} title={"Swap Courses"}>
+                                {selected === "swap" ?
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                              d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10s10-4.48 10-10m-7-5.5l3.5 3.5l-3.5 3.5V11h-4V9h4zm-6 11L5.5 14L9 10.5V13h4v2H9z"/>
+                                    </svg>
+                                    :
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                              d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99zM21 9l-3.99-4v3H10v2h7.01v3z"/>
+                                    </svg>
 
+                                }
+                                <div className={styles.hide}>
+                                    <span className={styles.navLinkText}>Swap Courses</span>
+                                    <div className={styles.forUAEU}><span>for UAEU</span></div>
+                                </div>
+                            </Link>*/}
                             {/*<Link className={styles.navLink} to={"/notifications"} title={"Notification"}>
                                 {selected === "notifications" ?
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
@@ -199,7 +218,7 @@ export default function Header() {
             </header>
 
             <div className={styles.mobileNav}>
-                <Link className={styles.navLink} to={"/professor"}>
+                <Link className={styles.navLinkMobile} to={"/professor"}>
 
                     {selected === "professor" ?
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
@@ -212,6 +231,9 @@ export default function Header() {
                                   d="M6.385 13.615h2.203l5.27-5.269q.129-.148.193-.31q.064-.163.064-.323t-.067-.316q-.067-.157-.19-.305l-.92-.95q-.128-.129-.298-.193q-.169-.064-.334-.064q-.16 0-.322.064q-.163.064-.31.193l-5.29 5.27zm6.846-5.902l-.925-.944zm-5.962 5.018v-.95l3.448-3.448l.462.488l.47.48l-3.43 3.43zm3.91-3.91l.47.48l-.932-.968zm.63 4.794h5.806v-1H12.81zM3 20.077V4.615q0-.69.463-1.152Q3.925 3 4.615 3h14.77q.69 0 1.152.463q.463.462.463 1.152v10.77q0 .69-.462 1.153q-.463.462-1.153.462H6.077zM5.65 16h13.735q.23 0 .423-.192q.192-.193.192-.423V4.615q0-.23-.192-.423Q19.615 4 19.385 4H4.615q-.23 0-.423.192Q4 4.385 4 4.615v13.03zM4 16V4z"/>
                         </svg>
                     }
+                    <div className={styles.mobileText}>
+                        <span>Rate Professor</span>
+                    </div>
 
                 </Link>
 
@@ -229,7 +251,7 @@ export default function Header() {
                     }
                 </Link>*/}
 
-                <Link className={styles.navLink} to={"/course"}>
+                <Link className={styles.navLinkMobile} to={"/course"}>
 
                     {selected === "course" ?
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
@@ -244,7 +266,25 @@ export default function Header() {
                         </svg>
 
                     }
+                    <div className={styles.mobileText}>
+                        <span>Course Materials</span>
+                    </div>
                 </Link>
+
+                {/*<Link className={styles.navLink} to={"/swap"} title={"Swap Courses"}>
+                    {selected === "swap" ?
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                  d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10s10-4.48 10-10m-7-5.5l3.5 3.5l-3.5 3.5V11h-4V9h4zm-6 11L5.5 14L9 10.5V13h4v2H9z"/>
+                        </svg>
+                        :
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                  d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99zM21 9l-3.99-4v3H10v2h7.01v3z"/>
+                        </svg>
+
+                    }
+                </Link>*/}
 
                 {/*<Link className={styles.navLink} to={"/notifications"}>
 
@@ -282,7 +322,7 @@ export default function Header() {
 
                 </Link>*/}
 
-                <a className={styles.navLink} href={"https://instagram.com/uaeu.space"} target={"_blank"}>
+                <a className={styles.navLinkMobile} href={"https://instagram.com/uaeu.space"} target={"_blank"}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
                         <g fill="none" stroke="currentColor" strokeWidth="1.5">
                             <path strokeLinecap="round" strokeLinejoin="round"
@@ -291,6 +331,9 @@ export default function Header() {
                             <path strokeLinecap="round" strokeLinejoin="round" d="m17.5 6.51l.01-.011"/>
                         </g>
                     </svg>
+                    <div className={styles.mobileText}>
+                        <span>Follow us</span>
+                    </div>
 
                 </a>
 

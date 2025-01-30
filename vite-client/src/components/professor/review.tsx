@@ -7,7 +7,6 @@ import ReviewRating from "./review_rating.tsx";
 import ReviewDeletionModal from "./review_deletion_modal.tsx";
 import ReplySection from "./reply_section.tsx";
 import ReplyCompose from "./reply_compose.tsx";
-import CommentButton from "../comment_button.tsx";
 import {CommentsContext} from "../../context/comments.ts";
 
 
@@ -53,7 +52,7 @@ export default function Review(review: ReviewAPI) {
                                     className={styles.time}
                                 >{formatRelativeTime(new Date(review.created_at))}</time>
 
-                                {diffDays <= 7 && <div className={styles.new}>
+                                {diffDays < 7 && <div className={styles.new}>
                                     <span>NEW</span>
                                 </div>}
                             </div>
@@ -78,26 +77,24 @@ export default function Review(review: ReviewAPI) {
                         {review.comment.trim()}
                     </p>
 
-                    <div className={styles.imageList}>
-                        {
-                            review.attachments && review.attachments.map((attachment, index) => (
-                                <div key={index} className={styles.attachment} onClick={() => {
-                                    window.open(attachment.url, "_blank");
-                                }}>
-                                    <div
-                                        style={{paddingBottom: `${attachment.height / attachment.width * 100}%`}}></div>
-                                    <div style={{backgroundImage: `url(${attachment.url})`}} className={styles.imageDiv}>
-                                    </div>
-                                    <img src={attachment.url}
-                                         draggable={false}
-                                         width={100}
-                                         height={100}
-                                         alt={""}/>
-                                </div>)
-                            )
-
+                    {review.attachments && <div className={styles.imageList}>
+                        {review.attachments.map((attachment, index) => (
+                            <div key={index} className={styles.attachment} onClick={() => {
+                                window.open(attachment.url, "_blank");
+                            }}>
+                                <div
+                                    style={{paddingBottom: `${attachment.height / attachment.width * 100}%`}}></div>
+                                <div style={{backgroundImage: `url(${attachment.url})`}} className={styles.imageDiv}>
+                                </div>
+                                <img src={attachment.url}
+                                     draggable={false}
+                                     width={100}
+                                     height={100}
+                                     alt={""}/>
+                            </div>)
+                        )
                         }
-                    </div>
+                    </div>}
                 </div>
 
 

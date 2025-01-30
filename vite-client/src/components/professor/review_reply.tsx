@@ -14,7 +14,7 @@ import {removeReply} from "../../redux/slice/professor_slice.ts";
 export default function ReviewReply({reply, reviewId, op}: { reply: ReviewReplyAPI, reviewId: number, op: boolean }) {
 
     const [replyCompose, showReplyCompose] = useState(false);
-
+    const [aspectRatio, setAspectRatio] = useState(1);
     const context = useContext(CommentsContext);
 
     const dispatch = useDispatch();
@@ -29,6 +29,14 @@ export default function ReviewReply({reply, reviewId, op}: { reply: ReviewReplyA
         dispatch(removeReply({reviewId}));
     }
 
+    if (reply.gif) {
+        const img = new Image();
+        img.onload = () => {
+            setAspectRatio(img.height / img.width);
+            console.log(aspectRatio);
+        }
+        img.src = reply.gif;
+    }
 
     return (
         <>
@@ -49,10 +57,22 @@ export default function ReviewReply({reply, reviewId, op}: { reply: ReviewReplyA
                         </div>
                         <span className={styles.authorText}>Author</span></>}
                 </div>
-                <div>
-                    <p dir={"auto"} className={styles.replyText}>{reply.mention &&
-                        <span className={styles.mention}>@{reply.mention} </span>}{reply.comment}</p>
-                </div>
+                {reply.gif ?
+                    <div className={styles.replyAttachment}>
+                        <div style={{paddingBottom: `${(aspectRatio) * 100}%`}}></div>
+                        <div style={{backgroundImage: `url(${reply.gif})`}}
+                             className={styles.imageDiv}>
+                        </div>
+                        <img src={reply.gif}
+                             draggable={false}
+                             width={100}
+                             height={100}
+                             alt={""}/>
+                    </div>
+                    : <div>
+                        <p dir={"auto"} className={styles.replyText}>{reply.mention &&
+                            <span className={styles.mention}>@{reply.mention} </span>}{reply.comment}</p>
+                    </div>}
                 <div className={styles.replyFooter}>
                     <div className={styles.footerButtons}>
                         <div className={styles.replyButton} onClick={() => {

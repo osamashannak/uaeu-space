@@ -11,8 +11,9 @@ import {isbot} from "isbot";
 import requestIp from "request-ip";
 import {createDataSource} from "@spaceread/database";
 import crypto from "crypto";
-import {Guest, IPAddress} from "@spaceread/database/entity/user/Guest";
-import {ReviewRating} from "@spaceread/database/entity/professor/ReviewRating";
+import {User} from "@spaceread/database/entity/user/User";
+import {Guest} from "@spaceread/database/entity/user/Guest";
+import {IPAddress} from "@spaceread/database/entity/user/IPAddress";
 import {getCountryFromIp} from "./api";
 
 const app = express();
@@ -25,6 +26,7 @@ export const AppDataSource = createDataSource({
 
 export const GuestRepository = AppDataSource.getRepository(Guest);
 export const IPRepository = AppDataSource.getRepository(IPAddress);
+export const UserRepository = AppDataSource.getRepository(User);
 
 app.use(cookies());
 
@@ -65,7 +67,7 @@ app.use(async function (req, res, next) {
             const ip = new IPAddress();
 
             ip.ip_address = address;
-            ip.guest = guest;
+            ip.actor = guest;
             ip.country = await getCountryFromIp(address);
 
             await IPRepository.save(ip);
@@ -88,7 +90,7 @@ app.use(async function (req, res, next) {
         const ip = new IPAddress();
 
         ip.ip_address = address;
-        ip.guest = guest;
+        ip.actor = guest;
         ip.country = await getCountryFromIp(address);
 
         await IPRepository.save(ip);
@@ -98,45 +100,6 @@ app.use(async function (req, res, next) {
     setSessionCookie(res, "gid", guest.token, false);
 
     next();
-
-    let mig = req.query.mig;
-
-    if (mig && typeof mig === "string") {
-        mig = atob(mig);
-
-        try {
-            mig = JSON.parse(mig) as { key: string, value: string }[];
-
-            for (const {key, value} of mig) {
-
-                if (typeof key !== "string" || typeof value !== "string") {
-                    continue;
-                }
-
-                if (key.endsWith("-prof")) {
-                    const email = key.replace("-prof", "");
-
-                    if (!guest!.rated_professors.includes(email)) {
-                        guest!.rated_professors.push(email);
-                    }
-
-                } else if (key.startsWith("like-request") || key.startsWith("dislike-request")) {
-                    console.log(key, value)
-                    const rating = await AppDataSource.getRepository(ReviewRating).findOne({where: {id: value}});
-
-                    if (rating && !rating.guest) {
-                        rating.guest = guest!;
-
-                        await AppDataSource.getRepository(ReviewRating).save(rating);
-                    }
-                }
-            }
-
-            await AppDataSource.getRepository(Guest).save(guest!);
-        } catch (e) {
-            return;
-        }
-    }
 
 });
 

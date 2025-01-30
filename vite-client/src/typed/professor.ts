@@ -45,6 +45,7 @@ export interface ReviewReplyAPI {
     id: number;
     author: string;
     comment: string;
+    gif: string | null;
     mention?: string;
     likes: number;
     self: boolean;
@@ -102,4 +103,21 @@ export interface ProfessorHistory {
     email: string;
     university: string;
     date: Date;
+}
+
+export interface ReviewComposeProps {
+    id: number;
+    reviewId: number;
+    author: string;
+    comment: string;
+    replyMention?: string;
+    mention?: number;
+    op: boolean;
+    created_at: Date;
+    showReplyCompose: (show: boolean) => void;
+}
+
+export interface ReplyContent {
+    comment: string | "";
+    gif: TenorGIFAttachment | null;
 }

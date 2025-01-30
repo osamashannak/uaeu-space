@@ -172,3 +172,137 @@
   font-weight: 500;
   margin-top: 12px;
 }
+
+.gifSelector {
+  position: relative;
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+  z-index: 999;
+  pointer-events: none;
+  top: -30%;
+
+  aside {
+    position: absolute !important;
+
+    @media (max-width: 768px) {
+      right: 0;
+    }
+
+    @media (min-width: 768px) {
+      left: 50px;
+    }
+
+  }
+}
+
+.container2 {
+  // middleo f the screen
+
+}
+
+.buttonIconWrapper {
+  min-width: 36px;
+  min-height: 36px;
+  cursor: pointer;
+  transition-duration: 0.3s;
+  transition-property: all;
+  border-radius: 9999px;
+  margin-left: -8px;
+  margin-right: 8px;
+
+  &:hover {
+    color: #049AE5;
+  }
+
+  @media (min-width: 768px) {
+    &:hover {
+      background-color: rgba(4, 154, 229, 0.1);
+    }
+  }
+}
+
+
+.buttonLabel {
+  transition-property: background-color;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+}
+
+
+.postButtonList {
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.imagePreview {
+  position: relative;
+  cursor: pointer;
+
+  width: 200px;
+
+  max-height: 300px;
+
+  border-radius: 16px;
+  border: 1px solid #E5E5E5;
+
+  margin-top: 12px;
+
+  overflow: hidden;
+  z-index: 1;
+
+
+  .imageDiv {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  img {
+    inset: 0px;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+    -webkit-user-drag: none;
+    overflow-clip-margin: content-box;
+    overflow: clip;
+  }
+}
+
+.deleteButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  margin: 8px;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  transition-property: background-color, box-shadow;
+  border-radius: 9999px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 24px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}

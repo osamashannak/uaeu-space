@@ -16,24 +16,15 @@ import EmojiSelector from "../lexical_editor/emoji_selector.tsx";
 import {CommentsContext} from "../../context/comments.ts";
 import {useDispatch} from "react-redux";
 import {addReply} from "../../redux/slice/professor_slice.ts";
+import GifPicker, {ContentFilter} from "gif-picker-react";
+import {ReplyContent, ReviewComposeProps, TenorGIFAttachment} from "../../typed/professor.ts";
 
 
-interface ReviewComposeProps {
-    id: number;
-    reviewId: number;
-    author: string;
-    comment: string;
-    replyMention?: string;
-    mention?: number;
-    op: boolean;
-    created_at: Date;
-    showReplyCompose: (show: boolean) => void;
-}
 
 
 export default function ReplyCompose(props: ReviewComposeProps) {
 
-    const [comment, setComment] = useState("");
+    const [content, setContent] = useState<ReplyContent>({comment: "", gif: null});
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const [submitting, setSubmitting] = useState(false);
     const [name, setName] = useState<string | null>(null);
@@ -80,16 +71,16 @@ export default function ReplyCompose(props: ReviewComposeProps) {
 
     let lengthStyle = styles.commentLength;
 
-    if (comment.length > 350) {
+    if (content.comment.length > 350) {
         lengthStyle += ` ${styles.commentLengthWarning}`;
-    } else if (comment.length == 350) {
+    } else if (content.comment.length == 350) {
         lengthStyle += ` ${styles.commentLengthPerfect}`;
-    } else if (comment.length < 350) {
+    } else if (content.comment.length < 350) {
         lengthStyle += ` ${styles.commentLengthGood}`;
     }
 
     const formFilled = () => {
-        return comment.trim().length > 0;
+        return content.comment.trim().length > 0 || content.gif;
     }
 
     const handleSubmit = async () => {
@@ -101,7 +92,10 @@ export default function ReplyCompose(props: ReviewComposeProps) {
 
         setSubmitting(true);
 
-        const reply = await postReply(props.reviewId, comment, props.mention);
+        const reply = await postReply(props.reviewId, {
+            comment: content.comment,
+            gif: content.gif?.url
+        }, props.mention);
 
         if (!reply?.success) {
             setSubmitting(false);
@@ -121,6 +115,7 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                 comment: reply.reply.comment,
                 mention: reply.reply.mention,
                 created_at: reply.reply.created_at,
+                gif: reply.reply.gif,
                 author: reply.reply.author,
                 self: true,
                 likes: 0,
@@ -132,6 +127,39 @@ export default function ReplyCompose(props: ReviewComposeProps) {
 
         props.showReplyCompose(false);
 
+    }
+
+    function addTenorGif(gif: string) {
+        const img = new Image();
+        img.src = gif;
+
+        img.onload = async () => {
+            const attachment: TenorGIFAttachment = {
+                id: "READY",
+                url: gif,
+                height: img.height,
+                width: img.width,
+                weight: 4
+            };
+
+            setContent({...content, gif: attachment});
+        }
+    }
+
+    function toggleGifSelector() {
+        const gifSelector = document.querySelector(`.${styles.gifSelector}`) as HTMLDivElement;
+        if (gifSelector) {
+            gifSelector.style.opacity = gifSelector.style.opacity === "0" ? "1" : "0";
+            gifSelector.style.pointerEvents = gifSelector.style.pointerEvents === "none" ? "all" : "none";
+        }
+    }
+
+    function hideGifSelector() {
+        const gifSelector = document.querySelector(`.${styles.gifSelector}`) as HTMLDivElement;
+        if (gifSelector) {
+            gifSelector.style.opacity = "0";
+            gifSelector.style.pointerEvents = "none";
+        }
     }
 
     if (!name) {
@@ -157,12 +185,16 @@ export default function ReplyCompose(props: ReviewComposeProps) {
         body.style.position = "fixed";
     }
 
+
     return (
         <div className={styles.replyForm} onClick={(e) => {
             e.stopPropagation();
             props.showReplyCompose(false);
         }}>
-            <div className={styles.replyFormModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.replyFormModal} onClick={(e) => {
+                e.stopPropagation()
+                hideGifSelector();
+            }}>
                 <div className={styles.closeButton} onClick={() => props.showReplyCompose(false)}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <rect width="24" height="24" fill="none"/>
@@ -192,7 +224,7 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                     <span>You are replying as <span
                         className={styles.replyAuthor}>{name}{props.op && " (Author)"}</span></span>
                 </div>
-                <LexicalComposer initialConfig={{
+                {!content.gif && <LexicalComposer initialConfig={{
                     namespace: 'lexical',
                     theme: {
                         rtl: styles.postRTL,
@@ -232,20 +264,77 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                                     }
                                 });
 
-                                setComment(f);
+                                setContent({...content, comment: f});
                             }}/>
                         </div>
 
 
                         <div className={lengthStyle}>
                             <div>
-                                <span>{[...(comment ?? "").trim()].length > 0 ? [...comment].length : 0}</span>
+                                <span>{[...content.comment.trim()].length > 0 ? [...content.comment].length : 0}</span>
                                 <span>/ 350</span>
                             </div>
                         </div>
                     </div>
                     <EmojiSelector/>
-                </LexicalComposer>
+                </LexicalComposer>}
+
+                {content.gif &&
+                    <>
+                        <div className={styles.imagePreview}
+                             onClick={event => {
+                                 event.stopPropagation();
+                             }}>
+                            <div className={styles.deleteButton}
+                                 onClick={(event) => {
+                                     event.stopPropagation();
+                                        setContent({...content, gif: null});
+                                 }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                     viewBox="0 0 256 256">
+                                    <path fill="currentColor"
+                                          d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"/>
+                                </svg>
+                            </div>
+                            <div style={{paddingBottom: `${(content.gif.height / content.gif.width) * 100}%`}}></div>
+                            <div style={{backgroundImage: `url(${content.gif.url})`}}
+                                 className={styles.imageDiv}>
+                            </div>
+                            <img src={content.gif.url}
+                                 draggable={false}
+                                 width={100}
+                                 height={100}
+                                 alt={""}/>
+                        </div>
+                        <div>
+                            <span>Via Tenor</span>
+                        </div>
+                    </>}
+
+                <div className={styles.gifSelector} onClick={e => e.stopPropagation()}>
+                    <div className={styles.container2}>
+                        <GifPicker tenorApiKey={"AIzaSyDmHmE9bzvu54NGyozlJFwHCwtpOFQiVng"}
+                                   contentFilter={ContentFilter.HIGH}
+                                   width={300}
+                                   onGifClick={(gif) => {
+                                       addTenorGif(gif.url);
+                                       hideGifSelector();
+                                   }}/>
+                    </div>
+                </div>
+                <div className={styles.postButtonList}>
+                    <div className={styles.buttonIconWrapper}>
+                        <div className={styles.buttonLabel} onClick={(e) => {
+                            e.stopPropagation();
+                            toggleGifSelector();
+                        }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                      d="M19 19H5V5h14zM5 3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm6.5 11h1v-4h-1zm2 0h1v-1.5H16v-1h-1.5V11h2v-1h-3zm-4-2v1h-1v-2h2c0-.55-.45-1-1-1h-1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
 
                 <div className={styles.submitButtonWrapper}>
                     <div title={"Post"}

@@ -3,8 +3,9 @@ import {promisify} from "util";
 import {scheduleJob} from "node-schedule";
 import axios from "axios";
 import FormData from "form-data";
-import {AppDataSource} from "./app";
+import {AppDataSource} from "../app";
 import {CourseFile} from "@spaceread/database/entity/course/CourseFile";
+import {config} from "../config";
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -16,8 +17,8 @@ enum ServiceNeeded {
 
 export default class VirusTotalClient {
 
-    private readonly ENDPOINT: string = 'https://www.virustotal.com/api/v3';
-    private readonly API_KEY?: string = process.env.VIRUSTOTAL_API_KEY;
+    private readonly ENDPOINT: string;
+    private readonly API_KEY?: string;
     private readonly QUEUE: { filePath?: string, blobName: string, serviceNeeded: ServiceNeeded, vtId?: string }[];
     private readonly MINUTE_LIMIT: number = 4;
     private readonly DAILY_LIMIT: number = 500;
@@ -28,9 +29,17 @@ export default class VirusTotalClient {
     private filesInProcess: number = 0;
 
     constructor() {
-        if (this.API_KEY === undefined) {
+        if (config.virusTotal.apiKey === undefined) {
             throw new Error('VIRUSTOTAL_API_KEY is not set');
         }
+
+        this.API_KEY = config.virusTotal.apiKey;
+
+        if (config.virusTotal.endpoint === undefined) {
+            throw new Error('VIRUSTOTAL_ENDPOINT is not set');
+        }
+
+        this.ENDPOINT = config.virusTotal.endpoint;
 
         this.QUEUE = [];
 
@@ -81,10 +90,6 @@ export default class VirusTotalClient {
                 this.storeAnalysis(element.blobName, element.vtId!);
                 break;
         }
-    }
-
-    canAddToQueue(): boolean {
-        return this.filesInProcess < 4;
     }
 
     private resetDailyLimit() {

@@ -23,7 +23,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   user-select: none;
-    -webkit-user-select: none;
+  -webkit-user-select: none;
   cursor: pointer;
   padding-top: 1rem;
   padding-left: 1rem;
@@ -56,10 +56,9 @@
   text-decoration: none;
   border-radius: 9999px;
 
-  &:hover{
+  &:hover {
     text-decoration: none;
   }
-
 
   @media (min-width: 768px) {
     &:hover {
@@ -93,12 +92,26 @@
   }
 }
 
+.navLinkMobile {
+  @extend .navLink;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+
+  .mobileText {
+    font-size: 8px;
+    margin-top: 2px;
+    font-weight: 500;
+
+  }
+}
+
 .navLinkLogin {
   display: none;
 }
 
 .navLinkLoginReversed {
-    display: none;
+  display: none;
 }
 
 .mobileNav {
@@ -133,10 +146,6 @@
   .navLink {
     width: fit-content;
     align-self: flex-end;
-
-    span {
-      display: none;
-    }
   }
 
   .navLinkLogin, .hide {
@@ -183,6 +192,7 @@
     .navigation {
       display: none;
     }
+
     .titleText {
       font-size: 15px;
       -webkit-text-fill-color: rgba(5, 154, 229, 1);
@@ -204,6 +214,7 @@
 @media all and (display-mode: standalone) {
   .mobileNav {
     height: 82px;
+
     a {
       align-self: start;
     }

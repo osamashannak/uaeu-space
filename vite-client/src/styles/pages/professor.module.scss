@@ -106,8 +106,7 @@
 
   .pickUniversity {
     display: flex;
-    column-gap: 6px;
-    row-gap: 12px;
+    column-gap: 12px;
     flex-wrap: wrap;
     margin-top: 16px;
 
@@ -122,14 +121,19 @@
       transition: background-color 0.3s;
       user-select: none;
       -webkit-user-select: none;
-
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+        justify-content: center;
 
       img {
-        margin-right: 4px;
-        width: 16px;
-        margin-right: 8px;
+        max-width: 64px;
+      }
+
+      .uniName {
+        text-align: center;
+        // place self at the bottom of the parent
+        margin-top: auto;
+
       }
 
       @media (min-width: 768px) {

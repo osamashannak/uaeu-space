@@ -2,12 +2,12 @@ import {Request, Response} from 'express';
 import requestIp from "request-ip";
 import {promisify} from "util";
 import * as fs from "fs";
-import {compressFile, verifyJWTToken} from "../utils";
-import {AppDataSource, Azure, VTClient} from "../app";
-import {AzureClient} from "../azure";
 import {Course} from "@spaceread/database/entity/course/Course";
 import {CourseFile} from "@spaceread/database/entity/course/CourseFile";
 import {FileAccessToken} from "@spaceread/database/entity/FileAccessToken";
+import {AppDataSource, Azure, VTClient} from "../../app";
+import {compressFile} from "../../utils/utils";
+import {AzureClient} from "../../services/azure";
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -40,7 +40,7 @@ export const find = async (req: Request, res: Response) => {
         ...courseWithoutViews,
         files: course.files
             .filter(value => value.visible)
-            .map(({ guest, reviewed, downloads, visible, ...file}) => {
+            .map(({ actor, reviewed, downloads, visible, ...file}) => {
                 if (!cache.has(file.id.toString())) {
                     cache.set(file.id.toString(), downloads);
                     setTimeout(() => cache.delete(file.id.toString()), 86400000);
@@ -58,13 +58,11 @@ export const find = async (req: Request, res: Response) => {
 
 
 export const getAll = async (req: Request, res: Response) => {
-
     const courses = await AppDataSource.getRepository(Course).find({
         select: {name: true, tag: true}, order: {views: "desc"}
     });
 
     res.status(200).json({courses: courses});
-
 }
 
 export const uploadFile = async (req: Request, res: Response) => {
@@ -135,23 +133,23 @@ export const getFile = async (req: Request, res: Response) => {
             client_address: address
         }
     });
-    
+
     if (!fileAccessToken) {
         const queryParams = Azure.generateToken(address, "materials");
-        
+
         fileAccessToken = new FileAccessToken();
-        
+
         fileAccessToken.url = queryParams.toString();
         fileAccessToken.expires_on = queryParams.expiresOn!;
         fileAccessToken.client_address = address;
-        
+
         await AppDataSource.getRepository(FileAccessToken).save(fileAccessToken);
     } else if (fileAccessToken.expires_on < new Date()) {
         const queryParams = Azure.generateToken(address, "materials");
-        
+
         fileAccessToken.url = queryParams.toString();
         fileAccessToken.expires_on = queryParams.expiresOn!;
-        
+
         await AppDataSource.getRepository(FileAccessToken).save(fileAccessToken);
     }
 
@@ -161,11 +159,7 @@ export const getFile = async (req: Request, res: Response) => {
         }
     });
 
-    const token = params.token as string | undefined;
-
-    const decodedToken = token ? verifyJWTToken(token) : undefined;
-
-    if (!courseFile || (!courseFile.visible && !decodedToken)) {
+    if (!courseFile || !courseFile.visible) {
         res.status(404).json({});
         return;
     }

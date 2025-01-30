@@ -1,4 +1,11 @@
-import {ProfessorAPI, ReviewAPI, ReviewFormAPI, ReviewReplyAPI, TenorGIFAttachment} from "../typed/professor.ts";
+import {
+    ProfessorAPI,
+    ReplyContent,
+    ReviewAPI,
+    ReviewFormAPI,
+    ReviewReplyAPI,
+    TenorGIFAttachment
+} from "../typed/professor.ts";
 import {ProfessorItem} from "../typed/searchbox.ts";
 
 
@@ -130,7 +137,7 @@ export const getReviewReplies = async (id: number, current: number[]) => {
     return response as { replies: ReviewReplyAPI[], comments: number } ?? null;
 }
 
-export const postReply = async (reviewId: number, comment: string, replyId?: number) => {
+export const postReply = async (reviewId: number, content: {comment: string, gif?: string}, replyId?: number) => {
     let response;
 
     try {
@@ -142,7 +149,7 @@ export const postReply = async (reviewId: number, comment: string, replyId?: num
             },
             body: JSON.stringify({
                 reviewId,
-                comment,
+                content,
                 replyId
             }),
             credentials: "include"
