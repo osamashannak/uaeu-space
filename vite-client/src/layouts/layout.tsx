@@ -4,8 +4,24 @@ import Footer from "../components/footer.tsx";
 import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
 import {Helmet} from "react-helmet-async";
 import {Outlet, ScrollRestoration} from "react-router-dom";
+import MobileNavigation from "../components/mobile_navigation.tsx";
+import {useEffect, useState} from "react";
 
 export default function Layout() {
+
+    const [width, setWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWidth(window.innerWidth);
+        }
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        }
+    }, []);
 
     return (
         <>
@@ -34,21 +50,19 @@ export default function Layout() {
                 </script>
             </Helmet>
 
-            <Header/>
+            {width > 768 ? <Header/> : <MobileNavigation/>}
 
             <ScrollRestoration/>
 
             <main>
-                <div className={styles.main}>
-                    <GoogleReCaptchaProvider
-                        reCaptchaKey="6Lf8FeElAAAAAJX3DVLxtBSEydXx0ln7KscspOZ8"
-                        useEnterprise={true}
-                        scriptProps={{
-                            async: true
-                        }}>
-                        <Outlet/>
-                    </GoogleReCaptchaProvider>
-                </div>
+                <GoogleReCaptchaProvider
+                    reCaptchaKey="6Lf8FeElAAAAAJX3DVLxtBSEydXx0ln7KscspOZ8"
+                    useEnterprise={true}
+                    scriptProps={{
+                        async: true
+                    }}>
+                    <Outlet/>
+                </GoogleReCaptchaProvider>
             </main>
 
             <Footer/>

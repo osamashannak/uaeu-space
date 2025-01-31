@@ -1,4 +1,4 @@
-import styles from "../styles/components/backarrow.module.scss";
+import styles from "../styles/components/global/backarrow.module.scss";
 import {useNavigate} from "react-router-dom";
 
 export default function BackArrow(props: {

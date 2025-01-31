@@ -83,7 +83,7 @@ export async function whoAmI() {
     let response;
 
     try {
-        response = await fetch(HOST + "/gate/whoami", {
+        response = await fetch(HOST + "/gate/whoAmI", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"

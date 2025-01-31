@@ -1,6 +1,6 @@
 import reviewStyles from "../../styles/components/professor/review.module.scss";
 import {useEffect, useRef} from "react";
-import headerStyles from "../../styles/components/header.module.scss";
+import headerStyles from "../../styles/components/global/header.module.scss";
 
 
 export default function InfoPopup(props: {setShowPopup, setShowAd}) {

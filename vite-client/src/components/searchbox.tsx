@@ -2,7 +2,7 @@ import {useCombobox} from "downshift";
 import {useContext, useRef, useState} from "react";
 import Fuse from "fuse.js";
 import {useNavigate} from "react-router-dom";
-import styles from "../styles/components/searchbox.module.scss";
+import styles from "../styles/components/global/searchbox.module.scss";
 import {Item} from "../typed/searchbox.ts";
 import {getCoursesList} from "../api/course.ts";
 import {getProfessorsList} from "../api/professor.ts";
@@ -11,8 +11,11 @@ import {UniversityContext} from "../pages/professor_lookup.tsx";
 export default function SearchBox(props: { type: "professor" | "course" | "restaurant" }) {
     const {university} = useContext(UniversityContext);
 
-    const SearchBox = () => {
+    if (university === null) {
+        return null;
+    }
 
+    const SearchBox = () => {
 
         const [items, setItems] = useState<Item[]>([]);
         const [allItems, setAllItems] = useState<Item[]>([]);

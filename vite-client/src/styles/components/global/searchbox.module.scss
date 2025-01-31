@@ -23,6 +23,11 @@
     padding: 18px 20px 18px 40px;
     background: transparent;
     outline: none;
+
+    &::placeholder {
+      user-select: none;
+      -webkit-user-select: none;
+    }
   }
 
   .searchIcon {
@@ -91,27 +96,28 @@
 }
 
 .professorItem {
-    display: flex;
+  display: flex;
   flex-direction: column;
+
   * {
     text-align: left;
   }
 
 
-    .professorName {
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+  .professorName {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
 
-    .email {
-      color: rgb(83, 100, 113);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+  .email {
+    color: rgb(83, 100, 113);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
 
-    }
+  }
 }

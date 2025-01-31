@@ -78,9 +78,7 @@ export default function CustomPlainTextPlugin({
     );
 }
 
-function Placeholder({
-                         content,
-                     }: {
+function Placeholder({content,}: {
     content: ((isEditable: boolean) => null | JSX.Element) | null | JSX.Element;
 }): null | JSX.Element {
     const [editor] = useLexicalComposerContext();

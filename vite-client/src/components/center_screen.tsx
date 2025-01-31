@@ -1,5 +1,5 @@
 import {ReactNode, useEffect} from "react";
-import styles from "../styles/components/center_screen.module.scss";
+import styles from "../styles/components/global/center_screen.module.scss";
 
 export default function CenterScreen({children, setDisplayScreen}: {
     children: ReactNode | ReactNode[],

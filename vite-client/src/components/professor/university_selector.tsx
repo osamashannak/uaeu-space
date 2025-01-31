@@ -19,7 +19,7 @@ export default function UniversitySelector() {
                 <div
                     onClick={() => setUniversity('United Arab Emirates University')}
                     className={university === 'United Arab Emirates University' ? styles.selected : styles.university}>
-                    <img src={uaeu} alt="uaeu"/>
+                    <img src={uaeu} alt="uaeu" width={64}/>
                     <div className={styles.uniName}>
                         <span>UAEU</span>
                     </div>
@@ -28,7 +28,7 @@ export default function UniversitySelector() {
                 <div
                     onClick={() => setUniversity('Khalifa University')}
                     className={university === 'Khalifa University' ? styles.selected : styles.university}>
-                    <img src={ku} alt="ku"/>
+                    <img src={ku} alt="ku" width={64}/>
                     <div className={styles.uniName}>
                         <span>KU</span>
                     </div>
@@ -37,7 +37,7 @@ export default function UniversitySelector() {
                 <div
                     onClick={() => setUniversity('University of Sharjah')}
                     className={university === 'University of Sharjah' ? styles.selected : styles.university}>
-                    <img src={uos} alt="uos"/>
+                    <img src={uos} alt="uos" width={64}/>
                     <div className={styles.uniName}>
                         <span>UOS</span>
                     </div>

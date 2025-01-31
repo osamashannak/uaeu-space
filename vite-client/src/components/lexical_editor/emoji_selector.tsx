@@ -1,7 +1,7 @@
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$insertNodes, type LexicalEditor, TextNode} from "lexical";
-import {$createEmojiNode, EmojiNode} from "./emoji_node.tsx";
+import {$createEmojiNode, EmojiNode} from "./emoji_node.ts";
 import {Twemoji} from "../../twemoji";
 import Picker from '@emoji-mart/react'
 import data from '@emoji-mart/data/sets/14/twitter.json'

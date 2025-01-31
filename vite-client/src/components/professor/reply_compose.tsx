@@ -1,6 +1,6 @@
 import styles from "../../styles/components/professor/reply_compose.module.scss";
 import reviewStyles from "../../styles/components/professor/review.module.scss";
-import {EmojiNode} from "../lexical_editor/emoji_node.tsx";
+import {EmojiNode} from "../lexical_editor/emoji_node.ts";
 import CustomPlainTextPlugin from "../lexical_editor/custom_plaintext_plugin.tsx";
 import {ContentEditable} from "@lexical/react/LexicalContentEditable";
 import {HistoryPlugin} from "@lexical/react/LexicalHistoryPlugin";
@@ -12,7 +12,7 @@ import {LexicalEditor} from "lexical";
 import dayjs from "dayjs";
 import {formatRelativeTime} from "../../utils.tsx";
 import {getReplyName, postReply} from "../../api/professor.ts";
-import EmojiSelector from "../lexical_editor/emoji_selector.tsx";
+import EmojiSelector from "../lexical_editor/emoji_selector.ts";
 import {CommentsContext} from "../../context/comments.ts";
 import {useDispatch} from "react-redux";
 import {addReply} from "../../redux/slice/professor_slice.ts";

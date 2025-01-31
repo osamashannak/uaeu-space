@@ -2,7 +2,6 @@ import styles from "../styles/pages/professor.module.scss";
 import SearchBox from "../components/searchbox.tsx";
 import UniversitySelector from "../components/professor/university_selector.tsx";
 import {createContext, useEffect, useState} from "react";
-import {ProfessorHistory} from "../typed/professor.ts";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {Helmet} from "react-helmet-async";
@@ -30,7 +29,7 @@ export default function ProfessorLookup() {
         localStorage.setItem('selectedUniversity', university);
     }, [university]);
 
-    const professorHistory = JSON.parse(localStorage.getItem('professorHistory') || '[]') as ProfessorHistory[];
+    // const professorHistory = JSON.parse(localStorage.getItem('professorHistory') || '[]') as ProfessorHistory[];
 
     return (
         <>

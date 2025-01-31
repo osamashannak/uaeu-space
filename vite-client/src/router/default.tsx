@@ -9,8 +9,6 @@ import Error from "../pages/error.tsx";
 import Login from "../pages/login.tsx";
 import Layout from "../layouts/layout.tsx";
 import Notifications from "../pages/notifications.tsx";
-import Post from "../pages/post.tsx";
-import CourseSwap from "../pages/course_swap.tsx";
 
 const Router = createBrowserRouter([
     {
@@ -35,10 +33,6 @@ const Router = createBrowserRouter([
             {
                 path: "professor",
                 element: <ProfessorLookup/>
-            },
-            {
-                path: "post/:id",
-                element: <Post/>,
             },
             {
                 path: "professor/:email",
