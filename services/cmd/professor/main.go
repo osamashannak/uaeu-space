@@ -1,11 +1,13 @@
-package main
+package professor
 
 import (
 	"context"
-	"github.com/osamashannak/uaeu-space/services/internal/course"
+	"github.com/osamashannak/uaeu-space/services/internal/professor"
+	profDB "github.com/osamashannak/uaeu-space/services/internal/professor/database"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/server"
+	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
 
 	"fmt"
 	"os/signal"
@@ -38,8 +40,8 @@ func main() {
 func realMain(ctx context.Context) error {
 	logger := logging.FromContext(ctx)
 
-	var cfg course.Config
-	cfg, err := setup(ctx)
+	var cfg *professor.Config
+	cfg, err := professor.Setup(ctx)
 	if err != nil {
 		return fmt.Errorf("setup.Setup: %w", err)
 	}
@@ -52,9 +54,11 @@ func realMain(ctx context.Context) error {
 	}
 	defer db.Close(ctx)
 
-	repo := database.NewCourseDB(db)
+	professorDb := profDB.New(db)
 
-	courseServer, err := course.NewServer(cfg, *repo)
+	sfGenerator := snowflake.New(1)
+
+	professorServer, err := professor.NewServer(professorDb, sfGenerator)
 	if err != nil {
 		return fmt.Errorf("publish.NewServer: %w", err)
 	}
@@ -66,14 +70,5 @@ func realMain(ctx context.Context) error {
 
 	logger.Infow("server listening", "port", cfg.Port)
 
-	return srv.ServeHTTP(ctx, courseServer.Routes(ctx))
-}
-
-func setup(ctx context.Context) (course.Config, error) {
-	cfg, err := course.LoadConfig()
-	if err != nil {
-		return course.Config{}, fmt.Errorf("course.LoadConfig: %w", err)
-	}
-
-	return cfg, nil
+	return srv.ServeHTTP(ctx, professorServer.Routes(ctx))
 }

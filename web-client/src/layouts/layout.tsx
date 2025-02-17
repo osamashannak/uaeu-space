@@ -56,7 +56,7 @@ export default function Layout() {
 
             <main>
                 <GoogleReCaptchaProvider
-                    reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    reCaptchaKey={import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY}
                     useEnterprise={true}
                     scriptProps={{
                         async: true

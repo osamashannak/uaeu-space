@@ -26,7 +26,7 @@ export default function ReviewFormFooter(props: {
 
         const mimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-        const files = Array.from(event.target.files!).filter(file => mimeTypes.includes(file.type));
+        const files = Array.from(event.target.files!).filter(file => mimeTypes.includes(file.type)).slice(0, 1);
 
         event.target.value = "";
 
@@ -221,7 +221,7 @@ export default function ReviewFormFooter(props: {
 
                 <div className={styles.gifSelector} onClick={e => e.stopPropagation()}>
                     <div className={styles.container2}>
-                        <GifPicker tenorApiKey={import.meta.env.VITE_TENOR_API_KEY}
+                        <GifPicker tenorApiKey={import.meta.env.VITE_GOOGLE_TENOR_API_KEY}
                                    contentFilter={ContentFilter.HIGH}
                                    width={width}
                                    onGifClick={(gif) => {

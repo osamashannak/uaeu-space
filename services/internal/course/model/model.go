@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type Course struct {
 	Tag   string
 	Name  string
@@ -18,6 +20,7 @@ type CourseFile struct {
 	VtReport  *VtReportJson
 	CourseTag string
 	Downloads int
+	CreatedAt time.Time
 }
 
 type VtReportJson struct {

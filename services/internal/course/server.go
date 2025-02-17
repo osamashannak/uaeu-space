@@ -2,19 +2,22 @@ package course
 
 import (
 	"context"
-	"course/internal/repository"
+	"github.com/osamashannak/uaeu-space/services/internal/course/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
 	"net/http"
 )
 
 type Server struct {
-	config     Config
-	repository repository.CourseDB
+	config    *Config
+	db        *database.CourseDB
+	generator *snowflake.Generator
 }
 
-func NewServer(config Config, repository repository.CourseDB) (*Server, error) {
+func NewServer(config *Config, db *database.CourseDB, generator *snowflake.Generator) (*Server, error) {
 	return &Server{
-		config:     config,
-		repository: repository,
+		config:    config,
+		db:        db,
+		generator: generator,
 	}, nil
 }
 

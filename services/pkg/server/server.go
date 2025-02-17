@@ -2,9 +2,9 @@ package server
 
 import (
 	"context"
-	"course/pkg/logging"
 	"errors"
 	"fmt"
+	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"net"
 	"net/http"
 	"strconv"

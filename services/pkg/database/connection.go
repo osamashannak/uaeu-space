@@ -2,10 +2,10 @@ package database
 
 import (
 	"context"
-	"course/pkg/logging"
 	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"strings"
 	"time"
 )

@@ -1,9 +1,8 @@
 package course
 
 import (
-	"course/pkg/azure"
-	"course/pkg/database"
-	"course/pkg/virustotal"
+	"services/pkg/azure"
+	"services/pkg/database"
 )
 
 type Config struct {

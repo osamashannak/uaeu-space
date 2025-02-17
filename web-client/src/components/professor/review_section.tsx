@@ -1,6 +1,6 @@
 import {ReviewAPI} from "../../typed/professor.ts";
 import styles from "../../styles/pages/professor.module.scss";
-import {formatRelativeTime, pluralize, ratingToIcon} from "../../utils.tsx";
+import {pluralize} from "../../utils.tsx";
 import Review from "./review.tsx";
 import reviewStyles from "../../styles/components/professor/review.module.scss";
 import SortReviews from "./sort_reviews.tsx";
@@ -8,8 +8,6 @@ import ReviewAd from "../advertisement/review_ad.tsx";
 
 
 export default function ReviewSection(props: { professorReviews: ReviewAPI[] }) {
-
-
 
     const reviews = props.professorReviews;
     const reviewCount = reviews.length;

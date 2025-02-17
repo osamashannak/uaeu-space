@@ -1,16 +1,16 @@
-package repository
+package database
 
 import (
 	"context"
-	"course/internal/model"
-	"course/pkg/database"
+	"github.com/osamashannak/uaeu-space/services/internal/course/model"
+	"github.com/osamashannak/uaeu-space/services/pkg/database"
 )
 
 type CourseDB struct {
 	db *database.DB
 }
 
-func NewCourseDB(db *database.DB) *CourseDB {
+func New(db *database.DB) *CourseDB {
 	return &CourseDB{db: db}
 }
 
@@ -99,7 +99,7 @@ func (c *CourseDB) InsertCourseFile(ctx context.Context, file model.CourseFile) 
 }
 
 func (c *CourseDB) incrementFileDownloads(ctx context.Context, tag string) error {
-	_, err := c.db.Pool.Exec(ctx, `UPDATE course.course SET downloads = downloads + 1 WHERE tag = $1`, tag)
+	_, err := c.db.Pool.Exec(ctx, `UPDATE course.course_file SET download = downloads + 1 WHERE tag = $1`, tag)
 
 	return err
 }
