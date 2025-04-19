@@ -3,6 +3,7 @@ package professor
 import (
 	"context"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
 	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
 	"net/http"
 )
@@ -10,12 +11,14 @@ import (
 type Server struct {
 	db        *database.ProfessorDB
 	generator *snowflake.Generator
+	recaptcha *recaptcha.Recaptcha
 }
 
-func NewServer(db *database.ProfessorDB, generator *snowflake.Generator) (*Server, error) {
+func NewServer(db *database.ProfessorDB, generator *snowflake.Generator, recaptcha *recaptcha.Recaptcha) (*Server, error) {
 	return &Server{
 		db:        db,
 		generator: generator,
+		recaptcha: recaptcha,
 	}, nil
 }
 
@@ -27,6 +30,7 @@ func (s *Server) Routes(ctx context.Context) http.Handler {
 
 	mux.Handle("POST /comment", s.PostReview())
 	mux.Handle("DELETE /comment", s.DeleteReview())
+	mux.Handle("GET /comment/translate", s.TranslateReview())
 	mux.Handle("POST /comment/attachment", s.UploadReviewAttachment())
 	mux.Handle("POST /comment/rating", s.AddReviewRating())
 	mux.Handle("DELETE /comment/rating", s.DeleteReviewRating())

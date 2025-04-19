@@ -1,10 +1,12 @@
 package professor
 
 import (
+	googleRecaptcha "cloud.google.com/go/recaptchaenterprise/v2/apiv1"
 	"context"
 	"github.com/osamashannak/uaeu-space/services/internal/professor"
 	profDB "github.com/osamashannak/uaeu-space/services/internal/professor/database"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/server"
 	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
@@ -58,7 +60,12 @@ func realMain(ctx context.Context) error {
 
 	sfGenerator := snowflake.New(1)
 
-	professorServer, err := professor.NewServer(professorDb, sfGenerator)
+	client, _ := googleRecaptcha.NewClient(ctx)
+	defer client.Close()
+
+	recaptchaClient := recaptcha.New(client, &cfg.Recaptcha)
+
+	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient)
 	if err != nil {
 		return fmt.Errorf("publish.NewServer: %w", err)
 	}

@@ -15,17 +15,17 @@ type Professor struct {
 }
 
 type Review struct {
-	Id             int64
+	Id             uint64
 	Score          int
 	Positive       bool
 	Content        string
 	ProfessorEmail string
-	Attachments    []string
+	Attachment     string
 	Reviewed       bool
 	SoftDeleted    bool
 	Visible        bool
 	CreatedAt      time.Time
-	IpAddress      net.IPNet
+	IpAddress      string
 	SessionId      *int64
 	UserId         *int64
 }
@@ -76,4 +76,11 @@ type ReplyLike struct {
 	UserId    *int64
 	ReplyId   int64
 	CreatedAt time.Time
+}
+
+type ReviewTranslation struct {
+	ReviewId       int64
+	TranslatedText string
+	Target         string
+	CreatedAt      time.Time
 }

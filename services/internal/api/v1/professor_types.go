@@ -42,7 +42,6 @@ type ReviewPostResponse struct {
 	Score      int       `json:"score"`
 	Positive   bool      `json:"positive"`
 	Attachment string    `json:"attachment"`
-	Id         int       `json:"id"`
-	SoftDelete bool      `json:"soft_delete"`
+	Id         uint64    `json:"id"`
 	CreatedAt  time.Time `json:"created_at"`
 }

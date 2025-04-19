@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
+	"google.golang.org/grpc"
 	"net"
 	"net/http"
 	"strconv"
@@ -63,4 +64,32 @@ func (s *Server) ServeHTTP(ctx context.Context, handler http.Handler) error {
 		return fmt.Errorf("failed to shutdown server: %w", err)
 	}
 	return nil
+}
+
+func (s *Server) ServeGRPC(ctx context.Context, srv *grpc.Server) error {
+	logger := logging.FromContext(ctx)
+
+	errCh := make(chan error, 1)
+	go func() {
+		<-ctx.Done()
+
+		logger.Debugf("server.Serve: context closed")
+		logger.Debugf("server.Serve: shutting down")
+		srv.GracefulStop()
+	}()
+
+	// Run the server. This will block until the provided context is closed.
+	if err := srv.Serve(s.listener); err != nil && !errors.Is(err, grpc.ErrServerStopped) {
+		return fmt.Errorf("failed to serve: %w", err)
+	}
+
+	logger.Debugf("server.Serve: serving stopped")
+
+	// Return any errors that happened during shutdown.
+	select {
+	case err := <-errCh:
+		return fmt.Errorf("failed to shutdown: %w", err)
+	default:
+		return nil
+	}
 }

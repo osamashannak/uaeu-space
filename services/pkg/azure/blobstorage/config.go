@@ -1,4 +1,4 @@
-package azure
+package blobstorage
 
 type Config struct {
 	StorageAccountName string `env:"AZURE_STORAGE_ACCOUNT"`

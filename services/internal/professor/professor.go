@@ -1,7 +1,7 @@
 package professor
 
 import (
-	"github.com/osamashannak/uaeu-space/services/internal/jsonutil"
+	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"net/http"
 )
 
@@ -22,5 +22,26 @@ func (s *Server) GetAll() http.Handler {
 func (s *Server) Get() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
+
+		email := r.URL.Query().Get("email")
+
+		if email == "" {
+			http.Error(w, "missing email parameter", http.StatusBadRequest)
+			return
+		}
+
+		professor, err := s.db.GetProfessor(ctx, email)
+
+		if err != nil {
+			http.Error(w, "failed to get professor", http.StatusInternalServerError)
+			return
+		}
+
+		if professor == nil {
+			http.Error(w, "professor not found", http.StatusNotFound)
+			return
+		}
+
+		jsonutil.MarshalResponse(w, http.StatusOK, professor)
 	})
 }
