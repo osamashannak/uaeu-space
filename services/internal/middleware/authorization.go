@@ -1,22 +1,39 @@
 package middleware
 
-import "net/http"
+import (
+	"context"
+	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
+	"github.com/osamashannak/uaeu-space/services/internal/authentication/model"
+	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
+	"net/http"
+	"strconv"
+)
 
 func Authorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
+		cookie, err := r.Cookie("gid")
 
-		// get the token from the request cookie
-		token, err := r.Cookie("gid")
-
-		if err != nil {
-			http.Error(w, "You are not authorized.", http.StatusUnauthorized)
+		if err != nil || cookie.Value == "" {
+			errorResponse := v1.ErrorResponse{
+				Message: "invalid session",
+				Error:   http.StatusUnauthorized,
+			}
+			jsonutil.MarshalResponse(w, http.StatusUnauthorized, errorResponse)
 			return
 		}
 
-		// make a get request to the auth service to validate the token
+		id, err := strconv.ParseInt(cookie.Value, 10, 64)
 
-		// validate the token
+		if err != nil {
+			errorResponse := v1.ErrorResponse{
+				Message: "invalid session",
+				Error:   http.StatusUnauthorized,
+			}
+			jsonutil.MarshalResponse(w, http.StatusUnauthorized, errorResponse)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), "session", model.Session{Id: id})
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

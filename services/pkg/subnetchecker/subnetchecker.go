@@ -19,7 +19,6 @@ var ipv6Subnets = []string{
 	"2a02:1718::/32",
 }
 
-// parseSubnets converts CIDR strings into net.IPNet objects
 func parseSubnets(subnetList []string) ([]*net.IPNet, error) {
 	var parsedSubnets []*net.IPNet
 	for _, subnet := range subnetList {
@@ -32,36 +31,32 @@ func parseSubnets(subnetList []string) ([]*net.IPNet, error) {
 	return parsedSubnets, nil
 }
 
-// CheckIP checks if the given IP is in any of the defined subnets
-func CheckIP(ipStr string) (bool, error) {
+func CheckIP(ipStr string) bool {
 	ip := net.ParseIP(ipStr)
 	if ip == nil {
-		return false, nil // Invalid IP address format
+		return false
 	}
 
-	// Parse subnets
 	ipv4Nets, err := parseSubnets(ipv4Subnets)
 	if err != nil {
-		return false, err
+		return false
 	}
 	ipv6Nets, err := parseSubnets(ipv6Subnets)
 	if err != nil {
-		return false, err
+		return false
 	}
 
-	// Check if IP belongs to any IPv4 subnets
 	for _, subnet := range ipv4Nets {
 		if subnet.Contains(ip) {
-			return true, nil
+			return true
 		}
 	}
 
-	// Check if IP belongs to any IPv6 subnets
 	for _, subnet := range ipv6Nets {
 		if subnet.Contains(ip) {
-			return true, nil
+			return true
 		}
 	}
 
-	return false, nil // Not in any subnets
+	return false
 }

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"net"
 	"time"
 )
 
@@ -10,38 +9,31 @@ type Professor struct {
 	Name       string
 	College    string
 	University string
-	Views      int
-	Visible    bool
+	Reviews    []Review
 }
 
 type Review struct {
-	Id             uint64
+	ID             uint64
 	Score          int
 	Positive       bool
 	Content        string
-	ProfessorEmail string
 	Attachment     string
-	Reviewed       bool
+	ProfessorEmail string
+	IpAddress      string
 	SoftDeleted    bool
 	Visible        bool
-	CreatedAt      time.Time
-	IpAddress      string
+	Reviewed       bool
+	LikeCount      int
+	DislikeCount   int
+	Language       string
+	UaeuOrigin     bool
 	SessionId      *int64
 	UserId         *int64
-}
-
-type ReviewRating struct {
-	Id        int64
-	Value     bool
-	CreatedAt time.Time
-	IpAddress net.IPNet
-	ReviewId  int64
-	UserId    *int64
-	SessionId int64
+	CreatedAt      time.Time
 }
 
 type ReviewAttachment struct {
-	Id        int64
+	Id        uint64
 	MimeType  string
 	Size      int
 	width     int
@@ -51,7 +43,7 @@ type ReviewAttachment struct {
 }
 
 type ReviewReply struct {
-	Id          int64
+	Id          uint64
 	Content     string
 	Gif         string
 	SoftDeleted bool
@@ -62,8 +54,15 @@ type ReviewReply struct {
 	MentionId   *int64
 }
 
+type ReviewScores struct {
+	ReviewId  uint64
+	Attribute string
+	Score     int
+	CreatedAt time.Time
+}
+
 type ReplyName struct {
-	Id        int64
+	Id        uint64
 	Name      string
 	ReviewId  int64
 	UserId    *int64
@@ -71,7 +70,7 @@ type ReplyName struct {
 }
 
 type ReplyLike struct {
-	Id        int64
+	Id        uint64
 	SessionId int64
 	UserId    *int64
 	ReplyId   int64
@@ -79,7 +78,7 @@ type ReplyLike struct {
 }
 
 type ReviewTranslation struct {
-	ReviewId       int64
+	ReviewId       uint64
 	TranslatedText string
 	Target         string
 	CreatedAt      time.Time

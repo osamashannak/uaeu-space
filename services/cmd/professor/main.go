@@ -1,12 +1,16 @@
-package professor
+package main
 
 import (
-	googleRecaptcha "cloud.google.com/go/recaptchaenterprise/v2/apiv1"
+	recaptcha2 "cloud.google.com/go/recaptchaenterprise/v2/apiv1"
+	translate2 "cloud.google.com/go/translate"
 	"context"
+	"github.com/joho/godotenv"
 	"github.com/osamashannak/uaeu-space/services/internal/professor"
 	profDB "github.com/osamashannak/uaeu-space/services/internal/professor/database"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
+	"github.com/osamashannak/uaeu-space/services/pkg/google/translate"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/server"
 	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
@@ -17,9 +21,11 @@ import (
 )
 
 func main() {
+	_ = godotenv.Load()
+
 	ctx, done := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 
-	logger := logging.NewLoggerFromEnv()
+	logger := logging.DefaultLogger()
 
 	ctx = logging.WithLogger(ctx, logger)
 
@@ -60,12 +66,28 @@ func realMain(ctx context.Context) error {
 
 	sfGenerator := snowflake.New(1)
 
-	client, _ := googleRecaptcha.NewClient(ctx)
-	defer client.Close()
+	client, err := recaptcha2.NewClient(ctx)
+
+	if err != nil {
+		return fmt.Errorf("failed to create recaptcha client: %w", err)
+	}
+
+	defer func(client *recaptcha2.Client) {
+		err := client.Close()
+		if err != nil {
+			logger.Errorw("failed to close recaptcha client", "error", err)
+		}
+	}(client)
 
 	recaptchaClient := recaptcha.New(client, &cfg.Recaptcha)
 
-	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient)
+	perspectiveClient := perspective.New(&cfg.Perspective)
+
+	googleTranslateClient, _ := translate2.NewClient(ctx)
+
+	translateClient := translate.New(googleTranslateClient)
+
+	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, translateClient)
 	if err != nil {
 		return fmt.Errorf("publish.NewServer: %w", err)
 	}

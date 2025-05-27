@@ -2,7 +2,12 @@ package v1
 
 import "time"
 
-type ProfessorFindResponse struct {
+type ProfessorInList struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
+}
+
+type ProfessorResponse struct {
 	Email          string        `json:"email"`
 	Name           string        `json:"name"`
 	College        string        `json:"college"`
@@ -14,18 +19,18 @@ type ProfessorFindResponse struct {
 }
 
 type Review struct {
-	Id          int           `json:"id"`
-	Score       int           `json:"score"`
-	Positive    bool          `json:"positive"`
-	Comment     string        `json:"comment"`
-	CreatedAt   time.Time     `json:"created_at"`
-	Author      string        `json:"author"`
-	Likes       int           `json:"likes"`
-	Dislikes    int           `json:"dislikes"`
-	Comments    int           `json:"comments"`
-	Attachments []interface{} `json:"attachments"`
-	Self        bool          `json:"self"`
-	UaeuOrigin  bool          `json:"uaeuOrigin"`
+	ID         int64     `json:"id"`
+	Score      int       `json:"score"`
+	Positive   bool      `json:"positive"`
+	Content    string    `json:"comment"`
+	CreatedAt  time.Time `json:"created_at"`
+	Author     string    `json:"author"`
+	Likes      int       `json:"likes"`
+	Dislikes   int       `json:"dislikes"`
+	Comments   int       `json:"comments"`
+	Attachment string    `json:"attachment"`
+	Self       bool      `json:"self"`
+	UaeuOrigin bool      `json:"uaeuOrigin"`
 }
 
 type ReviewPostBody struct {
@@ -42,6 +47,17 @@ type ReviewPostResponse struct {
 	Score      int       `json:"score"`
 	Positive   bool      `json:"positive"`
 	Attachment string    `json:"attachment"`
-	Id         uint64    `json:"id"`
+	ID         uint64    `json:"id"`
 	CreatedAt  time.Time `json:"created_at"`
+	Flagged    *bool     `json:"flagged,omitempty"`
+}
+
+type SuccessResponse struct {
+	Success bool   `json:"success"`
+	Message string `json:"message"`
+}
+
+type ReviewTranslationResponse struct {
+	Content string `json:"content"`
+	Target  string `json:"target"`
 }
