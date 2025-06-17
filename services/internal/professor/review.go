@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
-	model2 "github.com/osamashannak/uaeu-space/services/internal/authentication/model"
+	"github.com/osamashannak/uaeu-space/services/internal/middleware"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/model"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
@@ -17,7 +17,7 @@ func (s *Server) PostReview() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		session, ok := ctx.Value("session").(*model2.Session)
+		profile, ok := ctx.Value("profile").(*middleware.Profile)
 
 		if !ok {
 			errorResponse := v1.ErrorResponse{
@@ -89,7 +89,7 @@ func (s *Server) PostReview() http.Handler {
 			Language:       flags.Language,
 			CreatedAt:      time.Now(),
 			IpAddress:      r.RemoteAddr,
-			SessionId:      &session.Id,
+			SessionId:      &profile.SessionId,
 		}
 
 		err = s.db.InsertReview(ctx, &review)
@@ -132,7 +132,7 @@ func (s *Server) DeleteReview() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 
-		session, ok := ctx.Value("session").(*model2.Session)
+		profile, ok := ctx.Value("profile").(*middleware.Profile)
 
 		if !ok {
 			errorResponse := v1.ErrorResponse{
@@ -165,7 +165,7 @@ func (s *Server) DeleteReview() http.Handler {
 			return
 		}
 
-		if review.SessionId == nil || *review.SessionId != session.Id {
+		if review.SessionId == nil || *review.SessionId != profile.SessionId {
 			errorResponse := v1.ErrorResponse{
 				Message: "you are not allowed to delete this review",
 				Error:   http.StatusForbidden,

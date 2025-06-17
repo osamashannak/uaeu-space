@@ -99,5 +99,5 @@ func realMain(ctx context.Context) error {
 
 	logger.Infow("server listening", "port", cfg.Port)
 
-	return srv.ServeHTTP(ctx, professorServer.Routes(ctx))
+	return srv.ServeHTTP(ctx, professorServer.Routes())
 }

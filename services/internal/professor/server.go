@@ -1,7 +1,6 @@
 package professor
 
 import (
-	"context"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/middleware"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/database"
@@ -38,13 +37,13 @@ func NewServer(db *database.ProfessorDB,
 	}, nil
 }
 
-func (s *Server) Routes(ctx context.Context) http.Handler {
+func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.Handle("GET /", s.Get())
 	mux.Handle("GET /all", s.GetAll())
 
-	mux.Handle("POST /comment", middleware.Authorization(s.PostReview()))
+	mux.Handle("POST /comment", middleware.Gateway(s.PostReview()))
 	mux.Handle("DELETE /comment", s.DeleteReview())
 	mux.Handle("GET /comment/translate", s.TranslateReview())
 	mux.Handle("POST /comment/attachment", s.UploadReviewAttachment())

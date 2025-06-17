@@ -20,7 +20,7 @@ type Review struct {
 	Attachment     string
 	ProfessorEmail string
 	IpAddress      string
-	SoftDeleted    bool
+	DeletedAt      *time.Time
 	Visible        bool
 	Reviewed       bool
 	LikeCount      int

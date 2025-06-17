@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
@@ -10,7 +9,7 @@ import (
 )
 
 func (db *ProfessorDB) GetProfessors(ctx context.Context, university string) ([]v1.ProfessorInList, error) {
-	var professors []v1.ProfessorInList = make([]v1.ProfessorInList, 0)
+	var professors = make([]v1.ProfessorInList, 0)
 
 	rows, err := db.db.Pool.Query(ctx, `SELECT email, name FROM professor.professor WHERE visible AND university = $1 ORDER BY views DESC`, university)
 	if err != nil {
@@ -57,8 +56,9 @@ SELECT
     r.attachment,
 	r.uaeu_origin,
     r.created_at,
-    r.like_count AS likes,
-    r.dislike_count AS dislikes
+    r.like_count,
+    r.dislike_count,
+	r.language
 FROM professor.professor p
          LEFT JOIN filtered_reviews r ON p.email = r.professor_email
 WHERE p.email = $1
@@ -74,23 +74,28 @@ ORDER BY r.created_at DESC;`, email)
 	professor.Reviews = make([]v1.Review, 0)
 	firstRow := true
 
+	var (
+		profEmail   string
+		profName    string
+		profUni     string
+		profCollege string
+	)
+
 	for rows.Next() {
-		var (
-			profEmail, profName, profUni, profCollege string
-			reviewID                                  sql.NullInt64
-			score                                     sql.NullInt32
-			positive                                  sql.NullBool
-			content                                   sql.NullString
-			createdAt                                 sql.NullTime
-			likes, dislikes                           sql.NullInt32
-			attachment                                sql.NullString
-			uaeuOrigin                                sql.NullBool
-		)
+		var review v1.Review
 
 		err := rows.Scan(
 			&profEmail, &profName, &profUni, &profCollege,
-			&reviewID, &score, &positive, &content, &createdAt, &attachment,
-			&likes, &dislikes, &uaeuOrigin,
+			&review.ID,
+			&review.Score,
+			&review.Positive,
+			&review.Text,
+			&review.CreatedAt,
+			&review.Attachment,
+			&review.LikeCount,
+			&review.DislikeCount,
+			&review.UaeuOrigin,
+			&review.Language,
 		)
 		if err != nil {
 			return nil, err
@@ -107,20 +112,7 @@ ORDER BY r.created_at DESC;`, email)
 			firstRow = false
 		}
 
-		if reviewID.Valid {
-			review := v1.Review{
-				ID:         reviewID.Int64,
-				Score:      int(score.Int32),
-				Positive:   positive.Bool,
-				Content:    content.String,
-				CreatedAt:  createdAt.Time,
-				Attachment: attachment.String,
-				Likes:      int(likes.Int32),
-				Dislikes:   int(dislikes.Int32),
-				UaeuOrigin: uaeuOrigin.Bool,
-			}
-			professor.Reviews = append(professor.Reviews, review)
-		}
+		professor.Reviews = append(professor.Reviews, review)
 
 	}
 

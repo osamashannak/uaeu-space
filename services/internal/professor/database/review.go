@@ -39,7 +39,7 @@ func (db *ProfessorDB) InsertReview(ctx context.Context, review *model.Review) e
 
 func (db *ProfessorDB) SoftDeleteReview(ctx context.Context, id string) error {
 	_, err := db.db.Pool.Exec(ctx,
-		`UPDATE professor.review SET soft_deleted = true WHERE id = $1`, id)
+		`UPDATE professor.review SET deleted_at = now() WHERE id = $1`, id)
 	return err
 }
 

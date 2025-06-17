@@ -1,7 +1,6 @@
 package course
 
 import (
-	"context"
 	"github.com/osamashannak/uaeu-space/services/internal/course/database"
 	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
 	"net/http"
@@ -21,7 +20,7 @@ func NewServer(config *Config, db *database.CourseDB, generator *snowflake.Gener
 	}, nil
 }
 
-func (s *Server) Routes(ctx context.Context) http.Handler {
+func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.Handle("GET /course", s.GetCourse())

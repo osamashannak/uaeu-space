@@ -8,29 +8,42 @@ type ProfessorInList struct {
 }
 
 type ProfessorResponse struct {
-	Email          string        `json:"email"`
-	Name           string        `json:"name"`
-	College        string        `json:"college"`
-	University     string        `json:"university"`
-	Reviews        []Review      `json:"reviews"`
-	SimilarlyRated []interface{} `json:"similarlyRated"`
-	CanReview      bool          `json:"canReview"`
-	Score          float64       `json:"score"`
+	Email             string             `json:"email"`
+	Name              string             `json:"name"`
+	College           string             `json:"college"`
+	University        string             `json:"university"`
+	Reviews           []Review           `json:"reviews"`
+	SimilarProfessors []SimilarProfessor `json:"similar_professors"`
+	Reviewed          bool               `json:"reviewed"`
+	Score             float64            `json:"score"`
+}
+
+type SimilarProfessor struct {
+	ProfessorEmail   string  `json:"professor_email"`
+	ProfessorName    string  `json:"professor_name"`
+	ProfessorCollege string  `json:"professor_college"`
+	ReviewsCount     int     `json:"reviews_count"`
+	Score            float64 `json:"score"`
+	ReviewPreview    string  `json:"review_preview"`
 }
 
 type Review struct {
-	ID         int64     `json:"id"`
-	Score      int       `json:"score"`
-	Positive   bool      `json:"positive"`
-	Content    string    `json:"comment"`
-	CreatedAt  time.Time `json:"created_at"`
-	Author     string    `json:"author"`
-	Likes      int       `json:"likes"`
-	Dislikes   int       `json:"dislikes"`
-	Comments   int       `json:"comments"`
-	Attachment string    `json:"attachment"`
-	Self       bool      `json:"self"`
-	UaeuOrigin bool      `json:"uaeuOrigin"`
+	SortIndex    int64     `json:"sort_index"`
+	ID           int64     `json:"id"`
+	Score        int       `json:"score"`
+	Positive     bool      `json:"positive"`
+	Text         string    `json:"text"`
+	CreatedAt    time.Time `json:"created_at"`
+	Author       string    `json:"author"`
+	Language     string    `json:"language"`
+	LikeCount    int       `json:"like_count"`
+	DislikeCount int       `json:"dislike_count"`
+	CommentCount int       `json:"comment_count"`
+	Attachment   string    `json:"attachment"`
+	Lang         string    `json:"lang"`
+	Self         bool      `json:"self"`
+	Rated        string    `json:"rated,omitempty"`
+	UaeuOrigin   bool      `json:"uaeu_origin"`
 }
 
 type ReviewPostBody struct {
