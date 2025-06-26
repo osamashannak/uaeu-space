@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"context"
+	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
+	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"net/http"
 	"strconv"
 )
@@ -19,16 +21,15 @@ func Gateway(next http.Handler) http.Handler {
 		sessionId, err := strconv.ParseInt(r.Header.Get("X-Session-ID"), 10, 64)
 
 		if err != nil {
-			http.Error(w, "Invalid or missing session ID", http.StatusUnauthorized)
+			errorResponse := v1.ErrorResponse{
+				Message: "Invalid or missing session ID",
+				Error:   http.StatusUnauthorized,
+			}
+			jsonutil.MarshalResponse(w, http.StatusUnauthorized, errorResponse)
 			return
 		}
 
 		userId, err := strconv.ParseInt(r.Header.Get("X-User-ID"), 10, 64)
-
-		if err != nil {
-			http.Error(w, "Invalid or missing user ID", http.StatusUnauthorized)
-			return
-		}
 
 		profile := &Profile{
 			UserId:    userId,
@@ -37,6 +38,11 @@ func Gateway(next http.Handler) http.Handler {
 		}
 
 		if profile.UserId == 0 && profile.SessionId == 0 {
+			errorResponse := v1.ErrorResponse{
+				Message: "Unauthorized",
+				Error:   http.StatusUnauthorized,
+			}
+			jsonutil.MarshalResponse(w, http.StatusUnauthorized, errorResponse)
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}

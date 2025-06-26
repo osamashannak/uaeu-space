@@ -73,6 +73,26 @@ func (s *Server) Get() http.Handler {
 			return
 		}
 
-		jsonutil.MarshalResponse(w, http.StatusOK, professor)
+		reviews, err := s.db.GetProfessorReviews(ctx, email)
+
+		if err != nil {
+			fmt.Println("failed to get professor reviews:", err)
+			errorResponse := v1.ErrorResponse{
+				Message: "failed to get professor reviews",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+
+		response := v1.ProfessorResponse{
+			Email:      professor.Email,
+			Name:       professor.Name,
+			University: professor.University,
+			College:    professor.College,
+			Reviews:    *reviews,
+		}
+
+		jsonutil.MarshalResponse(w, http.StatusOK, response)
 	})
 }

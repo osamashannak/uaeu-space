@@ -2,6 +2,7 @@ package professor
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/middleware"
@@ -9,8 +10,9 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"github.com/osamashannak/uaeu-space/services/pkg/subnetchecker"
+	"github.com/osamashannak/uaeu-space/services/pkg/utils"
+	"io"
 	"net/http"
-	"time"
 )
 
 func (s *Server) PostReview() http.Handler {
@@ -40,7 +42,7 @@ func (s *Server) PostReview() http.Handler {
 			return
 		}
 
-		assessment := s.recaptcha.Verify(ctx, request.RecaptchaToken, r.RemoteAddr, r.UserAgent())
+		/*assessment := s.recaptcha.Verify(ctx, request.RecaptchaToken, r.RemoteAddr, r.UserAgent())
 
 		if !assessment {
 			errorResponse := v1.ErrorResponse{
@@ -49,11 +51,15 @@ func (s *Server) PostReview() http.Handler {
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
 			return
-		}
+		}*/
 
 		professor, err := s.db.GetProfessor(ctx, request.ProfessorEmail)
 
-		if err != nil || professor == nil {
+		if err != nil {
+			fmt.Printf("failed to get professor: %v\n", err)
+		}
+
+		if professor == nil {
 			errorResponse := v1.ErrorResponse{
 				Message: "professor not found",
 				Error:   http.StatusBadRequest,
@@ -71,31 +77,57 @@ func (s *Server) PostReview() http.Handler {
 			return
 		}
 
-		if len(request.Comment) > 350 {
-			request.Comment = request.Comment[:350]
+		if len(request.Text) > 350 {
+			request.Text = request.Text[:350]
 		}
 
-		flags := s.perspective.Analyze(request.Comment)
+		request.Text = utils.ReviewTextCleaner(request.Text)
+
+		var attachmentInfo *v1.ReviewAttachment
+
+		if request.Attachment != "" {
+			attachment, err := s.db.GetReviewAttachment(ctx, request.Attachment)
+
+			if err == nil {
+				attachmentInfo = &v1.ReviewAttachment{
+					ID:     attachment.ID,
+					Height: attachment.Height,
+					Width:  attachment.Width,
+					URL:    attachment.URL,
+				}
+			}
+		}
+
+		if request.Text == "" && attachmentInfo == nil {
+			errorResponse := v1.ErrorResponse{
+				Message: "review cannot be empty",
+				Error:   http.StatusBadRequest,
+			}
+			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+			return
+		}
+
+		flags := s.perspective.Analyze(request.Text)
 
 		review := model.Review{
 			ID:             s.generator.Next(),
 			Score:          request.Score,
 			Positive:       request.Positive,
-			Content:        request.Comment,
+			Content:        request.Text,
 			ProfessorEmail: request.ProfessorEmail,
 			Attachment:     request.Attachment,
 			UaeuOrigin:     subnetchecker.CheckIP(r.RemoteAddr),
-			Visible:        flags.Flagged(),
+			Visible:        !flags.Flagged(),
 			Language:       flags.Language,
-			CreatedAt:      time.Now(),
-			IpAddress:      r.RemoteAddr,
+			IpAddress:      "192.168.1.1", // todo r.RemoteAddr
 			SessionId:      &profile.SessionId,
 		}
 
 		err = s.db.InsertReview(ctx, &review)
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Printf("failed to insert review: %v\n", err)
+			http.Error(w, "an error has occurred from our end. please try again later.", http.StatusInternalServerError)
 			return
 		}
 
@@ -117,7 +149,7 @@ func (s *Server) PostReview() http.Handler {
 			Comment:    review.Content,
 			Score:      review.Score,
 			Positive:   review.Positive,
-			Attachment: review.Attachment,
+			Attachment: attachmentInfo,
 			ID:         review.ID,
 			CreatedAt:  review.CreatedAt,
 			Flagged:    flagged,
@@ -262,6 +294,115 @@ func (s *Server) TranslateReview() http.Handler {
 
 func (s *Server) UploadReviewAttachment() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		const maxUploadSize = 32 << 20 // 32 megabytes
+
+		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
+		ctx := r.Context()
+
+		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
+			var maxBytesErr *http.MaxBytesError
+			if errors.As(err, &maxBytesErr) {
+				errorResponse := v1.ErrorResponse{
+					Message: fmt.Sprintf("file size cannot exceed %d MB", maxUploadSize>>20),
+					Error:   http.StatusRequestEntityTooLarge,
+				}
+				jsonutil.MarshalResponse(w, http.StatusRequestEntityTooLarge, errorResponse)
+			} else {
+				errorResponse := v1.ErrorResponse{
+					Message: "failed to parse multipart form",
+					Error:   http.StatusBadRequest,
+				}
+				jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+			}
+			return
+		}
+
+		file, _, err := r.FormFile("file")
+		if err != nil {
+			errorResponse := v1.ErrorResponse{
+				Message: "failed to get 'file' from form",
+				Error:   http.StatusBadRequest,
+			}
+			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+			return
+		}
+		defer file.Close()
+
+		fileBytes, err := io.ReadAll(file)
+		if err != nil {
+			fmt.Printf("failed to read file content: %v\n", err)
+			errorResponse := v1.ErrorResponse{
+				Message: "an error occurred. please try again later.",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+
+		contentType := http.DetectContentType(fileBytes)
+		extension, ok := utils.GetValidExtension(contentType)
+
+		if !ok {
+			errorResponse := v1.ErrorResponse{
+				Message: fmt.Sprintf("invalid file type '%s'. only jpeg, png, and gif are allowed", contentType),
+				Error:   http.StatusBadRequest,
+			}
+			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+			return
+		}
+
+		fileBytes, contentType, imageBounds, err := utils.ProcessImageFile(fileBytes, contentType)
+		if err != nil {
+			errorResponse := v1.ErrorResponse{
+				Message: "an error occurred. please try again later.",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+		attachmentId := s.generator.Next()
+		finalBlobName := fmt.Sprintf("%d%s", attachmentId, extension)
+
+		err = s.storage.CreateObject(ctx, finalBlobName, contentType, "public, max-age=604800", fileBytes)
+		if err != nil {
+			fmt.Printf("failed to save file to storage: %v\n", err)
+			errorResponse := v1.ErrorResponse{
+				Message: "an error occurred. please try again later.",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+
+		safety, err := s.vision.AnalyzeImageSafety(utils.FormatBlobURL("attachments", finalBlobName, ""))
+
+		attachment := model.ReviewAttachment{
+			ID:       attachmentId,
+			MimeType: contentType,
+			Size:     len(fileBytes),
+			Width:    imageBounds.Width,
+			Height:   imageBounds.Height,
+			Visible:  err == nil && safety.IsSafe(),
+			URL:      utils.FormatBlobURL("attachments", finalBlobName, ""),
+		}
+
+		err = s.db.InsertReviewAttachment(ctx, &attachment)
+
+		if err != nil {
+			fmt.Printf("failed to insert review attachment: %v\n", err)
+			errorResponse := v1.ErrorResponse{
+				Message: "an error occurred. please try again later.",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+
+		response := v1.ReviewAttachmentResponse{
+			ID: attachmentId,
+		}
+
+		jsonutil.MarshalResponse(w, http.StatusCreated, response)
 
 	})
 }

@@ -4,6 +4,8 @@ import (
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/middleware"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
+	"github.com/osamashannak/uaeu-space/services/pkg/azure/vision"
 	"github.com/osamashannak/uaeu-space/services/pkg/cache"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
@@ -18,22 +20,28 @@ type Server struct {
 	generator   *snowflake.Generator
 	recaptcha   *recaptcha.Recaptcha
 	perspective *perspective.Perspective
+	vision      *vision.AzureVision
 	translate   *translate.Translate
 	cache       *cache.Cache[[]v1.ProfessorInList]
+	storage     *blobstorage.BlobStorage
 }
 
 func NewServer(db *database.ProfessorDB,
 	generator *snowflake.Generator,
 	recaptcha *recaptcha.Recaptcha,
 	perspective *perspective.Perspective,
-	translate *translate.Translate) (*Server, error) {
+	vision *vision.AzureVision,
+	translate *translate.Translate,
+	storage *blobstorage.BlobStorage) (*Server, error) {
 	return &Server{
 		db:          db,
 		generator:   generator,
 		recaptcha:   recaptcha,
 		perspective: perspective,
+		vision:      vision,
 		translate:   translate,
 		cache:       cache.New[[]v1.ProfessorInList](24 * time.Hour),
+		storage:     storage,
 	}, nil
 }
 

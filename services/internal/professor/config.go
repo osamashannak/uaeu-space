@@ -3,6 +3,7 @@ package professor
 import (
 	"context"
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
+	"github.com/osamashannak/uaeu-space/services/pkg/azure/vision"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
@@ -14,6 +15,7 @@ type Config struct {
 	Port        string `env:"PORT"`
 	Database    database.Config
 	Azure       blobstorage.Config
+	Vision      vision.Config
 	Recaptcha   recaptcha.Config
 	Perspective perspective.Config
 }

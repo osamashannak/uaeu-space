@@ -9,7 +9,6 @@ type Professor struct {
 	Name       string
 	College    string
 	University string
-	Reviews    []Review
 }
 
 type Review struct {
@@ -33,17 +32,18 @@ type Review struct {
 }
 
 type ReviewAttachment struct {
-	Id        uint64
+	ID        uint64
 	MimeType  string
 	Size      int
-	width     int
-	height    int
-	visible   bool
+	Width     int
+	Height    int
+	Visible   bool
+	URL       string
 	CreatedAt time.Time
 }
 
 type ReviewReply struct {
-	Id          uint64
+	ID          uint64
 	Content     string
 	Gif         string
 	SoftDeleted bool
@@ -62,7 +62,7 @@ type ReviewScores struct {
 }
 
 type ReplyName struct {
-	Id        uint64
+	ID        uint64
 	Name      string
 	ReviewId  int64
 	UserId    *int64
@@ -70,7 +70,7 @@ type ReplyName struct {
 }
 
 type ReplyLike struct {
-	Id        uint64
+	ID        uint64
 	SessionId int64
 	UserId    *int64
 	ReplyId   int64

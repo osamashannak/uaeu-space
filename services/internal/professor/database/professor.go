@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
+	"github.com/osamashannak/uaeu-space/services/internal/professor/model"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"time"
 )
@@ -37,42 +38,16 @@ func (db *ProfessorDB) GetProfessors(ctx context.Context, university string) ([]
 	return professors, nil
 }
 
-func (db *ProfessorDB) GetProfessor(ctx context.Context, email string) (*v1.ProfessorResponse, error) {
-	rows, err := db.db.Pool.Query(ctx, `WITH filtered_reviews AS (
-    SELECT *
-    FROM professor.review
-    WHERE visible = TRUE
-      AND soft_deleted = FALSE
-)
-SELECT
-    p.email,
-    p.name,
-    p.university,
-    p.college,
-    r.id AS review_id,
-    r.score,
-    r.positive,
-    r.content,
-    r.attachment,
-	r.uaeu_origin,
-    r.created_at,
-    r.like_count,
-    r.dislike_count,
-	r.language
-FROM professor.professor p
-         LEFT JOIN filtered_reviews r ON p.email = r.professor_email
-WHERE p.email = $1
-ORDER BY r.created_at DESC;`, email)
-
+func (db *ProfessorDB) GetProfessor(ctx context.Context, email string) (*model.Professor, error) {
+	rows, err := db.db.Pool.Query(ctx, `SELECT email, name, university, college FROM professor.professor WHERE visible AND email = $1`, email)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var professor v1.ProfessorResponse
-
-	professor.Reviews = make([]v1.Review, 0)
-	firstRow := true
+	if !rows.Next() {
+		return nil, fmt.Errorf("professor not found")
+	}
 
 	var (
 		profEmail   string
@@ -81,43 +56,70 @@ ORDER BY r.created_at DESC;`, email)
 		profCollege string
 	)
 
+	err = rows.Scan(&profEmail, &profName, &profUni, &profCollege)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Professor{
+		Email:      profEmail,
+		Name:       profName,
+		University: profUni,
+		College:    profCollege,
+	}, nil
+}
+
+func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, email string) (*[]v1.Review, error) {
+	rows, err := db.db.Pool.Query(ctx, `
+	SELECT
+		review.sort_index,
+		review.id,
+		review.score,
+		review.positive,
+		review.content,
+		review.uaeu_origin,
+		review.created_at,
+		review.like_count,
+		review.dislike_count,
+		review.language
+	FROM professor.review
+	JOIN review_attachment ON review.attachment = review_attachment.id
+	WHERE review.professor_email = $1 AND review.visible AND review.deleted_at IS NULL
+	ORDER BY review.sort_index, id DESC;`, email)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	reviews := make([]v1.Review, 0)
+
 	for rows.Next() {
 		var review v1.Review
 
 		err := rows.Scan(
-			&profEmail, &profName, &profUni, &profCollege,
+			&review.SortIndex,
 			&review.ID,
 			&review.Score,
 			&review.Positive,
 			&review.Text,
+			&review.UaeuOrigin,
 			&review.CreatedAt,
-			&review.Attachment,
 			&review.LikeCount,
 			&review.DislikeCount,
-			&review.UaeuOrigin,
 			&review.Language,
 		)
+
 		if err != nil {
 			return nil, err
 		}
 
-		if firstRow {
-			professor = v1.ProfessorResponse{
-				Email:      profEmail,
-				Name:       profName,
-				University: profUni,
-				College:    profCollege,
-				Reviews:    []v1.Review{},
-			}
-			firstRow = false
-		}
-
-		professor.Reviews = append(professor.Reviews, review)
+		reviews = append(reviews, review)
 
 	}
 
 	go func() {
-		timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+		timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 		defer cancel()
 
 		err := db.incrementProfessorViews(timeoutCtx, email)
@@ -126,11 +128,7 @@ ORDER BY r.created_at DESC;`, email)
 		}
 	}()
 
-	if firstRow {
-		return nil, fmt.Errorf("professor not found")
-	}
-
-	return &professor, nil
+	return &reviews, nil
 }
 
 func (db *ProfessorDB) incrementProfessorViews(ctx context.Context, email string) error {

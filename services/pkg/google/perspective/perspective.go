@@ -48,28 +48,33 @@ func (p *Perspective) Analyze(commentText string) *AnalysisResult {
 
 	body, err := json.Marshal(request)
 	if err != nil {
+		fmt.Println("Error marshaling request body:", err)
 		return result
 	}
 
 	url := fmt.Sprintf("%s?key=%s", p.config.Endpoint, p.config.Key)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
 	if err != nil {
+		fmt.Println("Error creating HTTP request:", err)
 		return result
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := p.client.Do(req)
 	if err != nil {
+		fmt.Println("Error making HTTP request:", err)
 		return result
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Perspective API returned non-200 status: %d\n", resp.StatusCode)
 		return result
 	}
 
 	raw, err := io.ReadAll(resp.Body)
 	if err != nil {
+		fmt.Println("Error reading response body:", err)
 		return result
 	}
 

@@ -7,6 +7,8 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/osamashannak/uaeu-space/services/internal/professor"
 	profDB "github.com/osamashannak/uaeu-space/services/internal/professor/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
+	"github.com/osamashannak/uaeu-space/services/pkg/azure/vision"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
@@ -83,11 +85,19 @@ func realMain(ctx context.Context) error {
 
 	perspectiveClient := perspective.New(&cfg.Perspective)
 
+	visionClient := vision.New(&cfg.Vision)
+
 	googleTranslateClient, _ := translate2.NewClient(ctx)
 
 	translateClient := translate.New(googleTranslateClient)
 
-	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, translateClient)
+	blobStorage, err := blobstorage.New(cfg.Azure.AttachmentsContainer)
+
+	if err != nil {
+		return fmt.Errorf("blobstorage.New: %w", err)
+	}
+
+	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, visionClient, translateClient, blobStorage)
 	if err != nil {
 		return fmt.Errorf("publish.NewServer: %w", err)
 	}

@@ -31,9 +31,9 @@ func (db *ProfessorDB) GetReview(ctx context.Context, id string) (*model.Review,
 
 func (db *ProfessorDB) InsertReview(ctx context.Context, review *model.Review) error {
 	_, err := db.db.Pool.Exec(ctx,
-		`INSERT INTO professor.review (id, score, positive, content, attachment, professor_email, ip_address, session_id, user_id)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-		review.ID, review.Score, review.Positive, review.Content, review.Attachment, review.ProfessorEmail, review.IpAddress, review.SessionId, review.UserId)
+		`INSERT INTO professor.review (id, score, positive, content, attachment, professor_email, ip_address, session_id, user_id, visible, uaeu_origin, language)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+		review.ID, review.Score, review.Positive, review.Content, review.Attachment, review.ProfessorEmail, review.IpAddress, review.SessionId, review.UserId, review.Visible, review.UaeuOrigin, review.Language)
 	return err
 }
 
@@ -106,4 +106,32 @@ func (db *ProfessorDB) InsertReviewTranslation(ctx context.Context, translation 
 			VALUES ($1, $2, $3)`,
 		translation.ReviewId, translation.Target, translation.TranslatedText)
 	return err
+}
+
+func (db *ProfessorDB) InsertReviewAttachment(ctx context.Context, attachment *model.ReviewAttachment) error {
+	_, err := db.db.Pool.Exec(ctx,
+		`INSERT INTO professor.review_attachment (id, mime_type, size, width, height, visible, url)
+			VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+		attachment.ID, attachment.MimeType, attachment.Size, attachment.Width, attachment.Height, attachment.Visible, attachment.URL)
+	return err
+}
+
+func (db *ProfessorDB) GetReviewAttachment(ctx context.Context, id string) (*model.ReviewAttachment, error) {
+	var attachment model.ReviewAttachment
+
+	err := db.db.Pool.QueryRow(ctx,
+		`SELECT id, mime_type, size, width, height, visible, url
+		 FROM professor.review_attachment WHERE id = $1`, id).Scan(
+		&attachment.ID,
+		&attachment.MimeType,
+		&attachment.Size,
+		&attachment.Width,
+		&attachment.Height,
+		&attachment.Visible)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &attachment, nil
 }

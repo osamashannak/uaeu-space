@@ -15,6 +15,7 @@ import (
 type BlobStorage struct {
 	accountClient *azblob.Client
 	credential    *azblob.SharedKeyCredential
+	containerName string
 }
 
 func newAccessTokenCredential(accountName string, accountKey string) (*azblob.SharedKeyCredential, error) {
@@ -25,7 +26,7 @@ func newAccessTokenCredential(accountName string, accountKey string) (*azblob.Sh
 	return credential, nil
 }
 
-func NewBlobStorage() (*BlobStorage, error) {
+func New(containerName string) (*BlobStorage, error) {
 	accountName := os.Getenv("AZURE_STORAGE_ACCOUNT")
 	if accountName == "" {
 		return nil, fmt.Errorf("missing AZURE_STORAGE_ACCOUNT")
@@ -50,20 +51,14 @@ func NewBlobStorage() (*BlobStorage, error) {
 	return &BlobStorage{
 		accountClient: client,
 		credential:    credential,
+		containerName: containerName,
 	}, nil
 }
 
-func (s *BlobStorage) CreateObject(ctx context.Context, container, name, contentType, cacheControl string, contents []byte) error {
-	blobClient := s.accountClient.ServiceClient().NewContainerClient(container).NewBlobClient(name)
-
-	_, err := blobClient.SetHTTPHeaders(ctx, blob.HTTPHeaders{
-		BlobContentType:  &contentType,
-		BlobCacheControl: &cacheControl,
-	}, nil)
-
-	_, err = s.accountClient.UploadBuffer(
+func (s *BlobStorage) CreateObject(ctx context.Context, name, contentType, cacheControl string, contents []byte) error {
+	_, err := s.accountClient.UploadBuffer(
 		ctx,
-		container,
+		s.containerName,
 		name,
 		contents,
 		&azblob.UploadBufferOptions{HTTPHeaders: &blob.HTTPHeaders{
@@ -75,7 +70,7 @@ func (s *BlobStorage) CreateObject(ctx context.Context, container, name, content
 	return err
 }
 
-func (s *BlobStorage) generateSASToken(containerName string, ipAddress net.IP) (string, error) {
+func (s *BlobStorage) generateSASToken(ipAddress net.IP) (string, error) {
 	expiry := time.Now().Add(3 * 30 * 24 * time.Hour)
 
 	permissions := sas.BlobPermissions{
@@ -86,7 +81,7 @@ func (s *BlobStorage) generateSASToken(containerName string, ipAddress net.IP) (
 		ExpiryTime:    expiry,
 		Protocol:      sas.ProtocolHTTPS,
 		Permissions:   permissions.String(),
-		ContainerName: containerName,
+		ContainerName: s.containerName,
 		IPRange: sas.IPRange{
 			Start: ipAddress,
 			End:   ipAddress,
@@ -98,5 +93,4 @@ func (s *BlobStorage) generateSASToken(containerName string, ipAddress net.IP) (
 	}
 
 	return sasQueryParams.Encode(), nil
-
 }
