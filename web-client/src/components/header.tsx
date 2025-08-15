@@ -82,8 +82,8 @@ export default function Header() {
                                 <div className={styles.forUAEU}><span>for UAEU</span></div>
                             </div>
                         </Link>
-                        {/*<Link className={styles.navLink} to={"/swap"} title={"Swap Courses"}>
-                                {selected === "swap" ?
+                        <Link className={styles.navLink} to={"/schedule"} title={"Schedule Maker"}>
+                                {selected === "schedule" ?
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
                                         <path fill="currentColor"
                                               d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12s4.48 10 10 10s10-4.48 10-10m-7-5.5l3.5 3.5l-3.5 3.5V11h-4V9h4zm-6 11L5.5 14L9 10.5V13h4v2H9z"/>
@@ -96,10 +96,10 @@ export default function Header() {
 
                                 }
                                 <div className={styles.hide}>
-                                    <span className={styles.navLinkText}>Swap Courses</span>
+                                    <span className={styles.navLinkText}>Schedule Maker</span>
                                     <div className={styles.forUAEU}><span>for UAEU</span></div>
                                 </div>
-                            </Link>*/}
+                            </Link>
                         {/*<Link className={styles.navLink} to={"/notifications"} title={"Notification"}>
                                 {selected === "notifications" ?
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"

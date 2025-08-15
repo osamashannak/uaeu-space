@@ -48,7 +48,7 @@ export default function Professor() {
 
         const abortController = new AbortController();
 
-        getProfessor(email, abortController).then((professor) => {
+        getProfessor(email.toLowerCase(), abortController).then((professor) => {
             dispatch(setProfessor(professor));
         })
 
@@ -129,7 +129,7 @@ export default function Professor() {
     }
 
     const score = parseFloat(professor.score.toFixed(1));
-    const longestReview = professor.reviews.length > 0 ? professor.reviews.reduce((prev, current) => (prev.comment.length > current.comment.length) ? prev : current).comment : undefined;
+    const longestReview = professor.reviews.length > 0 ? professor.reviews.reduce((prev, current) => (prev.text.length > current.text.length) ? prev : current).text : undefined;
 
     return (
         <>
@@ -162,10 +162,10 @@ export default function Professor() {
                 </section>
 
                 <Suspense fallback={<DisabledReviewForm/>}>
-                    <ReviewForm professorEmail={professor.email} canReview={professor.canReview}/>
+                    <ReviewForm professorEmail={professor.email} canReview={professor.can_review}/>
                 </Suspense>
 
-                {professor.similarlyRated.length > 0 && <RelatedReviews reviews={professor.similarlyRated}/>}
+                {professor.similar_professors.length > 0 && <RelatedReviews reviews={professor.similar_professors}/>}
 
                 <Suspense fallback={<LoadingSuspense/>}>
                     <ReviewSection professorReviews={professor.reviews}/>

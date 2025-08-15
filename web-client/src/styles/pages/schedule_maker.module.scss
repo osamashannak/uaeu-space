@@ -1,0 +1,85 @@
+.searchBoxWrapper {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  position: relative;
+  max-width: 350px;
+}
+
+.searchIcon {
+  position: absolute;
+  top: 9px;
+  left: 15px;
+  color: #aaa;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.searchBox {
+  padding-left: 36px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+
+  border-radius: 20px;
+
+  border: 1px solid #ccc;
+}
+
+.searchBoxInput {
+  border: none;
+  outline: none;
+
+
+}
+
+
+.sectionPreview {
+  border-radius: 8px;
+  padding: 16px 12px;
+  width: 300px;
+  margin-bottom: 0.8rem;
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+
+  display: flex;
+}
+
+.sectionCourse {
+  .courseTag {
+    font-weight: 500;
+  }
+  color: #049ae5;
+  font-weight: 600;
+}
+
+.sectionDoctor {
+  display: flex;
+  background: #eaf6fb;
+  padding: 4px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  width: fit-content;
+  border-radius: 4px;
+  color: #049ae5;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.sectionBuilding {
+  display: flex;
+  background: #eaf6fb;
+  padding: 4px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  width: fit-content;
+  border-radius: 4px;
+  color: #049ae5;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.addButton {
+  width: 28px;
+  margin: auto;
+  cursor: pointer;
+}

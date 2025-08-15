@@ -5,10 +5,11 @@ import Course from "../pages/course.tsx";
 import CourseLookup from "../pages/course_lookup.tsx";
 import TermsOfService from "../pages/legal/tos.tsx";
 import Privacy from "../pages/legal/privacy.tsx";
-import Error from "../pages/error.tsx";
 import Login from "../pages/login.tsx";
 import Layout from "../layouts/layout.tsx";
 import Notifications from "../pages/notifications.tsx";
+import ScheduleMaker from "../pages/schedule_maker.tsx";
+import PageNotFound from "../pages/page_not_found.tsx";
 
 const Router = createBrowserRouter([
     {
@@ -32,6 +33,7 @@ const Router = createBrowserRouter([
             },
             {
                 path: "professor",
+
                 element: <ProfessorLookup/>
             },
             {
@@ -47,12 +49,16 @@ const Router = createBrowserRouter([
                 element: <Course/>,
             },
             {
+                path: "schedule",
+                element: <ScheduleMaker/>
+            },
+            {
                 path: "login",
                 element: <Login/>
             },
             {
                 path: "*",
-                element: <Error/>
+                element: <PageNotFound/>
             }
         ]
     }

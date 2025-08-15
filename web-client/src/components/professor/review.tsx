@@ -68,13 +68,26 @@ export default function Review(review: ReviewAPI) {
                         </div>
                     </div>
 
+                    <div className={styles.reviewInfoRight}>
+                        <div className={styles.viewMoreButton}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                <g fill="currentColor">
+                                    <circle cx="6" cy="12" r="1.75"/>
+                                    <circle cx="12" cy="12" r="1.75"/>
+                                    <circle cx="18" cy="12" r="1.75"/>
+                                </g>
+                            </svg>
+                            <div className={styles.iconBackground}></div>
+                        </div>
+                    </div>
+
 
                 </div>
 
                 <div className={styles.reviewBody}>
 
                     <p dir={"auto"} id={`review_comment_${review.id}`}>
-                        {review.comment.trim()}
+                        {review.text.trim()}
                     </p>
 
                     {review.attachments && <div className={styles.imageList}>
@@ -97,11 +110,15 @@ export default function Review(review: ReviewAPI) {
                     </div>}
                 </div>
 
+                <div>
+                    <span className={styles.translateText}>Translate text</span>
+                </div>
+
 
                 <div className={styles.reviewFooter}>
                     <div>
-                        <ReviewRating dislikes={review.dislikes} likes={review.likes} id={review.id}
-                                      self={review.selfRating}/>
+                        <ReviewRating dislikes={review.dislike_count} likes={review.like_count} id={review.id}
+                                      self={review.rated}/>
                     </div>
 
                     <div className={styles.comment} onClick={() => {
@@ -114,19 +131,19 @@ export default function Review(review: ReviewAPI) {
                         e.currentTarget.classList.remove(styles.buttonClick);
                     }}>
                         <div className={styles.commentButton}>
-                            <svg className={styles.icon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <svg width={20} height={20} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
                                       d="M12 21a9 9 0 1 0-9-9c0 1.488.36 2.89 1 4.127L3 21l4.873-1c1.236.639 2.64 1 4.127 1"/>
                             </svg>
                             <div className={styles.iconBackground}></div>
                         </div>
-                        {review.comments > 0 && <span className={styles.commentCount}>{review.comments}</span>}
+                        {review.comment_count > 0 && <span className={styles.commentCount}>{review.comment_count}</span>}
                     </div>
 
                     {review.self && <div className={styles.deleteButton} onClick={() => {
                         setDeleteConfirm(true);
                     }}>
-                        <svg className={styles.icon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                        <svg width={20} height={20} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
                             <path fill="currentColor"
                                   d="M216 50h-42V40a22 22 0 0 0-22-22h-48a22 22 0 0 0-22 22v10H40a6 6 0 0 0 0 12h10v146a14 14 0 0 0 14 14h128a14 14 0 0 0 14-14V62h10a6 6 0 0 0 0-12M94 40a10 10 0 0 1 10-10h48a10 10 0 0 1 10 10v10H94Zm100 168a2 2 0 0 1-2 2H64a2 2 0 0 1-2-2V62h132Zm-84-104v64a6 6 0 0 1-12 0v-64a6 6 0 0 1 12 0m48 0v64a6 6 0 0 1-12 0v-64a6 6 0 0 1 12 0"/>
                         </svg>
@@ -136,7 +153,7 @@ export default function Review(review: ReviewAPI) {
                     {deleteConfirm && <ReviewDeletionModal setDeleteConfirm={setDeleteConfirm} reviewId={review.id}/>}
 
 
-                    {review.uaeuOrigin &&
+                    {review.uaeu_origin &&
                         <div className={styles.uaeuOrigin} title={"This review was posted from UAEU internet."}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24">
                                 <path fill="currentColor"
@@ -149,12 +166,12 @@ export default function Review(review: ReviewAPI) {
             </article>
             <CommentsContext.Provider value={{comments, setComments}}>
                 {replyCompose &&
-                    <ReplyCompose id={review.id} author={review.author} comment={review.comment} op={review.self}
+                    <ReplyCompose id={review.id} author={review.author} comment={review.text} op={review.self}
                                   created_at={review.created_at} showReplyCompose={showReplyCompose}
                                   reviewId={review.id}/>}
 
-                {review.comments > 0 &&
-                    <ReplySection reviewId={review.id} comments={review.comments} op={review.self}/>}
+                {review.comment_count > 0 &&
+                    <ReplySection reviewId={review.id} comments={review.comment_count} op={review.self}/>}
 
             </CommentsContext.Provider>
 

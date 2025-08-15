@@ -1,21 +1,19 @@
-import {useEffect} from "react";
-import styles from "../styles/pages/error.module.scss";
-import brokenMagnifier from "../assets/images/error/broken-magnifier.png";
+import {isRouteErrorResponse, useRouteError} from "react-router-dom";
+
 
 export default function Error() {
+    const error = useRouteError();
 
-    useEffect(() => {
-        // @ts-expect-error Clarity is not defined
-        clarity("set", "ErrorViewed", "true");
-    }, []);
-
-    return (
-        <div className={styles.errorPage}>
-            <div className={styles.textBlock}>
-                <span className={styles.errorText}>Page not found!</span>
-                <p className={styles.errorSubText}>We couldn't find the page you were looking for.</p>
+    if (isRouteErrorResponse(error)) {
+        return (
+            <div>
+                <h1>{error.status}</h1>
+                <h2>{error.data.sorry}</h2>
+                <p>
+                    Go ahead and email {error.data.hrEmail} if you
+                    feel like this is a mistake.
+                </p>
             </div>
-            <img className={styles.image} src={brokenMagnifier} alt="Broken Magnifier"/>
-        </div>
-    )
+        );
+    }
 }

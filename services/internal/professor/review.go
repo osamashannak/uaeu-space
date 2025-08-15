@@ -150,8 +150,8 @@ func (s *Server) PostReview() http.Handler {
 			Score:      review.Score,
 			Positive:   review.Positive,
 			Attachment: attachmentInfo,
-			ID:         review.ID,
 			CreatedAt:  review.CreatedAt,
+			ID:         review.ID,
 			Flagged:    flagged,
 		}
 

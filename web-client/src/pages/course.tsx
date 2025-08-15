@@ -30,7 +30,7 @@ export default function Course() {
             return;
         }
 
-        getCourse(tag).then((course) => {
+        getCourse(tag.toLowerCase()).then((course) => {
             setCourse(course);
         })
 

@@ -1,4 +1,3 @@
-
 export interface ProfessorAPI {
     email: string;
     name: string;
@@ -6,16 +5,16 @@ export interface ProfessorAPI {
     university: string;
     reviews: ReviewAPI[];
     score: number;
-    canReview: boolean;
-    similarlyRated: SimilarProfessors[]
+    can_review: boolean;
+    similar_professors: SimilarProfessors[]
 }
 
 export interface SimilarProfessors {
     professor_email: string;
     professor_name: string;
     professor_college: string;
-    reviewCount: number;
-    review: string;
+    reviews_count: number;
+    review_preview: string;
     score: number;
 }
 
@@ -24,15 +23,15 @@ export interface ReviewAPI {
     author: string;
     score: number;
     positive: boolean;
-    comment: string;
+    text: string;
     created_at: Date;
-    likes: number;
-    dislikes: number;
-    comments: number;
+    like_count: number;
+    dislike_count: number;
+    comment_count: number;
     self: boolean;
-    selfRating: boolean | null;
+    rated: boolean | null;
     fadeIn: boolean;
-    uaeuOrigin: boolean;
+    uaeu_origin: boolean;
     attachments: {
         id: string;
         height: number;

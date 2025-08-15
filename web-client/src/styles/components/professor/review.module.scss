@@ -126,11 +126,6 @@
 
 }
 
-.icon {
-  width: 20px;
-  height: 20px;
-}
-
 .iconBackground {
   position: absolute;
   margin: -8px;
@@ -274,11 +269,6 @@
   display: flex;
   margin-top: 0.5rem;
 
-  .reviewStars {
-    display: flex;
-    align-items: center;
-    margin-right: 0.5rem;
-  }
 
 }
 
@@ -351,6 +341,21 @@
 .replyAttachment {
   @extend .attachment;
   width: 150px;
+}
+
+.translateText {
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  color: #049AE5;
+  user-select: none;
+  -webkit-user-select: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
 }
 
 .reviewFooter {
@@ -473,17 +478,24 @@
 }
 
 .viewMoreButton {
-  width: fit-content;
-  margin-left: 41px;
-  margin-bottom: 12px;
-  font-weight: 500;
-  color: rgba(110, 112, 114, 1);
   cursor: pointer;
-  font-size: 12px;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  display: flex;
+  align-items: center;
 
-  svg {
-    width: 12px;
-    height: 12px;
+  @media (min-width: 768px) {
+
+    &:hover {
+      color: rgb(249, 24, 128);
+
+      .iconBackground {
+        background-color: rgba(249, 24, 128, 0.1);
+        border-radius: 50%;
+
+      }
+    }
   }
 }
 

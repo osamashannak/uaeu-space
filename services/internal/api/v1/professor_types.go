@@ -78,6 +78,7 @@ type ReviewPostResponse struct {
 	Attachment *ReviewAttachment `json:"attachment,omitempty"`
 	ID         uint64            `json:"id"`
 	Flagged    *bool             `json:"flagged,omitempty"`
+	CreatedAt  time.Time         `json:"created_at"`
 }
 
 type SuccessResponse struct {
