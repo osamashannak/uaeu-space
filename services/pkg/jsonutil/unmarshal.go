@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 	"strings"
 )
 
@@ -47,6 +48,20 @@ func Unmarshal(w http.ResponseWriter, r *http.Request, data interface{}) (int, e
 	}
 	if d.More() {
 		return http.StatusBadRequest, fmt.Errorf("body must contain only one JSON object")
+	}
+
+	v := reflect.ValueOf(data).Elem()
+	t := v.Type()
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		structField := t.Field(i)
+
+		if structField.Tag.Get("required") == "true" {
+			if field.Kind() == reflect.Ptr && field.IsNil() {
+				return http.StatusBadRequest, fmt.Errorf("%s is required", structField.Tag.Get("json"))
+			}
+		}
 	}
 
 	return http.StatusOK, nil

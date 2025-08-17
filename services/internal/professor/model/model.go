@@ -12,11 +12,12 @@ type Professor struct {
 }
 
 type Review struct {
-	ID             uint64
+	SortIndex      int64
+	ID             int64
 	Score          int
 	Positive       bool
 	Content        string
-	Attachment     string
+	Attachment     *int64
 	ProfessorEmail string
 	IpAddress      string
 	DeletedAt      *time.Time
@@ -32,7 +33,7 @@ type Review struct {
 }
 
 type ReviewAttachment struct {
-	ID        uint64
+	ID        int64
 	MimeType  string
 	Size      int
 	Width     int
@@ -42,11 +43,21 @@ type ReviewAttachment struct {
 	CreatedAt time.Time
 }
 
+type ReviewRating struct {
+	Value     bool
+	IpAddress string
+	CreatedAt time.Time
+	ReviewId  int64
+	SessionId int64
+	UserId    *int64
+}
+
 type ReviewReply struct {
-	ID          uint64
+	ID          int64
 	Content     string
-	Gif         string
+	Gif         *string
 	SoftDeleted bool
+	Op          bool
 	CreatedAt   time.Time
 	ReviewId    int64
 	UserId      *int64
@@ -55,14 +66,14 @@ type ReviewReply struct {
 }
 
 type ReviewScores struct {
-	ReviewId  uint64
+	ReviewId  int64
 	Attribute string
 	Score     int
 	CreatedAt time.Time
 }
 
 type ReplyName struct {
-	ID        uint64
+	ID        int64
 	Name      string
 	ReviewId  int64
 	UserId    *int64
@@ -70,7 +81,7 @@ type ReplyName struct {
 }
 
 type ReplyLike struct {
-	ID        uint64
+	ID        int64
 	SessionId int64
 	UserId    *int64
 	ReplyId   int64
@@ -78,7 +89,7 @@ type ReplyLike struct {
 }
 
 type ReviewTranslation struct {
-	ReviewId       uint64
+	ReviewId       int64
 	TranslatedText string
 	Target         string
 	CreatedAt      time.Time

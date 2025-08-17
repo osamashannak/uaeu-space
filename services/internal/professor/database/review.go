@@ -2,48 +2,65 @@ package database
 
 import (
 	"context"
+	"errors"
+	"github.com/jackc/pgx/v5"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/model"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 )
 
-func (db *ProfessorDB) GetReview(ctx context.Context, id string) (*model.Review, error) {
+func (db *ProfessorDB) GetReview(ctx context.Context, id int64) (*model.Review, error) {
 	var review model.Review
 
-	err := db.db.Pool.QueryRow(ctx,
-		`SELECT id, score, positive, content, attachment, professor_email, ip_address, session_id, user_id
-		 FROM professor.review WHERE id = $1`, id).Scan(
+	err := db.Db.Pool.QueryRow(ctx,
+		`SELECT id, score, positive, content, attachment, professor_email, session_id, user_id, language
+		 FROM professor.review WHERE id = $1 AND deleted_at IS NULL`, id).Scan(
 		&review.ID,
 		&review.Score,
 		&review.Positive,
 		&review.Content,
 		&review.Attachment,
 		&review.ProfessorEmail,
-		&review.IpAddress,
 		&review.SessionId,
-		&review.UserId)
+		&review.UserId,
+		&review.Language)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
 	return &review, nil
 }
 
+func (db *ProfessorDB) ExistsReviewSession(ctx context.Context, email string, sessionId int64) (bool, error) {
+	var exists bool
+
+	err := db.Db.Pool.QueryRow(ctx,
+		`SELECT EXISTS(SELECT 1 FROM professor.review WHERE professor_email = $1 AND session_id = $2 AND deleted_at IS NULL)`, email, sessionId).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+
+	return exists, nil
+}
+
 func (db *ProfessorDB) InsertReview(ctx context.Context, review *model.Review) error {
-	_, err := db.db.Pool.Exec(ctx,
-		`INSERT INTO professor.review (id, score, positive, content, attachment, professor_email, ip_address, session_id, user_id, visible, uaeu_origin, language)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+	_, err := db.Db.Pool.Exec(ctx,
+		`INSERT INTO professor.review (sort_index, id, score, positive, content, attachment, professor_email, ip_address, session_id, user_id, visible, uaeu_origin, language)
+			VALUES ($1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
 		review.ID, review.Score, review.Positive, review.Content, review.Attachment, review.ProfessorEmail, review.IpAddress, review.SessionId, review.UserId, review.Visible, review.UaeuOrigin, review.Language)
 	return err
 }
 
-func (db *ProfessorDB) SoftDeleteReview(ctx context.Context, id string) error {
-	_, err := db.db.Pool.Exec(ctx,
-		`UPDATE professor.review SET deleted_at = now() WHERE id = $1`, id)
+func (db *ProfessorDB) SoftDeleteReview(ctx context.Context, reviewId int64) error {
+	_, err := db.Db.Pool.Exec(ctx,
+		`UPDATE professor.review SET deleted_at = now() WHERE id = $1`, reviewId)
 	return err
 }
 
-func (db *ProfessorDB) InsertReviewFlags(ctx context.Context, id uint64, result *perspective.AnalysisResult) error {
+func (db *ProfessorDB) InsertReviewFlags(ctx context.Context, reviewId int64, result *perspective.AnalysisResult) error {
 	type flagEntry struct {
 		Attribute string
 		Score     float64
@@ -73,7 +90,7 @@ func (db *ProfessorDB) InsertReviewFlags(ctx context.Context, id uint64, result 
 	query := `INSERT INTO professor.review_flag (review_id, attribute, score, engine) VALUES ($1, $2, $3, $4)`
 
 	for _, flag := range flags {
-		_, err := db.db.Pool.Exec(ctx, query, id, flag.Attribute, flag.Score, "perspective")
+		_, err := db.Db.Pool.Exec(ctx, query, reviewId, flag.Attribute, flag.Score, "perspective")
 		if err != nil {
 			return err
 		}
@@ -82,18 +99,21 @@ func (db *ProfessorDB) InsertReviewFlags(ctx context.Context, id uint64, result 
 	return nil
 }
 
-func (db *ProfessorDB) GetTranslatedReview(ctx context.Context, id string) (*model.ReviewTranslation, error) {
+func (db *ProfessorDB) GetTranslatedReview(ctx context.Context, reviewId int64) (*model.ReviewTranslation, error) {
 	var translation model.ReviewTranslation
 
-	err := db.db.Pool.QueryRow(ctx,
+	err := db.Db.Pool.QueryRow(ctx,
 		`SELECT review_id, target, translated_text, created_at
-		 FROM professor.review_translation WHERE review_id = $1`, id).Scan(
+		 FROM professor.review_translation WHERE review_id = $1`, reviewId).Scan(
 		&translation.ReviewId,
-		&translation.TranslatedText,
 		&translation.Target,
+		&translation.TranslatedText,
 		&translation.CreatedAt)
 
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
@@ -101,7 +121,7 @@ func (db *ProfessorDB) GetTranslatedReview(ctx context.Context, id string) (*mod
 }
 
 func (db *ProfessorDB) InsertReviewTranslation(ctx context.Context, translation *model.ReviewTranslation) error {
-	_, err := db.db.Pool.Exec(ctx,
+	_, err := db.Db.Pool.Exec(ctx,
 		`INSERT INTO professor.review_translation (review_id, target, translated_text)
 			VALUES ($1, $2, $3)`,
 		translation.ReviewId, translation.Target, translation.TranslatedText)
@@ -109,29 +129,60 @@ func (db *ProfessorDB) InsertReviewTranslation(ctx context.Context, translation 
 }
 
 func (db *ProfessorDB) InsertReviewAttachment(ctx context.Context, attachment *model.ReviewAttachment) error {
-	_, err := db.db.Pool.Exec(ctx,
+	_, err := db.Db.Pool.Exec(ctx,
 		`INSERT INTO professor.review_attachment (id, mime_type, size, width, height, visible, url)
 			VALUES ($1, $2, $3, $4, $5, $6, $7)`,
 		attachment.ID, attachment.MimeType, attachment.Size, attachment.Width, attachment.Height, attachment.Visible, attachment.URL)
 	return err
 }
 
-func (db *ProfessorDB) GetReviewAttachment(ctx context.Context, id string) (*model.ReviewAttachment, error) {
+func (db *ProfessorDB) GetReviewAttachment(ctx context.Context, attachmentId int64) (*model.ReviewAttachment, error) {
 	var attachment model.ReviewAttachment
 
-	err := db.db.Pool.QueryRow(ctx,
+	err := db.Db.Pool.QueryRow(ctx,
 		`SELECT id, mime_type, size, width, height, visible, url
-		 FROM professor.review_attachment WHERE id = $1`, id).Scan(
+		 FROM professor.review_attachment WHERE id = $1`, attachmentId).Scan(
 		&attachment.ID,
 		&attachment.MimeType,
 		&attachment.Size,
 		&attachment.Width,
 		&attachment.Height,
-		&attachment.Visible)
+		&attachment.Visible,
+		&attachment.URL)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &attachment, nil
+}
+
+func (db *ProfessorDB) ExistsReviewRatingFromSession(ctx context.Context, reviewId, sessionId int64) (*bool, error) {
+	var exists bool
+
+	err := db.Db.Pool.QueryRow(ctx,
+		`SELECT EXISTS(SELECT 1 FROM professor.review_rating WHERE review_id = $1 AND session_id = $2)`, reviewId, sessionId).Scan(&exists)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &attachment, nil
+	return &exists, nil
+}
+
+func (db *ProfessorDB) InsertReviewRating(ctx context.Context, rating *model.ReviewRating) error {
+	_, err := db.Db.Pool.Exec(ctx,
+		`INSERT INTO professor.review_rating (value, ip_address, review_id, session_id, user_id)
+		 VALUES ($1, $2, $3, $4, $5)`,
+		rating.Value, rating.IpAddress, rating.ReviewId, rating.SessionId, rating.UserId)
+	return err
+}
+
+func (db *ProfessorDB) DeleteReviewRating(ctx context.Context, reviewId int64, sessionId int64) error {
+	_, err := db.Db.Pool.Exec(ctx,
+		`DELETE FROM professor.review_rating WHERE review_id = $1 AND session_id = $2`, reviewId, sessionId)
+	return err
 }

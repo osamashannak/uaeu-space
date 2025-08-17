@@ -7,7 +7,7 @@ import (
 )
 
 type CourseDB struct {
-	db *database.DB
+	Db *database.DB
 }
 
 func New(db *database.DB) *CourseDB {

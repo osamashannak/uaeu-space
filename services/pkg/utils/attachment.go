@@ -29,7 +29,7 @@ type ImageBounds struct {
 	Height int
 }
 
-func ProcessImageFile(fileBytes []byte, contentType string) (processedBytes []byte, newContentType string, imageBounds *ImageBounds, err error) {
+func ProcessImageFile(fileBytes []byte) (processedBytes []byte, newContentType string, imageBounds *ImageBounds, err error) {
 	decodedImage, _, err := image.Decode(bytes.NewReader(fileBytes))
 
 	if err != nil {

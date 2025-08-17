@@ -6,6 +6,11 @@ import (
 )
 
 func ReviewTextCleaner(text string) string {
+	runes := []rune(text)
+	if len(runes) > 350 {
+		text = string(runes[:350])
+	}
+
 	trimmed := strings.TrimSpace(text)
 
 	if trimmed == "" {

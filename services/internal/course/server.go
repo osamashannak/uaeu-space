@@ -2,6 +2,7 @@ package course
 
 import (
 	"github.com/osamashannak/uaeu-space/services/internal/course/database"
+	"github.com/osamashannak/uaeu-space/services/internal/middleware"
 	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
 	"net/http"
 )
@@ -25,7 +26,7 @@ func (s *Server) Routes() http.Handler {
 
 	mux.Handle("GET /course", s.GetCourse())
 	mux.Handle("GET /course/list", s.GetCourseList())
-	mux.Handle("POST /course/upload", s.UploadCourseFile())
+	mux.Handle("POST /course/upload", middleware.Gateway(s.UploadCourseFile(), *s.db.Db, *s.generator))
 	mux.Handle("GET /course/download", s.DownloadCourseFile())
 
 	return mux
