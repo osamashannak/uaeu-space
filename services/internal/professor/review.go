@@ -478,7 +478,7 @@ func (s *Server) UploadReviewAttachment() http.Handler {
 			return
 		}
 
-		fileBytes, contentType, imageBounds, err := utils.ProcessImageFile(fileBytes, contentType)
+		fileBytes, contentType, imageBounds, err := utils.ProcessImageFile(fileBytes)
 		if err != nil {
 			logger.Errorf("failed to process image file: %v", err)
 			errorResponse := v1.ErrorResponse{

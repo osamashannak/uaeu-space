@@ -15,7 +15,7 @@ RUN go mod download
 COPY . .
 
 ARG SERVICE
-RUN go build -o bin/$SERVICE ./cmd/$SERVICE.go
+RUN go build -o bin/$SERVICE ./cmd/$SERVICE
 
 FROM alpine:latest
 
