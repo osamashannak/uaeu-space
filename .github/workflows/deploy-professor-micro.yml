@@ -45,7 +45,7 @@ jobs:
 
       - name: 'Build and Push Container'
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/professor:${{ github.sha }}"
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/professor:${{ github.sha }}"
           docker build --file services/Dockerfile --build-arg SERVICE=professor --tag "${DOCKER_TAG}" services
           docker push "${DOCKER_TAG}"
       - name: 'Deploy to Cloud Run'
