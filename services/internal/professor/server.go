@@ -50,8 +50,8 @@ func NewServer(db *database.ProfessorDB,
 func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 
-	mux.Handle("GET /", middleware.Gateway(s.Get(), *s.db.Db, *s.generator))
-	mux.Handle("GET /all", s.GetAll())
+	mux.Handle("GET /professor", middleware.Gateway(s.Get(), *s.db.Db, *s.generator))
+	mux.Handle("GET /professor/all", s.GetAll())
 
 	mux.Handle("POST /comment", middleware.Gateway(s.PostReview(), *s.db.Db, *s.generator))
 	mux.Handle("DELETE /comment", middleware.Gateway(s.DeleteReview(), *s.db.Db, *s.generator))

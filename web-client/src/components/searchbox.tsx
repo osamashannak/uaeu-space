@@ -15,8 +15,8 @@ export default function SearchBox(props: { type: "professor" | "course" | "resta
 
         const [items, setItems] = useState<Item[]>([]);
         const [allItems, setAllItems] = useState<Item[]>([]);
-        const lastInputValue = useRef<string>();
-        const previousUniversity = useRef<string>();
+        const lastInputValue = useRef<string>(undefined);
+        const previousUniversity = useRef<string>(undefined);
         const navigate = useNavigate();
 
 

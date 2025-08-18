@@ -91,7 +91,7 @@ export default function ReviewReply({reply, reviewId, op}: { reply: ReviewReplyA
                             </>
                         }
                     </div>
-                    <ReplyLike id={reply.id} likes={reply.likes} self={reply.selfLike}/>
+                    <ReplyLike id={reply.id} likes={reply.like_count} self={reply.liked}/>
                 </div>
             </div>
             {replyCompose &&

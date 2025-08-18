@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom/client'
 import './styles/global.scss'
 import {RouterProvider} from "react-router-dom";
 import Router from "./router/default.tsx";
-import {HelmetProvider} from "react-helmet-async";
 import store from "./redux/store.ts";
 import {Provider} from "react-redux";
+import {HelmetProvider} from "@dr.pogodin/react-helmet";
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

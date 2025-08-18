@@ -1,5 +1,5 @@
 import styles from "../../styles/pages/legal.module.scss";
-import {Helmet} from "react-helmet-async";
+import {Helmet} from "@dr.pogodin/react-helmet";
 
 export default function Privacy() {
     return (

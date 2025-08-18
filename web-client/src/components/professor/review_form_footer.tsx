@@ -18,7 +18,7 @@ export default function ReviewFormFooter(props: {
 
     const uploadImage = (event: ChangeEvent<HTMLInputElement>) => {
 
-        if (details.attachments.length > 1) {
+        if (details.attachment) {
             alert("You may only choose 1 image.");
             event.target.value = "";
             return;
@@ -35,14 +35,9 @@ export default function ReviewFormFooter(props: {
             return;
         }
 
-        const emptySlots = 4 - details.attachments.length;
+        const image = files[0];
 
-        const images = files.slice(0, emptySlots);
-
-        if (images.length === 0) return;
-
-        for (const image of images) {
-            /*if (['video/mp4', 'video/quicktime'].includes(image.type)) {
+        /*if (['video/mp4', 'video/quicktime'].includes(image.type)) {
                 if (emptySlots !== 4) {
                     alert("You may only choose 4 images, 1 GIF or 1 video.");
                     continue;
@@ -53,25 +48,21 @@ export default function ReviewFormFooter(props: {
                 return;
             }*/
 
-            if (['image/webp', 'image/gif'].includes(image.type)) {
-                if (emptySlots !== 4) continue;
-
-                addImage(image);
-                event.target.value = "";
-
-                return;
-            }
-
-            new Compressor(images[0], {
-                quality: 0.8,
-                success(compressedFile) {
-                    addImage(compressedFile);
-                },
-                error() {
-                    alert("Failed to upload the image.");
-                },
-            });
+        if (['image/webp', 'image/gif'].includes(image.type)) {
+            addImage(image);
+            event.target.value = "";
+            return;
         }
+
+        new Compressor(image, {
+            quality: 0.8,
+            success(compressedFile) {
+                addImage(compressedFile);
+            },
+            error() {
+                alert("Failed to upload the image.");
+            },
+        });
 
         event.target.value = "";
     }
@@ -121,7 +112,7 @@ export default function ReviewFormFooter(props: {
                 weight: 4
             };
 
-            setDetails(prevState => ({...prevState, attachments: [...prevState.attachments, attachment]}));
+            setDetails(prevState => ({...prevState, attachment: attachment}));
         }
     }
 
@@ -149,17 +140,17 @@ export default function ReviewFormFooter(props: {
                 src: file
             } as ImageAttachment;
 
-            setDetails(prevState => ({...prevState, attachments: [...prevState.attachments, attachment]}));
+            setDetails(prevState => ({...prevState, attachment: attachment}));
 
         }
     }
 
     function canAddMoreAttachments() {
-        return details.attachments.reduce((acc, attachment) => acc + attachment.weight, 0) < 1;
+        return !details.attachment;
     }
 
     function canAddGif() {
-        return details.attachments.reduce((acc, attachment) => acc + attachment.weight, 0) === 0;
+        return !details.attachment;
     }
 
     function hideEmojiSelector() {

@@ -14,12 +14,12 @@ import {LexicalEditor} from "lexical";
 import {EditorRefPlugin} from "@lexical/react/LexicalEditorRefPlugin";
 import {useRef} from "react";
 import ReviewFormFooter from "./review_form_footer.tsx";
-import AttachmentSlider from "./attachment_slider.tsx";
 import {useDispatch} from "react-redux";
 import {addReview} from "../../redux/slice/professor_slice.ts";
 import ProgressBar from "progressbar.js";
 import Line from "progressbar.js/line";
 import EmojiSelector from "../lexical_editor/emoji_selector.tsx";
+import ReviewAttachment from "./review_attachment.tsx";
 
 
 export default function ReviewForm(props: { professorEmail: string, canReview: boolean }) {
@@ -28,7 +28,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         score: undefined,
         comment: "",
         positive: undefined,
-        attachments: [],
+        attachment: undefined,
     });
     const [submitting, setSubmitting] = useState<boolean | null | "error">(!props.canReview ? null : false);
     const {executeRecaptcha} = useGoogleReCaptcha();
@@ -37,69 +37,50 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
     const lineRef = useRef<Line | null>(null);
 
     useEffect(() => {
-        function verifyUpload(id: string | undefined, url: string) {
+        if (!details.attachment) return;
+
+        const attachment = details.attachment;
+
+        function verifyUpload(id: string | undefined) {
             if (id === undefined) {
-                alert("Failed to upload the media file.");
+                alert("Invalid attachment. Please try again.");
                 setDetails((prevDetails) => ({
                     ...prevDetails,
-                    attachments: prevDetails.attachments.filter((_) => _.url !== url),
+                    attachment: undefined
                 }));
                 return;
             }
 
-            console.log(details.attachments)
+            if (!details.attachment) return;
 
-            const index = details.attachments.findIndex(attachment => attachment.url === url);
-
-            details.attachments[index].id = id;
+            details.attachment.id = id;
 
             setDetails(prevState => {
                 return {
                     ...prevState,
-                    attachments: details.attachments,
+                    attachment: details.attachment,
                 }
             })
         }
 
-        const attachments = details.attachments.filter(attachment => attachment.id === "READY");
+        attachment.id = "UPLOADING";
 
-        for (const attachment of attachments) {
-            if ('src' in attachment) {
-                setDetails((prevDetails) => ({
-                    ...prevDetails,
-                    attachments: prevDetails.attachments.map((_) => {
-                        if (_.url === attachment.url) {
-                            return {
-                                ..._,
-                                id: "UPLOADING",
-                            }
-                        }
-                        return _;
-                    }),
-                }));
-                uploadImageAttachment(attachment.src).then(id => {
-                    verifyUpload(id, attachment.url);
-                })
-            } else {
-                setDetails((prevDetails) => ({
-                    ...prevDetails,
-                    attachments: prevDetails.attachments.map((_) => {
-                        if (_.url === attachment.url) {
-                            return {
-                                ..._,
-                                id: "UPLOADING",
-                            }
-                        }
-                        return _;
-                    }),
-                }));
-                uploadTenorAttachment(attachment).then(id => {
-                    verifyUpload(id, attachment.url);
-                });
-            }
+        setDetails((prevDetails) => ({
+            ...prevDetails,
+            attachment: attachment
+        }));
+
+        if ('src' in attachment) {
+            uploadImageAttachment(attachment.src).then((id) => {
+                verifyUpload(id);
+            })
+        } else {
+            uploadTenorAttachment(attachment).then((id) => {
+                verifyUpload(id);
+            })
         }
 
-    }, [details.attachments]);
+    }, [details.attachment]);
 
     useEffect(() => {
         if (submitting === null || submitting === "error") {
@@ -109,7 +90,6 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         lineRef.current = new ProgressBar.Line('#line-container', {
             color: '#87CEFA',
             strokeWidth: 0.7,
-
         });
     }, [submitting]);
 
@@ -117,7 +97,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         return (
             (details.comment
                 && details.comment.trim()
-                && details.comment.length <= 350 || details.attachments.length > 0) &&
+                && details.comment.length <= 350 || details.attachment) &&
             details.score &&
             details.positive !== undefined);
     }
@@ -140,9 +120,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
 
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        const uploadingAttachmentsCount = details.attachments.filter(attachment => attachment.id === "UPLOADING").length;
-
-        if (uploadingAttachmentsCount > 0) {
+        if (details.attachment?.id === "UPLOADING") {
             setTimeout(handleSubmit, 500);
             return;
         }
@@ -157,12 +135,12 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
         const token = await executeRecaptcha("new_review");
 
         const status = await postReview({
-            comment: details.comment!,
+            text: details.comment!,
             score: details.score!,
             positive: details.positive!,
-            professorEmail: props.professorEmail,
-            recaptchaToken: token,
-            attachments: details.attachments.map((attachment) => attachment.id)
+            professor_email: props.professorEmail,
+            recaptcha_token: token,
+            attachment: details.attachment?.id
         });
 
         if (!status || !status.success) {
@@ -172,23 +150,26 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             return;
         }
 
+        // todo check if static.review.flagged
+
         setSubmitting(null);
 
         dispatch(addReview({
-            uaeuOrigin: status.review.uaeuOrigin,
+            uaeu_origin: status.review.uaeu_origin,
             fadeIn: true,
             self: true,
-            selfRating: null,
-            comments: 0,
-            attachments: details.attachments,
+            rated: null,
+            reply_count: 0,
+            language: status.review.language,
+            attachment: details.attachment,
             author: "User",
             created_at: status.review.created_at,
-            dislikes: 0,
-            likes: 0,
-            comment: status.review.comment,
+            dislike_count: 0,
+            like_count: 0,
+            text: status.review.text,
             score: status.review.score,
             positive: status.review.positive,
-            id: status.review.id
+            id: status.review.id,
         }));
 
         lineRef.current?.destroy();
@@ -231,52 +212,6 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
                 onClick={event => {
                     event.preventDefault();
                 }}>
-
-                {/*<div>
-                    <div className={styles.guestWarning} onClick={(e) => {
-                        e.stopPropagation();
-
-                        const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
-                        warningWindow.style.display = "flex";
-                        document.body.style.overflow = "hidden";
-                        document.body.style.height = `calc(100vh - 160px)`;
-                    }}>
-                        <span>You are not logged in</span>
-                        <div className={styles.infoButton}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-                                <path fill="currentColor"
-                                      d="M11 17h2v-6h-2zm1-8q.425 0 .713-.288T13 8q0-.425-.288-.712T12 7q-.425 0-.712.288T11 8q0 .425.288.713T12 9m0 13q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22m0-2q3.35 0 5.675-2.325T20 12q0-3.35-2.325-5.675T12 4Q8.65 4 6.325 6.325T4 12q0 3.35 2.325 5.675T12 20m0-8"/>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div className={styles.fullscreenWarning} onClick={(e) => {
-                        e.stopPropagation();
-                        const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
-                        warningWindow.style.display = "none";
-                        document.body.style.removeProperty("overflow");
-                        document.body.style.removeProperty("height");
-                    }}>
-                        <div className={styles.warningWindow} onClick={(e) => {
-                            e.stopPropagation();
-                        }}>
-                            <h3>Logging in will allow you to:</h3>
-                            <div className={styles.list}>
-                                <p className={styles.element}>1. Edit your reviews 12 hours after submitting</p>
-                                <p className={styles.element}>2. Delete your reviews at any time</p>
-                            </div>
-                            <h5>Your reviews will always be anonymous</h5>
-                            <Link className={styles.warningButton} onClick={() => {
-                                const warningWindow = document.querySelector(`.${styles.fullscreenWarning}`) as HTMLDivElement;
-                                warningWindow.style.display = "none";
-                                document.body.style.removeProperty("overflow");
-                                document.body.style.removeProperty("height");
-                            }} to={"/login"}>Login</Link>
-                        </div>
-
-                    </div>
-                </div>*/}
-
 
                 <LexicalComposer initialConfig={{
                     namespace: 'lexical',
@@ -336,7 +271,8 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
                         </div>
                     </div>
 
-                    <AttachmentSlider details={details} setDetails={setDetails}/>
+                    <ReviewAttachment details={details} setDetails={setDetails}/>
+
 
                     <EmojiSelector/>
                 </LexicalComposer>

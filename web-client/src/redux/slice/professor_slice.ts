@@ -1,5 +1,5 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit'
-import {ProfessorAPI, ReviewAPI, ReviewReplyAPI} from "../../typed/professor.ts";
+import {ProfessorAPI, ReviewAPI} from "../../typed/professor.ts";
 import {RootState} from "../store.ts";
 
 
@@ -40,8 +40,8 @@ export const professorSlice = createSlice({
 
                     const aDate = new Date(a.created_at).getTime();
                     const bDate = new Date(b.created_at).getTime();
-                    const aLikes = a.likes - a.dislikes;
-                    const bLikes = b.likes - b.dislikes;
+                    const aLikes = a.like_count - a.dislike_count;
+                    const bLikes = b.like_count - b.dislike_count;
 
                     const oneWeek = 7 * 24 * 60 * 60 * 1000; // milliseconds in one week
                     const sixMonths = 6 * 30 * 24 * 60 * 60 * 1000; // milliseconds in six months
@@ -126,7 +126,7 @@ export const professorSlice = createSlice({
                 return;
             }
 
-            review.comments += 1;
+            review.reply_count += 1;
         },
         removeReply: (state, action: PayloadAction<{ reviewId: number }>) => {
             if (!state.professor) {
@@ -139,7 +139,7 @@ export const professorSlice = createSlice({
                 return;
             }
 
-            review.comments -= 1;
+            review.reply_count -= 1;
         },
         changeRepliesCount: (state, action: PayloadAction<{ reviewId: number, count: number }>) => {
             if (!state.professor) {
@@ -152,7 +152,7 @@ export const professorSlice = createSlice({
                 return;
             }
 
-            review.comments = action.payload.count;
+            review.reply_count = action.payload.count;
         }
     }
 });

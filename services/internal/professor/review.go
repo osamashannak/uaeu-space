@@ -15,6 +15,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func (s *Server) PostReview() http.Handler {
@@ -161,6 +162,7 @@ func (s *Server) PostReview() http.Handler {
 			Language:       flags.Language,
 			IpAddress:      r.RemoteAddr,
 			SessionId:      &profile.SessionId,
+			CreatedAt:      time.Now(),
 		}
 
 		if attachmentInfo != nil {
@@ -196,12 +198,14 @@ func (s *Server) PostReview() http.Handler {
 		}
 
 		var response = v1.ReviewPostResponse{
-			Comment:    review.Content,
+			Text:       review.Content,
 			Score:      review.Score,
 			Positive:   review.Positive,
 			Attachment: attachmentInfo,
 			ID:         review.ID,
 			Flagged:    flagged,
+			Language:   review.Language,
+			CreatedAt:  review.CreatedAt,
 		}
 
 		logger.Debugf("review posted successfully: %+v", response)

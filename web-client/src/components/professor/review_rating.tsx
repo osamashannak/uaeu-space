@@ -59,7 +59,6 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
     }
 
     const likeCount = (props.likes + (liked ? 1 : 0) - (props.self ? 1 : 0));
-    const dislikeCount = (props.dislikes + (liked === false ? 1 : 0) - (props.self === false ? 1 : 0));
 
     function dislikeRatingClick(id: number) {
         return {

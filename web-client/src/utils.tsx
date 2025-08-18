@@ -2,6 +2,7 @@ import icons from "./icons";
 import styles from "./styles/components/professor/review.module.scss";
 import {Twemoji} from "./twemoji";
 import tlds from "tlds";
+import {JSX} from "react";
 
 export const URL_REGEX = new RegExp(
     "^" +

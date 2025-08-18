@@ -2,10 +2,10 @@ import styles from "../styles/layout.module.scss";
 import Header from "../components/header.tsx";
 import Footer from "../components/footer.tsx";
 import {GoogleReCaptchaProvider} from "react-google-recaptcha-v3";
-import {Helmet} from "react-helmet-async";
 import {Outlet, ScrollRestoration} from "react-router-dom";
 import MobileNavigation from "../components/mobile_navigation.tsx";
 import {useEffect, useState} from "react";
+import {Helmet} from "@dr.pogodin/react-helmet";
 
 export default function Layout() {
 

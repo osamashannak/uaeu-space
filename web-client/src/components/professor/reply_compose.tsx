@@ -118,8 +118,8 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                 gif: reply.reply.gif,
                 author: reply.reply.author,
                 self: true,
-                likes: 0,
-                selfLike: false,
+                like_count: 0,
+                liked: false,
                 fadeIn: true,
                 op: props.op
             }];

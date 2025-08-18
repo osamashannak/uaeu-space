@@ -1,0 +1,61 @@
+name: 'Build and Deploy Vite Frontend'
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'web-client/**'
+  pull_request:
+    paths:
+      - 'web-client/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: 'ubuntu-latest'
+
+    permissions:
+      id-token: 'write'
+
+    steps:
+      - name: 'Checkout code'
+        uses: 'actions/checkout@v3'
+
+      - name: 'Set short SHA'
+        run: echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: 'Setup Node.js'
+        uses: 'actions/setup-node@v3'
+        with:
+          node-version: '20'
+
+      - name: 'Install dependencies'
+        run: npm install --omit=dev
+
+      - name: 'Build Vite app'
+        run: npm run build
+        working-directory: web-client
+        env:
+          VITE_APP_VERSION: ${{ env.VERSION }}
+
+      - name: 'Configure AWS credentials'
+        uses: 'aws-actions/configure-aws-credentials@v4.3.1'
+        with:
+          role-to-assume: arn:aws:iam::734946078607:role/github-action
+          aws-region: me-central-1
+
+      - name: Upload versioned build
+        run: |
+          aws s3 sync web-client/dist s3://static.spaceread.net/${{ env.VERSION }} --delete
+
+      - name: Upload HTML (latest)
+        run: |
+          aws s3 cp web-client/dist/index.html s3://spaceread.net/www/index.html
+
+      - name: Upload HTML (versioned)
+        run: |
+          aws s3 cp web-client/dist/index.html s3://spaceread.net/index-${{ env.VERSION }}.html
+
+      - name: Cleanup HTML file from static bucket
+        run: |
+          aws s3 rm s3://static.spaceread.net/${{ env.VERSION }}/index.html || true

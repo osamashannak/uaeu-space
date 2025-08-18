@@ -71,12 +71,14 @@ type ReviewRatingBody struct {
 }
 
 type ReviewPostResponse struct {
-	Comment    string            `json:"comment"`
+	Text       string            `json:"text"`
 	Score      int               `json:"score"`
 	Positive   bool              `json:"positive"`
 	Attachment *ReviewAttachment `json:"attachment,omitempty"`
 	ID         int64             `json:"id"`
 	Flagged    *bool             `json:"flagged,omitempty"`
+	CreatedAt  time.Time         `json:"created_at"`
+	Language   string            `json:"language"`
 }
 
 type SuccessResponse struct {

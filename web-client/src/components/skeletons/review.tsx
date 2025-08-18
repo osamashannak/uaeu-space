@@ -1,6 +1,5 @@
 import reviewStyles from "../../styles/components/professor/review.module.scss";
 import Skeleton from "react-loading-skeleton";
-import ReviewRating from "../professor/review_rating.tsx";
 
 
 export default function ReviewSkeleton() {

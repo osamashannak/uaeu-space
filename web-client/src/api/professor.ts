@@ -1,6 +1,5 @@
 import {
     ProfessorAPI,
-    ReplyContent,
     ReviewAPI,
     ReviewFormAPI,
     ReviewReplyAPI,
@@ -47,7 +46,7 @@ export const uploadImageAttachment = async (file: File | Blob) => {
     try {
         const formData = new FormData();
         formData.append("file", file);
-        const request = await fetch(HOST + "/professor/comment/attachment/uploadImage", {
+        const request = await fetch(HOST + "/comment/attachment", {
             method: "POST",
             body: formData,
             headers: {
@@ -66,7 +65,7 @@ export const uploadTenorAttachment = async (tenorGIFAttachment: TenorGIFAttachme
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/comment/attachment/uploadTenor", {
+        const request = await fetch(HOST + "/comment/attachment", {
             method: "POST",
             body: JSON.stringify({
                 url: tenorGIFAttachment.url,
@@ -111,7 +110,7 @@ export const getReplyName = async (id: number) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/comment/reply/name?id=" + id, {
+        const request = await fetch(HOST + "/comment/reply/name?reviewId=" + id, {
             credentials: "include",
         });
         response = await request.json();
@@ -126,7 +125,7 @@ export const getReviewReplies = async (id: number, current: number[]) => {
     let response;
 
     try {
-        const request = await fetch(HOST + `/professor/comment/reply?id=${id}&current=${current.join(",")}`, {
+        const request = await fetch(HOST + `/comment/reply?reviewId=${id}&current=${current.join(",")}`, {
             credentials: "include",
         });
         response = await request.json();
@@ -141,7 +140,7 @@ export const postReply = async (reviewId: number, content: {comment: string, gif
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/comment/reply", {
+        const request = await fetch(HOST + "/comment/reply", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -166,7 +165,7 @@ export const likeReply = async (replyId: number) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/comment/reply/like?id=" + replyId, {
+        const request = await fetch(HOST + "/comment/reply/like?replyId=" + replyId, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -187,7 +186,7 @@ export const removeLikeReply = async (replyId: number) => {
     let response;
 
     try {
-        const request = await fetch(HOST + `/professor/comment/reply/like?id=${replyId}`, {
+        const request = await fetch(HOST + `/comment/reply/like?replyId=${replyId}`, {
             method: "DELETE",
             credentials: "include"
         });
@@ -203,7 +202,7 @@ export const postReview = async (options: ReviewFormAPI) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/comment", {
+        const request = await fetch(HOST + "/comment", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -224,7 +223,7 @@ export const deleteReview = async (reviewId: number) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/comment?id=" + reviewId, {
+        const request = await fetch(HOST + "/comment?reviewId=" + reviewId, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
@@ -240,11 +239,29 @@ export const deleteReview = async (reviewId: number) => {
     return response as { success: boolean, message: string };
 }
 
+export const translateReview = async (reviewId: number) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/comment/translate?reviewId=" + reviewId, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    return response as { content: string, target: string };
+}
+
 export const deleteReply = async (replyId: number) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/professor/comment/reply?id=" + replyId, {
+        const request = await fetch(HOST + "/comment/reply?replyId=" + replyId, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
@@ -284,7 +301,7 @@ export const addRating = async (reviewId: number, positive: boolean) => {
 export const removeRating = async (reviewId: number) => {
 
     try {
-        await fetch(HOST + `/professor/comment/rating?reviewId=${reviewId}`, {
+        await fetch(HOST + `/comment/rating?reviewId=${reviewId}`, {
             method: "DELETE",
             credentials: "include"
         });

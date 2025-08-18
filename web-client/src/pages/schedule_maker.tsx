@@ -44,14 +44,14 @@ export default function ScheduleMaker() {
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24">
                             <g className="building-outline">
                                 <g fill="currentColor" className="Vector">
-                                    <path fill-rule="evenodd"
+                                    <path fillRule="evenodd"
                                           d="M8 5a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3h-8a3 3 0 0 1-3-3zm3-1a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"
-                                          clip-rule="evenodd"/>
-                                    <path fill-rule="evenodd"
+                                          clipRule="evenodd"/>
+                                    <path fillRule="evenodd"
                                           d="M2 11a3 3 0 0 1 3-3h4.5v2H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h9.5v2H5a3 3 0 0 1-3-3z"
-                                          clip-rule="evenodd"/>
-                                    <path fill-rule="evenodd" d="M12 17a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3h-2v-3h-2v3h-2z"
-                                          clip-rule="evenodd"/>
+                                          clipRule="evenodd"/>
+                                    <path fillRule="evenodd" d="M12 17a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3h-2v-3h-2v3h-2z"
+                                          clipRule="evenodd"/>
                                     <path
                                         d="M12 6a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm0 5a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm-7 4a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm11-9a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0zm0 5a1 1 0 1 1 2 0v1a1 1 0 1 1-2 0z"/>
                                 </g>

@@ -5,8 +5,8 @@ import {getCourse} from "../api/course.ts";
 import Skeleton from "react-loading-skeleton";
 import styles from "../styles/pages/course.module.scss";
 import fileStyles from "../styles/components/course/file.module.scss";
-import {Helmet} from "react-helmet-async";
 import BackArrow from "../components/backarrow.tsx";
+import {Helmet} from "@dr.pogodin/react-helmet";
 
 
 const FileSkeleton = lazy(

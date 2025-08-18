@@ -222,7 +222,6 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
   line-height: 20px;
 }
 
@@ -263,13 +262,24 @@
   color: rgb(139, 152, 165);
 }
 
+.reviewRight {
+
+
+
+}
+
 .reviewInfoRight {
   font-weight: 600;
   white-space: nowrap;
   display: flex;
-  margin-top: 0.5rem;
+  margin-top: 8px;
+  align-items: center;
+  gap: 4px;
 
-
+  .reviewStars {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .reviewBody {
@@ -344,13 +354,14 @@
 }
 
 .translateText {
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 500;
   margin-top: 8px;
-  margin-bottom: 8px;
   cursor: pointer;
   color: #049AE5;
   user-select: none;
   -webkit-user-select: none;
+  width: fit-content;
 
   &:hover {
     text-decoration: underline;
@@ -363,7 +374,7 @@
   align-items: center;
   font-size: 0.85rem;
   color: rgba(0, 0, 0, 0.5);
-  padding-top: 1rem;
+  padding-top: 18px;
   padding-bottom: 0.5rem;
 
 }

@@ -4,7 +4,7 @@ import UniversitySelector from "../components/professor/university_selector.tsx"
 import {createContext, useEffect, useState} from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {Helmet} from "react-helmet-async";
+import {Helmet} from "@dr.pogodin/react-helmet";
 
 dayjs.extend(relativeTime);
 
@@ -13,7 +13,7 @@ export type GlobalContent = {
     setUniversity: (c: string) => void
 }
 export const UniversityContext = createContext<GlobalContent>({
-    setUniversity(c: string): void {
+    setUniversity(_c: string): void {
     }, university: null
 });
 

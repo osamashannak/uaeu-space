@@ -8,6 +8,8 @@ import ReviewDeletionModal from "./review_deletion_modal.tsx";
 import ReplySection from "./reply_section.tsx";
 import ReplyCompose from "./reply_compose.tsx";
 import {CommentsContext} from "../../context/comments.ts";
+import ReviewOptions from "./review_options.tsx";
+import {translateReview} from "../../api/professor.ts";
 
 
 export default function Review(review: ReviewAPI) {
@@ -59,8 +61,8 @@ export default function Review(review: ReviewAPI) {
 
                         </div>
                         <div className={styles.reviewInfoRight}>
-                            <div className={styles.reviewStars}>
-                                <span title={review.score.toString()}>{ratingToIcon(review.score)}</span>
+                            <div className={styles.reviewStars} title={review.score.toString()}>
+                                {ratingToIcon(review.score)}
                             </div>
                             <div className={styles.recommendation}>
                                 <span>{review.positive ? "Recommend" : "Not recommended"}</span>
@@ -68,21 +70,27 @@ export default function Review(review: ReviewAPI) {
                         </div>
                     </div>
 
-                    <div className={styles.reviewInfoRight}>
-                        <div className={styles.viewMoreButton}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-                                <g fill="currentColor">
-                                    <circle cx="6" cy="12" r="1.75"/>
-                                    <circle cx="12" cy="12" r="1.75"/>
-                                    <circle cx="18" cy="12" r="1.75"/>
-                                </g>
-                            </svg>
-                            <div className={styles.iconBackground}></div>
-                        </div>
-                    </div>
+                    <ReviewOptions/>
 
 
                 </div>
+
+                {review.language !== "en" && <div className={styles.translateText} onClick={() => {
+                    translateReview(review.id).then((response) => {
+                        if (!response) {
+                            return;
+                        }
+
+                        const p = document.getElementById(`review_comment_${review.id}`);
+                        if (!p) return;
+
+                        p.innerHTML = response.content;
+
+                        parseText(p);
+                    })
+                }}>
+                    <span>Translate text</span>
+                </div>}
 
                 <div className={styles.reviewBody}>
 
@@ -90,28 +98,21 @@ export default function Review(review: ReviewAPI) {
                         {review.text.trim()}
                     </p>
 
-                    {review.attachments && <div className={styles.imageList}>
-                        {review.attachments.map((attachment, index) => (
-                            <div key={index} className={styles.attachment} onClick={() => {
-                                window.open(attachment.url, "_blank");
+                    {review.attachment && <div className={styles.imageList}>
+                        <div className={styles.attachment} onClick={() => {
+                                window.open(review.attachment!.url, "_blank");
                             }}>
                                 <div
-                                    style={{paddingBottom: `${attachment.height / attachment.width * 100}%`}}></div>
-                                <div style={{backgroundImage: `url(${attachment.url})`}} className={styles.imageDiv}>
+                                    style={{paddingBottom: `${review.attachment.height / review.attachment.width * 100}%`}}></div>
+                                <div style={{backgroundImage: `url(${review.attachment.url})`}} className={styles.imageDiv}>
                                 </div>
-                                <img src={attachment.url}
+                                <img src={review.attachment.url}
                                      draggable={false}
                                      width={100}
                                      height={100}
                                      alt={""}/>
                             </div>)
-                        )
-                        }
                     </div>}
-                </div>
-
-                <div>
-                    <span className={styles.translateText}>Translate text</span>
                 </div>
 
 
@@ -137,7 +138,7 @@ export default function Review(review: ReviewAPI) {
                             </svg>
                             <div className={styles.iconBackground}></div>
                         </div>
-                        {review.comment_count > 0 && <span className={styles.commentCount}>{review.comment_count}</span>}
+                        {review.reply_count > 0 && <span className={styles.commentCount}>{review.reply_count}</span>}
                     </div>
 
                     {review.self && <div className={styles.deleteButton} onClick={() => {
@@ -170,8 +171,8 @@ export default function Review(review: ReviewAPI) {
                                   created_at={review.created_at} showReplyCompose={showReplyCompose}
                                   reviewId={review.id}/>}
 
-                {review.comment_count > 0 &&
-                    <ReplySection reviewId={review.id} comments={review.comment_count} op={review.self}/>}
+                {review.reply_count > 0 &&
+                    <ReplySection reviewId={review.id} comments={review.reply_count} op={review.self}/>}
 
             </CommentsContext.Provider>
 

@@ -27,12 +27,12 @@ export default function RelatedReviews(props: {reviews: SimilarProfessors[]}) {
                             <span className={styles.relatedProfName}>{value.professor_name}</span>
                         </div>
                         <div dir={"auto"} className={styles.relatedProfReview}>
-                            <span>{value.review.slice(0, 100).trim()}... </span>
+                            <span>{value.review_preview.slice(0, 100).trim()}... </span>
                             <span className={styles.readMore}>Read more</span>
                         </div>
                         <div className={styles.relatedProfInfo}>
-                            {value.reviewCount > 5 ? <span>{Math.floor(value.reviewCount / 5) * 5}+ comments</span> :
-                                <span>{value.reviewCount}+ comments</span>
+                            {value.reviews_count > 5 ? <span>{Math.floor(value.reviews_count / 5) * 5}+ comments</span> :
+                                <span>{value.reviews_count}+ comments</span>
                             }
                             <div className={"text-separator"}>
                                 <span>·</span>

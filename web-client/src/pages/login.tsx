@@ -1,14 +1,13 @@
 import styles from "../styles/pages/login.module.scss";
-import Layout from "../layouts/layout.tsx";
 import dayjs from "dayjs";
 import {CredentialResponse, GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
-import {Helmet} from "react-helmet-async";
 import {useEffect, useState} from "react";
 import LoginWithEmail from "../components/login/login_with_email.tsx";
 import RegisterForm from "../components/login/register_form.tsx";
 import CompleteGoogleSignUp from "../components/login/complete_google_signup.tsx";
 import {GoogleSignUpProps} from "../typed/user.ts";
 import {sendGoogleLogin} from "../api/auth.ts";
+import {Helmet} from "@dr.pogodin/react-helmet";
 
 
 export default function Login() {

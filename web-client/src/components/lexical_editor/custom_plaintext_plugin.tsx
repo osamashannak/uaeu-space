@@ -12,7 +12,7 @@ import {LexicalEditor} from "lexical";
 import {registerDragonSupport} from '@lexical/dragon';
 import {registerPlainText} from '@lexical/plain-text';
 import {mergeRegister} from '@lexical/utils';
-import {useLayoutEffect, useState} from "react";
+import {JSX, useLayoutEffect, useState} from "react";
 import {$canShowPlaceholderCurry} from '@lexical/text';
 
 function usePlainTextSetup(editor: LexicalEditor): void {

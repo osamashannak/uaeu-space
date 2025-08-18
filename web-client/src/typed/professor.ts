@@ -5,7 +5,7 @@ export interface ProfessorAPI {
     university: string;
     reviews: ReviewAPI[];
     score: number;
-    can_review: boolean;
+    reviewed: boolean;
     similar_professors: SimilarProfessors[]
 }
 
@@ -27,17 +27,18 @@ export interface ReviewAPI {
     created_at: Date;
     like_count: number;
     dislike_count: number;
-    comment_count: number;
+    reply_count: number;
+    language: string;
     self: boolean;
     rated: boolean | null;
     fadeIn: boolean;
     uaeu_origin: boolean;
-    attachments: {
+    attachment?: {
         id: string;
         height: number;
         width: number;
         url: string;
-    }[];
+    };
 }
 
 export interface ReviewReplyAPI {
@@ -46,9 +47,9 @@ export interface ReviewReplyAPI {
     comment: string;
     gif: string | null;
     mention?: string;
-    likes: number;
+    like_count: number;
     self: boolean;
-    selfLike: boolean;
+    liked: boolean;
     op: boolean;
     created_at: Date;
     fadeIn?: boolean;
@@ -85,16 +86,16 @@ export interface ReviewFormDraft {
     score?: number;
     positive?: boolean;
     comment: string;
-    attachments: (ImageAttachment | TenorGIFAttachment | VideoAttachment)[];
+    attachment?: ImageAttachment | TenorGIFAttachment;
 }
 
 export interface ReviewFormAPI {
-    professorEmail: string;
-    recaptchaToken: string;
+    professor_email: string;
+    recaptcha_token: string;
     score: number;
     positive: boolean;
-    comment: string;
-    attachments: string[];
+    text: string;
+    attachment?: string;
 }
 
 export interface ProfessorHistory {

@@ -21,7 +21,7 @@ import {
     $isTextNode,
     TextNode,
 } from 'lexical';
-import {useEffect} from 'react';
+import {JSX, useEffect} from 'react';
 import {$createAutoLinkNode, $isAutoLinkNode, $isLinkNode, AutoLinkNode} from "./custom_link_node.ts";
 
 type ChangeHandler = (url: string | null, prevUrl: string | null) => void;

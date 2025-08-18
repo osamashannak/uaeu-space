@@ -82,7 +82,7 @@ export default function Header() {
                                 <div className={styles.forUAEU}><span>for UAEU</span></div>
                             </div>
                         </Link>
-                        <Link className={styles.navLink} to={"/schedule"} title={"Schedule Maker"}>
+                        {/*<Link className={styles.navLink} to={"/schedule"} title={"Schedule Maker"}>
                                 {selected === "schedule" ?
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
                                         <path fill="currentColor"
@@ -99,7 +99,7 @@ export default function Header() {
                                     <span className={styles.navLinkText}>Schedule Maker</span>
                                     <div className={styles.forUAEU}><span>for UAEU</span></div>
                                 </div>
-                            </Link>
+                            </Link>*/}
                         {/*<Link className={styles.navLink} to={"/notifications"} title={"Notification"}>
                                 {selected === "notifications" ?
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"

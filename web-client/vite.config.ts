@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 // https://vitejs.dev/config/
-export default defineConfig(({command, mode}) => {
+export default defineConfig(({ mode}) => {
   const env = loadEnv(mode, process.cwd());
 
   return {
@@ -42,14 +42,14 @@ export default defineConfig(({command, mode}) => {
               return 'vendor';
             }
           },
-          assetFileNames: "[name].[hash].[ext]",
-          chunkFileNames: "[name].[hash].js",
+          assetFileNames: "assets/[name].[hash].[ext]",
+          chunkFileNames: "assets/[name].[hash].js",
           entryFileNames: "assets/[name].[hash].js",
           format: "es",
         }
       },
       modulePreload: true,
     },
-    base: mode === 'production' ? env.VITE_ASSETS_URL : '/',
+    base: mode === 'production' ? `${env.VITE_ASSETS_URL}/${env.VITE_APP_VERSION}/` : '/',
   }
 })

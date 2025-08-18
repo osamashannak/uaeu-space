@@ -3,11 +3,11 @@ import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$insertNodes, type LexicalEditor, TextNode} from "lexical";
 import {$createEmojiNode, EmojiNode} from "./emoji_node.ts";
 import {Twemoji} from "../../twemoji";
-import Picker from '@emoji-mart/react'
-import data from '@emoji-mart/data/sets/14/twitter.json'
 import {useEffect} from "react";
+import EmojiPicker from "emoji-picker-react";
 
 function findAndTransformEmoji(node: TextNode): null | TextNode {
+
     const text = node.getTextContent();
 
     // @ts-expect-error twemoji does not have types
@@ -71,6 +71,11 @@ function useEmojis(editor: LexicalEditor): void {
     }, [editor]);
 }
 
+function unifiedToEmoji(unified: string) {
+    const codePoints = unified.split("-").map(u => parseInt(u, 16));
+    return String.fromCodePoint(...codePoints);
+}
+
 export default function EmojiSelector() {
     const [editor] = useLexicalComposerContext();
 
@@ -80,28 +85,24 @@ export default function EmojiSelector() {
         <div className={styles.emojiSelector} onClick={(e) => {
             e.stopPropagation();
         }}>
-            <Picker
-                data={data}
-                theme={"light"}
-                previewPosition={"none"}
-                set={"twitter"}
-                onClickOutside={() => {
-                    const emojiPicker = document.querySelector(styles.emojiSelector) as HTMLDivElement;
-                    if (emojiPicker) {
-                        emojiPicker.style.opacity = "0";
-                        emojiPicker.style.pointerEvents = "none";
-                    }
-                }}
-                onEmojiSelect={(emoji: { native: string; }) => {
+            <EmojiPicker
+                onEmojiClick={(emoji) => {
                     editor.update(() => {
-                        // @ts-expect-error twemoji does not have types
-                        const twemoji = ((window.twemoji as Twemoji)).parse(emoji.native).match(/src="([^"]*)"/)![1];
-
-                        $insertNodes([$createEmojiNode({emoji: emoji.native, imageUrl: twemoji})])
+                        $insertNodes([$createEmojiNode({emoji: emoji.emoji, imageUrl: emoji.imageUrl})]);
 
                         editor.blur();
                     });
                 }}
+                getEmojiUrl={unified => {
+                    const emoji = unifiedToEmoji(unified)
+                    // @ts-expect-error twemoji does not have types
+                    return ((window.twemoji as Twemoji)).parse(emoji, {
+                        folder: 'svg',
+                        ext: '.svg',
+                    }).match(/src="([^"]*)"/)![1];
+                }}
+                lazyLoadEmojis={true}
+
             />
         </div>
     )

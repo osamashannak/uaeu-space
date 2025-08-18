@@ -23,6 +23,20 @@ export default function SortReviews() {
 
     }, []);
 
+    useEffect(() => {
+        function onClickAway(event: MouseEvent) {
+            if (!(event.target as HTMLElement).classList.contains(styles.sortButton)) {
+                setSortHidden(true);
+            }
+        }
+
+        window.addEventListener("click", onClickAway);
+
+        return () => {
+            window.removeEventListener("click", onClickAway);
+        };
+    }, []);
+
 
     return (
         <>
