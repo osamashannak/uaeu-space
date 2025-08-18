@@ -15,7 +15,6 @@ import BackArrow from "../components/backarrow.tsx";
 import RelatedReviews from "../components/professor/related_reviews.tsx";
 import {Helmet} from "@dr.pogodin/react-helmet";
 
-
 const ReviewForm = lazy(async () => {
     const [moduleExports] = await Promise.all([
         await import("../components/professor/review_form.tsx"),
