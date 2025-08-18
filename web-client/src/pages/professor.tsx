@@ -22,7 +22,6 @@ const ReviewForm = lazy(async () => {
         new Promise(resolve => setTimeout(resolve, 500))
     ]);
     return moduleExports;
-
 });
 
 const ReviewSection = lazy(async () => {
