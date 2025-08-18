@@ -17,6 +17,10 @@ jobs:
     permissions:
       id-token: 'write'
 
+    defaults:
+      run:
+        working-directory: web-client
+
     steps:
       - name: 'Checkout code'
         uses: 'actions/checkout@v3'
@@ -34,7 +38,6 @@ jobs:
 
       - name: 'Build Vite app'
         run: npm run build
-        working-directory: web-client
         env:
           VITE_APP_VERSION: ${{ env.VERSION }}
 
