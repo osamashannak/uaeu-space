@@ -15,7 +15,7 @@ RUN go mod download
 COPY . .
 
 ARG SERVICE
-RUN go build -o bin/$SERVICE ./cmd/$SERVICE
+RUN go build -o bin/server ./cmd/$SERVICE
 
 FROM alpine:latest
 
@@ -24,8 +24,8 @@ RUN apk add --no-cache ca-certificates
 WORKDIR /app
 
 ARG SERVICE
-COPY --from=builder /app/bin/$SERVICE .
+COPY --from=builder /app/bin/server .
 
 EXPOSE 8080
 
-ENTRYPOINT ["/app/$SERVICE"]
+ENTRYPOINT ["/app/server"]
