@@ -49,7 +49,7 @@ jobs:
 
       - name: Upload versioned build
         run: |
-          aws s3 sync dist s3://static.spaceread.net/${{ env.VERSION }} --delete \
+          aws s3 sync dist s3://static.spaceread.net/${{ env.VERSION }} \
           --exclude "index.html"
 
       - name: Upload HTML (latest)
@@ -57,7 +57,7 @@ jobs:
           aws s3 cp dist/index.html s3://spaceread.net/www/index.html \
           --cache-control "private, no-cache, s-maxage=0, max-age=0, must-revalidate, no-store" \
           --expires "Tue, 31 Mar 1981 09:00:00 GMT" \
-          --content-type "text/html; charset=utf-8"
+          --content-type "text/html; charset=utf-8" --delete
 
       - name: Upload HTML (versioned)
         run: |

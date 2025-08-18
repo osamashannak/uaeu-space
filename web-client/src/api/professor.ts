@@ -8,7 +8,7 @@ import {
 import {ProfessorItem} from "../typed/searchbox.ts";
 
 
-const HOST = import.meta.env.VITE_SERVER_ENDPOINT;
+const HOST = import.meta.env.VITE_PROFESSOR_ENDPOINT;
 
 export const getProfessorsList = async (university: string) => {
     let response;

@@ -1,7 +1,7 @@
 import {CourseItem} from "../typed/searchbox.ts";
 import {CourseAPI} from "../typed/course.ts";
 
-const HOST = import.meta.env.VITE_SERVER_ENDPOINT;
+const HOST = import.meta.env.VITE_COURSE_ENDPOINT;
 
 export const getCoursesList = async () => {
     let response;
