@@ -44,7 +44,6 @@ export default function Professor() {
             dispatch(setProfessor(null));
             return;
         }
-
         const abortController = new AbortController();
 
         getProfessor(email.toLowerCase(), abortController).then((professor) => {
