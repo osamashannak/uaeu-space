@@ -9,6 +9,7 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
+	"github.com/osamashannak/uaeu-space/services/pkg/utils"
 	"net/http"
 )
 
@@ -27,12 +28,14 @@ func Gateway(next http.Handler, database database.DB, generator snowflake.Genera
 
 		ctx := r.Context()
 
+		ipAddress := utils.GetClientIP(r)
+
 		var id *int64
 
 		cookie, err := r.Cookie(cookieName)
 
 		if err != nil || cookie == nil {
-			id, err = createSession(ctx, w, database, generator, r.RemoteAddr, r.UserAgent())
+			id, err = createSession(ctx, w, database, generator, ipAddress, r.UserAgent())
 			if err != nil {
 				reqLogger.Errorf("Failed to create session: %v", err)
 				errorResponse := v1.ErrorResponse{
@@ -47,7 +50,7 @@ func Gateway(next http.Handler, database database.DB, generator snowflake.Genera
 		}
 
 		if id == nil {
-			id, err = createSession(ctx, w, database, generator, r.RemoteAddr, r.UserAgent())
+			id, err = createSession(ctx, w, database, generator, ipAddress, r.UserAgent())
 			if err != nil {
 				reqLogger.Errorf("Failed to create session: %v", err)
 				errorResponse := v1.ErrorResponse{
@@ -66,7 +69,7 @@ func Gateway(next http.Handler, database database.DB, generator snowflake.Genera
 		reqLogger = reqLogger.With(
 			"method", r.Method,
 			"path", r.URL.Path,
-			"remote_ip", r.RemoteAddr,
+			"remote_ip", ipAddress,
 			"id", profile.SessionId,
 		)
 

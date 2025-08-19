@@ -51,7 +51,7 @@ func (s *Server) PostReview() http.Handler {
 			return
 		}
 
-		assessment := s.recaptcha.Verify(ctx, *request.RecaptchaToken, r.RemoteAddr, r.UserAgent())
+		assessment := s.recaptcha.Verify(ctx, *request.RecaptchaToken, utils.GetClientIP(r), r.UserAgent())
 
 		if !assessment {
 			logger.Errorf("recaptcha verification failed: %v", assessment)
@@ -151,16 +151,18 @@ func (s *Server) PostReview() http.Handler {
 
 		logger.Debugf("perspective analysis result: %+v", flags)
 
+		ipAddress := utils.GetClientIP(r)
+
 		review := model.Review{
 			ID:             int64(s.generator.Next()),
 			Score:          *request.Score,
 			Positive:       *request.Positive,
 			Content:        request.Text,
 			ProfessorEmail: *request.ProfessorEmail,
-			UaeuOrigin:     subnetchecker.CheckIP(r.RemoteAddr),
+			UaeuOrigin:     subnetchecker.CheckIP(ipAddress),
 			Visible:        !flags.Flagged(),
 			Language:       flags.Language,
-			IpAddress:      r.RemoteAddr,
+			IpAddress:      ipAddress,
 			SessionId:      &profile.SessionId,
 			CreatedAt:      time.Now(),
 		}
@@ -640,7 +642,7 @@ func (s *Server) AddReviewRating() http.Handler {
 			ReviewId:  request.ReviewID,
 			SessionId: profile.SessionId,
 			Value:     *value,
-			IpAddress: r.RemoteAddr,
+			IpAddress: utils.GetClientIP(r),
 		}
 
 		err = s.db.InsertReviewRating(ctx, &rating)
