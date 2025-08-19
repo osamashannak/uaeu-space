@@ -67,5 +67,5 @@ func (s *Server) Routes() http.Handler {
 	mux.Handle("POST /comment/reply/like", middleware.Gateway(s.LikeReply(), *s.db.Db, *s.generator))
 	mux.Handle("DELETE /comment/reply/like", middleware.Gateway(s.UnlikeReply(), *s.db.Db, *s.generator))
 
-	return mux
+	return middleware.CORS(mux)
 }
