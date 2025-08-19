@@ -5,6 +5,7 @@ import "net/http"
 var AllowedOrigins = []string{
 	"https://spaceread.net",
 	"https://migration-build.spaceread.net",
+	"http://localhost:5173",
 }
 
 func CORS(next http.Handler) http.Handler {
