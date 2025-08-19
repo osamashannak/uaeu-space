@@ -20,7 +20,7 @@ export const getProfessorsList = async (university: string) => {
         return undefined;
     }
 
-    return response['professors'] as ProfessorItem[];
+    return response as ProfessorItem[];
 }
 
 export const getProfessor = async (id: string, abortController: AbortController) => {

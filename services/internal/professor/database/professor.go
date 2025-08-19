@@ -2,9 +2,6 @@ package database
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"github.com/jackc/pgx/v5"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/model"
 )
@@ -46,7 +43,7 @@ func (db *ProfessorDB) GetProfessor(ctx context.Context, email string) (*model.P
 	defer rows.Close()
 
 	if !rows.Next() {
-		return nil, fmt.Errorf("professor not found")
+		return nil, nil
 	}
 
 	var (
@@ -58,9 +55,6 @@ func (db *ProfessorDB) GetProfessor(ctx context.Context, email string) (*model.P
 
 	err = rows.Scan(&profEmail, &profName, &profUni, &profCollege)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, nil
-		}
 		return nil, err
 	}
 

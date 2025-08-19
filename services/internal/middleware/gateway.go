@@ -103,7 +103,7 @@ func createSession(ctx context.Context, w http.ResponseWriter, database database
 		Name:     cookieName,
 		Value:    token,
 		Domain:   cookieDomain,
-		MaxAge:   365 * 1000 * 60 * 60 * 24,
+		MaxAge:   365 * 60 * 60 * 24,
 		Secure:   true,
 		HttpOnly: true,
 	}
