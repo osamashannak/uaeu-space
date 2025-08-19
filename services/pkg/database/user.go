@@ -8,7 +8,7 @@ func (db *DB) GetSessionID(ctx context.Context, token string) (*int64, error) {
 	var id int64
 
 	err := db.Pool.QueryRow(ctx,
-		`SELECT id FROM auth.session WHERE token = $1`, token).Scan(&id)
+		`SELECT id FROM account.session WHERE token = $1`, token).Scan(&id)
 
 	if err != nil {
 		return nil, err
@@ -19,7 +19,7 @@ func (db *DB) GetSessionID(ctx context.Context, token string) (*int64, error) {
 
 func (db *DB) CreateSession(ctx context.Context, id int64, token, userAgent, ipAddress string) error {
 	_, err := db.Pool.Exec(ctx,
-		`INSERT INTO auth.session (token, user_agent, ip_address, id) VALUES ($1, $2, $3, $4)`,
+		`INSERT INTO account.session (token, user_agent, ip_address, id) VALUES ($1, $2, $3, $4)`,
 		token, userAgent, ipAddress, id)
 
 	return err
