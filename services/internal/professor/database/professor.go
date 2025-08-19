@@ -81,7 +81,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			r.reply_count,
 			r.uaeu_origin,
 			r.created_at,
-			(r.session_id = $1) AS self,
+			COALESCE( (r.session_id IS NOT DISTINCT FROM $1), FALSE ) AS self,
 			CASE 
 				WHEN rr.value = true THEN 'like'
 				WHEN rr.value = false THEN 'dislike'
