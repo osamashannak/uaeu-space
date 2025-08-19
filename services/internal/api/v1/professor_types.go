@@ -40,6 +40,7 @@ type Review struct {
 	DislikeCount int               `json:"dislike_count"`
 	ReplyCount   int               `json:"reply_count"`
 	Attachment   *ReviewAttachment `json:"attachment,omitempty"`
+	Gif          *string           `json:"gif,omitempty"`
 	Self         bool              `json:"self"`
 	Rated        *string           `json:"rated,omitempty"`
 	UaeuOrigin   bool              `json:"uaeu_origin"`
@@ -59,6 +60,7 @@ type ReviewPostBody struct {
 	ProfessorEmail *string `json:"professor_email" required:"true"`
 	RecaptchaToken *string `json:"recaptcha_token" required:"true"`
 	Attachment     *int64  `json:"attachment"`
+	Gif            *string `json:"gif"`
 }
 
 type ReviewAttachmentResponse struct {
@@ -75,6 +77,7 @@ type ReviewPostResponse struct {
 	Score      int               `json:"score"`
 	Positive   bool              `json:"positive"`
 	Attachment *ReviewAttachment `json:"attachment,omitempty"`
+	Gif        *string           `json:"gif,omitempty"`
 	ID         int64             `json:"id"`
 	Flagged    *bool             `json:"flagged,omitempty"`
 	CreatedAt  time.Time         `json:"created_at"`

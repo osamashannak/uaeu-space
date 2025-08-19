@@ -89,7 +89,8 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			ra.height,
 			ra.width,
 			ra.url,
-			r.session_id
+			r.session_id,
+			r.gif
 		FROM professor.review r
 		LEFT JOIN professor.review_rating rr 
 			ON rr.review_id = r.id AND rr.session_id = $1
@@ -137,6 +138,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			&attWidth,
 			&attURL,
 			&revSessionId,
+			&rev.Gif,
 		); err != nil {
 			return nil, nil, nil, nil, err
 		}

@@ -48,9 +48,9 @@ func (db *ProfessorDB) ExistsReviewSession(ctx context.Context, email string, se
 
 func (db *ProfessorDB) InsertReview(ctx context.Context, review *model.Review) error {
 	_, err := db.Db.Pool.Exec(ctx,
-		`INSERT INTO professor.review (sort_index, id, score, positive, content, attachment, professor_email, ip_address, session_id, user_id, visible, uaeu_origin, language, created_at)
-			VALUES ($1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
-		review.ID, review.Score, review.Positive, review.Content, review.Attachment, review.ProfessorEmail, review.IpAddress, review.SessionId, review.UserId, review.Visible, review.UaeuOrigin, review.Language, review.CreatedAt)
+		`INSERT INTO professor.review (sort_index, id, score, positive, content, attachment, professor_email, ip_address, session_id, user_id, visible, uaeu_origin, language, created_at, gif)
+			VALUES ($1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+		review.ID, review.Score, review.Positive, review.Content, review.Attachment, review.ProfessorEmail, review.IpAddress, review.SessionId, review.UserId, review.Visible, review.UaeuOrigin, review.Language, review.CreatedAt, review.Gif)
 	return err
 }
 

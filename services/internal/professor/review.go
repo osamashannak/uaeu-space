@@ -137,7 +137,33 @@ func (s *Server) PostReview() http.Handler {
 			}
 		}
 
-		if request.Text == "" && attachmentInfo == nil {
+		var gif *string
+
+		if request.Gif != nil {
+			if attachmentInfo != nil {
+				logger.Debugf("both attachment and gif provided, only one is allowed")
+				errorResponse := v1.ErrorResponse{
+					Message: "only one of attachment or gif can be provided",
+					Error:   http.StatusBadRequest,
+				}
+				jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+				return
+			}
+
+			if !utils.IsValidTenorURL(*request.Gif) {
+				logger.Debugf("invalid gif URL: %s", *request.Gif)
+				errorResponse := v1.ErrorResponse{
+					Message: "gif must be a valid Tenor GIF URL",
+					Error:   http.StatusBadRequest,
+				}
+				jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+				return
+			} else {
+				gif = request.Gif
+			}
+		}
+
+		if request.Text == "" && (attachmentInfo == nil || gif == nil) {
 			logger.Debugf("review text is empty")
 			errorResponse := v1.ErrorResponse{
 				Message: "review cannot be empty",
@@ -165,6 +191,7 @@ func (s *Server) PostReview() http.Handler {
 			IpAddress:      ipAddress,
 			SessionId:      &profile.SessionId,
 			CreatedAt:      time.Now(),
+			Gif:            gif,
 		}
 
 		if attachmentInfo != nil {

@@ -18,6 +18,7 @@ type Review struct {
 	Positive       bool
 	Content        string
 	Attachment     *int64
+	Gif            *string
 	ProfessorEmail string
 	IpAddress      string
 	DeletedAt      *time.Time
