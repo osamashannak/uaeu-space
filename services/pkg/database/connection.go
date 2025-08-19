@@ -23,6 +23,7 @@ func NewDB(ctx context.Context, cfg *Config) (*DB, error) {
 	pgxConfig.BeforeAcquire = func(ctx context.Context, conn *pgx.Conn) bool {
 		return conn.Ping(ctx) == nil
 	}
+	pgxConfig.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
 
 	pool, err := pgxpool.NewWithConfig(ctx, pgxConfig)
 	if err != nil {
