@@ -12,8 +12,8 @@ on:
 
 env:
   PROJECT_ID: 'uaeu-space'
-  REGION: 'me-west1'
-  SERVICE: 'sr-professor'
+  REGION: 'europe-west1'
+  SERVICE: 'spaceread-prof'
   WORKLOAD_IDENTITY_PROVIDER: 'projects/503811163032/locations/global/workloadIdentityPools/github-actions-pool/providers/spaceread'
 
 jobs:
