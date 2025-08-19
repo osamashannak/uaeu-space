@@ -117,7 +117,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			attHeight    *int
 			attWidth     *int
 			attURL       *string
-			revSessionId int64
+			revSessionId *int64
 		)
 
 		if err := rows.Scan(
@@ -161,7 +161,10 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 		scoreSum += float64(rev.Score)
 
 		reviews = append(reviews, rev)
-		sessionIDs = append(sessionIDs, revSessionId)
+
+		if revSessionId != nil {
+			sessionIDs = append(sessionIDs, *revSessionId)
+		}
 
 	}
 
