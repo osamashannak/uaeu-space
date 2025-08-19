@@ -130,9 +130,9 @@ func (db *ProfessorDB) InsertReviewTranslation(ctx context.Context, translation 
 
 func (db *ProfessorDB) InsertReviewAttachment(ctx context.Context, attachment *model.ReviewAttachment) error {
 	_, err := db.Db.Pool.Exec(ctx,
-		`INSERT INTO professor.review_attachment (id, mime_type, size, width, height, visible, url)
+		`INSERT INTO professor.review_attachment (id, mime_type, size, width, height, visible, blob_name)
 			VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-		attachment.ID, attachment.MimeType, attachment.Size, attachment.Width, attachment.Height, attachment.Visible, attachment.URL)
+		attachment.ID, attachment.MimeType, attachment.Size, attachment.Width, attachment.Height, attachment.Visible, attachment.BlobName)
 	return err
 }
 
@@ -140,7 +140,7 @@ func (db *ProfessorDB) GetReviewAttachment(ctx context.Context, attachmentId int
 	var attachment model.ReviewAttachment
 
 	err := db.Db.Pool.QueryRow(ctx,
-		`SELECT id, mime_type, size, width, height, visible, url
+		`SELECT id, mime_type, size, width, height, visible, blob_name
 		 FROM professor.review_attachment WHERE id = $1`, attachmentId).Scan(
 		&attachment.ID,
 		&attachment.MimeType,
@@ -148,7 +148,7 @@ func (db *ProfessorDB) GetReviewAttachment(ctx context.Context, attachmentId int
 		&attachment.Width,
 		&attachment.Height,
 		&attachment.Visible,
-		&attachment.URL)
+		&attachment.BlobName)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

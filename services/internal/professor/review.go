@@ -132,7 +132,7 @@ func (s *Server) PostReview() http.Handler {
 					ID:     attachment.ID,
 					Height: attachment.Height,
 					Width:  attachment.Width,
-					URL:    attachment.URL,
+					URL:    utils.FormatBlobURL("attachments", attachment.BlobName, ""),
 				}
 			}
 		}
@@ -544,7 +544,7 @@ func (s *Server) UploadReviewAttachment() http.Handler {
 			Width:    imageBounds.Width,
 			Height:   imageBounds.Height,
 			Visible:  err == nil && safety.IsSafe(),
-			URL:      utils.FormatBlobURL("attachments", finalBlobName, ""),
+			BlobName: finalBlobName,
 		}
 
 		err = s.db.InsertReviewAttachment(ctx, &attachment)

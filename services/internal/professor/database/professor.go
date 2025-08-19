@@ -4,6 +4,7 @@ import (
 	"context"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/model"
+	"github.com/osamashannak/uaeu-space/services/pkg/utils"
 )
 
 func (db *ProfessorDB) GetProfessors(ctx context.Context, university string) ([]v1.ProfessorInList, error) {
@@ -88,7 +89,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			ra.id,
 			ra.height,
 			ra.width,
-			ra.url,
+			ra.blob_name,
 			r.session_id,
 			r.gif
 		FROM professor.review r
@@ -148,7 +149,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 				ID:     *attID,
 				Height: *attHeight,
 				Width:  *attWidth,
-				URL:    *attURL,
+				URL:    utils.FormatBlobURL("attachments", *attURL, ""),
 			}
 		}
 

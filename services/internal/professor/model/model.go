@@ -40,7 +40,7 @@ type ReviewAttachment struct {
 	Width     int
 	Height    int
 	Visible   bool
-	URL       string
+	BlobName  string
 	CreatedAt time.Time
 }
 
