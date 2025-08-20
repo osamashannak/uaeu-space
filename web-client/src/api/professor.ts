@@ -140,7 +140,7 @@ export const likeReply = async (replyId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/comment/reply/like?replyId=" + replyId, {
+        const request = await fetch(HOST + "/comment/reply/like?reply_id=" + replyId, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ export const removeLikeReply = async (replyId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + `/comment/reply/like?replyId=${replyId}`, {
+        const request = await fetch(HOST + `/comment/reply/like?reply_id=${replyId}`, {
             method: "DELETE",
             credentials: "include"
         });
@@ -198,7 +198,7 @@ export const deleteReview = async (reviewId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/comment?reviewId=" + reviewId, {
+        const request = await fetch(HOST + "/comment?review_id=" + reviewId, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
@@ -218,7 +218,7 @@ export const translateReview = async (reviewId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/comment/translate?reviewId=" + reviewId, {
+        const request = await fetch(HOST + "/comment/translate?review_id=" + reviewId, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
@@ -236,7 +236,7 @@ export const deleteReply = async (replyId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/comment/reply?replyId=" + replyId, {
+        const request = await fetch(HOST + "/comment/reply?reply_id=" + replyId, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',

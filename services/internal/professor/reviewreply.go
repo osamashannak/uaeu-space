@@ -183,10 +183,10 @@ func (s *Server) DeleteReply() http.Handler {
 			return
 		}
 
-		replyIdStr := r.URL.Query().Get("reply_id")
+		replyIdStr := r.URL.Query().Get("replyId")
 		if replyIdStr == "" {
 			errorResponse := v1.ErrorResponse{
-				Message: "missing reply_id parameter",
+				Message: "missing replyId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
@@ -196,7 +196,7 @@ func (s *Server) DeleteReply() http.Handler {
 		replyId, err := strconv.ParseInt(replyIdStr, 10, 64)
 		if err != nil {
 			errorResponse := v1.ErrorResponse{
-				Message: "invalid reply_id parameter",
+				Message: "invalid replyId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
@@ -272,7 +272,7 @@ func (s *Server) GetReplies() http.Handler {
 		reviewIdStr := r.URL.Query().Get("reviewId")
 		if reviewIdStr == "" {
 			errorResponse := v1.ErrorResponse{
-				Message: "missing review_id parameter",
+				Message: "missing reviewId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
@@ -282,7 +282,7 @@ func (s *Server) GetReplies() http.Handler {
 		reviewId, err := strconv.ParseInt(reviewIdStr, 10, 64)
 		if err != nil {
 			errorResponse := v1.ErrorResponse{
-				Message: "invalid review_id parameter",
+				Message: "invalid reviewId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
@@ -350,10 +350,10 @@ func (s *Server) LikeReply() http.Handler {
 			return
 		}
 
-		replyIdStr := r.URL.Query().Get("reply_id")
+		replyIdStr := r.URL.Query().Get("replyId")
 		if replyIdStr == "" {
 			errorResponse := v1.ErrorResponse{
-				Message: "missing reply_id parameter",
+				Message: "missing replyId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
@@ -363,7 +363,7 @@ func (s *Server) LikeReply() http.Handler {
 		replyId, err := strconv.ParseInt(replyIdStr, 10, 64)
 		if err != nil {
 			errorResponse := v1.ErrorResponse{
-				Message: "invalid reply_id parameter",
+				Message: "invalid replyId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
@@ -407,10 +407,10 @@ func (s *Server) UnlikeReply() http.Handler {
 			return
 		}
 
-		replyIdStr := r.URL.Query().Get("reply_id")
+		replyIdStr := r.URL.Query().Get("replyId")
 		if replyIdStr == "" {
 			errorResponse := v1.ErrorResponse{
-				Message: "missing reply_id parameter",
+				Message: "missing replyId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
@@ -420,7 +420,7 @@ func (s *Server) UnlikeReply() http.Handler {
 		replyId, err := strconv.ParseInt(replyIdStr, 10, 64)
 		if err != nil {
 			errorResponse := v1.ErrorResponse{
-				Message: "invalid reply_id parameter",
+				Message: "invalid replyId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
@@ -456,7 +456,7 @@ func (s *Server) GetReplyName() http.Handler {
 		reviewIdStr := r.URL.Query().Get("reviewId")
 		if reviewIdStr == "" {
 			errorResponse := v1.ErrorResponse{
-				Message: "missing review_id parameter",
+				Message: "missing reviewId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
@@ -467,7 +467,7 @@ func (s *Server) GetReplyName() http.Handler {
 
 		if err != nil {
 			errorResponse := v1.ErrorResponse{
-				Message: "invalid review_id parameter",
+				Message: "invalid reviewId parameter",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
