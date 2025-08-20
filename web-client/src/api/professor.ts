@@ -195,7 +195,7 @@ export const postReview = async (options: ReviewFormAPI) => {
         return undefined;
     }
 
-    return response as { success: boolean, message: string, review: ReviewAPI };
+    return response as ReviewAPI;
 }
 
 export const deleteReview = async (reviewId: string) => {

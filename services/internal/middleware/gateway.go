@@ -19,7 +19,7 @@ type Profile struct {
 
 const (
 	cookieName   = "gid"
-	cookieDomain = "migration-build.spaceread.net"
+	cookieDomain = ".spaceread.net"
 )
 
 func Gateway(next http.Handler, database database.DB, generator snowflake.Generator) http.Handler {
