@@ -30,7 +30,7 @@ export interface ReviewAPI {
     reply_count: number;
     language: string;
     self: boolean;
-    rated: boolean | null;
+    rated: string | null;
     fadeIn: boolean;
     uaeu_origin: boolean;
     gif?: string;

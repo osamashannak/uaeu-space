@@ -2,9 +2,9 @@ import {useRef, useState} from "react";
 import styles from "../../styles/components/global/rating.module.scss";
 import {addRating, removeRating} from "../../api/professor.ts";
 
-export default function ReviewRating(props: { id: string, likes: number, dislikes: number, self: boolean | null }) {
+export default function ReviewRating(props: { id: string, likes: number, dislikes: number, self: string | null }) {
 
-    const [liked, setLiked] = useState<boolean | null>(props.self);
+    const [liked, setLiked] = useState<boolean | null>(props.self === "like" ? true : props.self === "dislike" ? false : null);
 
     const running = useRef(false);
 

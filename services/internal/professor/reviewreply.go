@@ -93,6 +93,16 @@ func (s *Server) PostReply() http.Handler {
 			return
 		}
 
+		if author == "" {
+			logger.Debugf("no author name found for session ID %d", profile.SessionId)
+			errorResponse := v1.ErrorResponse{
+				Message: "missing author name",
+				Error:   http.StatusBadRequest,
+			}
+			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+			return
+		}
+
 		var mention *string
 
 		if request.ReplyID != nil {

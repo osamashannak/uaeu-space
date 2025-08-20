@@ -32,7 +32,11 @@ export const getProfessor = async (id: string, abortController: AbortController)
         });
         response = await request.json();
     } catch (error) {
-        return null;
+        throw error
+    }
+
+    if (response.error) {
+        throw new Error(response.error);
     }
 
     return response as ProfessorAPI ?? null;

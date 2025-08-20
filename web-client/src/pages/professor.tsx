@@ -40,8 +40,6 @@ export default function Professor() {
 
     const professor = professorState.professor as ProfessorAPI | undefined | null;
 
-    console.log(professor)
-
     useEffect(() => {
         if (!email) {
             dispatch(setProfessor(null));
