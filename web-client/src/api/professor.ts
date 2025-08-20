@@ -81,11 +81,11 @@ export const uploadVideoAttachment = async (file: File | Blob) => {
     return response.id as string;
 }
 
-export const getReplyName = async (id: string) => {
+export const getReplyName = async (reviewId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/comment/reply/name?reviewId=" + id, {
+        const request = await fetch(HOST + "/comment/reply/name?reviewId=" + reviewId, {
             credentials: "include",
         });
         response = await request.json();
@@ -100,7 +100,7 @@ export const getReviewReplies = async (reviewId: string, current: string[]) => {
     let response;
 
     try {
-        const request = await fetch(HOST + `/comment/reply?review_id=${reviewId}&current=${current.join(",")}`, {
+        const request = await fetch(HOST + `/comment/reply?reviewId=${reviewId}&current=${current.join(",")}`, {
             credentials: "include",
         });
         response = await request.json();
@@ -140,7 +140,7 @@ export const likeReply = async (replyId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/comment/reply/like?reply_id=" + replyId, {
+        const request = await fetch(HOST + "/comment/reply/like?replyId=" + replyId, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ export const removeLikeReply = async (replyId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + `/comment/reply/like?reply_id=${replyId}`, {
+        const request = await fetch(HOST + `/comment/reply/like?replyId=${replyId}`, {
             method: "DELETE",
             credentials: "include"
         });
@@ -198,7 +198,7 @@ export const deleteReview = async (reviewId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/comment?review_id=" + reviewId, {
+        const request = await fetch(HOST + "/comment?reviewId=" + reviewId, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
@@ -218,7 +218,7 @@ export const translateReview = async (reviewId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/comment/translate?review_id=" + reviewId, {
+        const request = await fetch(HOST + "/comment/translate?reviewId=" + reviewId, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
@@ -236,7 +236,7 @@ export const deleteReply = async (replyId: string) => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/comment/reply?reply_id=" + replyId, {
+        const request = await fetch(HOST + "/comment/reply?replyId=" + replyId, {
             method: "DELETE",
             headers: {
                 'Content-Type': 'application/json',
