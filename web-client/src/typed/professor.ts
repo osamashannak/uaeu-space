@@ -32,6 +32,7 @@ export interface ReviewAPI {
     self: boolean;
     rated: string | null;
     fadeIn: boolean;
+    flagged: boolean;
     uaeu_origin: boolean;
     gif?: string;
     attachment?: {
