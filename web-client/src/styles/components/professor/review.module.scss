@@ -265,7 +265,6 @@
 .reviewRight {
 
 
-
 }
 
 .reviewInfoRight {
@@ -588,7 +587,6 @@
     background-color: white;
     border-radius: 8px;
 
-
     .popupText {
       font-size: 16px;
       font-weight: 500;
@@ -624,4 +622,83 @@
       }
     }
   }
+}
+
+.flaggedPopup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 500;
+
+  background-color: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .popInside {
+    padding: 24px;
+  }
+
+  .popupContent {
+    padding: 24px;
+    animation: popup 0.3s;
+
+    height: 300px;
+    max-width: 600px;
+    background-color: white;
+    border-radius: 8px;
+
+
+    .popupText {
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom: 24px;
+    }
+
+    .popupButtons {
+      display: flex;
+      justify-content: flex-start;
+      gap: 12px;
+
+      button {
+        border: none;
+        padding: 12px 16px;
+        border-radius: 9999px;
+        color: white;
+        font-weight: 600;
+        background-color: #87CEFA;
+        cursor: pointer;
+
+        user-select: none;
+        -webkit-user-select: none;
+
+
+        transition: opacity 0.2s ease-in-out;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+}
+
+.deletePopupButton {
+  // light red
+  background-color: #F87171 !important;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.flaggedImage {
+  user-select: none;
+    -webkit-user-select: none;
+
 }

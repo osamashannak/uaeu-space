@@ -1,24 +1,25 @@
-import { FormEvent, useEffect, useState, useRef } from "react";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import {FormEvent, useEffect, useState, useRef} from "react";
+import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "../../styles/components/professor/review_form.module.scss";
-import { ReviewFormDraft } from "../../typed/professor.ts";
-import { postReview, uploadImageAttachment } from "../../api/professor.ts";
-import { convertArabicNumeral } from "../../utils.tsx";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { EmojiNode } from "../lexical_editor/emoji_node.ts";
+import {ReviewFormDraft} from "../../typed/professor.ts";
+import {postReview, uploadImageAttachment} from "../../api/professor.ts";
+import {convertArabicNumeral} from "../../utils.tsx";
+import {LexicalComposer} from "@lexical/react/LexicalComposer";
+import {ContentEditable} from "@lexical/react/LexicalContentEditable";
+import {HistoryPlugin} from "@lexical/react/LexicalHistoryPlugin";
+import {EmojiNode} from "../lexical_editor/emoji_node.ts";
 import CustomPlainTextPlugin from "../lexical_editor/custom_plaintext_plugin.tsx";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { LexicalEditor } from "lexical";
-import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
+import {OnChangePlugin} from "@lexical/react/LexicalOnChangePlugin";
+import {LexicalEditor} from "lexical";
+import {EditorRefPlugin} from "@lexical/react/LexicalEditorRefPlugin";
 import ReviewFormFooter from "./review_form_footer.tsx";
-import { useDispatch } from "react-redux";
-import { addReview } from "../../redux/slice/professor_slice.ts";
+import {useDispatch} from "react-redux";
+import {addReview} from "../../redux/slice/professor_slice.ts";
 import ProgressBar from "progressbar.js";
 import Line from "progressbar.js/line";
 import EmojiSelector from "../lexical_editor/emoji_selector.tsx";
 import ReviewAttachment from "./review_attachment.tsx";
+import FlaggedPopup from "./flagged_popup.tsx";
 
 export default function ReviewForm(props: { professorEmail: string; canReview: boolean }) {
     const [details, setDetails] = useState<ReviewFormDraft>({
@@ -31,8 +32,9 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
     const [submitting, setSubmitting] = useState<boolean | null | "error">(
         !props.canReview ? null : false
     );
+    const [flaggedPopup, setFlaggedPopup] = useState<boolean>(true);
 
-    const { executeRecaptcha } = useGoogleReCaptcha();
+    const {executeRecaptcha} = useGoogleReCaptcha();
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const dispatch = useDispatch();
 
@@ -48,7 +50,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                     strokeWidth: 0.7,
                 });
             }
-            lineRef.current.animate(1, { duration: 3000 });
+            lineRef.current.animate(1, {duration: 3000});
         } else {
             lineRef.current?.destroy();
             lineRef.current = null;
@@ -57,36 +59,36 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
 
     useEffect(() => {
         const att = details.attachment;
-
         if (!att) {
             attachmentUploadRef.current = null;
             return;
         }
 
-        if (att.id && att.id !== "UPLOADING") {
+        if (att.id && att.id !== "READY" && att.id !== "UPLOADING") {
             attachmentUploadRef.current = Promise.resolve(att.id);
             return;
         }
 
-        setDetails(prev =>
-            prev.attachment ? { ...prev, attachment: { ...prev.attachment, id: "UPLOADING" } } : prev
-        );
+        if (att.id === "READY") {
+            setDetails(prev =>
+                prev.attachment ? {...prev, attachment: {...prev.attachment, id: "UPLOADING"}} : prev
+            );
 
-        const p = uploadImageAttachment(att.src)
-            .then(id => {
-                if (!id) throw new Error("upload failed");
-                setDetails(prev =>
-                    prev.attachment ? { ...prev, attachment: { ...prev.attachment, id } } : prev
-                );
-                return id;
-            })
-            .catch(() => {
-                setDetails(prev => ({ ...prev, attachment: undefined }));
-                return undefined;
-            });
+            const p = uploadImageAttachment(att.src)
+                .then((id) => {
+                    if (!id) throw new Error("upload failed");
+                    setDetails(prev =>
+                        prev.attachment ? {...prev, attachment: {...prev.attachment, id}} : prev
+                    );
+                    return id;
+                })
+                .catch(() => {
+                    setDetails(prev => ({...prev, attachment: undefined}));
+                    return undefined;
+                });
 
-        attachmentUploadRef.current = p;
-
+            attachmentUploadRef.current = p;
+        }
     }, [details.attachment?.src]);
 
     const formFilled = () => {
@@ -157,6 +159,10 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
             return;
         }
 
+        if (status.review.flagged) {
+
+        }
+
         setSubmitting(null);
 
         dispatch(
@@ -177,6 +183,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                 positive: status.review.positive,
                 id: status.review.id,
                 gif: details.gif ? details.gif.url : undefined,
+                flagged: true
             })
         );
     };
@@ -208,6 +215,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
 
     return (
         <>
+            {flaggedPopup && <FlaggedPopup setShowPopup={setFlaggedPopup}/>}
             <div className={styles.lineContainer}>
                 <div id={"line-container"}></div>
             </div>
@@ -235,11 +243,12 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                     <div onClick={() => commentRef.current?.focus()}>
                         <div className={styles.postEditor}>
                             <CustomPlainTextPlugin
-                                placeholder={<div className={styles.postPlaceholder}>What was your experience?</div>}
+                                placeholder={<div className={styles.postPlaceholder}>What was your
+                                    experience?</div>}
                                 contentEditable={
                                     <div className={styles.postContentContainer}>
                                         <ContentEditable
-                                            style={{ outline: "none" }}
+                                            style={{outline: "none"}}
                                             role={"textbox"}
                                             spellCheck={"true"}
                                             className={styles.postContent}
@@ -247,8 +256,8 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                                     </div>
                                 }
                             />
-                            <HistoryPlugin />
-                            <EditorRefPlugin editorRef={commentRef} />
+                            <HistoryPlugin/>
+                            <EditorRefPlugin editorRef={commentRef}/>
                             <OnChangePlugin
                                 onChange={editor => {
                                     const json = editor.toJSON();
@@ -282,12 +291,12 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                         </div>
                     </div>
 
-                    <ReviewAttachment details={details} setDetails={setDetails} />
+                    <ReviewAttachment details={details} setDetails={setDetails}/>
 
-                    <EmojiSelector />
+                    <EmojiSelector/>
                 </LexicalComposer>
 
-                {!submitting && <ReviewFormFooter details={details} setDetails={setDetails} />}
+                {!submitting && <ReviewFormFooter details={details} setDetails={setDetails}/>}
 
                 <div className={submitting ? styles.disabledFormOptions : styles.formOptions}>
                     <div
@@ -317,11 +326,11 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                                         event.target.setCustomValidity("Enter a number 1-5.");
                                         event.target.value = event.target.value.replace(/[^1-5]/g, "");
                                         details.score = undefined;
-                                        setDetails({ ...details });
+                                        setDetails({...details});
                                     } else {
                                         event.target.setCustomValidity("");
                                         details.score = parseInt(event.target.value);
-                                        setDetails({ ...details });
+                                        setDetails({...details});
                                     }
                                     event.target.reportValidity();
                                 }}
@@ -345,7 +354,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                                     id={"main-rec-radio"}
                                     onChange={() => {
                                         details.positive = true;
-                                        setDetails({ ...details });
+                                        setDetails({...details});
                                     }}
                                     onInvalid={invalidRadioSubmission}
                                     type="radio"
@@ -361,7 +370,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                                 <input
                                     onChange={() => {
                                         details.positive = false;
-                                        setDetails({ ...details });
+                                        setDetails({...details});
                                     }}
                                     type="radio"
                                     className={styles.radioTwo}
