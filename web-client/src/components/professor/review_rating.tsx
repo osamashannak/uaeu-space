@@ -2,7 +2,7 @@ import {useRef, useState} from "react";
 import styles from "../../styles/components/global/rating.module.scss";
 import {addRating, removeRating} from "../../api/professor.ts";
 
-export default function ReviewRating(props: { id: number, likes: number, dislikes: number, self: boolean | null }) {
+export default function ReviewRating(props: { id: string, likes: number, dislikes: number, self: boolean | null }) {
 
     const [liked, setLiked] = useState<boolean | null>(props.self);
 
@@ -28,7 +28,7 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
 
         setLiked(true);
 
-        await addRating(props.id, true);
+        await addRating(props.id, "like");
 
         running.current = false;
     }
@@ -53,14 +53,14 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
 
         setLiked(false);
 
-        await addRating(props.id, false);
+        await addRating(props.id, "dislike");
 
         running.current = false;
     }
 
     const likeCount = (props.likes + (liked ? 1 : 0) - (props.self ? 1 : 0));
 
-    function dislikeRatingClick(id: number) {
+    function dislikeRatingClick(id: string) {
         return {
             onMouseDown: () => {
                 const likeButton = document.getElementById(`dislike-button-${id}`);
@@ -81,7 +81,7 @@ export default function ReviewRating(props: { id: number, likes: number, dislike
         }
     }
 
-    function likeRatingClick(id: number) {
+    function likeRatingClick(id: string) {
         return {
             onMouseDown: () => {
                 const likeButton = document.getElementById(`like-button-${id}`);

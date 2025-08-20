@@ -7,7 +7,7 @@ import {useDispatch} from "react-redux";
 import {changeRepliesCount} from "../../redux/slice/professor_slice.ts";
 
 
-export default function ReplySection({reviewId, comments, op}: { reviewId: number, comments: number, op: boolean }) {
+export default function ReplySection({reviewId, comments, op}: { reviewId: string, comments: number, op: boolean }) {
 
     const [loading, setLoading] = useState(false);
     const [moreLoading, setMoreLoading] = useState(false);
@@ -21,7 +21,7 @@ export default function ReplySection({reviewId, comments, op}: { reviewId: numbe
 
     if (loading) {
         return (
-            <div className={styles.viewMoreButton}>
+            <div className={styles.viewMoreReply}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <rect width="24" height="24" fill="none"/>
                     <path fill="currentColor"
@@ -39,7 +39,7 @@ export default function ReplySection({reviewId, comments, op}: { reviewId: numbe
 
     if (!context.comments.length) {
         return (
-            <div className={styles.viewMoreButton} onClick={async () => {
+            <div className={styles.viewMoreReply} onClick={async () => {
                 setLoading(true);
                 const repliesAPI = await getReviewReplies(reviewId, []);
                 context.setComments(repliesAPI?.replies || []);
@@ -65,7 +65,7 @@ export default function ReplySection({reviewId, comments, op}: { reviewId: numbe
             </div>
 
             {unloadedReplies > 0 && (moreLoading ?
-                <div className={styles.viewMoreButton}>
+                <div className={styles.viewMoreReply}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <rect width="24" height="24" fill="none"/>
                         <path fill="currentColor"
@@ -77,7 +77,7 @@ export default function ReplySection({reviewId, comments, op}: { reviewId: numbe
                         </path>
                     </svg>
                 </div>
-                : <div className={styles.viewMoreButton} onClick={async () => {
+                : <div className={styles.viewMoreReply} onClick={async () => {
                     setMoreLoading(true);
 
                     const ids = context.comments.map((reply) => reply.id);

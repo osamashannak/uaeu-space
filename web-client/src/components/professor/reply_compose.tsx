@@ -17,14 +17,14 @@ import {CommentsContext} from "../../context/comments.ts";
 import {useDispatch} from "react-redux";
 import {addReply} from "../../redux/slice/professor_slice.ts";
 import GifPicker, {ContentFilter} from "gif-picker-react";
-import {ReplyContent, ReviewComposeProps, TenorGIFAttachment} from "../../typed/professor.ts";
+import {GifPreview, ReplyContent, ReviewComposeProps} from "../../typed/professor.ts";
 
 
 
 
 export default function ReplyCompose(props: ReviewComposeProps) {
 
-    const [content, setContent] = useState<ReplyContent>({comment: "", gif: null});
+    const [content, setContent] = useState<ReplyContent>({comment: "", gif: undefined});
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const [submitting, setSubmitting] = useState(false);
     const [name, setName] = useState<string | null>(null);
@@ -97,7 +97,7 @@ export default function ReplyCompose(props: ReviewComposeProps) {
             gif: content.gif?.url
         }, props.mention);
 
-        if (!reply?.success) {
+        if (!reply?.id) {
             setSubmitting(false);
             // @ts-expect-error Clarity not defined
             clarity("set", "ReplyFailed", "true");
@@ -110,13 +110,13 @@ export default function ReplyCompose(props: ReviewComposeProps) {
 
         context.setComments(old => {
             return [...old, {
-                id: reply.reply.id,
+                id: reply.id,
                 reviewId: props.reviewId,
-                comment: reply.reply.comment,
-                mention: reply.reply.mention,
-                created_at: reply.reply.created_at,
-                gif: reply.reply.gif,
-                author: reply.reply.author,
+                comment: reply.comment,
+                mention: reply.mention,
+                created_at: reply.created_at,
+                gif: reply.gif,
+                author: reply.author,
                 self: true,
                 like_count: 0,
                 liked: false,
@@ -134,15 +134,12 @@ export default function ReplyCompose(props: ReviewComposeProps) {
         img.src = gif;
 
         img.onload = async () => {
-            const attachment: TenorGIFAttachment = {
-                id: "READY",
+            const gifPreview = {
                 url: gif,
-                height: img.height,
                 width: img.width,
-                weight: 4
-            };
-
-            setContent({...content, gif: attachment});
+                height: img.height
+            } as GifPreview;
+            setContent({...content, gif: gifPreview});
         }
     }
 
@@ -184,7 +181,6 @@ export default function ReplyCompose(props: ReviewComposeProps) {
         const body = document.querySelector("body") as HTMLBodyElement;
         body.style.position = "fixed";
     }
-
 
     return (
         <div className={styles.replyForm} onClick={(e) => {
@@ -288,7 +284,7 @@ export default function ReplyCompose(props: ReviewComposeProps) {
                             <div className={styles.deleteButton}
                                  onClick={(event) => {
                                      event.stopPropagation();
-                                        setContent({...content, gif: null});
+                                        setContent({...content, gif: undefined});
                                  }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                      viewBox="0 0 256 256">

@@ -2,7 +2,7 @@ import styles from "../../styles/components/professor/review.module.scss";
 import {useRef, useState} from "react";
 import {likeReply, removeLikeReply} from "../../api/professor.ts";
 
-export default function ReplyLike(props: { id: number, likes: number, self: boolean })
+export default function ReplyLike(props: { id: string, likes: number, self: boolean })
 {
     const [liked, setLiked] = useState<boolean>(props.self);
 

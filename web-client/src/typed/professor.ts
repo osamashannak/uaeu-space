@@ -19,7 +19,7 @@ export interface SimilarProfessors {
 }
 
 export interface ReviewAPI {
-    id: number;
+    id: string;
     author: string;
     score: number;
     positive: boolean;
@@ -33,6 +33,7 @@ export interface ReviewAPI {
     rated: boolean | null;
     fadeIn: boolean;
     uaeu_origin: boolean;
+    gif?: string;
     attachment?: {
         id: string;
         height: number;
@@ -42,10 +43,10 @@ export interface ReviewAPI {
 }
 
 export interface ReviewReplyAPI {
-    id: number;
+    id: string;
     author: string;
     comment: string;
-    gif: string | null;
+    gif?: string;
     mention?: string;
     like_count: number;
     self: boolean;
@@ -61,7 +62,6 @@ export interface ImageAttachment {
     url: string;
     height: number;
     width: number;
-    weight: 1
     src: File | Blob;
 }
 
@@ -74,19 +74,13 @@ export interface VideoAttachment {
     videoSrc: File | Blob;
 }
 
-export interface TenorGIFAttachment {
-    id: string;
-    url: string;
-    height: number;
-    width: number;
-    weight: 4;
-}
 
 export interface ReviewFormDraft {
     score?: number;
     positive?: boolean;
     comment: string;
-    attachment?: ImageAttachment | TenorGIFAttachment;
+    attachment?: ImageAttachment;
+    gif?: GifPreview;
 }
 
 export interface ReviewFormAPI {
@@ -96,6 +90,7 @@ export interface ReviewFormAPI {
     positive: boolean;
     text: string;
     attachment?: string;
+    gif?: string;
 }
 
 export interface ProfessorHistory {
@@ -106,12 +101,12 @@ export interface ProfessorHistory {
 }
 
 export interface ReviewComposeProps {
-    id: number;
-    reviewId: number;
+    id: string;
+    reviewId: string;
     author: string;
     comment: string;
     replyMention?: string;
-    mention?: number;
+    mention?: string;
     op: boolean;
     created_at: Date;
     showReplyCompose: (show: boolean) => void;
@@ -119,5 +114,11 @@ export interface ReviewComposeProps {
 
 export interface ReplyContent {
     comment: string | "";
-    gif: TenorGIFAttachment | null;
+    gif?: GifPreview;
+}
+
+export interface GifPreview {
+    url: string;
+    width: number;
+    height: number;
 }

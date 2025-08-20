@@ -36,7 +36,6 @@ export default function DisabledReviewForm() {
                     </div>
                 </div>
 
-                <div style={{marginTop: "8px"}}/>
 
                 <div className={styles.postFooter}>
                     <div

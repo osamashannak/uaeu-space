@@ -16,13 +16,14 @@ export default function RelatedReviews(props: {reviews: SimilarProfessors[]}) {
             {props.reviews.map((value, index) => {
                 return <div key={index} className={styles.relatedProf} onClick={() => {
                     navigate(`/professor/${value.professor_email}`)
-                    // @ts-expect-error Clarity is not defined
-                    clarity("set", "UsedRecommendation", "true");
+                    if (typeof window !== "undefined" && (window as any).clarity) {
+                        (window as any).clarity("set", "UsedRecommendation", "true");
+                    }
                 }}>
                     <div className={styles.relatedProfScore}>
                         <span>{value.score.toFixed(1)}</span>
                     </div>
-                    <div>
+                    <div className={styles.relatedProfBody}>
                         <div className={styles.relatedProfScore}>
                             <span className={styles.relatedProfName}>{value.professor_name}</span>
                         </div>

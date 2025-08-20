@@ -510,6 +510,30 @@
   }
 }
 
+.viewMoreReply {
+  width: fit-content;
+  margin-left: 41px;
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: rgba(110, 112, 114, 1);
+  cursor: pointer;
+  font-size: 12px;
+  user-select: none;
+  -webkit-user-select: none;
+
+  @media (min-width: 768px) {
+
+    &:hover {
+      color: rgb(249, 24, 128);
+    }
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
 .infoButton {
   display: flex;
   align-items: center;

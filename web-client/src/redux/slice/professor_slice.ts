@@ -108,14 +108,14 @@ export const professorSlice = createSlice({
 
             state.professor.reviews = [action.payload, ...state.professor.reviews];
         },
-        removeReview: (state, action: PayloadAction<number>) => {
+        removeReview: (state, action: PayloadAction<string>) => {
             if (!state.professor) {
                 return;
             }
 
             state.professor.reviews = state.professor.reviews.filter(review => review.id !== action.payload);
         },
-        addReply: (state, action: PayloadAction<{ reviewId: number }>) => {
+        addReply: (state, action: PayloadAction<{ reviewId: string }>) => {
             if (!state.professor) {
                 return;
             }
@@ -128,7 +128,7 @@ export const professorSlice = createSlice({
 
             review.reply_count += 1;
         },
-        removeReply: (state, action: PayloadAction<{ reviewId: number }>) => {
+        removeReply: (state, action: PayloadAction<{ reviewId: string }>) => {
             if (!state.professor) {
                 return;
             }
@@ -141,7 +141,7 @@ export const professorSlice = createSlice({
 
             review.reply_count -= 1;
         },
-        changeRepliesCount: (state, action: PayloadAction<{ reviewId: number, count: number }>) => {
+        changeRepliesCount: (state, action: PayloadAction<{ reviewId: string, count: number }>) => {
             if (!state.professor) {
                 return;
             }

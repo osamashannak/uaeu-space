@@ -5,7 +5,7 @@ import {useDispatch} from "react-redux";
 import {removeReview} from "../../redux/slice/professor_slice.ts";
 
 
-export default function ReviewDeletionModal({reviewId, setDeleteConfirm}: { reviewId: number, setDeleteConfirm: (value: boolean) => void }) {
+export default function ReviewDeletionModal({reviewId, setDeleteConfirm}: { reviewId: string, setDeleteConfirm: (value: boolean) => void }) {
 
     const dispatch = useDispatch();
 

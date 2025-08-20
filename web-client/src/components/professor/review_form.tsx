@@ -2,7 +2,7 @@ import {FormEvent, useEffect, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {ReviewFormDraft} from "../../typed/professor.ts";
-import {postReview, uploadImageAttachment, uploadTenorAttachment} from "../../api/professor.ts";
+import {postReview, uploadImageAttachment} from "../../api/professor.ts";
 import {convertArabicNumeral} from "../../utils.tsx";
 import {LexicalComposer} from "@lexical/react/LexicalComposer";
 import {ContentEditable} from "@lexical/react/LexicalContentEditable";
@@ -70,15 +70,9 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             attachment: attachment
         }));
 
-        if ('src' in attachment) {
-            uploadImageAttachment(attachment.src).then((id) => {
-                verifyUpload(id);
-            })
-        } else {
-            uploadTenorAttachment(attachment).then((id) => {
-                verifyUpload(id);
-            })
-        }
+        uploadImageAttachment(attachment.src).then((id) => {
+            verifyUpload(id);
+        })
 
     }, [details.attachment]);
 
@@ -140,7 +134,8 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             positive: details.positive!,
             professor_email: props.professorEmail,
             recaptcha_token: token,
-            attachment: details.attachment?.id
+            attachment: details.attachment?.id,
+            gif: details.gif ? details.gif.url : undefined,
         });
 
         if (!status || !status.success) {
@@ -170,6 +165,7 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
             score: status.review.score,
             positive: status.review.positive,
             id: status.review.id,
+            gif: details.gif ? details.gif.url : undefined,
         }));
 
         lineRef.current?.destroy();
@@ -272,7 +268,6 @@ export default function ReviewForm(props: { professorEmail: string, canReview: b
                     </div>
 
                     <ReviewAttachment details={details} setDetails={setDetails}/>
-
 
                     <EmojiSelector/>
                 </LexicalComposer>

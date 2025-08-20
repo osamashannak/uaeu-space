@@ -11,7 +11,7 @@ import {useDispatch} from "react-redux";
 import {removeReply} from "../../redux/slice/professor_slice.ts";
 
 
-export default function ReviewReply({reply, reviewId, op}: { reply: ReviewReplyAPI, reviewId: number, op: boolean }) {
+export default function ReviewReply({reply, reviewId, op}: { reply: ReviewReplyAPI, reviewId: string, op: boolean }) {
 
     const [replyCompose, showReplyCompose] = useState(false);
     const [aspectRatio, setAspectRatio] = useState(1);

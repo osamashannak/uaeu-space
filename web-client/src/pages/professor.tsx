@@ -1,5 +1,5 @@
 import einstein from "../assets/images/einstien.png";
-import {lazy, Suspense, useEffect} from "react";
+import {lazy, Suspense, useEffect, useRef} from "react";
 import styles from "../styles/pages/professor.module.scss";
 import {getProfessor} from "../api/professor.ts";
 import {useParams} from "react-router-dom";
@@ -36,23 +36,37 @@ export default function Professor() {
 
     const dispatch = useDispatch();
     const professorState = useSelector(selectProfessor);
+    const latestReq = useRef<symbol | null>(null);
 
     const professor = professorState.professor as ProfessorAPI | undefined | null;
+
+    console.log(professor)
 
     useEffect(() => {
         if (!email) {
             dispatch(setProfessor(null));
             return;
         }
-        const abortController = new AbortController();
 
-        getProfessor(email.toLowerCase(), abortController).then((professor) => {
-            dispatch(setProfessor(professor));
-        })
+        const ac = new AbortController();
+        dispatch(clearProfessor());
+
+        const reqToken = Symbol("professor");
+        latestReq.current = reqToken;
+
+        (async () => {
+            try {
+                const data = await getProfessor(email.toLowerCase(), ac);
+                if (ac.signal.aborted || latestReq.current !== reqToken) return;
+                dispatch(setProfessor(data));
+            } catch (err: any) {
+                if (err?.name === "AbortError" || ac.signal.aborted || latestReq.current !== reqToken) return;
+                dispatch(setProfessor(null));
+            }
+        })();
 
         return () => {
-            abortController.abort();
-            dispatch(clearProfessor());
+            ac.abort();
         }
     }, [dispatch, email]);
 
@@ -114,8 +128,10 @@ export default function Professor() {
     }
 
     if (professor === null) {
-        // @ts-expect-error Clarity is not defined
-        clarity("set", "NoProfessor", "true");
+        if (typeof window !== "undefined" && (window as any).clarity) {
+            (window as any).clarity("set", "NoProfessor", "true");
+        }
+
         return (
 
             <div className={styles.professorNotFound}>
@@ -161,7 +177,7 @@ export default function Professor() {
                 </section>
 
                 <Suspense fallback={<DisabledReviewForm/>}>
-                    <ReviewForm professorEmail={professor.email} canReview={professor.reviewed}/>
+                    <ReviewForm professorEmail={professor.email} canReview={!professor.reviewed}/>
                 </Suspense>
 
                 {professor.similar_professors.length > 0 && <RelatedReviews reviews={professor.similar_professors}/>}

@@ -2,8 +2,7 @@ import {
     ProfessorAPI,
     ReviewAPI,
     ReviewFormAPI,
-    ReviewReplyAPI,
-    TenorGIFAttachment
+    ReviewReplyAPI
 } from "../typed/professor.ts";
 import {ProfessorItem} from "../typed/searchbox.ts";
 
@@ -36,7 +35,7 @@ export const getProfessor = async (id: string, abortController: AbortController)
         return null;
     }
 
-    return response['professor'] as ProfessorAPI ?? null;
+    return response as ProfessorAPI ?? null;
 }
 
 
@@ -61,37 +60,13 @@ export const uploadImageAttachment = async (file: File | Blob) => {
     return response.id as string;
 }
 
-export const uploadTenorAttachment = async (tenorGIFAttachment: TenorGIFAttachment) => {
-    let response;
-
-    try {
-        const request = await fetch(HOST + "/comment/attachment", {
-            method: "POST",
-            body: JSON.stringify({
-                url: tenorGIFAttachment.url,
-                height: tenorGIFAttachment.height,
-                width: tenorGIFAttachment.width
-            }),
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
-            }
-        });
-        response = await request.json();
-    } catch (error) {
-        return undefined;
-    }
-
-    return response.id as string;
-}
-
 export const uploadVideoAttachment = async (file: File | Blob) => {
     let response;
 
     try {
         const formData = new FormData();
         formData.append("file", file);
-        const request = await fetch(HOST + "/professor/comment/attachment/uploadVideo", {
+        const request = await fetch(HOST + "/comment/attachment/uploadVideo", {
             method: "POST",
             body: formData,
             headers: {
@@ -106,7 +81,7 @@ export const uploadVideoAttachment = async (file: File | Blob) => {
     return response.id as string;
 }
 
-export const getReplyName = async (id: number) => {
+export const getReplyName = async (id: string) => {
     let response;
 
     try {
@@ -121,11 +96,11 @@ export const getReplyName = async (id: number) => {
     return response['name'] as string ?? null;
 }
 
-export const getReviewReplies = async (id: number, current: number[]) => {
+export const getReviewReplies = async (reviewId: string, current: string[]) => {
     let response;
 
     try {
-        const request = await fetch(HOST + `/comment/reply?reviewId=${id}&current=${current.join(",")}`, {
+        const request = await fetch(HOST + `/comment/reply?review_id=${reviewId}&current=${current.join(",")}`, {
             credentials: "include",
         });
         response = await request.json();
@@ -136,7 +111,7 @@ export const getReviewReplies = async (id: number, current: number[]) => {
     return response as { replies: ReviewReplyAPI[], comments: number } ?? null;
 }
 
-export const postReply = async (reviewId: number, content: {comment: string, gif?: string}, replyId?: number) => {
+export const postReply = async (reviewId: string, content: {comment: string, gif?: string }, replyId?: string) => {
     let response;
 
     try {
@@ -147,9 +122,9 @@ export const postReply = async (reviewId: number, content: {comment: string, gif
                 'X-Csrf-Token': document.cookie.split(";").find((c) => c.trim().startsWith("k"))?.split("=")[1] ?? ""
             },
             body: JSON.stringify({
-                reviewId,
-                content,
-                replyId
+                review_id: reviewId,
+                reply_id: replyId,
+                ...content,
             }),
             credentials: "include"
         });
@@ -158,10 +133,10 @@ export const postReply = async (reviewId: number, content: {comment: string, gif
         return undefined;
     }
 
-    return response as { success: boolean, message: string, reply: ReviewReplyAPI };
+    return response as ReviewReplyAPI;
 }
 
-export const likeReply = async (replyId: number) => {
+export const likeReply = async (replyId: string) => {
     let response;
 
     try {
@@ -182,7 +157,7 @@ export const likeReply = async (replyId: number) => {
 
 }
 
-export const removeLikeReply = async (replyId: number) => {
+export const removeLikeReply = async (replyId: string) => {
     let response;
 
     try {
@@ -219,7 +194,7 @@ export const postReview = async (options: ReviewFormAPI) => {
     return response as { success: boolean, message: string, review: ReviewAPI };
 }
 
-export const deleteReview = async (reviewId: number) => {
+export const deleteReview = async (reviewId: string) => {
     let response;
 
     try {
@@ -239,7 +214,7 @@ export const deleteReview = async (reviewId: number) => {
     return response as { success: boolean, message: string };
 }
 
-export const translateReview = async (reviewId: number) => {
+export const translateReview = async (reviewId: string) => {
     let response;
 
     try {
@@ -257,7 +232,7 @@ export const translateReview = async (reviewId: number) => {
     return response as { content: string, target: string };
 }
 
-export const deleteReply = async (replyId: number) => {
+export const deleteReply = async (replyId: string) => {
     let response;
 
     try {
@@ -277,17 +252,17 @@ export const deleteReply = async (replyId: number) => {
     return response as { success: boolean, message: string };
 }
 
-export const addRating = async (reviewId: number, positive: boolean) => {
+export const addRating = async (review_id: string, rating: string) => {
 
     try {
-        await fetch(HOST + "/professor/comment/rating", {
+        await fetch(HOST + "/comment/rating", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                reviewId,
-                positive
+                review_id,
+                rating
             }),
             credentials: "include"
         });
@@ -298,7 +273,7 @@ export const addRating = async (reviewId: number, positive: boolean) => {
     return true;
 }
 
-export const removeRating = async (reviewId: number) => {
+export const removeRating = async (reviewId: string) => {
 
     try {
         await fetch(HOST + `/comment/rating?reviewId=${reviewId}`, {

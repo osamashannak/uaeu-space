@@ -111,7 +111,7 @@ export default function Review(review: ReviewAPI) {
                                      width={100}
                                      height={100}
                                      alt={""}/>
-                            </div>)
+                            </div>
                     </div>}
                 </div>
 

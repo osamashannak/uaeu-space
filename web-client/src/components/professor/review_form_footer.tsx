@@ -2,9 +2,9 @@ import styles from "../../styles/components/professor/review_form.module.scss";
 import {ChangeEvent, Dispatch, SetStateAction, useEffect} from "react";
 import Compressor from "compressorjs";
 import {
+    GifPreview,
     ImageAttachment,
-    ReviewFormDraft,
-    TenorGIFAttachment
+    ReviewFormDraft
 } from "../../typed/professor.ts";
 import GifPicker, {ContentFilter} from "gif-picker-react";
 
@@ -104,15 +104,13 @@ export default function ReviewFormFooter(props: {
         img.src = gif;
 
         img.onload = async () => {
-            const attachment: TenorGIFAttachment = {
-                id: "READY",
+            const gifPreview: GifPreview = {
                 url: gif,
                 height: img.height,
-                width: img.width,
-                weight: 4
+                width: img.width
             };
 
-            setDetails(prevState => ({...prevState, attachment: attachment}));
+            setDetails(prevState => ({...prevState, gif: gifPreview}));
         }
     }
 
@@ -136,7 +134,7 @@ export default function ReviewFormFooter(props: {
                 url: img.src,
                 height: img.height,
                 width: img.width,
-                weight: 1,
+                weight: 4,
                 src: file
             } as ImageAttachment;
 

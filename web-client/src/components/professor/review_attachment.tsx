@@ -1,57 +1,75 @@
-import {ReviewFormDraft} from "../../typed/professor.ts";
+import { ReviewFormDraft } from "../../typed/professor.ts";
 import styles from "../../styles/components/professor/review_form.module.scss";
-import {Dispatch, SetStateAction} from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
+
+type MediaPick =
+    | ({ kind: "gif" } & NonNullable<ReviewFormDraft["gif"]>)
+    | ({ kind: "attachment" } & NonNullable<ReviewFormDraft["attachment"]>);
 
 export default function ReviewAttachment(props: {
-    details: ReviewFormDraft,
-    setDetails: Dispatch<SetStateAction<ReviewFormDraft>>,
+    details: ReviewFormDraft;
+    setDetails: Dispatch<SetStateAction<ReviewFormDraft>>;
 }) {
+    const { details, setDetails } = props;
 
-    const attachment = props.details.attachment;
+    // pick exactly one
+    const media: MediaPick | undefined = useMemo(() => {
+        if (details.gif) return { kind: "gif", ...details.gif };
+        if (details.attachment) return { kind: "attachment", ...details.attachment };
+        return undefined;
+    }, [details.gif, details.attachment]);
 
-    if (!attachment) {
-        return null;
-    }
+    if (!media) return null;
 
-    const aspectRatio = attachment.height / attachment.width;
+    const aspectRatio = media.width ? media.height / media.width : 1;
+
+    const handleDelete = () => {
+        setDetails((prev) => ({
+            ...prev,
+            gif: media.kind === "gif" ? undefined : prev.gif,
+            attachment: media.kind === "attachment" ? undefined : prev.attachment,
+        }));
+        try {
+            URL.revokeObjectURL(media.url);
+        } catch {}
+    };
+
+    const key = media.kind === "attachment" ? media.id : `gif:${media.url}`;
 
     return (
         <>
-            <div key={attachment.id} className={styles.imagePreview}
-                 onClick={event => {
-                     event.stopPropagation();
-                     //window.open(attachment.url, '_blank');
-                 }}>
-                <div className={styles.deleteButton}
-                     onClick={(event) => {
-                         event.stopPropagation();
-                         props.setDetails((prevDetails) => ({
-                             ...prevDetails,
-                             attachments: undefined,
-                         }));
-                         URL.revokeObjectURL(attachment.url);
-                     }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                         viewBox="0 0 256 256">
-                        <path fill="currentColor"
-                              d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"/>
+            <div
+                key={key}
+                className={styles.imagePreview}
+                onClick={(e) => {
+                    e.stopPropagation();
+                }}
+            >
+                <div
+                    className={styles.deleteButton}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete();
+                    }}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256">
+                        <path
+                            fill="currentColor"
+                            d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"
+                        />
                     </svg>
                 </div>
-                <div style={{paddingBottom: `${aspectRatio * 100}%`}}></div>
-                <div style={{backgroundImage: `url(${attachment.url})`}}
-                     className={styles.imageDiv}>
-                </div>
-                <img src={attachment.url}
-                     draggable={false}
-                     width={100}
-                     height={100}
-                     alt={""}/>
+
+                <div style={{ paddingBottom: `${aspectRatio * 100}%` }} />
+                <div style={{ backgroundImage: `url(${media.url})` }} className={styles.imageDiv} />
+                <img src={media.url} draggable={false} width={100} height={100} alt="" />
             </div>
+
             <div>
-                {attachment.id.includes("tenor") &&
+                {(media.kind === "gif" ? media.url.includes("tenor") : (media.id ?? "").includes("tenor")) && (
                     <span>Via Tenor</span>
-                }
+                )}
             </div>
         </>
-    )
+    );
 }
