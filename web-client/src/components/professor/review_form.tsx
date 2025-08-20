@@ -135,7 +135,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                 created_at: review.created_at,
                 dislike_count: 0,
                 like_count: 0,
-                text: review.text,
+                text: review.text ?? "",
                 score: review.score,
                 positive: review.positive,
                 id: review.id,
@@ -154,7 +154,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
         })()
 
         reviewRef.current = null;
-        setSubmitting(null);
+        setSubmitting(false);
     }
 
     async function handleSubmit() {
