@@ -1,8 +1,8 @@
-import {FormEvent, useEffect, useState, useRef} from "react";
+import {FormEvent, useEffect, useRef, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "../../styles/components/professor/review_form.module.scss";
-import {ReviewFormDraft} from "../../typed/professor.ts";
-import {postReview, uploadImageAttachment} from "../../api/professor.ts";
+import {ReviewAPI, ReviewFormDraft} from "../../typed/professor.ts";
+import {deleteReview, postReview, uploadImageAttachment} from "../../api/professor.ts";
 import {convertArabicNumeral} from "../../utils.tsx";
 import {LexicalComposer} from "@lexical/react/LexicalComposer";
 import {ContentEditable} from "@lexical/react/LexicalContentEditable";
@@ -32,13 +32,14 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
     const [submitting, setSubmitting] = useState<boolean | null | "error">(
         !props.canReview ? null : false
     );
-    const [flaggedPopup, setFlaggedPopup] = useState<boolean>(true);
+    const [flaggedPopup, setFlaggedPopup] = useState<boolean>(false);
 
     const {executeRecaptcha} = useGoogleReCaptcha();
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const dispatch = useDispatch();
 
     const lineRef = useRef<Line | null>(null);
+    const reviewRef = useRef<ReviewAPI | null>(null);
 
     const attachmentUploadRef = useRef<Promise<string | undefined> | null>(null);
 
@@ -74,7 +75,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                 prev.attachment ? {...prev, attachment: {...prev.attachment, id: "UPLOADING"}} : prev
             );
 
-            const p = uploadImageAttachment(att.src)
+            attachmentUploadRef.current = uploadImageAttachment(att.src)
                 .then((id) => {
                     if (!id) throw new Error("upload failed");
                     setDetails(prev =>
@@ -86,23 +87,21 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                     setDetails(prev => ({...prev, attachment: undefined}));
                     return undefined;
                 });
-
-            attachmentUploadRef.current = p;
         }
-    }, [details.attachment?.src]);
+    }, [details.attachment?.src])
 
-    const formFilled = () => {
+    function formFilled() {
         return (
             ((details.comment && details.comment.trim() && details.comment.length <= 350) ||
                 details.attachment) &&
             details.score &&
             details.positive !== undefined
         );
-    };
+    }
 
-    const invalidRadioSubmission = (event: FormEvent<HTMLInputElement>) => {
+    function invalidRadioSubmission(event: FormEvent<HTMLInputElement>) {
         event.currentTarget.setCustomValidity("Please select one of these options.");
-    };
+    }
 
     async function ensureAttachmentUploaded(): Promise<string | undefined> {
         const att = details.attachment;
@@ -113,7 +112,52 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
         return await p;
     }
 
-    const handleSubmit = async () => {
+    function finalizeSubmission() {
+        const review = reviewRef.current;
+
+        if (!review) {
+            setSubmitting("error");
+            return;
+        }
+
+        setSubmitting(null);
+
+        dispatch(
+            addReview({
+                uaeu_origin: review.uaeu_origin,
+                fadeIn: true,
+                self: true,
+                rated: null,
+                reply_count: 0,
+                language: review.language,
+                attachment: details.attachment,
+                author: "User",
+                created_at: review.created_at,
+                dislike_count: 0,
+                like_count: 0,
+                text: review.text,
+                score: review.score,
+                positive: review.positive,
+                id: review.id,
+                gif: details.gif ? details.gif.url : undefined,
+                flagged: true
+            })
+        );
+    }
+
+    function editReview() {
+        const review = reviewRef.current;
+        if (!review) return;
+
+        (async () => {
+            await deleteReview(review.id);
+        })()
+
+        reviewRef.current = null;
+        setSubmitting(null);
+    }
+
+    async function handleSubmit() {
         setSubmitting(true);
 
         // @ts-expect-error Clarity is not defined
@@ -159,34 +203,16 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
             return;
         }
 
-        if (status.review.flagged) {
+        reviewRef.current = status.review;
 
+        if (status.review.flagged) {
+            setFlaggedPopup(true);
+            return;
         }
 
-        setSubmitting(null);
+        finalizeSubmission();
 
-        dispatch(
-            addReview({
-                uaeu_origin: status.review.uaeu_origin,
-                fadeIn: true,
-                self: true,
-                rated: null,
-                reply_count: 0,
-                language: status.review.language,
-                attachment: details.attachment,
-                author: "User",
-                created_at: status.review.created_at,
-                dislike_count: 0,
-                like_count: 0,
-                text: status.review.text,
-                score: status.review.score,
-                positive: status.review.positive,
-                id: status.review.id,
-                gif: details.gif ? details.gif.url : undefined,
-                flagged: true
-            })
-        );
-    };
+    }
 
     if (submitting === null) {
         return (
@@ -215,7 +241,8 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
 
     return (
         <>
-            {flaggedPopup && <FlaggedPopup setShowPopup={setFlaggedPopup}/>}
+            {flaggedPopup && <FlaggedPopup setShowPopup={setFlaggedPopup} finalizeSubmission={finalizeSubmission}
+                                           editReview={editReview}/>}
             <div className={styles.lineContainer}>
                 <div id={"line-container"}></div>
             </div>

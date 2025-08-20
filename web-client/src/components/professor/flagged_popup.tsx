@@ -5,6 +5,8 @@ import flaggedImage from "../../assets/images/flagged_modal_image.png";
 
 export default function FlaggedPopup(props: {
     setShowPopup: Dispatch<SetStateAction<boolean>>;
+    finalizeSubmission: () => void;
+    editReview: () => void;
 }) {
     const scrollPosition = useRef(0);
 
@@ -108,7 +110,7 @@ export default function FlaggedPopup(props: {
                                 Some of the wording in your review might come across as offensive and inappropriate.
                             </div>
                             <div className={reviewStyles.popupText}>
-                                If that wasn’t your intention, you can delete it and try again.
+                                If that wasn’t your intention, you can edit it and try again.
                             </div>
                         </div>
 
@@ -119,10 +121,13 @@ export default function FlaggedPopup(props: {
                         </div>
                     </div>
                     <div className={reviewStyles.popupButtons}>
-                        <button className={reviewStyles.deletePopupButton} onClick={() => {
-                        }}>Delete review
-                        </button>
                         <button onClick={() => {
+                            props.editReview();
+                            props.setShowPopup(false);
+                        }}>Edit review
+                        </button>
+                        <button className={reviewStyles.deletePopupButton} onClick={() => {
+                            props.finalizeSubmission();
                             props.setShowPopup(false)
                         }}>Post anyway
                         </button>
