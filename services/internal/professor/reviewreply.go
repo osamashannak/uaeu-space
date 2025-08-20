@@ -269,7 +269,7 @@ func (s *Server) GetReplies() http.Handler {
 			return
 		}
 
-		reviewIdStr := r.URL.Query().Get("review_id")
+		reviewIdStr := r.URL.Query().Get("reviewId")
 		if reviewIdStr == "" {
 			errorResponse := v1.ErrorResponse{
 				Message: "missing review_id parameter",
@@ -453,7 +453,7 @@ func (s *Server) GetReplyName() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		reviewIdStr := r.URL.Query().Get("review_id")
+		reviewIdStr := r.URL.Query().Get("reviewId")
 		if reviewIdStr == "" {
 			errorResponse := v1.ErrorResponse{
 				Message: "missing review_id parameter",

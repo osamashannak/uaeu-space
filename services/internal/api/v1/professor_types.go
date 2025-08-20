@@ -28,8 +28,8 @@ type SimilarProfessor struct {
 }
 
 type Review struct {
-	SortIndex    int64             `json:"sort_index"`
-	ID           int64             `json:"id"`
+	SortIndex    int64             `json:"sort_index,string"`
+	ID           int64             `json:"id,string"`
 	Score        int               `json:"score"`
 	Positive     bool              `json:"positive"`
 	Text         string            `json:"text"`
@@ -47,7 +47,7 @@ type Review struct {
 }
 
 type ReviewAttachment struct {
-	ID     int64  `json:"id"`
+	ID     int64  `json:"id,string"`
 	Height int    `json:"height"`
 	Width  int    `json:"width"`
 	URL    string `json:"url"`
@@ -59,16 +59,16 @@ type ReviewPostBody struct {
 	Positive       *bool   `json:"positive" required:"true"`
 	ProfessorEmail *string `json:"professor_email" required:"true"`
 	RecaptchaToken *string `json:"recaptcha_token" required:"true"`
-	Attachment     *int64  `json:"attachment"`
+	Attachment     *int64  `json:"attachment,string"`
 	Gif            *string `json:"gif"`
 }
 
 type ReviewAttachmentResponse struct {
-	ID int64 `json:"id"`
+	ID int64 `json:"id,string"`
 }
 
 type ReviewRatingBody struct {
-	ReviewID int64  `json:"review_id"`
+	ReviewID int64  `json:"review_id,string"`
 	Rating   string `json:"rating"`
 }
 
@@ -78,7 +78,7 @@ type ReviewPostResponse struct {
 	Positive   bool              `json:"positive"`
 	Attachment *ReviewAttachment `json:"attachment,omitempty"`
 	Gif        *string           `json:"gif,omitempty"`
-	ID         int64             `json:"id"`
+	ID         int64             `json:"id,string"`
 	Flagged    *bool             `json:"flagged,omitempty"`
 	CreatedAt  time.Time         `json:"created_at"`
 	Language   string            `json:"language"`
@@ -95,7 +95,7 @@ type ReviewTranslationResponse struct {
 }
 
 type ReplyNameBody struct {
-	ReviewID int64 `json:"review_id"`
+	ReviewID int64 `json:"review_id,string"`
 }
 
 type ReplyNameResponse struct {
@@ -103,14 +103,14 @@ type ReplyNameResponse struct {
 }
 
 type ReplyPostBody struct {
-	ReviewID int64   `json:"review_id" required:"true"`
-	ReplyID  *int64  `json:"reply_id"`
+	ReviewID int64   `json:"review_id,string" required:"true"`
+	ReplyID  *int64  `json:"reply_id,string"`
 	Comment  string  `json:"comment"`
 	Gif      *string `json:"gif"`
 }
 
 type Reply struct {
-	ID        int64     `json:"id"`
+	ID        int64     `json:"id,string"`
 	Comment   string    `json:"comment"`
 	CreatedAt time.Time `json:"created_at"`
 	Gif       *string   `json:"gif,omitempty"`
