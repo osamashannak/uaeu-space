@@ -186,7 +186,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
 
         const token = await executeRecaptcha("new_review");
 
-        const status = await postReview({
+        const review = await postReview({
             text: details.comment!,
             score: details.score!,
             positive: details.positive!,
@@ -196,16 +196,16 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
             gif: details.gif ? details.gif.url : undefined,
         });
 
-        if (!status || !status.success) {
+        if (!review) {
             // @ts-expect-error Clarity is not defined
             clarity("set", "ReviewFailed", "true");
             setSubmitting("error");
             return;
         }
 
-        reviewRef.current = status.review;
+        reviewRef.current = review;
 
-        if (status.review.flagged) {
+        if (review.flagged) {
             setFlaggedPopup(true);
             return;
         }
