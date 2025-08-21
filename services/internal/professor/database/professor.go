@@ -97,7 +97,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 		LEFT JOIN professor.review_rating rr 
 			ON rr.review_id = r.id AND rr.session_id = $1
 		LEFT JOIN professor.review_attachment ra 
-			ON r.attachment = ra.id
+			ON r.attachment = ra.id AND ra.visible
 		WHERE professor_email = $2 AND r.deleted_at IS NULL
 		ORDER BY r.created_at DESC;`, sessionId, email)
 
