@@ -46,16 +46,13 @@ jobs:
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/professor:${{ github.sha }}"
           docker build --file services/Dockerfile --build-arg SERVICE=professor --tag "${DOCKER_TAG}" services
           docker push "${DOCKER_TAG}"
-          
-      - name: 'Set default GCP project'
-        run: gcloud config set project ${{ env.PROJECT_ID }}
         
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
-          project: '${{ env.PROJECT_ID }}'
+          project_id: '${{ env.PROJECT_ID }}'
           image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}/professor:${{ github.sha }}'
 
       - name: 'Show output'
