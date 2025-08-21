@@ -86,7 +86,7 @@ type ReviewPostResponse struct {
 
 type ReviewReportBody struct {
 	ReviewID int64  `json:"review_id,string"`
-	Reason   string `json:"rating"`
+	Reason   string `json:"reason"`
 }
 
 type SuccessResponse struct {
