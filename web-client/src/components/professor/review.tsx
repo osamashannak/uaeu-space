@@ -9,11 +9,13 @@ import ReviewOptions from "./review_options.tsx";
 import {translateReview} from "../../api/professor.ts";
 import {ReplyProvider} from "../provider/reply.tsx";
 import ReplyComposeModal from "../modal/reply_compose_modal.tsx";
+import GoogleAttribution from "../google_attribution.tsx";
 
 
 export default function Review(review: ReviewAPI) {
 
     const [replyCompose, showReplyCompose] = useState(false);
+    const [showAttribution, setShowAttribution] = useState(false);
 
 
     useEffect(() => {
@@ -72,7 +74,7 @@ export default function Review(review: ReviewAPI) {
 
                 </div>
 
-                {review.language !== "en" && <div className={styles.translateText} onClick={() => {
+                {(review.language !== "en" && !showAttribution) && <div className={styles.translateText} onClick={() => {
                     translateReview(review.id).then((response) => {
                         if (!response) {
                             return;
@@ -84,6 +86,8 @@ export default function Review(review: ReviewAPI) {
                         p.innerHTML = response.content;
 
                         parseText(p);
+
+                        setShowAttribution(true);
                     })
                 }}>
                     <span>Translate text</span>
@@ -110,6 +114,9 @@ export default function Review(review: ReviewAPI) {
                                      alt={""}/>
                             </div>
                     </div>}
+
+                    {showAttribution && <GoogleAttribution/>}
+
                 </div>
 
 
