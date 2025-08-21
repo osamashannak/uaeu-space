@@ -51,12 +51,22 @@ func (s *Server) PostReview() http.Handler {
 			return
 		}
 
-		assessment := s.recaptcha.Verify(ctx, *request.RecaptchaToken, utils.GetClientIP(r), r.UserAgent())
+		assessment, err := s.recaptcha.Verify(ctx, *request.RecaptchaToken, utils.GetClientIP(r), r.UserAgent())
 
-		if !assessment {
+		if err != nil {
 			logger.Errorf("recaptcha verification failed: %v", assessment)
 			errorResponse := v1.ErrorResponse{
 				Message: "an error has occurred. please try again later.",
+				Error:   http.StatusBadRequest,
+			}
+			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+			return
+		}
+
+		if !assessment {
+			logger.Debugf("recaptcha verification failed: %v", assessment)
+			errorResponse := v1.ErrorResponse{
+				Message: "recaptcha verification failed",
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)

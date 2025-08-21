@@ -19,7 +19,7 @@ func New(client *recaptcha.Client, config *Config) *Recaptcha {
 	}
 }
 
-func (r *Recaptcha) Verify(ctx context.Context, token, ip, userAgent string) bool {
+func (r *Recaptcha) Verify(ctx context.Context, token, ip, userAgent string) (bool, error) {
 	event := &recaptchapb.Event{
 		Token:         token,
 		SiteKey:       r.cfg.SiteKey,
@@ -39,17 +39,17 @@ func (r *Recaptcha) Verify(ctx context.Context, token, ip, userAgent string) boo
 	response, err := r.client.CreateAssessment(ctx, request)
 
 	if err != nil {
-		return false
+		return false, err
 	}
 
 	if response.TokenProperties.Valid == false {
-		return false
+		return false, nil
 	}
 
 	if response.TokenProperties.Action != r.cfg.ExpectedAction {
-		return false
+		return false, nil
 	}
 
-	return response.RiskAnalysis.Score > r.cfg.Threshold
+	return response.RiskAnalysis.Score > r.cfg.Threshold, nil
 
 }
