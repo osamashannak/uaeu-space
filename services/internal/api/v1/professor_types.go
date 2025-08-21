@@ -84,6 +84,11 @@ type ReviewPostResponse struct {
 	Language   string            `json:"language"`
 }
 
+type ReviewReportBody struct {
+	ReviewID int64  `json:"review_id,string"`
+	Reason   string `json:"rating"`
+}
+
 type SuccessResponse struct {
 	Success bool   `json:"success"`
 	Message string `json:"message"`

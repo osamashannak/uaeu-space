@@ -1,6 +1,7 @@
 import reviewStyles from "../../styles/components/professor/review.module.scss";
 import {useState} from "react";
-import InfoPopup from "./info_popup.tsx";
+import {useModal} from "../provider/modal.tsx";
+import AdvertisementModal from "../modal/advertisement_modal.tsx";
 
 interface ReviewAdProps {
     adUrl: string;
@@ -12,8 +13,8 @@ interface ReviewAdProps {
 
 export default function ReviewAd(props: ReviewAdProps) {
 
-    const [showPopup, setShowPopup] = useState(false);
     const [showAd, setShowAd] = useState(true);
+    const modal = useModal();
 
     if (!showAd) {
         return null;
@@ -37,8 +38,6 @@ export default function ReviewAd(props: ReviewAdProps) {
 
     return (
         <>
-            {showPopup && <InfoPopup setShowAd={setShowAd} setShowPopup={setShowPopup}/>}
-
             <div>
                 <article className={reviewStyles.review}>
                     <div className={reviewStyles.reviewInfo}>
@@ -49,7 +48,9 @@ export default function ReviewAd(props: ReviewAdProps) {
                                     Advertisement
                                 </div>
                                 <div className={reviewStyles.infoButton} onClick={() => {
-                                    setShowPopup(true);
+                                    modal.openModal(AdvertisementModal, {
+                                        setShowAd: setShowAd
+                                    })
                                 }}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em"
                                          viewBox="0 0 256 256">

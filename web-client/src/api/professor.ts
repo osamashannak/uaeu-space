@@ -272,6 +272,27 @@ export const translateReview = async (reviewId: string) => {
     return response as { content: string, target: string };
 }
 
+
+export const reportReview = async (reviewId: string, reason: string) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/comment/report", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reviewId, reason }),
+            credentials: "include"
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    return response.success as boolean ?? false;
+}
+
 export const deleteReply = async (replyId: string) => {
     let response;
 

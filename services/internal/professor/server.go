@@ -56,6 +56,7 @@ func (s *Server) Routes() http.Handler {
 	mux.Handle("POST /comment", middleware.Gateway(s.PostReview(), *s.db.Db, *s.generator))
 	mux.Handle("DELETE /comment", middleware.Gateway(s.DeleteReview(), *s.db.Db, *s.generator))
 	mux.Handle("GET /comment/translate", s.TranslateReview())
+	mux.Handle("POST /comment/report", s.ReportReview())
 	mux.Handle("POST /comment/attachment", s.UploadReviewAttachment())
 	mux.Handle("POST /comment/rating", middleware.Gateway(s.AddReviewRating(), *s.db.Db, *s.generator))
 	mux.Handle("DELETE /comment/rating", middleware.Gateway(s.DeleteReviewRating(), *s.db.Db, *s.generator))

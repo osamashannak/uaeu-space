@@ -6,6 +6,7 @@ import {Outlet, ScrollRestoration} from "react-router-dom";
 import MobileNavigation from "../components/mobile_navigation.tsx";
 import {useEffect, useState} from "react";
 import {Helmet} from "@dr.pogodin/react-helmet";
+import {ModalProvider} from "../components/provider/modal.tsx";
 
 export default function Layout() {
 
@@ -61,7 +62,9 @@ export default function Layout() {
                     scriptProps={{
                         async: true
                     }}>
-                    <Outlet/>
+                    <ModalProvider>
+                        <Outlet/>
+                    </ModalProvider>
                 </GoogleReCaptchaProvider>
             </main>
 

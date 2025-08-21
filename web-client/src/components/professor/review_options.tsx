@@ -1,45 +1,41 @@
 import styles from "../../styles/components/professor/review.module.scss";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import sortStyles from "../../styles/pages/professor.module.scss";
+import {ReviewAPI} from "../../typed/professor.ts";
+import {useModal} from "../provider/modal.tsx";
+import ReviewDeletionModal from "../modal/review_deletion_modal.tsx";
+import ReportReviewModal from "../modal/report_review_modal.tsx";
 
 
-export default function ReviewOptions() {
+export default function ReviewOptions(props: {
+    review: ReviewAPI,
+}) {
 
-    const [sortHidden, setSortHidden] = useState(true);
+    const modal = useModal();
+    const [showList, setShowList] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-
-        window.onclick = (event) => {
-            if (!(event.target as HTMLElement).classList.contains(styles.sortButton)) {
-                setSortHidden(true);
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(event.target as Node)
+            ) {
+                setShowList(false);
             }
         }
 
-        return () => {
-            window.onclick = null;
-        }
-
-    }, []);
-
-    useEffect(() => {
-        function onClickAway(event: MouseEvent) {
-            if (!(event.target as HTMLElement).classList.contains(styles.sortButton)) {
-                setSortHidden(true);
-            }
-        }
-
-        window.addEventListener("click", onClickAway);
+        document.addEventListener("mousedown", handleClickOutside);
 
         return () => {
-            window.removeEventListener("click", onClickAway);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 
     return (
-        <div className={styles.reviewRight}>
-            <div className={styles.viewMoreButton} onClick={(event) => {
-                event.stopPropagation();
-                setSortHidden(!sortHidden)
+        <div ref={containerRef} className={styles.reviewRight}>
+            <div className={styles.viewMoreButton} onClick={() => {
+                setShowList(!showList)
             }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                     <g fill="currentColor">
@@ -50,15 +46,30 @@ export default function ReviewOptions() {
                 </svg>
                 <div className={styles.iconBackground}></div>
             </div>
-            <div className={sortHidden ? sortStyles.hiddenSortByMenu : sortStyles.sortByMenu}>
+            {showList && <div className={sortStyles.sortByMenu}>
                 <div className={sortStyles.sortByMenuList}>
                     <div className={sortStyles.sortByListItem}
                          onClick={() => {
+                             modal.openModal(ReportReviewModal, {
+                                 reviewId: props.review.id
+                             });
+                             setShowList(false);
                          }}>
                         <span>Report</span>
                     </div>
+                    {props.review.self &&
+                        <div className={sortStyles.sortByListItem}
+                             onClick={() => {
+                                 modal.openModal(ReviewDeletionModal, {
+                                     reviewId: props.review.id
+                                 });
+                                 setShowList(false);
+                             }}>
+                            <span>Delete</span>
+                        </div>
+                    }
                 </div>
-            </div>
+            </div>}
         </div>
 
     )

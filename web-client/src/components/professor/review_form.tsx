@@ -19,7 +19,8 @@ import ProgressBar from "progressbar.js";
 import Line from "progressbar.js/line";
 import EmojiSelector from "../lexical_editor/emoji_selector.tsx";
 import ReviewAttachment from "./review_attachment.tsx";
-import FlaggedPopup from "./flagged_popup.tsx";
+import {useModal} from "../provider/modal.tsx";
+import FlaggedModal from "../modal/flagged_modal.tsx";
 
 export default function ReviewForm(props: { professorEmail: string; canReview: boolean }) {
     const [details, setDetails] = useState<ReviewFormDraft>({
@@ -32,7 +33,6 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
     const [submitting, setSubmitting] = useState<boolean | null | "error">(
         !props.canReview ? null : false
     );
-    const [flaggedPopup, setFlaggedPopup] = useState<boolean>(false);
 
     const {executeRecaptcha} = useGoogleReCaptcha();
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
@@ -42,6 +42,8 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
     const reviewRef = useRef<ReviewAPI | null>(null);
 
     const attachmentUploadRef = useRef<Promise<string | undefined> | null>(null);
+
+    const modal = useModal();
 
     useEffect(() => {
         if (submitting === true) {
@@ -206,7 +208,10 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
         reviewRef.current = review;
 
         if (review.flagged) {
-            setFlaggedPopup(true);
+            modal.openModal(FlaggedModal, {
+                finalizeSubmission: finalizeSubmission,
+                editReview: editReview,
+            });
             return;
         }
 
@@ -241,8 +246,6 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
 
     return (
         <>
-            {flaggedPopup && <FlaggedPopup setShowPopup={setFlaggedPopup} finalizeSubmission={finalizeSubmission}
-                                           editReview={editReview}/>}
             <div className={styles.lineContainer}>
                 <div id={"line-container"}></div>
             </div>
@@ -313,7 +316,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                       ? [...details.comment].length
                       : 0}
                 </span>
-                                <span>/ 350</span>
+                                <span>/350</span>
                             </div>
                         </div>
                     </div>

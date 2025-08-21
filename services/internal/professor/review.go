@@ -445,6 +445,88 @@ func (s *Server) TranslateReview() http.Handler {
 	})
 }
 
+func (s *Server) ReportReview() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		logger := logging.FromContext(ctx)
+
+		profile, ok := ctx.Value("profile").(*middleware.Profile)
+
+		if !ok {
+			logger.Debugf("profile not found in context, session missing")
+			errorResponse := v1.ErrorResponse{
+				Message: "session missing",
+				Error:   http.StatusUnauthorized,
+			}
+			jsonutil.MarshalResponse(w, http.StatusUnauthorized, errorResponse)
+			return
+		}
+
+		var request v1.ReviewReportBody
+		code, err := jsonutil.Unmarshal(w, r, &request)
+
+		if err != nil {
+			logger.Debugf("failed to unmarshal request: %v", err)
+			errorResponse := v1.ErrorResponse{
+				Message: err.Error(),
+				Error:   code,
+			}
+			jsonutil.MarshalResponse(w, code, errorResponse)
+			return
+		}
+
+		logger.Debugf("received request to translate review with ID: %d", request.ReviewID)
+
+		review, err := s.db.GetReview(ctx, request.ReviewID)
+
+		if err != nil {
+			logger.Errorf("failed to get review: %v", err)
+			errorResponse := v1.ErrorResponse{
+				Message: "failed to get review",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+
+		if review == nil {
+			logger.Debugf("review not found: %d", request.ReviewID)
+			errorResponse := v1.ErrorResponse{
+				Message: "review not found",
+				Error:   http.StatusNotFound,
+			}
+			jsonutil.MarshalResponse(w, http.StatusNotFound, errorResponse)
+			return
+		}
+
+		err = s.db.InsertReviewReport(ctx, &model.ReviewReport{
+			ID:        int64(s.generator.Next()),
+			ReviewId:  review.ID,
+			Reason:    request.Reason,
+			SessionId: profile.SessionId,
+		})
+
+		if err != nil {
+			logger.Errorf("failed to insert review report: %v", err)
+			errorResponse := v1.ErrorResponse{
+				Message: "failed to report review",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+
+		logger.Debugf("review reported successfully: %d", request.ReviewID)
+
+		jsonutil.MarshalResponse(w, http.StatusOK, v1.SuccessResponse{
+			Message: "review reported successfully",
+			Success: true,
+		})
+
+	})
+}
+
 func (s *Server) UploadReviewAttachment() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		const maxUploadSize = 64 << 20 // 64 megabytes

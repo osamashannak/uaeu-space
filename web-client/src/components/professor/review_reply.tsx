@@ -2,20 +2,20 @@ import styles from "../../styles/components/professor/review.module.scss";
 import dayjs from "dayjs";
 import {formatRelativeTime} from "../../utils.tsx";
 import {ReviewReplyAPI} from "../../typed/professor.ts";
-import ReplyCompose from "./reply_compose.tsx";
-import {useContext, useState} from "react";
+import {useState} from "react";
 import ReplyLike from "./reply_like.tsx";
-import {CommentsContext} from "../../context/comments.ts";
 import {deleteReply} from "../../api/professor.ts";
 import {useDispatch} from "react-redux";
 import {removeReply} from "../../redux/slice/professor_slice.ts";
+import {useReply} from "../provider/reply.tsx";
+import ReplyComposeModal from "../modal/reply_compose_modal.tsx";
 
 
 export default function ReviewReply({reply, reviewId, op}: { reply: ReviewReplyAPI, reviewId: string, op: boolean }) {
 
     const [replyCompose, showReplyCompose] = useState(false);
     const [aspectRatio, setAspectRatio] = useState(1);
-    const context = useContext(CommentsContext);
+    const context = useReply();
 
     const dispatch = useDispatch();
 
@@ -25,7 +25,7 @@ export default function ReviewReply({reply, reviewId, op}: { reply: ReviewReplyA
 
         if (!response || !response.success) return;
 
-        context.setComments(context.comments.filter((r) => r.id !== reply.id));
+        context.setReplies(context.replies.filter((r) => r.id !== reply.id));
         dispatch(removeReply({reviewId}));
     }
 
@@ -95,7 +95,7 @@ export default function ReviewReply({reply, reviewId, op}: { reply: ReviewReplyA
                 </div>
             </div>
             {replyCompose &&
-                <ReplyCompose id={reply.id} author={reply.author} comment={reply.comment} mention={reply.id}
+                <ReplyComposeModal id={reply.id} author={reply.author} comment={reply.comment} mention={reply.id}
                               created_at={reply.created_at} replyMention={reply.mention}
                               showReplyCompose={showReplyCompose} reviewId={reviewId}
                               op={op}/>}

@@ -95,3 +95,11 @@ type ReviewTranslation struct {
 	Target         string
 	CreatedAt      time.Time
 }
+
+type ReviewReport struct {
+	ID        int64
+	ReviewId  int64
+	Reason    string
+	CreatedAt time.Time
+	SessionId int64
+}

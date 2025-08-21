@@ -1,0 +1,135 @@
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 500;
+
+  background-color: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.modalBody {
+  position: relative;
+  margin: 24px;
+  padding: 32px;
+  background-color: white;
+  animation: popup 0.3s;
+  min-height: 150px;
+  min-width: 300px;
+  max-width: 600px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.closeButton {
+  position: absolute;
+  top: 25px;
+  z-index: 50;
+  cursor: pointer;
+  height: 28px;
+  width: 28px;
+}
+
+@keyframes popup {
+  0% {
+    transform: scale(0.7);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+
+  @media (max-width: 768px) {
+    font-size: 15px;
+
+  }
+}
+
+.text {
+  font-weight: 400;
+  margin-bottom: 12px;
+  color: rgba(0, 0, 0, 0.7);
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+.modalButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+
+}
+
+.buttonOk {
+  border: none;
+  padding: 12px 16px;
+  border-radius: 9999px;
+  color: white;
+  font-weight: 600;
+  background-color: #87CEFA;
+  cursor: pointer;
+
+  user-select: none;
+  -webkit-user-select: none;
+
+
+  transition: opacity 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.buttonRed {
+  @extend .buttonOk;
+  background-color: #F87171 !important;
+}
+
+.modalImage {
+  user-select: none;
+  -webkit-user-select: none;
+
+  @media (max-width: 768px) {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+.responseMessage {
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 16px;
+  color: rgba(0, 0, 0, 0.7);
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+.textArea {
+  max-width: calc(100% - 24px);
+  line-height: 20px;
+  margin-top: 0;
+  margin-bottom: 12px;
+  resize: none;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 8px;
+    font-size: 14px;
+  height: 100px;
+  width: 300px;
+}

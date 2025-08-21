@@ -1,10 +1,10 @@
 import styles from "../../styles/components/professor/review.module.scss";
 import ReviewReply from "./review_reply.tsx";
-import {useContext, useState} from "react";
+import {useState} from "react";
 import {getReviewReplies} from "../../api/professor.ts";
-import {CommentsContext} from "../../context/comments.ts";
 import {useDispatch} from "react-redux";
 import {changeRepliesCount} from "../../redux/slice/professor_slice.ts";
+import {useReply} from "../provider/reply.tsx";
 
 
 export default function ReplySection({reviewId, comments, op}: { reviewId: string, comments: number, op: boolean }) {
@@ -12,11 +12,11 @@ export default function ReplySection({reviewId, comments, op}: { reviewId: strin
     const [loading, setLoading] = useState(false);
     const [moreLoading, setMoreLoading] = useState(false);
 
-    const context = useContext(CommentsContext);
+    const context = useReply();
 
     const dispatch = useDispatch();
 
-    const unloadedReplies = comments - context.comments.length;
+    const unloadedReplies = comments - context.replies.length;
 
 
     if (loading) {
@@ -37,12 +37,12 @@ export default function ReplySection({reviewId, comments, op}: { reviewId: strin
     }
 
 
-    if (!context.comments.length) {
+    if (!context.replies.length) {
         return (
             <div className={styles.viewMoreReply} onClick={async () => {
                 setLoading(true);
                 const repliesAPI = await getReviewReplies(reviewId, []);
-                context.setComments(repliesAPI?.replies || []);
+                context.setReplies(repliesAPI?.replies || []);
                 setLoading(false);
             }}>
                 --- View {unloadedReplies} {unloadedReplies === 1 ? "reply" : "replies"}
@@ -57,7 +57,7 @@ export default function ReplySection({reviewId, comments, op}: { reviewId: strin
                 <div className={styles.line}></div>
                 <div className={styles.commentsList}>
 
-                    {context.comments.map((reply, index) => {
+                    {context.replies.map((reply, index) => {
                         return <ReviewReply reply={reply} key={index} reviewId={reviewId} op={op}/>
                     })}
 
@@ -80,13 +80,13 @@ export default function ReplySection({reviewId, comments, op}: { reviewId: strin
                 : <div className={styles.viewMoreReply} onClick={async () => {
                     setMoreLoading(true);
 
-                    const ids = context.comments.map((reply) => reply.id);
+                    const ids = context.replies.map((reply) => reply.id);
 
                     const repliesAPI = await getReviewReplies(reviewId, ids);
 
-                    const newReplies = repliesAPI?.replies.filter((reply) => !context.comments.find((existingReply) => existingReply.id === reply.id));
+                    const newReplies = repliesAPI?.replies.filter((reply) => !context.replies.find((existingReply) => existingReply.id === reply.id));
 
-                    context.setComments([...context.comments, ...(newReplies || [])]);
+                    context.setReplies([...context.replies, ...(newReplies || [])]);
 
                     if (repliesAPI?.comments) {
                         dispatch(changeRepliesCount({reviewId, count: repliesAPI.comments}));

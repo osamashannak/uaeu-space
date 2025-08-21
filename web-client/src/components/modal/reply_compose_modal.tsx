@@ -7,29 +7,27 @@ import {HistoryPlugin} from "@lexical/react/LexicalHistoryPlugin";
 import {EditorRefPlugin} from "@lexical/react/LexicalEditorRefPlugin";
 import {OnChangePlugin} from "@lexical/react/LexicalOnChangePlugin";
 import {LexicalComposer} from "@lexical/react/LexicalComposer";
-import {useContext, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {LexicalEditor} from "lexical";
 import dayjs from "dayjs";
 import {formatRelativeTime} from "../../utils.tsx";
 import {getReplyName, postReply} from "../../api/professor.ts";
 import EmojiSelector from "../lexical_editor/emoji_selector.tsx";
-import {CommentsContext} from "../../context/comments.ts";
 import {useDispatch} from "react-redux";
 import {addReply} from "../../redux/slice/professor_slice.ts";
 import GifPicker, {ContentFilter} from "gif-picker-react";
 import {GifPreview, ReplyContent, ReviewComposeProps} from "../../typed/professor.ts";
+import {useReply} from "../provider/reply.tsx";
 
 
-
-
-export default function ReplyCompose(props: ReviewComposeProps) {
+export default function ReplyComposeModal(props: ReviewComposeProps) {
 
     const [content, setContent] = useState<ReplyContent>({comment: "", gif: undefined});
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const [submitting, setSubmitting] = useState(false);
     const [name, setName] = useState<string | null>(null);
 
-    const context = useContext(CommentsContext);
+    const context = useReply();
 
     const dispatch = useDispatch();
 
@@ -112,7 +110,7 @@ export default function ReplyCompose(props: ReviewComposeProps) {
 
         dispatch(addReply({reviewId: props.reviewId}));
 
-        context.setComments(old => {
+        context.setReplies(old => {
             return [...old, {
                 id: reply.id,
                 reviewId: props.reviewId,

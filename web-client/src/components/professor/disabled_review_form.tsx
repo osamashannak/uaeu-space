@@ -31,7 +31,7 @@ export default function DisabledReviewForm() {
                     <div className={styles.commentLength}>
                         <div>
                             <span>0</span>
-                            <span>/ 350</span>
+                            <span>/350</span>
                         </div>
                     </div>
                 </div>

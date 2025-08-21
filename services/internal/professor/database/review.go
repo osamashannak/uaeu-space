@@ -128,6 +128,14 @@ func (db *ProfessorDB) InsertReviewTranslation(ctx context.Context, translation 
 	return err
 }
 
+func (db *ProfessorDB) InsertReviewReport(ctx context.Context, report *model.ReviewReport) error {
+	_, err := db.Db.Pool.Exec(ctx,
+		`INSERT INTO professor.review_report (id, review_id, reason, session_id)
+			VALUES ($1, $2, $3, $4)`,
+		report.ID, report.ReviewId, report.Reason, report.SessionId)
+	return err
+}
+
 func (db *ProfessorDB) InsertReviewAttachment(ctx context.Context, attachment *model.ReviewAttachment) error {
 	_, err := db.Db.Pool.Exec(ctx,
 		`INSERT INTO professor.review_attachment (id, mime_type, size, width, height, visible, blob_name)
