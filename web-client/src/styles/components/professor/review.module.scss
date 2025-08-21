@@ -646,16 +646,20 @@
     padding: 24px;
     animation: popup 0.3s;
 
-    height: 300px;
+    height: auto;
     max-width: 600px;
     background-color: white;
     border-radius: 8px;
 
 
     .popupText {
-      font-size: 14px;
       font-weight: 400;
       margin-bottom: 24px;
+      color: rgba(0, 0, 0, 0.7);
+
+      @media (max-width: 768px) {
+        font-size: 12px;
+      }
     }
 
     .popupButtons {
@@ -695,10 +699,20 @@
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 16px;
+
+  @media (max-width: 768px) {
+    font-size: 15px;
+
+  }
 }
 
 .flaggedImage {
   user-select: none;
-    -webkit-user-select: none;
+  -webkit-user-select: none;
+
+  @media (max-width: 768px) {
+    width: 100px;
+    height: 100px;
+  }
 
 }

@@ -415,7 +415,7 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                         title={"Post"}
                         className={
                             submitting
-                                ? styles.veryDisabledFormOptions
+                                ? styles.veryDisabledFormSubmit
                                 : formFilled()
                                     ? styles.enabledFormSubmit
                                     : styles.disabledFormSubmit

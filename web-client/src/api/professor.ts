@@ -61,6 +61,10 @@ export const uploadImageAttachment = async (file: File | Blob) => {
         return undefined;
     }
 
+    if (response.error) {
+        return  undefined;
+    }
+
     return response.id as string;
 }
 
@@ -97,6 +101,10 @@ export const getReplyName = async (reviewId: string) => {
         return null;
     }
 
+    if (response.error) {
+        return  undefined;
+    }
+
     return response['name'] as string ?? null;
 }
 
@@ -110,6 +118,10 @@ export const getReviewReplies = async (reviewId: string, current: string[]) => {
         response = await request.json();
     } catch (error) {
         return null;
+    }
+
+    if (response.error) {
+        return  undefined;
     }
 
     return response as { replies: ReviewReplyAPI[], comments: number } ?? null;
@@ -137,6 +149,10 @@ export const postReply = async (reviewId: string, content: {comment: string, gif
         return undefined;
     }
 
+    if (response.error) {
+        return  undefined;
+    }
+
     return response as ReviewReplyAPI;
 }
 
@@ -157,6 +173,10 @@ export const likeReply = async (replyId: string) => {
         return false;
     }
 
+    if (response.error) {
+        return  undefined;
+    }
+
     return response.success as boolean;
 
 }
@@ -172,6 +192,10 @@ export const removeLikeReply = async (replyId: string) => {
         response = await request.json();
     } catch (error) {
         return false;
+    }
+
+    if (response.error) {
+        return  undefined;
     }
 
     return response.success as boolean;
@@ -195,6 +219,10 @@ export const postReview = async (options: ReviewFormAPI) => {
         return undefined;
     }
 
+    if (response.error) {
+        return  undefined;
+    }
+
     return response as ReviewAPI;
 }
 
@@ -215,6 +243,10 @@ export const deleteReview = async (reviewId: string) => {
         return undefined;
     }
 
+    if (response.error) {
+        return  undefined;
+    }
+
     return response as { success: boolean, message: string };
 }
 
@@ -231,6 +263,10 @@ export const translateReview = async (reviewId: string) => {
         response = await request.json();
     } catch (error) {
         return undefined;
+    }
+
+    if (response.error) {
+        return  undefined;
     }
 
     return response as { content: string, target: string };
@@ -253,6 +289,10 @@ export const deleteReply = async (replyId: string) => {
         return undefined;
     }
 
+    if (response.error) {
+        return  undefined;
+    }
+
     return response as { success: boolean, message: string };
 }
 
@@ -273,6 +313,7 @@ export const addRating = async (review_id: string, rating: string) => {
     } catch (error) {
         return false;
     }
+
 
     return true;
 }
