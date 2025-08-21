@@ -163,7 +163,7 @@ func (s *Server) PostReview() http.Handler {
 			}
 		}
 
-		if request.Text == "" && (attachmentInfo == nil || gif == nil) {
+		if request.Text == "" && attachmentInfo == nil && gif == nil {
 			logger.Debugf("review text is empty")
 			errorResponse := v1.ErrorResponse{
 				Message: "review cannot be empty",

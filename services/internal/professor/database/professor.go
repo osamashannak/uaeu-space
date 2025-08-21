@@ -70,6 +70,7 @@ func (db *ProfessorDB) GetProfessor(ctx context.Context, email string) (*model.P
 func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64, email string) (*[]v1.Review, *float64, *[]int64, *bool, error) {
 	rows, err := db.Db.Pool.Query(ctx, `
 		SELECT 
+		    r.visible,
 		    r.sort_index,
 			r.id,
 			r.score,
@@ -97,7 +98,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			ON rr.review_id = r.id AND rr.session_id = $1
 		LEFT JOIN professor.review_attachment ra 
 			ON r.attachment = ra.id
-		WHERE professor_email = $2 AND r.visible AND r.deleted_at IS NULL
+		WHERE professor_email = $2 AND r.deleted_at IS NULL
 		ORDER BY r.created_at DESC;`, sessionId, email)
 
 	if err != nil {
@@ -113,6 +114,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 	for rows.Next() {
 		var (
 			rev          v1.Review
+			visible      bool
 			attID        *int64
 			attHeight    *int
 			attWidth     *int
@@ -121,6 +123,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 		)
 
 		if err := rows.Scan(
+			&visible,
 			&rev.SortIndex,
 			&rev.ID,
 			&rev.Score,
@@ -144,6 +147,14 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			return nil, nil, nil, nil, err
 		}
 
+		if rev.Self {
+			reviewed = true
+		}
+
+		if !visible {
+			continue
+		}
+
 		if attID != nil {
 			rev.Attachment = &v1.ReviewAttachment{
 				ID:     *attID,
@@ -151,10 +162,6 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 				Width:  *attWidth,
 				URL:    utils.FormatBlobURL("attachments", *attURL, ""),
 			}
-		}
-
-		if rev.Self {
-			reviewed = true
 		}
 
 		rev.Author = "User"
