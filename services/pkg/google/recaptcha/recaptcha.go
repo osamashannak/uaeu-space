@@ -42,8 +42,9 @@ func (r *Recaptcha) Verify(ctx context.Context, token, ip, userAgent string) (bo
 		return false, err
 	}
 
-	if response.TokenProperties.Valid == false {
-		return false, nil
+	if !response.TokenProperties.Valid {
+		return false, fmt.Errorf("the CreateAssessment() call failed because the token was invalid for the following reasons: %v",
+			response.TokenProperties.InvalidReason)
 	}
 
 	if response.TokenProperties.Action != r.cfg.ExpectedAction {
