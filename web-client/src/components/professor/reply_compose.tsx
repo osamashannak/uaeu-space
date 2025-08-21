@@ -65,6 +65,10 @@ export default function ReplyCompose(props: ReviewComposeProps) {
 
     useEffect(() => {
         getReplyName(props.reviewId).then((n) => {
+            if (!n || n === "null") {
+                setName(null);
+                return;
+            }
             setName(n);
         });
     }, [props.reviewId]);
