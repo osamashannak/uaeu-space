@@ -5,6 +5,7 @@ import (
 	recaptchapb "cloud.google.com/go/recaptchaenterprise/v2/apiv1/recaptchaenterprisepb"
 	"context"
 	"fmt"
+	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 )
 
 type Recaptcha struct {
@@ -48,7 +49,16 @@ func (r *Recaptcha) Verify(ctx context.Context, token, ip, userAgent string) (bo
 	}
 
 	if response.TokenProperties.Action != r.cfg.ExpectedAction {
-		return false, nil
+		return false, fmt.Errorf("the CreateAssessment() call failed because the action '%s' did not match the expected action '%s'",
+			response.TokenProperties.Action, r.cfg.ExpectedAction)
+	}
+
+	logger := logging.FromContext(ctx)
+
+	logger.Debugf("Recaptcha score: %f", response.RiskAnalysis.Score)
+
+	for _, reason := range response.RiskAnalysis.Reasons {
+		logger.Debugf(reason.String() + "\n")
 	}
 
 	return response.RiskAnalysis.Score > r.cfg.Threshold, nil
