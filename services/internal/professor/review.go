@@ -51,7 +51,7 @@ func (s *Server) PostReview() http.Handler {
 			return
 		}
 
-		/* assessment := s.recaptcha.Verify(ctx, *request.RecaptchaToken, utils.GetClientIP(r), r.UserAgent())
+		assessment := s.recaptcha.Verify(ctx, *request.RecaptchaToken, utils.GetClientIP(r), r.UserAgent())
 
 		if !assessment {
 			logger.Errorf("recaptcha verification failed: %v", assessment)
@@ -61,7 +61,7 @@ func (s *Server) PostReview() http.Handler {
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
 			return
-		} */
+		}
 
 		professor, err := s.db.GetProfessor(ctx, *request.ProfessorEmail)
 
