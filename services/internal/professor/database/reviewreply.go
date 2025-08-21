@@ -106,6 +106,7 @@ func (db *ProfessorDB) GetRepliesIgnoreCurrent(ctx context.Context, reviewId, se
 			WHERE r.review_id = $1
 			  AND r.id NOT IN (SELECT unnest($2::bigint[]))
 			  AND r.deleted_at IS NULL
+			  AND r.visible
 		ORDER BY created_at
 		LIMIT 5`, reviewId, current, sessionId)
 	if err != nil {
