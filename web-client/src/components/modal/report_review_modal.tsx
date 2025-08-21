@@ -1,5 +1,5 @@
 import styles from "../../styles/components/global/modal.module.scss";
-import {useRef} from "react";
+import {useRef, useState} from "react";
 import {reportReview} from "../../api/professor.ts";
 
 export default function ReportReviewModal(props: {
@@ -9,6 +9,24 @@ export default function ReportReviewModal(props: {
 
     const reasonRef = useRef<HTMLTextAreaElement>(null);
     const responseMessageRef = useRef<HTMLSpanElement>(null);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+
+    if (showConfirmation) {
+        return (
+            <div className={styles.background}>
+                <div className={styles.modalBody}>
+                    <span className={styles.title}>Thank you for your report!</span>
+                    <div className={styles.text}>Your report has been submitted successfully.</div>
+                    <div className={styles.modalButtons}>
+                        <div className={styles.buttonOk} onClick={() => {
+                            props.onClose();
+                        }}>Close
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.background}>
@@ -36,7 +54,7 @@ export default function ReportReviewModal(props: {
                             if (!response) {
                                 responseMessageRef.current!.innerText = "Failed to report review. Please try again later.";
                             } else {
-                                props.onClose();
+                                setShowConfirmation(true);
                             }
                         });
 
