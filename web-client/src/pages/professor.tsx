@@ -152,7 +152,7 @@ export default function Professor() {
                       content={longestReview ?? `Rate ${professor.name} from ${professor.university}!`}/>
             </Helmet>
             <div className={styles.profPage}>
-                <BackArrow text={"Professor"} url={"/professor"}/>
+                <BackArrow text={"Professor"} />
 
                 <section className={styles.profInfoHead}>
 

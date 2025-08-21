@@ -151,7 +151,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			reviewed = true
 		}
 
-		if !visible {
+		if !visible && !rev.Self {
 			continue
 		}
 

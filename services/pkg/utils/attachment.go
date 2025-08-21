@@ -29,21 +29,27 @@ type ImageBounds struct {
 	Height int
 }
 
-func ProcessImageFile(fileBytes []byte) (processedBytes []byte, newContentType string, imageBounds *ImageBounds, err error) {
+func GetImageBounds(fileBytes []byte) (*ImageBounds, error) {
 	decodedImage, _, err := image.Decode(bytes.NewReader(fileBytes))
-
 	if err != nil {
-		return nil, "", nil, fmt.Errorf("failed to decode image: %w", err)
+		return nil, fmt.Errorf("failed to decode image: %w", err)
 	}
 
 	bounds := decodedImage.Bounds()
-
 	width := bounds.Dx()
 	height := bounds.Dy()
 
-	imageBounds = &ImageBounds{
+	return &ImageBounds{
 		Width:  width,
 		Height: height,
+	}, nil
+}
+
+func ProcessImageFile(fileBytes []byte) (processedBytes []byte, newContentType string, err error) {
+	decodedImage, _, err := image.Decode(bytes.NewReader(fileBytes))
+
+	if err != nil {
+		return nil, "", fmt.Errorf("failed to decode image: %w", err)
 	}
 
 	var buffer bytes.Buffer
@@ -51,9 +57,9 @@ func ProcessImageFile(fileBytes []byte) (processedBytes []byte, newContentType s
 	err = jpeg.Encode(&buffer, decodedImage, &jpeg.Options{Quality: 85})
 
 	if err != nil {
-		return nil, "", nil, fmt.Errorf("failed to encode image: %w", err)
+		return nil, "", fmt.Errorf("failed to encode image: %w", err)
 	}
 
-	return buffer.Bytes(), "image/jpeg", imageBounds, nil
+	return buffer.Bytes(), "image/jpeg", nil
 
 }

@@ -24,7 +24,7 @@ export default function ReviewFormFooter(props: {
             return;
         }
 
-        const mimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        const mimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
 
         const files = Array.from(event.target.files!).filter(file => mimeTypes.includes(file.type)).slice(0, 1);
 
@@ -48,7 +48,7 @@ export default function ReviewFormFooter(props: {
                 return;
             }*/
 
-        if (['image/webp', 'image/gif'].includes(image.type)) {
+        if (image.type === "image/gif") {
             addImage(image);
             event.target.value = "";
             return;

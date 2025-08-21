@@ -2,7 +2,6 @@ import styles from "../styles/components/global/backarrow.module.scss";
 import {useNavigate} from "react-router-dom";
 
 export default function BackArrow(props: {
-    url: string,
     text: string
 }) {
 
@@ -11,7 +10,7 @@ export default function BackArrow(props: {
     return (
         <div className={styles.top}>
             <div className={styles.backArrow} onClick={() => {
-                navigate(props.url);
+                navigate(-1);
             }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <rect width="24" height="24" fill="none"/>

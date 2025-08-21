@@ -74,7 +74,7 @@ export default function Course() {
                 <title>{course.name} - United Arab Emirates University - SpaceRead</title>
             </Helmet>
             <div className={styles.coursePage}>
-                <BackArrow url={"/course"} text={"Course"}/>
+                <BackArrow text={"Course"}/>
                 <section className={styles.courseInfoHead}>
                     <h2>{course.tag}</h2>
                     <h1>{course.name}</h1>

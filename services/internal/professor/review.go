@@ -447,7 +447,7 @@ func (s *Server) TranslateReview() http.Handler {
 
 func (s *Server) UploadReviewAttachment() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		const maxUploadSize = 32 << 20 // 32 megabytes
+		const maxUploadSize = 64 << 20 // 64 megabytes
 
 		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 		ctx := r.Context()
@@ -511,9 +511,23 @@ func (s *Server) UploadReviewAttachment() http.Handler {
 			return
 		}
 
-		fileBytes, contentType, imageBounds, err := utils.ProcessImageFile(fileBytes)
+		if contentType != "image/gif" {
+			fileBytes, contentType, err = utils.ProcessImageFile(fileBytes)
+			if err != nil {
+				logger.Errorf("failed to process image file: %v", err)
+				errorResponse := v1.ErrorResponse{
+					Message: "an error occurred. please try again later.",
+					Error:   http.StatusInternalServerError,
+				}
+				jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+				return
+			}
+		}
+
+		imageBounds, err := utils.GetImageBounds(fileBytes)
+
 		if err != nil {
-			logger.Errorf("failed to process image file: %v", err)
+			logger.Errorf("failed to get image bounds: %v", err)
 			errorResponse := v1.ErrorResponse{
 				Message: "an error occurred. please try again later.",
 				Error:   http.StatusInternalServerError,
@@ -521,6 +535,7 @@ func (s *Server) UploadReviewAttachment() http.Handler {
 			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
 			return
 		}
+
 		attachmentId := int64(s.generator.Next())
 		finalBlobName := fmt.Sprintf("%d%s", attachmentId, extension)
 
