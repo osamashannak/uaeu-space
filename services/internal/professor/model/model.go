@@ -41,6 +41,7 @@ type ReviewAttachment struct {
 	Height    int
 	Visible   bool
 	BlobName  string
+	IpAddress string
 	CreatedAt time.Time
 }
 

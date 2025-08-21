@@ -635,13 +635,14 @@ func (s *Server) UploadReviewAttachment() http.Handler {
 		safety, err := s.vision.AnalyzeImageSafety(utils.FormatBlobURL("attachments", finalBlobName, ""))
 
 		attachment := model.ReviewAttachment{
-			ID:       attachmentId,
-			MimeType: contentType,
-			Size:     len(fileBytes),
-			Width:    imageBounds.Width,
-			Height:   imageBounds.Height,
-			Visible:  err == nil && safety.IsSafe(),
-			BlobName: finalBlobName,
+			ID:        attachmentId,
+			MimeType:  contentType,
+			Size:      len(fileBytes),
+			Width:     imageBounds.Width,
+			Height:    imageBounds.Height,
+			Visible:   err == nil && safety.IsSafe(),
+			BlobName:  finalBlobName,
+			IpAddress: utils.GetClientIP(r),
 		}
 
 		err = s.db.InsertReviewAttachment(ctx, &attachment)
