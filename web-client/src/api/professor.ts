@@ -282,7 +282,10 @@ export const reportReview = async (reviewId: string, reason: string) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ reviewId, reason }),
+            body: JSON.stringify({
+                review_id: reviewId,
+                reason: reason
+            }),
             credentials: "include"
         });
         response = await request.json();
