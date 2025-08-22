@@ -12,7 +12,7 @@ export default function ReviewSection(props: { professorReviews: ReviewAPI[] }) 
     const reviews = props.professorReviews;
     const reviewCount = reviews.length;
 
-    const adUrl = 'https://s3.me-central-1.amazonaws.com/static.spaceread.net/ad/88students.jpg';
+    const adUrl = 'https://static.spaceread.net/ad/88students.jpg';
 
     return (
         <div className={styles.commentsSection}>

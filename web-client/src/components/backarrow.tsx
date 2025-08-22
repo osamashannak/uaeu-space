@@ -10,7 +10,14 @@ export default function BackArrow(props: {
     return (
         <div className={styles.top}>
             <div className={styles.backArrow} onClick={() => {
-                navigate(-1);
+                const referrer = document.referrer;
+                const currentHost = window.location.host;
+
+                if (referrer && new URL(referrer).host === currentHost) {
+                    navigate(-1);
+                } else {
+                    navigate("/");
+                }
             }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                     <rect width="24" height="24" fill="none"/>
