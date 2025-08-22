@@ -2,7 +2,7 @@
 
 export default function TenorAttribution() {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="70px" height="177px"
+        <svg xmlns="http://www.w3.org/2000/svg" width="70px" height="30px"
              viewBox="0 0 835 177" version="1.1">
             <defs>
                 <polygon id="path-1"

@@ -18,6 +18,7 @@ import {addReply} from "../../redux/slice/professor_slice.ts";
 import GifPicker, {ContentFilter} from "gif-picker-react";
 import {GifPreview, ReplyContent, ReviewComposeProps} from "../../typed/professor.ts";
 import {useReply} from "../provider/reply.tsx";
+import TenorAttribution from "../tenor_attribution.tsx";
 
 
 export default function ReplyComposeModal(props: ReviewComposeProps) {
@@ -305,7 +306,7 @@ export default function ReplyComposeModal(props: ReviewComposeProps) {
                                  alt={""}/>
                         </div>
                         <div>
-                            <span>Via Tenor</span>
+                            <TenorAttribution/>
                         </div>
                     </>}
 
