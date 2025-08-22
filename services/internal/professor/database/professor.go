@@ -198,6 +198,7 @@ func (db *ProfessorDB) GetSimilarProfessors(ctx context.Context, sessions []int6
 			  AND p.university = $3
 			  AND p.visible = true
 			  AND r.visible = true
+			  AND r.deleted_at IS NULL
 			GROUP BY p.email, p.name, p.college
 			ORDER BY COUNT(DISTINCT r.session_id) DESC
 			LIMIT 3
