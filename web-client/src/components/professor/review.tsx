@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {ReviewAPI} from "../../typed/professor.ts";
+import {GifPreview, ReviewAPI} from "../../typed/professor.ts";
 import styles from "../../styles/components/professor/review.module.scss";
 import {formatRelativeTime, parseText, ratingToIcon} from "../../utils.tsx";
 import {useEffect, useState} from "react";
@@ -16,6 +16,7 @@ export default function Review(review: ReviewAPI) {
 
     const [replyCompose, showReplyCompose] = useState(false);
     const [showAttribution, setShowAttribution] = useState(false);
+    const [gifPreview, setGifPreview] = useState<GifPreview | null>(null);
 
 
     useEffect(() => {
@@ -26,6 +27,22 @@ export default function Review(review: ReviewAPI) {
         parseText(p);
 
     }, [review.id]);
+
+    useEffect(() => {
+        if (review.gif) {
+            const img = new Image();
+            img.onload = () => {
+                setGifPreview({
+                    width: img.width,
+                    height: img.height,
+                    url: review.gif!
+                });
+            };
+            img.src = review.gif;
+        } else {
+            setGifPreview(null);
+        }
+    }, [review.gif]);
 
     // if review is 7 days old or newer, add a new badge
     const reviewDate = new Date(review.created_at);
@@ -113,6 +130,22 @@ export default function Review(review: ReviewAPI) {
                                      height={100}
                                      alt={""}/>
                             </div>
+                    </div>}
+
+                    {gifPreview && <div className={styles.imageList}>
+                        <div className={styles.attachment} onClick={() => {
+                            window.open(review.attachment!.url, "_blank");
+                        }}>
+                            <div
+                                style={{paddingBottom: `${gifPreview.height / gifPreview.width * 100}%`}}></div>
+                            <div style={{backgroundImage: `url(${gifPreview.url})`}} className={styles.imageDiv}>
+                            </div>
+                            <img src={gifPreview.url}
+                                 draggable={false}
+                                 width={100}
+                                 height={100}
+                                 alt={""}/>
+                        </div>
                     </div>}
 
                     {showAttribution && <GoogleAttribution/>}

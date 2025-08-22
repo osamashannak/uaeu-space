@@ -4,8 +4,7 @@
 export default function GoogleAttribution() {
     return (
         <div style={{marginTop: "10px"}}>
-            <svg width="92px" height="16px" viewBox="0 0 122 16" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                  >
+            <svg width="92px" height="16px" viewBox="0 0 122 16" version="1.1" xmlns="http://www.w3.org/2000/svg">
                 <g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd" >
                     <g id="Imported-Layers-Copy-+-translated-by" >
                         <g id="Imported-Layers-Copy" transform="translate(73.000000, 0.127273)">

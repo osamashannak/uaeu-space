@@ -1,6 +1,7 @@
 import { ReviewFormDraft } from "../../typed/professor.ts";
 import styles from "../../styles/components/professor/review_form.module.scss";
 import { Dispatch, SetStateAction, useMemo } from "react";
+import TenorAttribution from "../tenor_attribution.tsx";
 
 type MediaPick =
     | ({ kind: "gif" } & NonNullable<ReviewFormDraft["gif"]>)
@@ -67,7 +68,7 @@ export default function ReviewAttachment(props: {
 
             <div>
                 {(media.kind === "gif" ? media.url.includes("tenor") : (media.id ?? "").includes("tenor")) && (
-                    <span>Via Tenor</span>
+                    <TenorAttribution/>
                 )}
             </div>
         </>
