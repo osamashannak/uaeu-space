@@ -137,11 +137,16 @@ func (s *Server) PostReply() http.Handler {
 			mention = &mentionName
 		}
 
+		op := false
+		if review.SessionId != nil {
+			op = *review.SessionId == profile.SessionId
+		}
+
 		reply := model.ReviewReply{
 			ID:        int64(s.generator.Next()),
 			Content:   request.Comment,
 			Gif:       request.Gif,
-			Op:        *review.SessionId == profile.SessionId,
+			Op:        op,
 			ReviewId:  request.ReviewID,
 			SessionId: profile.SessionId,
 			MentionId: request.ReplyID,
