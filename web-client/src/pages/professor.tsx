@@ -14,6 +14,7 @@ import DisabledReviewForm from "../components/professor/disabled_review_form.tsx
 import BackArrow from "../components/backarrow.tsx";
 import RelatedReviews from "../components/professor/related_reviews.tsx";
 import {Helmet} from "@dr.pogodin/react-helmet";
+import useFeedbackPopup from "../components/modal/feedback_request.tsx";
 
 const ReviewForm = lazy(async () => {
     const [moduleExports] = await Promise.all([
@@ -39,6 +40,8 @@ export default function Professor() {
     const latestReq = useRef<symbol | null>(null);
 
     const professor = professorState.professor as ProfessorAPI | undefined | null;
+
+    useFeedbackPopup(!!professor);
 
     useEffect(() => {
         if (!email) {
@@ -180,7 +183,7 @@ export default function Professor() {
 
                 {professor.similar_professors.length > 0 && <RelatedReviews reviews={professor.similar_professors}/>}
 
-                <Suspense fallback={<LoadingSuspense/>}>
+                <Suspense fallback={<LoadingSuspense height={"400px"}/>}>
                     <ReviewSection professorReviews={professor.reviews}/>
                 </Suspense>
 

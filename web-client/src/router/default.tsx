@@ -10,6 +10,7 @@ import Layout from "../layouts/layout.tsx";
 import Notifications from "../pages/notifications.tsx";
 import ScheduleMaker from "../pages/schedule_maker.tsx";
 import PageNotFound from "../pages/page_not_found.tsx";
+import Feedback from "../pages/feedback.tsx";
 
 const Router = createBrowserRouter([
     {
@@ -55,6 +56,10 @@ const Router = createBrowserRouter([
             {
                 path: "login",
                 element: <Login/>
+            },
+            {
+                path: "feedback",
+                element: <Feedback/>
             },
             {
                 path: "*",
