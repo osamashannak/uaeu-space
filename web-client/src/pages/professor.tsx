@@ -14,7 +14,6 @@ import DisabledReviewForm from "../components/professor/disabled_review_form.tsx
 import BackArrow from "../components/backarrow.tsx";
 import RelatedReviews from "../components/professor/related_reviews.tsx";
 import {Helmet} from "@dr.pogodin/react-helmet";
-import useFeedbackPopup from "../components/modal/feedback_request.tsx";
 
 const ReviewForm = lazy(async () => {
     const [moduleExports] = await Promise.all([
