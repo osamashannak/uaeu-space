@@ -20,6 +20,7 @@ export default function Feedback() {
     const totalQuestions = useRef<number>(1000);
     const [submitting, setSubmitting] = useState(false);
 
+    const HOST = import.meta.env.VITE_PROFESSOR_ENDPOINT;
 
     const handleAnswer = async () => {
         if (submitting) return; // ignore if already submitting
@@ -29,7 +30,7 @@ export default function Feedback() {
         setSubmitting(true);
 
         try {
-            const res = await fetch("http://localhost:8080/feedback", {
+            const res = await fetch(HOST + "/feedback", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({id: feedbackId, answer}),
@@ -64,7 +65,7 @@ export default function Feedback() {
         setStarted(true);
         setQuestion("loading");
 
-        const res = await fetch("http://localhost:8080/feedback/new");
+        const res = await fetch(HOST + "/feedback/new");
         const data: NewFeedbackResponse = await res.json();
 
         totalQuestions.current = data.remaining_count;
