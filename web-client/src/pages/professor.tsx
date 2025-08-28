@@ -41,7 +41,7 @@ export default function Professor() {
 
     const professor = professorState.professor as ProfessorAPI | undefined | null;
 
-    useFeedbackPopup(!!professor);
+    // useFeedbackPopup(!!professor);
 
     useEffect(() => {
         if (!email) {
