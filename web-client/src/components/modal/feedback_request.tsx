@@ -27,8 +27,7 @@ function FeedbackRequest(props: {
                             <span>We want your feedback! 🙂</span>
                         </div>
                         <div className={styles.text}>
-                            Help us improve SpaceRead and tell us if you’d join a UAEU Gaming Community or want a course
-                            notifier. It will be quick!
+                            Help us improve SpaceRead. It will be quick!
                         </div>
                     </div>
                 </div>
