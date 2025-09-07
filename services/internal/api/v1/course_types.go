@@ -1,5 +1,10 @@
 package v1
 
+type CourseInList struct {
+	Tag  string `json:"tag"`
+	Name string `json:"name"`
+}
+
 type CourseFind struct {
 	Tag string `json:"tag"`
 }

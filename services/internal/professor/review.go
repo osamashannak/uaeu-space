@@ -1,13 +1,11 @@
 package professor
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/middleware"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/model"
-	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/subnetchecker"
@@ -221,14 +219,6 @@ func (s *Server) PostReview() http.Handler {
 			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
 			return
 		}
-
-		go func(reviewId int64, result *perspective.AnalysisResult) {
-			bgCtx := context.Background()
-
-			if err := s.db.InsertReviewFlags(bgCtx, reviewId, result); err != nil {
-				logger.Errorf("failed to insert review flags: %v", err)
-			}
-		}(review.ID, flags)
 
 		var flagged *bool
 		if !review.Visible {

@@ -71,6 +71,7 @@ func Gateway(next http.Handler, database database.DB, generator snowflake.Genera
 			"path", r.URL.Path,
 			"remote_ip", ipAddress,
 			"id", profile.SessionId,
+			"new", err != nil || cookie == nil,
 		)
 
 		ctx = logging.WithLogger(ctx, reqLogger)
