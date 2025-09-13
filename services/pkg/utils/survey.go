@@ -247,7 +247,6 @@ func init() {
 		QuestionsMap[qs[i].ID] = &qs[i]
 		QuestionsOrder[i] = qs[i].ID
 	}
-	log.Printf("Loaded %d survey questions", len(QuestionsMap))
 }
 
 func GetRemainingQuestionsCount(currentID string) int {

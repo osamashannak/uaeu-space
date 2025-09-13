@@ -102,7 +102,7 @@ ORDER BY f.created_at DESC`, tag)
 }
 
 func (db *CourseDB) incrementCourseViews(ctx context.Context, tag string) error {
-	ct, err := db.Db.Pool.Exec(ctx, `UPDATE course.course SET views = views + 1 WHERE tag = $1`, tag)
+	ct, err := db.Db.Pool.Exec(ctx, `UPDATE course.course SET views = views + 1 WHERE tag = UPPER($1)`, tag)
 
 	if err != nil {
 		return err
