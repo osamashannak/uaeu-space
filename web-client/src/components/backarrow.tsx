@@ -16,7 +16,7 @@ export default function BackArrow(props: {
                 if (referrer && new URL(referrer).host === currentHost) {
                     navigate(-1);
                 } else {
-                    navigate("/");
+                    navigate(props.text === "Course" ? "/course" : "/");
                 }
             }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
