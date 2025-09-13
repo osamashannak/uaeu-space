@@ -154,7 +154,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 				ID:     *attID,
 				Height: *attHeight,
 				Width:  *attWidth,
-				URL:    utils.FormatBlobURL("attachments", *attURL, ""),
+				URL:    utils.FormatBlobURL("https://uaeuresources.blob.core.windows.net", "attachments", *attURL, ""),
 			}
 		}
 

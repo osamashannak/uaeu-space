@@ -2,8 +2,8 @@ package virustotal
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -12,7 +12,6 @@ import (
 	"time"
 )
 
-// ServiceNeeded represents the type of processing required
 type ServiceNeeded int
 
 const (
@@ -25,6 +24,8 @@ type QueueItem struct {
 	BlobName      string
 	ServiceNeeded ServiceNeeded
 	VtID          string
+	RetryCount    int
+	MaxRetries    int
 }
 
 type RateLimiter struct {
@@ -35,12 +36,27 @@ type RateLimiter struct {
 	Mutex       sync.Mutex
 }
 
-type Client struct {
-	Config      Config
-	Client      *http.Client
-	FileQueue   chan QueueItem
-	RateLimiter *RateLimiter
-	WorkerPool  *WorkerPool
+func (r *RateLimiter) CanUseAPI() bool {
+	r.Mutex.Lock()
+	defer r.Mutex.Unlock()
+	if r.DailyUsed >= r.DailyLimit || r.MinuteUsed >= r.MinuteLimit {
+		return false
+	}
+	r.MinuteUsed++
+	r.DailyUsed++
+	return true
+}
+
+func (r *RateLimiter) ResetMinuteLimit() {
+	r.Mutex.Lock()
+	r.MinuteUsed = 0
+	r.Mutex.Unlock()
+}
+
+func (r *RateLimiter) ResetDailyLimit() {
+	r.Mutex.Lock()
+	r.DailyUsed = 0
+	r.Mutex.Unlock()
 }
 
 type WorkerPool struct {
@@ -48,101 +64,73 @@ type WorkerPool struct {
 	WaitGroup sync.WaitGroup
 }
 
-func New(cfg Config, client *http.Client, workerCount int) *Client {
-	vtClient := &Client{
-		Config:    cfg,
-		Client:    client,
-		FileQueue: make(chan QueueItem, 100),
-		RateLimiter: &RateLimiter{
-			MinuteLimit: cfg.MinuteLimit,
-			DailyLimit:  cfg.DailyLimit,
-		},
-	}
-
-	// Start the worker pool
-	vtClient.WorkerPool = vtClient.createWorkerPool(workerCount)
-
-	// Start rate limit resets
-	go vtClient.scheduleRateLimitResets()
-
-	return vtClient
+type Client struct {
+	Config      Config
+	Client      *http.Client
+	WorkerPool  *WorkerPool
+	RateLimiter *RateLimiter
 }
 
-func (c *Client) createWorkerPool(workerCount int) *WorkerPool {
-	pool := &WorkerPool{Jobs: make(chan QueueItem, 100)}
+func New(cfg Config, httpClient *http.Client, workerCount int) *Client {
+	c := &Client{
+		Config:      cfg,
+		Client:      httpClient,
+		RateLimiter: &RateLimiter{MinuteLimit: cfg.MinuteLimit, DailyLimit: cfg.DailyLimit},
+		WorkerPool:  &WorkerPool{Jobs: make(chan QueueItem, 100)},
+	}
+
+	// Start workers
 	for i := 0; i < workerCount; i++ {
-		go c.worker(pool)
+		go c.worker()
 	}
-	return pool
-}
 
-// worker processes queue items concurrently
-func (c *Client) worker(pool *WorkerPool) {
-	for job := range pool.Jobs {
-		switch job.ServiceNeeded {
-		case FileUpload:
-			c.uploadFile(job.FilePath, job.BlobName)
-		case FileAnalysis:
-			c.storeAnalysis(job.BlobName, job.VtID)
+	// Start rate limit reset tickers
+	go func() {
+		minTicker := time.NewTicker(time.Minute)
+		dayTicker := time.NewTicker(24 * time.Hour)
+		for {
+			select {
+			case <-minTicker.C:
+				c.RateLimiter.ResetMinuteLimit()
+			case <-dayTicker.C:
+				c.RateLimiter.ResetDailyLimit()
+			}
 		}
-		pool.WaitGroup.Done()
-	}
-}
+	}()
 
-// scheduleRateLimitResets resets API rate limits periodically
-func (c *Client) scheduleRateLimitResets() {
-	tickerMinute := time.NewTicker(1 * time.Minute)
-	tickerDaily := time.NewTicker(24 * time.Hour)
-
-	for {
-		select {
-		case <-tickerMinute.C:
-			c.RateLimiter.resetMinuteLimit()
-		case <-tickerDaily.C:
-			c.RateLimiter.resetDailyLimit()
-		}
-	}
-}
-
-// resetMinuteLimit resets the per-minute API limit
-func (r *RateLimiter) resetMinuteLimit() {
-	r.Mutex.Lock()
-	r.MinuteUsed = 0
-	r.Mutex.Unlock()
-}
-
-// resetDailyLimit resets the daily API limit
-func (r *RateLimiter) resetDailyLimit() {
-	r.Mutex.Lock()
-	r.DailyUsed = 0
-	r.Mutex.Unlock()
-}
-
-// canUseAPI checks if API requests are within limits
-func (r *RateLimiter) canUseAPI() bool {
-	r.Mutex.Lock()
-	defer r.Mutex.Unlock()
-	return r.DailyUsed < r.DailyLimit && r.MinuteUsed < r.MinuteLimit
+	return c
 }
 
 // AddToQueue submits a file for processing
-func (c *Client) AddToQueue(filePath, blobName string) {
-	job := QueueItem{FilePath: filePath, BlobName: blobName, ServiceNeeded: FileUpload}
+func (c *Client) AddToQueue(item QueueItem) {
+	if item.MaxRetries == 0 {
+		item.MaxRetries = 5
+	}
 	c.WorkerPool.WaitGroup.Add(1)
-	c.WorkerPool.Jobs <- job
+	c.WorkerPool.Jobs <- item
 }
 
-// uploadFile sends a file to VirusTotal
-func (c *Client) uploadFile(filePath, blobName string) {
-	if !c.RateLimiter.canUseAPI() {
-		fmt.Println("Rate limit reached. Retrying later.")
-		time.Sleep(10 * time.Second)
-		c.AddToQueue(filePath, blobName) // Re-add to queue
+// worker handles queue items
+func (c *Client) worker() {
+	for job := range c.WorkerPool.Jobs {
+		switch job.ServiceNeeded {
+		case FileUpload:
+			c.uploadFile(job)
+		case FileAnalysis:
+			c.storeAnalysis(job)
+		}
+		c.WorkerPool.WaitGroup.Done()
+	}
+}
+
+// uploadFile safely handles rate limits and re-queues if needed
+func (c *Client) uploadFile(job QueueItem) {
+	if !c.RateLimiter.CanUseAPI() {
+		c.requeue(job)
 		return
 	}
 
-	fmt.Println("Uploading file:", filePath)
-	file, err := os.Open(filePath)
+	file, err := os.Open(job.FilePath)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
 		return
@@ -151,94 +139,86 @@ func (c *Client) uploadFile(filePath, blobName string) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("file", filePath)
+	part, err := writer.CreateFormFile("file", job.FilePath)
 	if err != nil {
 		fmt.Println("Error creating form file:", err)
 		return
 	}
-
-	_, err = io.Copy(part, file)
-	if err != nil {
+	if _, err := io.Copy(part, file); err != nil {
 		fmt.Println("Error copying file:", err)
 		return
 	}
 	writer.Close()
 
-	req, err := http.NewRequest("POST", c.Config.EndPoint+"/files", body)
-	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return
-	}
-
+	req, _ := http.NewRequest("POST", c.Config.EndPoint+"/files", body)
 	req.Header.Set("x-apikey", c.Config.APIKey)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	resp, err := c.Client.Do(req)
-	if err != nil {
-		fmt.Println("Upload failed, retrying...")
-		time.Sleep(5 * time.Second)
-		c.AddToQueue(filePath, blobName)
+	if err != nil || resp.StatusCode != http.StatusOK {
+		fmt.Println("Upload failed, re-queuing:", err)
+		c.requeue(job)
 		return
 	}
 	defer resp.Body.Close()
 
 	var result map[string]interface{}
-	status, err := jsonutil.Unmarshal(resp, req, &result)
-	if err != nil {
-		fmt.Println("JSON Error:", err)
-		return
-	}
-	if status != http.StatusOK {
-		fmt.Println("API Error:", result)
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		fmt.Println("JSON decode error:", err)
+		c.requeue(job)
 		return
 	}
 
 	data, ok := result["data"].(map[string]interface{})
 	if !ok || data["id"] == nil {
 		fmt.Println("Invalid response from VirusTotal")
+		c.requeue(job)
 		return
 	}
-
-	c.RateLimiter.MinuteUsed++
-	c.RateLimiter.DailyUsed++
 
 	vtID := data["id"].(string)
-	c.storeAnalysis(blobName, vtID)
+	os.Remove(job.FilePath)
 
-	os.Remove(filePath)
+	// Schedule analysis
+	c.AddToQueue(QueueItem{
+		BlobName:      job.BlobName,
+		VtID:          vtID,
+		ServiceNeeded: FileAnalysis,
+	})
 }
 
-// storeAnalysis retrieves analysis results from VirusTotal
-func (c *Client) storeAnalysis(blobName, vtID string) {
-	fmt.Println("Fetching analysis for:", blobName)
-
-	req, err := http.NewRequest("GET", c.Config.EndPoint+"/analyses/"+vtID, nil)
-	if err != nil {
-		fmt.Println("Error creating request:", err)
-		return
-	}
-
+// storeAnalysis fetches analysis results
+func (c *Client) storeAnalysis(job QueueItem) {
+	req, _ := http.NewRequest("GET", c.Config.EndPoint+"/analyses/"+job.VtID, nil)
 	req.Header.Set("x-apikey", c.Config.APIKey)
 
 	resp, err := c.Client.Do(req)
-	if err != nil {
-		fmt.Println("Analysis retrieval failed, retrying...")
-		time.Sleep(5 * time.Second)
-		c.AddToQueue("", blobName) // Retry analysis retrieval
+	if err != nil || resp.StatusCode != http.StatusOK {
+		fmt.Println("Analysis fetch failed, re-queuing:", err)
+		c.requeue(job)
 		return
 	}
 	defer resp.Body.Close()
 
 	var result map[string]interface{}
-	status, err := jsonutil.Unmarshal(resp, req, &result)
-	if err != nil {
-		fmt.Println("JSON Error:", err)
-		return
-	}
-	if status != http.StatusOK {
-		fmt.Println("API Error:", result)
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		fmt.Println("JSON decode error:", err)
+		c.requeue(job)
 		return
 	}
 
-	fmt.Println("Analysis completed for", blobName)
+	fmt.Println("Analysis completed for", job.BlobName)
+}
+
+// requeue retries a job with backoff
+func (c *Client) requeue(job QueueItem) {
+	if job.RetryCount >= job.MaxRetries {
+		fmt.Println("Max retries reached for", job.BlobName)
+		return
+	}
+	job.RetryCount++
+	go func() {
+		time.Sleep(time.Duration(job.RetryCount*5) * time.Second) // simple linear backoff
+		c.AddToQueue(job)
+	}()
 }

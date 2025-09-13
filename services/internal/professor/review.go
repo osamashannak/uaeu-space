@@ -140,7 +140,7 @@ func (s *Server) PostReview() http.Handler {
 					ID:     attachment.ID,
 					Height: attachment.Height,
 					Width:  attachment.Width,
-					URL:    utils.FormatBlobURL("attachments", attachment.BlobName, ""),
+					URL:    s.storage.FormatSASURL(attachment.BlobName, ""),
 				}
 			}
 		}
@@ -632,7 +632,9 @@ func (s *Server) UploadReviewAttachment() http.Handler {
 			return
 		}
 
-		safety, err := s.vision.AnalyzeImageSafety(utils.FormatBlobURL("attachments", finalBlobName, ""))
+		blobUrl := s.storage.FormatSASURL(finalBlobName, "")
+
+		safety, err := s.vision.AnalyzeImageSafety(blobUrl)
 
 		attachment := model.ReviewAttachment{
 			ID:        attachmentId,
