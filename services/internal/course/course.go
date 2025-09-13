@@ -174,7 +174,7 @@ func (s *Server) DownloadCourseFile() http.Handler {
 			logger.Debugf("no access token found for ip address %s", ipAddress)
 
 			expiresOn := time.Now().AddDate(0, 3, 0)
-			queryParams, err := s.storage.GenerateSASToken(net.IP(ipAddress), expiresOn)
+			queryParams, err = s.storage.GenerateSASToken(net.ParseIP(ipAddress), expiresOn)
 
 			if err != nil || queryParams == "" {
 				logger.Errorf("failed to generate SAS token for ip address %s: %v", ipAddress, err)
@@ -206,7 +206,7 @@ func (s *Server) DownloadCourseFile() http.Handler {
 			logger.Debugf("access token for ip address %s has expired", ipAddress)
 
 			expiresOn := time.Now().AddDate(0, 3, 0)
-			queryParams, err := s.storage.GenerateSASToken(net.IP(ipAddress), expiresOn)
+			queryParams, err = s.storage.GenerateSASToken(net.IP(ipAddress), expiresOn)
 
 			if err != nil || queryParams == "" {
 				logger.Errorf("failed to generate SAS token for ip address %s: %v", ipAddress, err)
