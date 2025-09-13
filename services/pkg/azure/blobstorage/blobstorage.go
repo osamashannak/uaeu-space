@@ -38,7 +38,6 @@ func New(containerName string) (*BlobStorage, error) {
 	accountKey := os.Getenv("AZURE_STORAGE_ACCESS_KEY")
 
 	credential, err := newAccessTokenCredential(accountName, accountKey)
-
 	if err != nil {
 		return nil, err
 	}
