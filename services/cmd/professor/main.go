@@ -50,7 +50,6 @@ func main() {
 func realMain(ctx context.Context) error {
 	logger := logging.FromContext(ctx)
 
-	var cfg *professor.Config
 	cfg, err := professor.Setup(ctx)
 	if err != nil {
 		return fmt.Errorf("setup.Setup: %w", err)
@@ -66,7 +65,11 @@ func realMain(ctx context.Context) error {
 
 	professorDb := profDB.New(db)
 
+	logger.Info("setting up snowflake generator")
+
 	sfGenerator := snowflake.New(1)
+
+	logger.Info("setting up recaptcha client")
 
 	client, err := recaptcha2.NewClient(ctx)
 
@@ -83,19 +86,29 @@ func realMain(ctx context.Context) error {
 
 	recaptchaClient := recaptcha.New(client, &cfg.Recaptcha)
 
+	logger.Info("setting up perspective client")
+
 	perspectiveClient := perspective.New(&cfg.Perspective)
 
+	logger.Info("setting up vision client")
+
 	visionClient := vision.New(&cfg.Vision)
+
+	logger.Info("setting up translate client")
 
 	googleTranslateClient, _ := translate2.NewClient(ctx)
 
 	translateClient := translate.New(googleTranslateClient)
+
+	logger.Info("setting up blob storage")
 
 	blobStorage, err := blobstorage.New(cfg.Azure.AttachmentsContainer)
 
 	if err != nil {
 		return fmt.Errorf("blobstorage.New: %w", err)
 	}
+
+	logger.Info("setting up professor server")
 
 	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, visionClient, translateClient, blobStorage)
 	if err != nil {

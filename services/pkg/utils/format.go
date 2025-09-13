@@ -2,6 +2,6 @@ package utils
 
 import "fmt"
 
-func FormatBlobURL(containerName, blobName, sasQuery string) string {
-	return fmt.Sprintf("https://uaeuresources.blob.core.windows.net/%s/%s?%s", containerName, blobName, sasQuery)
+func FormatBlobURL(accountClient, containerName, blobName, sasQuery string) string {
+	return fmt.Sprintf("%s/%s/%s?%s", accountClient, containerName, blobName, sasQuery)
 }

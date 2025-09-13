@@ -15,7 +15,7 @@ export const getCoursesList = async () => {
         return undefined;
     }
 
-    return response['courses'] as CourseItem[];
+    return response as CourseItem[];
 }
 
 export const getCourse = async (id: string) => {
@@ -30,7 +30,7 @@ export const getCourse = async (id: string) => {
         return undefined;
     }
 
-    return response['course'] as CourseAPI ?? null;
+    return response as CourseAPI ?? null;
 }
 
 export const uploadFile = async (fileName: string, file: File, courseTag: string): Promise<boolean> => {

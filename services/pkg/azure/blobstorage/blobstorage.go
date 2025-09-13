@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/blob"
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/sas"
+	"github.com/osamashannak/uaeu-space/services/pkg/utils"
 	"net"
 	"os"
 	"time"
@@ -70,27 +71,31 @@ func (s *BlobStorage) CreateObject(ctx context.Context, name, contentType, cache
 	return err
 }
 
-func (s *BlobStorage) generateSASToken(ipAddress net.IP) (string, error) {
-	expiry := time.Now().Add(3 * 30 * 24 * time.Hour)
-
+func (s *BlobStorage) GenerateSASToken(ipAddress net.IP, expiresOn time.Time) (*sas.QueryParameters, error) {
 	permissions := sas.BlobPermissions{
 		Read: true,
 	}
 
-	sasQueryParams, err := sas.BlobSignatureValues{
-		ExpiryTime:    expiry,
-		Protocol:      sas.ProtocolHTTPS,
-		Permissions:   permissions.String(),
+	sasValues := sas.BlobSignatureValues{
 		ContainerName: s.containerName,
+		Permissions:   permissions.String(),
+		ExpiryTime:    expiresOn,
+		Protocol:      sas.ProtocolHTTPS,
 		IPRange: sas.IPRange{
 			Start: ipAddress,
 			End:   ipAddress,
 		},
-	}.SignWithSharedKey(s.credential)
-
-	if err != nil {
-		return "", fmt.Errorf("failed to generate SAS token: %w", err)
 	}
 
-	return sasQueryParams.Encode(), nil
+	queryParams, err := sasValues.SignWithSharedKey(s.credential)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &queryParams, nil
+}
+
+func (s *BlobStorage) FormatSASURL(blobName, queryParams string) string {
+	return utils.FormatBlobURL(s.accountClient.URL(), s.containerName, blobName, queryParams)
 }

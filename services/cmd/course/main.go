@@ -3,9 +3,12 @@ package main
 import (
 	"context"
 	"github.com/osamashannak/uaeu-space/services/internal/course"
+	courseDB "github.com/osamashannak/uaeu-space/services/internal/course/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/server"
+	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
 
 	"fmt"
 	"os/signal"
@@ -38,8 +41,7 @@ func main() {
 func realMain(ctx context.Context) error {
 	logger := logging.FromContext(ctx)
 
-	var cfg course.Config
-	cfg, err := setup(ctx)
+	cfg, err := course.Setup(ctx)
 	if err != nil {
 		return fmt.Errorf("setup.Setup: %w", err)
 	}
@@ -52,9 +54,23 @@ func realMain(ctx context.Context) error {
 	}
 	defer db.Close(ctx)
 
-	repo := database.NewCourseDB(db)
+	courseDb := courseDB.New(db)
 
-	courseServer, err := course.NewServer(cfg, *repo)
+	logger.Info("setting up snowflake generator")
+
+	sfGenerator := snowflake.New(1)
+
+	logger.Info("setting up blob storage")
+
+	blobStorage, err := blobstorage.New(cfg.Azure.MaterialsContainer)
+
+	if err != nil {
+		return fmt.Errorf("blobstorage.New: %w", err)
+	}
+
+	logger.Info("setting up course server")
+
+	courseServer, err := course.NewServer(courseDb, sfGenerator, blobStorage)
 	if err != nil {
 		return fmt.Errorf("publish.NewServer: %w", err)
 	}
@@ -66,14 +82,5 @@ func realMain(ctx context.Context) error {
 
 	logger.Infow("server listening", "port", cfg.Port)
 
-	return srv.ServeHTTP(ctx, courseServer.Routes(ctx))
-}
-
-func setup(ctx context.Context) (course.Config, error) {
-	cfg, err := course.LoadConfig()
-	if err != nil {
-		return course.Config{}, fmt.Errorf("course.LoadConfig: %w", err)
-	}
-
-	return cfg, nil
+	return srv.ServeHTTP(ctx, courseServer.Routes())
 }

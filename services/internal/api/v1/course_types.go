@@ -22,11 +22,10 @@ type UploadFile struct {
 }
 
 type File struct {
-	ID        int    `json:"id"`
-	BlobName  string `json:"blob_name"`
-	Name      string `json:"name"`
-	Type      string `json:"type"`
-	Size      int    `json:"size"`
-	CreatedAt string `json:"created_at"`
-	Downloads int    `json:"downloads"`
+	ID            int64  `json:"id,string"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Size          int    `json:"size"`
+	DownloadCount int    `json:"download_count"`
+	CreatedAt     string `json:"created_at"`
 }

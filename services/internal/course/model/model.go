@@ -6,24 +6,23 @@ type Course struct {
 	Tag   string
 	Name  string
 	Views int
-	Files []CourseFile
 }
 
 type CourseFile struct {
-	Id        int64
-	BlobName  string
-	Name      string
-	Type      string
-	Size      int
-	Visible   bool
-	Reviewed  bool
-	VtReport  *VtReportJson
-	CourseTag string
-	Downloads int
-	CreatedAt time.Time
+	ID            int64
+	BlobName      string
+	Name          string
+	Type          string
+	Size          int
+	Visible       bool
+	Reviewed      bool
+	VtReport      *VTReportJson
+	CourseTag     string
+	DownloadCount int
+	CreatedAt     time.Time
 }
 
-type VtReportJson struct {
+type VTReportJson struct {
 	Malicious        int `json:"malicious"`
 	Suspicious       int `json:"suspicious"`
 	Undetected       int `json:"undetected"`
@@ -32,4 +31,11 @@ type VtReportJson struct {
 	ConfirmedTimeout int `json:"confirmed-timeout"`
 	Failure          int `json:"failure"`
 	TypeUnsupported  int `json:"type-unsupported"`
+}
+
+type FileAccessToken struct {
+	ClientAddress string
+	QueryParams   string
+	ExpiresOn     time.Time
+	CreatedAt     time.Time
 }

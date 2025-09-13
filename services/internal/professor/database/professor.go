@@ -2,6 +2,8 @@ package database
 
 import (
 	"context"
+	"errors"
+	"github.com/jackc/pgx/v5"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/model"
 	"github.com/osamashannak/uaeu-space/services/pkg/utils"
@@ -37,34 +39,26 @@ func (db *ProfessorDB) GetProfessors(ctx context.Context, university string) ([]
 }
 
 func (db *ProfessorDB) GetProfessor(ctx context.Context, email string) (*model.Professor, error) {
-	rows, err := db.Db.Pool.Query(ctx, `SELECT email, name, university, college FROM professor.professor WHERE visible AND email = $1`, email)
+	var prof model.Professor
+
+	err := db.Db.Pool.QueryRow(ctx,
+		`SELECT email, name, university, college 
+		 FROM professor.professor 
+		 WHERE visible AND email = LOWER($1)`, email).
+		Scan(&prof.Email, &prof.Name, &prof.University, &prof.College)
+
 	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	if !rows.Next() {
-		return nil, nil
-	}
-
-	var (
-		profEmail   string
-		profName    string
-		profUni     string
-		profCollege string
-	)
-
-	err = rows.Scan(&profEmail, &profName, &profUni, &profCollege)
-	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
 		return nil, err
 	}
 
-	return &model.Professor{
-		Email:      profEmail,
-		Name:       profName,
-		University: profUni,
-		College:    profCollege,
-	}, nil
+	if err := db.incrementProfessorViews(ctx, email); err != nil {
+		return nil, err
+	}
+
+	return &prof, nil
 }
 
 func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64, email string) (*[]v1.Review, *float64, *[]int64, *bool, error) {
