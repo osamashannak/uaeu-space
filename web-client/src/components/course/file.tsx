@@ -3,6 +3,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import {formatBytes, getIconFromMIME} from "../../utils.tsx";
 import {CourseFileAPI} from "../../typed/course.ts";
 import styles from "../../styles/components/course/file.module.scss";
+import {getDownloadLink} from "../../api/course.ts";
 
 dayjs.extend(relativeTime);
 
@@ -17,7 +18,7 @@ export default function File(props: CourseFileAPI) {
                     <h3 className={styles.fileName}>
                         <a style={{color: "#007fff"}}
                            target="_blank"
-                           href={"https://api.uaeu.space/course/file?id=" + props.id}
+                           href={getDownloadLink(props.id)}
                            rel="noreferrer nofollow"
                            title={props.name}>{props.name}</a>
                     </h3>

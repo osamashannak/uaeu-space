@@ -7,7 +7,7 @@ export const getCoursesList = async () => {
     let response;
 
     try {
-        const request = await fetch(HOST + "/course/all", {
+        const request = await fetch(HOST + "/course/list", {
             cache: "no-cache"
         });
         response = await request.json();
@@ -39,7 +39,7 @@ export const uploadFile = async (fileName: string, file: File, courseTag: string
     form.set("name", fileName);
     form.set("file", file);
 
-    const response = await fetch(HOST + "/course/file", {
+    const response = await fetch(HOST + "/course/upload", {
         method: "POST",
         body: form
     });
@@ -47,4 +47,8 @@ export const uploadFile = async (fileName: string, file: File, courseTag: string
     const data = await response.json();
 
     return data.result === "success";
+}
+
+export const getDownloadLink = (fileId: number) => {
+    return HOST + "/course/download?fileId=" + fileId;
 }

@@ -119,7 +119,7 @@ func (s *Server) DownloadCourseFile() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		fileId := r.URL.Query().Get("id")
+		fileId := r.URL.Query().Get("fileId")
 
 		logger.Debugf("received request to download course file with id: %s", fileId)
 
