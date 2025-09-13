@@ -80,10 +80,13 @@ func (s *BlobStorage) GenerateSASToken(ipAddress net.IP, expiresOn time.Time) (s
 		Permissions:   permissions.String(),
 		ExpiryTime:    expiresOn,
 		Protocol:      sas.ProtocolHTTPS,
-		IPRange: sas.IPRange{
-			Start: ipAddress,
-			End:   ipAddress,
-		},
+	}
+
+	if ip4 := ipAddress.To4(); ip4 != nil {
+		sasValues.IPRange = sas.IPRange{
+			Start: ip4,
+			End:   ip4,
+		}
 	}
 
 	queryParams, err := sasValues.SignWithSharedKey(s.credential)
