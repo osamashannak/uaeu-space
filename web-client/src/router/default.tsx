@@ -11,6 +11,7 @@ import Notifications from "../pages/notifications.tsx";
 import ScheduleMaker from "../pages/schedule_maker.tsx";
 import PageNotFound from "../pages/page_not_found.tsx";
 import Feedback from "../pages/feedback.tsx";
+import {ErrorPage} from "../pages/error_page.tsx";
 
 const Router = createBrowserRouter([
     {
@@ -34,11 +35,11 @@ const Router = createBrowserRouter([
             },
             {
                 path: "professor",
-
                 element: <ProfessorLookup/>
             },
             {
                 path: "professor/:email",
+                errorElement: <ErrorPage/>,
                 element: <Professor/>,
             },
             {
@@ -47,6 +48,7 @@ const Router = createBrowserRouter([
             },
             {
                 path: "course/:tag",
+                errorElement: <ErrorPage/>,
                 element: <Course/>,
             },
             {
