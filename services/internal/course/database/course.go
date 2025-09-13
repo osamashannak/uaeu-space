@@ -41,7 +41,7 @@ func (db *CourseDB) GetCourses(ctx context.Context) ([]v1.CourseInList, error) {
 func (db *CourseDB) GetCourse(ctx context.Context, tag string) (*v1.CourseInList, error) {
 	var course v1.CourseInList
 
-	err := db.Db.Pool.QueryRow(ctx, `SELECT name, tag FROM course.course WHERE tag = $1`, tag).Scan(&course.Name, &course.Tag)
+	err := db.Db.Pool.QueryRow(ctx, `SELECT name, tag FROM course.course WHERE tag = UPPER($1)`, tag).Scan(&course.Name, &course.Tag)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -68,7 +68,7 @@ SELECT
     download_count, 
     created_at 
 FROM course.file f 
-WHERE course_tag = UPPER($1) AND f.visible 
+WHERE course_tag = $1 AND f.visible 
 ORDER BY f.created_at DESC`, tag)
 
 	if err != nil {
