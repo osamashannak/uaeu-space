@@ -6,7 +6,9 @@ on:
       - 'main'
     paths:
       - 'services/cmd/course/**'
+      - 'services/internal/api/**'
       - 'services/internal/course/**'
+      - 'services/internal/middleware/**'
       - 'services/pkg/**'
       - 'services/Dockerfile'
       - 'services/go.mod'
