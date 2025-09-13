@@ -161,8 +161,8 @@ WHERE client_address = $1`, ipAddress).Scan(&accessToken.ClientAddress, &accessT
 
 func (db *CourseDB) InsertAccessToken(ctx context.Context, accessToken *model.FileAccessToken) error {
 	_, err := db.Db.Pool.Exec(ctx, `INSERT INTO 
-    course.access_token (client_address, query_params, expires_on) VALUES ($1, $2, $3)`,
-		accessToken.ClientAddress, accessToken.QueryParams, accessToken.ExpiresOn)
+    course.access_token (client_address, query_params, expires_on, created_at) VALUES ($1, $2, $3, $4)`,
+		accessToken.ClientAddress, accessToken.QueryParams, accessToken.ExpiresOn, accessToken.CreatedAt)
 
 	return err
 }

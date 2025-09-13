@@ -7,6 +7,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob/sas"
 	"github.com/osamashannak/uaeu-space/services/pkg/utils"
 	"net"
+	"net/url"
 	"os"
 	"time"
 
@@ -70,7 +71,7 @@ func (s *BlobStorage) CreateObject(ctx context.Context, name, contentType, cache
 	return err
 }
 
-func (s *BlobStorage) GenerateSASToken(ipAddress net.IP, expiresOn time.Time) (*sas.QueryParameters, error) {
+func (s *BlobStorage) GenerateSASToken(ipAddress net.IP, expiresOn time.Time) (string, error) {
 	permissions := sas.BlobPermissions{
 		Read: true,
 	}
@@ -89,10 +90,18 @@ func (s *BlobStorage) GenerateSASToken(ipAddress net.IP, expiresOn time.Time) (*
 	queryParams, err := sasValues.SignWithSharedKey(s.credential)
 
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &queryParams, nil
+	q := url.Values{}
+	q.Set("sv", queryParams.Version())
+	q.Set("se", queryParams.ExpiryTime().Format(time.RFC3339))
+	q.Set("sip", fmt.Sprintf("%s-%s", queryParams.IPRange().Start, queryParams.IPRange().End))
+	q.Set("sr", string(queryParams.Resource()))
+	q.Set("sp", string(queryParams.Permissions()))
+	q.Set("sig", queryParams.Signature())
+
+	return q.Encode(), nil
 }
 
 func (s *BlobStorage) FormatSASURL(blobName, queryParams string) string {

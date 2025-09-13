@@ -176,7 +176,7 @@ func (s *Server) DownloadCourseFile() http.Handler {
 			expiresOn := time.Now().AddDate(0, 3, 0)
 			queryParams, err := s.storage.GenerateSASToken(net.IP(ipAddress), expiresOn)
 
-			if err != nil || queryParams == nil {
+			if err != nil || queryParams == "" {
 				logger.Errorf("failed to generate SAS token for ip address %s: %v", ipAddress, err)
 				errorResponse := v1.ErrorResponse{
 					Message: "an error occurred. please try again later.",
@@ -188,7 +188,7 @@ func (s *Server) DownloadCourseFile() http.Handler {
 
 			err = s.db.InsertAccessToken(ctx, &model.FileAccessToken{
 				ClientAddress: ipAddress,
-				QueryParams:   queryParams.Encode(),
+				QueryParams:   queryParams,
 				ExpiresOn:     expiresOn,
 				CreatedAt:     time.Now(),
 			})
@@ -208,7 +208,7 @@ func (s *Server) DownloadCourseFile() http.Handler {
 			expiresOn := time.Now().AddDate(0, 3, 0)
 			queryParams, err := s.storage.GenerateSASToken(net.IP(ipAddress), expiresOn)
 
-			if err != nil || queryParams == nil {
+			if err != nil || queryParams == "" {
 				logger.Errorf("failed to generate SAS token for ip address %s: %v", ipAddress, err)
 				errorResponse := v1.ErrorResponse{
 					Message: "an error occurred. please try again later.",
@@ -220,7 +220,7 @@ func (s *Server) DownloadCourseFile() http.Handler {
 
 			err = s.db.UpdateAccessToken(ctx, &model.FileAccessToken{
 				ClientAddress: ipAddress,
-				QueryParams:   queryParams.Encode(),
+				QueryParams:   queryParams,
 				ExpiresOn:     expiresOn,
 			})
 
