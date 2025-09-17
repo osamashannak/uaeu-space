@@ -92,7 +92,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			ON rr.review_id = r.id AND rr.session_id = $1
 		LEFT JOIN professor.review_attachment ra 
 			ON r.attachment = ra.id AND ra.visible
-		WHERE professor_email = $2 AND r.deleted_at IS NULL
+		WHERE professor_email = $2 AND r.deleted_at IS NULL AND r.created_at >= NOW() - INTERVAL '1 year'
 		ORDER BY r.created_at DESC;`, sessionId, email)
 
 	if err != nil {
@@ -193,6 +193,7 @@ func (db *ProfessorDB) GetSimilarProfessors(ctx context.Context, sessions []int6
 			  AND p.visible = true
 			  AND r.visible = true
 			  AND r.deleted_at IS NULL
+			  AND r.created_at >= NOW() - INTERVAL '1 year'
 			GROUP BY p.email, p.name, p.college
 			ORDER BY COUNT(DISTINCT r.session_id) DESC
 			LIMIT 3
@@ -206,6 +207,7 @@ func (db *ProfessorDB) GetSimilarProfessors(ctx context.Context, sessions []int6
 			rTop.content AS review_preview
 		FROM profs p
 		JOIN professor.review r ON r.professor_email = p.email
+   								AND r.created_at >= NOW() - INTERVAL '1 year'
 		LEFT JOIN LATERAL (
 			SELECT r1.content
 			FROM professor.review r1
@@ -213,6 +215,7 @@ func (db *ProfessorDB) GetSimilarProfessors(ctx context.Context, sessions []int6
 			WHERE r1.professor_email = p.email
 			  AND r1.visible = true
 			  AND r1.deleted_at IS NULL
+AND r1.created_at >= NOW() - INTERVAL '1 year'
 			GROUP BY r1.id, r1.content
 			ORDER BY SUM(CASE WHEN rr.value THEN 1 ELSE 0 END) 
 				   - SUM(CASE WHEN rr.value = false THEN 1 ELSE 0 END) DESC,

@@ -118,7 +118,7 @@ func (db *CourseDB) incrementCourseViews(ctx context.Context, tag string) error 
 func (db *CourseDB) GetCourseFileBlobName(ctx context.Context, id string) (*string, error) {
 	var blobName string
 
-	err := db.Db.Pool.QueryRow(ctx, `SELECT blob_name FROM course.file WHERE id = $1`, id).Scan(&blobName)
+	err := db.Db.Pool.QueryRow(ctx, `SELECT blob_name FROM course.file WHERE id = $1 AND visible`, id).Scan(&blobName)
 
 	if err != nil {
 		return nil, err
