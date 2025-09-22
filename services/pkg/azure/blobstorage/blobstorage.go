@@ -56,7 +56,7 @@ func New(containerName string) (*BlobStorage, error) {
 	}, nil
 }
 
-func (s *BlobStorage) CreateObject(ctx context.Context, name string, contentType, cacheControl, encoding *string, contents []byte) error {
+func (s *BlobStorage) CreateObject(ctx context.Context, name string, contentType, cacheControl, encoding, disposition *string, contents []byte) error {
 	if strings.HasPrefix(*contentType, "video") {
 		*contentType = ""
 	}
@@ -67,9 +67,10 @@ func (s *BlobStorage) CreateObject(ctx context.Context, name string, contentType
 		name,
 		contents,
 		&azblob.UploadBufferOptions{HTTPHeaders: &blob.HTTPHeaders{
-			BlobContentEncoding: encoding,
-			BlobContentType:     contentType,
-			BlobCacheControl:    cacheControl,
+			BlobContentType:        contentType,
+			BlobCacheControl:       cacheControl,
+			BlobContentEncoding:    encoding,
+			BlobContentDisposition: disposition,
 		}},
 	)
 

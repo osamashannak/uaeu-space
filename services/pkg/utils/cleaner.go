@@ -27,16 +27,27 @@ func ReviewTextCleaner(text string) string {
 	return normalizedSpaces
 }
 
-func SanitizeFileName(original string, id string) string {
-	ext := strings.ToLower(filepath.Ext(original))
+func SanitizeFileName(original string) string {
+	ext := filepath.Ext(original)
+	base := strings.TrimSuffix(original, ext)
 
-	safeExt := regexp.MustCompile(`^[a-z0-9]+$`)
-	if len(ext) > 1 {
-		cleanExt := strings.TrimPrefix(ext, ".")
-		if safeExt.MatchString(cleanExt) {
-			return id + "." + cleanExt
-		}
+	re := regexp.MustCompile(`[^a-zA-Z0-9 _.-]+`)
+	base = re.ReplaceAllString(base, "_")
+
+	base = strings.Join(strings.Fields(base), " ")
+
+	base = strings.TrimSpace(base)
+
+	if base == "" {
+		base = "file"
 	}
 
-	return id
+	ext = strings.ToLower(ext)
+	reExt := regexp.MustCompile(`[^a-z0-9]+`)
+	ext = reExt.ReplaceAllString(ext, "")
+
+	if ext != "" {
+		return base + "." + ext
+	}
+	return base
 }

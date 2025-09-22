@@ -1,6 +1,7 @@
 package course
 
 import (
+	"fmt"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/course/model"
 	"github.com/osamashannak/uaeu-space/services/internal/middleware"
@@ -156,7 +157,7 @@ func (s *Server) UploadCourseFile() http.Handler {
 
 		fileId := s.generator.NextString()
 
-		blobName := utils.SanitizeFileName(request.FileName, fileId)
+		fileName := utils.SanitizeFileName(request.FileName)
 
 		contentType := http.DetectContentType(request.Contents)
 
@@ -174,8 +175,9 @@ func (s *Server) UploadCourseFile() http.Handler {
 
 		cacheControl := "max-age=31536000, immutable"
 		encoding := "gzip"
+		disposition := fmt.Sprintf("attachment; filename=%s", fileName)
 
-		err = s.storage.CreateObject(ctx, blobName, &contentType, &cacheControl, &encoding, compressedContents)
+		err = s.storage.CreateObject(ctx, fileId, &contentType, &cacheControl, &encoding, &disposition, compressedContents)
 
 		if err != nil {
 			logger.Errorf("failed to upload file to blob storage: %v", err)
@@ -189,8 +191,8 @@ func (s *Server) UploadCourseFile() http.Handler {
 
 		err = s.db.InsertCourseFile(ctx, &model.CourseFile{
 			ID:        fileId,
-			BlobName:  blobName,
-			Name:      request.FileName,
+			BlobName:  fileId,
+			Name:      fileName,
 			Type:      contentType,
 			Size:      len(compressedContents),
 			CourseTag: course.Tag,
