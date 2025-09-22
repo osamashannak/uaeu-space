@@ -11,6 +11,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -165,7 +166,7 @@ func (s *Server) UploadCourseFile() http.Handler {
 			return
 		}
 
-		fileId := s.generator.NextString()
+		fileId := strconv.FormatUint(s.generator.Next(), 10)
 
 		fileName = utils.SanitizeFileName(fileName)
 
