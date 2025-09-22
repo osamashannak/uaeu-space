@@ -135,7 +135,7 @@ func (s *Server) UploadCourseFile() http.Handler {
 			return
 		}
 
-		file, _, err := r.FormFile("file")
+		file, _, err := r.FormFile("contents")
 		if err != nil {
 			http.Error(w, "file is required", http.StatusBadRequest)
 			return
