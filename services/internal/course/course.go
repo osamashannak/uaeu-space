@@ -143,6 +143,18 @@ func (s *Server) UploadCourseFile() http.Handler {
 
 		logger.Debugf("received request to upload course file by session id: %d", profile.SessionId)
 
+		course, err := s.db.GetCourse(ctx, request.Tag)
+
+		if err != nil || course == nil {
+			logger.Debugf("course with tag %s not found: %v", request.Tag, err)
+			errorResponse := v1.ErrorResponse{
+				Message: "invalid course tag",
+				Error:   http.StatusBadRequest,
+			}
+			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+			return
+		}
+
 		fileId := s.generator.NextString()
 
 		blobName := request.FileName + "-" + fileId
@@ -186,7 +198,7 @@ func (s *Server) UploadCourseFile() http.Handler {
 			Name:      request.FileName,
 			Type:      contentType,
 			Size:      len(request.Contents),
-			CourseTag: request.Tag,
+			CourseTag: course.Tag,
 		})
 
 		if err != nil {
