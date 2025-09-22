@@ -8,6 +8,7 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/utils"
 	"net"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/storage/azblob"
@@ -56,6 +57,10 @@ func New(containerName string) (*BlobStorage, error) {
 }
 
 func (s *BlobStorage) CreateObject(ctx context.Context, name string, contentType, cacheControl, encoding *string, contents []byte) error {
+	if strings.HasPrefix(*contentType, "video") {
+		*contentType = ""
+	}
+
 	_, err := s.accountClient.UploadBuffer(
 		ctx,
 		s.containerName,

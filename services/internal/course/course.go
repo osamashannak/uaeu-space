@@ -9,7 +9,6 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/utils"
 	"net"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -157,13 +156,9 @@ func (s *Server) UploadCourseFile() http.Handler {
 
 		fileId := s.generator.NextString()
 
-		blobName := request.FileName + "-" + fileId
+		blobName := utils.SanitizeFileName(request.FileName, fileId)
 
 		contentType := http.DetectContentType(request.Contents)
-
-		if strings.HasPrefix(contentType, "video") {
-			contentType = ""
-		}
 
 		compressedContents, err := utils.CompressData(request.Contents)
 
@@ -197,7 +192,7 @@ func (s *Server) UploadCourseFile() http.Handler {
 			BlobName:  blobName,
 			Name:      request.FileName,
 			Type:      contentType,
-			Size:      len(request.Contents),
+			Size:      len(compressedContents),
 			CourseTag: course.Tag,
 		})
 
