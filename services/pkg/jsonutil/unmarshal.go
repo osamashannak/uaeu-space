@@ -15,16 +15,12 @@ const (
 )
 
 func Unmarshal(w http.ResponseWriter, r *http.Request, data interface{}) (int, error) {
-	return UnmarshalRequest(w, r, data, maxBodyBytes)
-}
-
-func UnmarshalRequest(w http.ResponseWriter, r *http.Request, data interface{}, bodySize int64) (int, error) {
 	if t := r.Header.Get("content-type"); len(t) < 16 || t[:16] != "application/json" {
 		return http.StatusUnsupportedMediaType, fmt.Errorf("content-type is not application/json")
 	}
 
 	defer r.Body.Close()
-	r.Body = http.MaxBytesReader(w, r.Body, bodySize)
+	r.Body = http.MaxBytesReader(w, r.Body, maxBodyBytes)
 
 	d := json.NewDecoder(r.Body)
 	d.DisallowUnknownFields()

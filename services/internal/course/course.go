@@ -8,6 +8,7 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/utils"
+	"io"
 	"net"
 	"net/http"
 	"time"
@@ -128,25 +129,34 @@ func (s *Server) UploadCourseFile() http.Handler {
 			return
 		}
 
-		var request v1.UploadFile
-		code, err := jsonutil.UnmarshalRequest(w, r, &request, 101<<20)
-
+		err := r.ParseMultipartForm(101 << 20) // 101 MB limit
 		if err != nil {
-			logger.Debugf("failed to unmarshal request: %v", err)
-			errorResponse := v1.ErrorResponse{
-				Message: err.Error(),
-				Error:   code,
-			}
-			jsonutil.MarshalResponse(w, code, errorResponse)
+			http.Error(w, "failed to parse multipart form", http.StatusBadRequest)
 			return
 		}
 
+		file, _, err := r.FormFile("file")
+		if err != nil {
+			http.Error(w, "file is required", http.StatusBadRequest)
+			return
+		}
+		defer file.Close()
+
+		contents, err := io.ReadAll(file)
+		if err != nil {
+			http.Error(w, "failed to read file", http.StatusInternalServerError)
+			return
+		}
+
+		tag := r.FormValue("course_tag")
+		fileName := r.FormValue("file_name")
+
 		logger.Debugf("received request to upload course file by session id: %d", profile.SessionId)
 
-		course, err := s.db.GetCourse(ctx, request.Tag)
+		course, err := s.db.GetCourse(ctx, tag)
 
 		if err != nil || course == nil {
-			logger.Debugf("course with tag %s not found: %v", request.Tag, err)
+			logger.Debugf("course with tag %s not found: %v", tag, err)
 			errorResponse := v1.ErrorResponse{
 				Message: "invalid course tag",
 				Error:   http.StatusBadRequest,
@@ -157,11 +167,11 @@ func (s *Server) UploadCourseFile() http.Handler {
 
 		fileId := s.generator.NextString()
 
-		fileName := utils.SanitizeFileName(request.FileName)
+		fileName = utils.SanitizeFileName(fileName)
 
-		contentType := http.DetectContentType(request.Contents)
+		contentType := http.DetectContentType(contents)
 
-		compressedContents, err := utils.CompressData(request.Contents)
+		compressedContents, err := utils.CompressData(contents)
 
 		if err != nil {
 			logger.Errorf("failed to compress file contents: %v", err)
