@@ -35,9 +35,9 @@ export const getCourse = async (id: string) => {
 
 export const uploadFile = async (fileName: string, file: File, courseTag: string): Promise<boolean> => {
     const form = new FormData();
-    form.set("tag", courseTag);
-    form.set("name", fileName);
-    form.set("file", file);
+    form.set("course_tag", courseTag);
+    form.set("file_name", fileName);
+    form.set("contents", file);
 
     const response = await fetch(HOST + "/course/upload", {
         method: "POST",
