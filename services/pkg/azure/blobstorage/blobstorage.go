@@ -55,15 +55,16 @@ func New(containerName string) (*BlobStorage, error) {
 	}, nil
 }
 
-func (s *BlobStorage) CreateObject(ctx context.Context, name, contentType, cacheControl string, contents []byte) error {
+func (s *BlobStorage) CreateObject(ctx context.Context, name string, contentType, cacheControl, encoding *string, contents []byte) error {
 	_, err := s.accountClient.UploadBuffer(
 		ctx,
 		s.containerName,
 		name,
 		contents,
 		&azblob.UploadBufferOptions{HTTPHeaders: &blob.HTTPHeaders{
-			BlobContentType:  &contentType,
-			BlobCacheControl: &cacheControl,
+			BlobContentEncoding: encoding,
+			BlobContentType:     contentType,
+			BlobCacheControl:    cacheControl,
 		}},
 	)
 

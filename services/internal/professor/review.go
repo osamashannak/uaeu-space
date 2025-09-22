@@ -620,8 +620,9 @@ func (s *Server) UploadReviewAttachment() http.Handler {
 
 		attachmentId := int64(s.generator.Next())
 		finalBlobName := fmt.Sprintf("%d%s", attachmentId, extension)
+		cacheControl := "public, max-age=604800"
 
-		err = s.storage.CreateObject(ctx, finalBlobName, contentType, "public, max-age=604800", fileBytes)
+		err = s.storage.CreateObject(ctx, finalBlobName, &contentType, &cacheControl, nil, fileBytes)
 		if err != nil {
 			logger.Errorf("failed to save file to storage: %v", err)
 			errorResponse := v1.ErrorResponse{

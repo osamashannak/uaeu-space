@@ -6,7 +6,7 @@ type CourseInList struct {
 }
 
 type CourseFind struct {
-	Tag string `json:"tag"`
+	Tag string `json:"tag" required:"true"`
 }
 
 type CourseFindResponse struct {
@@ -16,9 +16,9 @@ type CourseFindResponse struct {
 }
 
 type UploadFile struct {
-	Tag      string `json:"tag"`
-	FileName string `json:"file_name"`
-	Contents []byte `json:"contents"`
+	Tag      string `json:"course_tag" required:"true"`
+	FileName string `json:"file_name" required:"true"`
+	Contents []byte `json:"contents" required:"true"`
 }
 
 type File struct {

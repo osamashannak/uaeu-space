@@ -9,7 +9,7 @@ type Course struct {
 }
 
 type CourseFile struct {
-	ID            int64
+	ID            string
 	BlobName      string
 	Name          string
 	Type          string

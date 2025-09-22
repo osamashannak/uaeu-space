@@ -3,11 +3,13 @@ package course
 import (
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/course/model"
+	"github.com/osamashannak/uaeu-space/services/internal/middleware"
 	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/utils"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -110,6 +112,95 @@ func (s *Server) GetCourseList() http.Handler {
 
 func (s *Server) UploadCourseFile() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		logger := logging.FromContext(ctx)
+
+		profile, ok := ctx.Value("profile").(*middleware.Profile)
+
+		if !ok {
+			logger.Debugf("profile not found in context, session missing")
+			errorResponse := v1.ErrorResponse{
+				Message: "session missing",
+				Error:   http.StatusUnauthorized,
+			}
+			jsonutil.MarshalResponse(w, http.StatusUnauthorized, errorResponse)
+			return
+		}
+
+		var request v1.UploadFile
+		code, err := jsonutil.UnmarshalRequest(w, r, &request, 101<<20)
+
+		if err != nil {
+			logger.Debugf("failed to unmarshal request: %v", err)
+			errorResponse := v1.ErrorResponse{
+				Message: err.Error(),
+				Error:   code,
+			}
+			jsonutil.MarshalResponse(w, code, errorResponse)
+			return
+		}
+
+		logger.Debugf("received request to upload course file by session id: %d", profile.SessionId)
+
+		fileId := s.generator.NextString()
+
+		blobName := request.FileName + "-" + fileId
+
+		contentType := http.DetectContentType(request.Contents)
+
+		if strings.HasPrefix(contentType, "video") {
+			contentType = ""
+		}
+
+		compressedContents, err := utils.CompressData(request.Contents)
+
+		if err != nil {
+			logger.Errorf("failed to compress file contents: %v", err)
+			errorResponse := v1.ErrorResponse{
+				Message: "an error occurred. please try again later.",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+
+		cacheControl := "max-age=31536000, immutable"
+		encoding := "gzip"
+
+		err = s.storage.CreateObject(ctx, blobName, &contentType, &cacheControl, &encoding, compressedContents)
+
+		if err != nil {
+			logger.Errorf("failed to upload file to blob storage: %v", err)
+			errorResponse := v1.ErrorResponse{
+				Message: "an error occurred. please try again later.",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+
+		err = s.db.InsertCourseFile(ctx, &model.CourseFile{
+			ID:        fileId,
+			BlobName:  blobName,
+			Name:      request.FileName,
+			Type:      contentType,
+			Size:      len(request.Contents),
+			CourseTag: request.Tag,
+		})
+
+		if err != nil {
+			logger.Errorf("failed to insert course file record to database: %v", err)
+			errorResponse := v1.ErrorResponse{
+				Message: "an error occurred. please try again later.",
+				Error:   http.StatusInternalServerError,
+			}
+			jsonutil.MarshalResponse(w, http.StatusInternalServerError, errorResponse)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+
 	})
 }
 

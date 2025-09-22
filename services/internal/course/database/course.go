@@ -173,3 +173,12 @@ func (db *CourseDB) UpdateAccessToken(ctx context.Context, accessToken *model.Fi
 
 	return err
 }
+
+func (db *CourseDB) InsertCourseFile(ctx context.Context, file *model.CourseFile) error {
+	_, err := db.Db.Pool.Exec(ctx, `INSERT INTO 
+	course.file (id, course_tag, name, type, size, blob_name) 
+	VALUES ($1, $2, $3, $4, $5, $6)`,
+		file.ID, file.CourseTag, file.Name, file.Type, file.Size, file.BlobName)
+
+	return err
+}
