@@ -44,9 +44,7 @@ export const uploadFile = async (fileName: string, file: File, courseTag: string
         body: form
     });
 
-    const data = await response.json();
-
-    return data.result === "success";
+    return response.ok;
 }
 
 export const getDownloadLink = (fileId: number) => {
