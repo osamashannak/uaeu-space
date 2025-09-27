@@ -4,7 +4,6 @@ import {pluralize} from "../../utils.tsx";
 import Review from "./review.tsx";
 import reviewStyles from "../../styles/components/professor/review.module.scss";
 import SortReviews from "./sort_reviews.tsx";
-import ReviewAd from "../advertisement/review_ad.tsx";
 
 
 export default function ReviewSection(props: { professorReviews: ReviewAPI[] }) {
@@ -12,7 +11,6 @@ export default function ReviewSection(props: { professorReviews: ReviewAPI[] }) 
     const reviews = props.professorReviews;
     const reviewCount = reviews.length;
 
-    const adUrl = 'https://static.spaceread.net/ad/88students.jpg';
 
     return (
         <div className={styles.commentsSection}>
@@ -27,10 +25,6 @@ export default function ReviewSection(props: { professorReviews: ReviewAPI[] }) 
 
 
             <div className={reviewStyles.commentsList}>
-
-                {
-                    reviewCount > 1 && <ReviewAd adUrl={adUrl} imageHeight={2251} imageWidth={4000} text={'Get 10% off your next order with code SPACEREAD! '} urlText={"https://wa.me/qr/37BIBC2LRMFRB1"}/>
-                }
 
                 {
                     reviewCount > 0 ?
