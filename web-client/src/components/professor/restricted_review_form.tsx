@@ -22,9 +22,9 @@ import FlaggedModal from "../modal/flagged_modal.tsx";
 
 export default function RestrictedReviewForm(props: { professorEmail: string; canReview: boolean }) {
     const [details, setDetails] = useState<ReviewFormDraft>({
-        score: undefined,
+        score: 5,
         comment: "",
-        positive: undefined,
+        positive: true,
         attachment: undefined,
     });
 
