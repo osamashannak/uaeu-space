@@ -28,6 +28,25 @@ export default defineConfig(({ mode}) => {
         '@': path.resolve(process.cwd(), 'src'),
       },
     },
+    server: {
+      proxy: {
+        // Proxy for the Professor API
+        '/api/professor': {
+          target: 'https://professor.api.spaceread.net',
+          changeOrigin: true,
+          secure: false, // often needed for HTTPS targets
+          rewrite: (path) => path.replace(/^\/api\/professor/, ''),
+        },
+
+        // Proxy for the Course API
+        '/api/course': {
+          target: 'https://course.api.spaceread.net',
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/api\/course/, ''),
+        },
+      },
+    },
     build: {
       emptyOutDir: true,
       cssCodeSplit: true,

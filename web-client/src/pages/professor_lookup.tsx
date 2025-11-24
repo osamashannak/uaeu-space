@@ -2,11 +2,8 @@ import styles from "../styles/pages/professor.module.scss";
 import SearchBox from "../components/searchbox.tsx";
 import UniversitySelector from "../components/professor/university_selector.tsx";
 import {createContext, useEffect, useState} from "react";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import {Helmet} from "@dr.pogodin/react-helmet";
 
-dayjs.extend(relativeTime);
 
 export type GlobalContent = {
     university: string | null,

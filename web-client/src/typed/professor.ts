@@ -35,6 +35,7 @@ export interface ReviewAPI {
     flagged: boolean;
     uaeu_origin: boolean;
     gif?: string;
+    pinned?: boolean;
     attachment?: {
         id: string;
         height: number;

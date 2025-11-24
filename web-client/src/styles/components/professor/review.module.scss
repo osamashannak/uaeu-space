@@ -548,8 +548,6 @@
 }
 
 
-
-
 .popup {
   position: fixed;
   top: 0;
@@ -611,5 +609,15 @@
         }
       }
     }
+  }
+}
+
+.pinned {
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  span {
+    margin-left: 4px;
   }
 }

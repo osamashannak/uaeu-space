@@ -12,6 +12,7 @@ import ScheduleMaker from "../pages/schedule_maker.tsx";
 import PageNotFound from "../pages/page_not_found.tsx";
 import Feedback from "../pages/feedback.tsx";
 import {ErrorPage} from "../pages/error_page.tsx";
+import RestrictedProfessor from "../pages/restricted_professor.tsx";
 
 const Router = createBrowserRouter([
     {
@@ -36,6 +37,11 @@ const Router = createBrowserRouter([
             {
                 path: "professor",
                 element: <ProfessorLookup/>
+            },
+            {
+                path: "professor/jawadh@uaeu.ac.ae",
+                errorElement: <ErrorPage/>,
+                element: <RestrictedProfessor/>,
             },
             {
                 path: "professor/:email",

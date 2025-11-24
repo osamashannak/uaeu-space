@@ -2,7 +2,7 @@ import {useRef, useState} from "react";
 import styles from "../../styles/components/global/rating.module.scss";
 import {addRating, removeRating} from "../../api/professor.ts";
 
-export default function ReviewRating(props: { id: string, likes: number, dislikes: number, self: string | null }) {
+export default function ReviewRating(props: { id: string, likes: number, dislikes: number, self: string | null, restricted: boolean }) {
 
     const [liked, setLiked] = useState<boolean | null>(props.self === "like" ? true : props.self === "dislike" ? false : null);
 
@@ -140,10 +140,12 @@ export default function ReviewRating(props: { id: string, likes: number, dislike
                         <span className={styles.emptyRatingCount}></span>}
                 </div>
             </div>
-            <div className={styles.dislike} title={"Dislike"}>
-                <div id={`dislike-button-${props.id}`} onClick={onDislikeClick} {...dislikeRatingClick(props.id)} className={styles.buttonWrapper}>
+            {!props.restricted && <div className={styles.dislike} title={"Dislike"}>
+                <div id={`dislike-button-${props.id}`} onClick={onDislikeClick} {...dislikeRatingClick(props.id)}
+                     className={styles.buttonWrapper}>
                     {liked === false ?
-                        <svg className={styles.filledRatingIcon} width={20} height={20} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <svg className={styles.filledRatingIcon} width={20} height={20}
+                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path fill="currentColor" fillRule="evenodd"
                                   d="M11.277 19.219A4 4 0 0 0 14.606 21h.213a2 2 0 0 0 1.973-2.329L16.18 15h2.38a3 3 0 0 0 2.942-3.588l-1.2-6A3 3 0 0 0 17.36 3H6a3 3 0 0 0-3 3v8a1 1 0 0 0 1 1h3.93a1 1 0 0 1 .832.445l2.515 3.774ZM7 5v8H5V6a1 1 0 0 1 1-1h1Z"
                                   clipRule="evenodd"/>
@@ -159,7 +161,7 @@ export default function ReviewRating(props: { id: string, likes: number, dislike
                 </div>
                 <div className={styles.ratingCountWrapper}>
                 </div>
-            </div>
+            </div>}
         </div>
     );
 }
