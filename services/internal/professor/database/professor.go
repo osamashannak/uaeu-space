@@ -92,7 +92,7 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 			ON rr.review_id = r.id AND rr.session_id = $1
 		LEFT JOIN professor.review_attachment ra 
 			ON r.attachment = ra.id AND ra.visible
-		WHERE professor_email = $2 AND r.deleted_at IS NULL AND r.created_at >= NOW() - INTERVAL '1 year'
+		WHERE professor_email = $2 AND r.deleted_at IS NULL AND r.created_at >= NOW() - INTERVAL '2 years'
 		ORDER BY r.created_at DESC;`, sessionId, email)
 
 	if err != nil {
@@ -181,48 +181,51 @@ func (db *ProfessorDB) GetProfessorReviews(ctx context.Context, sessionId int64,
 func (db *ProfessorDB) GetSimilarProfessors(ctx context.Context, sessions []int64, professorEmail, university string) ([]v1.SimilarProfessor, error) {
 	rows, err := db.Db.Pool.Query(ctx, `
 				WITH profs AS (
+				SELECT 
+					p.email,
+					p.name,
+					p.college
+				FROM professor.professor p
+				JOIN professor.review r ON r.professor_email = p.email
+				WHERE r.session_id = ANY($1::bigint[]) 
+				AND p.email != $2
+				AND p.university = $3
+				AND p.visible = true
+				AND r.visible = true
+				AND r.deleted_at IS NULL
+				AND r.created_at >= NOW() - INTERVAL '2 years'
+				GROUP BY p.email, p.name, p.college
+				ORDER BY COUNT(DISTINCT r.session_id) DESC
+				LIMIT 3
+			)
 			SELECT 
-				p.email,
-				p.name,
-				p.college
-			FROM professor.professor p
+				p.email AS professor_email,
+				p.name AS professor_name,
+				p.college AS professor_college,
+				COUNT(r.id) AS reviews_count,
+				COALESCE(AVG(r.score), 0) AS score,
+				rTop.content AS review_preview
+			FROM profs p
+			-- FIX: Added visibility and deleted checks here
 			JOIN professor.review r ON r.professor_email = p.email
-			WHERE r.session_id = ANY($1::bigint[]) 
-			  AND p.email != $2
-			  AND p.university = $3
-			  AND p.visible = true
-			  AND r.visible = true
-			  AND r.deleted_at IS NULL
-			  AND r.created_at >= NOW() - INTERVAL '1 year'
-			GROUP BY p.email, p.name, p.college
-			ORDER BY COUNT(DISTINCT r.session_id) DESC
-			LIMIT 3
-		)
-		SELECT 
-			p.email AS professor_email,
-			p.name AS professor_name,
-			p.college AS professor_college,
-			COUNT(r.id) AS reviews_count,
-			COALESCE(AVG(r.score), 0) AS score,
-			rTop.content AS review_preview
-		FROM profs p
-		JOIN professor.review r ON r.professor_email = p.email
-   								AND r.created_at >= NOW() - INTERVAL '1 year'
-		LEFT JOIN LATERAL (
-			SELECT r1.content
-			FROM professor.review r1
-			LEFT JOIN professor.review_rating rr ON rr.review_id = r1.id
-			WHERE r1.professor_email = p.email
-			  AND r1.visible = true
-			  AND r1.deleted_at IS NULL
-AND r1.created_at >= NOW() - INTERVAL '1 year'
-			GROUP BY r1.id, r1.content
-			ORDER BY SUM(CASE WHEN rr.value THEN 1 ELSE 0 END) 
-				   - SUM(CASE WHEN rr.value = false THEN 1 ELSE 0 END) DESC,
-					 LENGTH(r1.content) DESC
-			LIMIT 1
-		) rTop ON true
-		GROUP BY p.email, p.name, p.college, rTop.content;`, sessions, professorEmail, university)
+				AND r.created_at >= NOW() - INTERVAL '2 years'
+				AND r.visible = true  
+				AND r.deleted_at IS NULL 
+			LEFT JOIN LATERAL (
+				SELECT r1.content
+				FROM professor.review r1
+				LEFT JOIN professor.review_rating rr ON rr.review_id = r1.id
+				WHERE r1.professor_email = p.email
+				AND r1.visible = true
+				AND r1.deleted_at IS NULL
+				AND r1.created_at >= NOW() - INTERVAL '2 years'
+				GROUP BY r1.id, r1.content
+				ORDER BY SUM(CASE WHEN rr.value THEN 1 ELSE 0 END) 
+						- SUM(CASE WHEN rr.value = false THEN 1 ELSE 0 END) DESC,
+							LENGTH(r1.content) DESC
+				LIMIT 1
+			) rTop ON true
+			GROUP BY p.email, p.name, p.college, rTop.content;`, sessions, professorEmail, university)
 
 	if err != nil {
 		return nil, err
