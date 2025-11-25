@@ -97,7 +97,9 @@ export default function Professor() {
         }
     }, [professor]);
 
-    if (professor === undefined) {
+    const isStale = email && professor && professor.email.toLowerCase() !== email.toLowerCase();
+
+    if (professor === undefined || isStale) {
         return (
 
             <div className={styles.profPage}>

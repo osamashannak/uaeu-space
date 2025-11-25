@@ -11,12 +11,19 @@ import LoadingSuspense from "../components/loading_suspense.tsx";
 import ReviewSkeleton from "../components/skeletons/review.tsx";
 import BackArrow from "../components/backarrow.tsx";
 import {Helmet} from "@dr.pogodin/react-helmet";
-import RestrictedReviewForm from "../components/professor/restricted_review_form.tsx";
 
 
 const RestrictedReviewSection = lazy(async () => {
     const [moduleExports] = await Promise.all([
         await import("../components/professor/restricted_review_section.tsx"),
+        new Promise(resolve => setTimeout(resolve, 500))
+    ]);
+    return moduleExports;
+});
+
+const RestrictedReviewForm = lazy(async () => {
+    const [moduleExports] = await Promise.all([
+        await import("../components/professor/restricted_review_form.tsx"),
         new Promise(resolve => setTimeout(resolve, 500))
     ]);
     return moduleExports;
@@ -59,9 +66,11 @@ export default function RestrictedProfessor() {
         return () => {
             ac.abort();
         }
-    }, [dispatch, email]);
+    }, [dispatch]);
 
-    if (professor === undefined) {
+    const isStale = professor && professor.email.toLowerCase() !== email.toLowerCase();
+
+    if (professor === undefined || isStale) {
         return (
 
             <div className={styles.profPage}>
