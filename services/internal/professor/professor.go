@@ -52,7 +52,7 @@ func (s *Server) Get() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			errorResponse := v1.ErrorResponse{

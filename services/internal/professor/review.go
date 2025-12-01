@@ -24,7 +24,7 @@ func (s *Server) PostReview() http.Handler {
 
 		logger.Debugf("received request to post review")
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")
@@ -250,7 +250,7 @@ func (s *Server) DeleteReview() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			errorResponse := v1.ErrorResponse{
@@ -451,7 +451,7 @@ func (s *Server) ReportReview() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")
@@ -679,7 +679,7 @@ func (s *Server) AddReviewRating() http.Handler {
 
 		logger.Debugf("received request to add review rating")
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")
@@ -803,7 +803,7 @@ func (s *Server) DeleteReviewRating() http.Handler {
 
 		logger.Debugf("received request to delete review rating")
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")

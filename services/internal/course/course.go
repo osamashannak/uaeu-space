@@ -118,7 +118,7 @@ func (s *Server) UploadCourseFile() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")

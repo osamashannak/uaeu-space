@@ -18,7 +18,7 @@ func (s *Server) PostReply() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			errorResponse := v1.ErrorResponse{
@@ -187,7 +187,7 @@ func (s *Server) DeleteReply() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			errorResponse := v1.ErrorResponse{
@@ -274,7 +274,7 @@ func (s *Server) GetReplies() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 		if !ok {
 			errorResponse := v1.ErrorResponse{
 				Message: "session missing",
@@ -354,7 +354,7 @@ func (s *Server) LikeReply() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			errorResponse := v1.ErrorResponse{
@@ -411,7 +411,7 @@ func (s *Server) UnlikeReply() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 
 		if !ok {
 			errorResponse := v1.ErrorResponse{
@@ -489,7 +489,7 @@ func (s *Server) GetReplyName() http.Handler {
 			return
 		}
 
-		profile, ok := ctx.Value("profile").(*middleware.Profile)
+		profile, ok := middleware.GetProfile(ctx)
 		if !ok {
 			errorResponse := v1.ErrorResponse{
 				Message: "session missing",
