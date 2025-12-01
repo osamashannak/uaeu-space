@@ -41,7 +41,7 @@ func NewServer(db *database.ProfessorDB,
 		perspective:      perspective,
 		vision:           vision,
 		translate:        translate,
-		cache:            cache.New[[]v1.ProfessorInList](24 * time.Hour),
+		cache:            cache.New[[]v1.ProfessorInList](12 * time.Hour),
 		similarProfCache: cache.New[[]v1.SimilarProfessor](7 * 24 * time.Hour),
 		storage:          storage,
 	}, nil
