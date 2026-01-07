@@ -33,7 +33,7 @@ export default function ReviewAd(props: ReviewAdProps) {
         return `${domain}${path}${query}`;
     }
 
-    const advertisement = 'https://uaeuspace.spaceread.net/advertisement';
+    const advertisement = 'https://instagram.com/miza_3d_printing';
 
 
     return (
@@ -70,27 +70,26 @@ export default function ReviewAd(props: ReviewAdProps) {
                         <p dir={"auto"}>
                             {props.text}
                             {props.urlText &&
-                                <a className={reviewStyles.adUrl} rel={"nofollow"} target={"_blank"} role={"link"} href={advertisement}>
+                                <a className={reviewStyles.adUrl} rel={"nofollow"} target={"_blank"} role={"link"}
+                                   href={advertisement}>
                                     <span>{shortenUrl(props.urlText)}</span>
                                 </a>
                             }
                         </p>
 
-                        <div className={reviewStyles.imageList}>
-                            <div className={reviewStyles.attachment} onClick={() => {
-                                window.open(advertisement, "_blank");
-                            }}>
-                                <div
-                                    style={{paddingBottom: `${props.imageHeight / props.imageWidth * 100}%`}}></div>
-                                <div style={{backgroundImage: `url(${props.adUrl})`}}
-                                     className={reviewStyles.imageDiv}>
-                                </div>
-                                <img src={props.adUrl}
-                                     draggable={false}
-                                     width={100}
-                                     height={100}
-                                     alt={""}/>
+                        <div className={reviewStyles.attachment} style={{marginTop: "12px", maxWidth: "75%"}} onClick={() => {
+                            window.open(advertisement, "_blank");
+                        }}>
+                            <div
+                                style={{paddingBottom: `${props.imageHeight / props.imageWidth * 125}%`}}></div>
+                            <div style={{backgroundImage: `url(${props.adUrl})`}}
+                                 className={reviewStyles.imageDiv}>
                             </div>
+                            <img src={props.adUrl}
+                                 draggable={false}
+                                 width={100}
+                                 height={100}
+                                 alt={""}/>
                         </div>
                     </div>
                 </article>
