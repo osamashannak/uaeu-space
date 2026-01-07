@@ -33,7 +33,7 @@ export default function ReviewAd(props: ReviewAdProps) {
         return `${domain}${path}${query}`;
     }
 
-    const advertisement = 'https://www.instagram.com/p/DQ995nDE4yW/';
+    const advertisement = 'https://www.instagram.com/p/DQ995nDE4yW/?utm_source=spaceread&utm_medium=ad&utm_campaign=miza_review';
 
 
     return (
