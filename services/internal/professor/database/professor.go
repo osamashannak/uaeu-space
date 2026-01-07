@@ -258,3 +258,23 @@ func (db *ProfessorDB) incrementProfessorViews(ctx context.Context, email string
 	_, err := db.Db.Pool.Exec(ctx, `UPDATE professor.professor SET views = views + 1 WHERE email = $1`, email)
 	return err
 }
+
+func (db *ProfessorDB) GetProfessorCourses(ctx context.Context, email string) ([]string, error) {
+	query := `SELECT course_tag FROM professor.professor_course_history WHERE email = $1`
+
+	rows, err := db.Db.Pool.Query(ctx, query, email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var courses []string
+	for rows.Next() {
+		var course string
+		if err := rows.Scan(&course); err != nil {
+			return nil, err
+		}
+		courses = append(courses, course)
+	}
+	return courses, nil
+}

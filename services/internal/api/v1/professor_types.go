@@ -16,6 +16,7 @@ type ProfessorResponse struct {
 	SimilarProfessors []SimilarProfessor `json:"similar_professors"`
 	Reviewed          bool               `json:"reviewed"`
 	Score             float64            `json:"score"`
+	Courses           []string           `json:"courses"`
 }
 
 type SimilarProfessor struct {

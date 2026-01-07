@@ -24,6 +24,7 @@ type Server struct {
 	translate        *translate.Translate
 	cache            *cache.Cache[[]v1.ProfessorInList]
 	similarProfCache *cache.Cache[[]v1.SimilarProfessor]
+	courseCache      *cache.Cache[[]string]
 	storage          *blobstorage.BlobStorage
 }
 
@@ -43,6 +44,7 @@ func NewServer(db *database.ProfessorDB,
 		translate:        translate,
 		cache:            cache.New[[]v1.ProfessorInList](12 * time.Hour),
 		similarProfCache: cache.New[[]v1.SimilarProfessor](7 * 24 * time.Hour),
+		courseCache:      cache.New[[]string](7 * 24 * time.Hour),
 		storage:          storage,
 	}, nil
 }
