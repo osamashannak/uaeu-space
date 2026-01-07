@@ -355,3 +355,27 @@ export const removeRating = async (reviewId: string) => {
 
     return true;
 }
+
+export const verifyStudentEmail = async (email: string) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/student/verify", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email}),
+            credentials: "include"
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    if (response.error) {
+        return  undefined;
+    }
+
+    return response.success as boolean;
+}

@@ -83,6 +83,12 @@ export default function Review(review: ReviewAPI) {
                             <div className={styles.recommendation}>
                                 <span>{review.positive ? "Recommend" : "Not recommended"}</span>
                             </div>
+                            {review.course && <div className={styles.course}>
+                                <span>{review.course}</span>
+                            </div>}
+                            {review.grade && <div className={styles.course}>
+                                <span>{review.grade}</span>
+                            </div>}
                         </div>
                     </div>
 

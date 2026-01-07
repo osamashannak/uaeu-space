@@ -1,9 +1,8 @@
-import {FormEvent, useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {ReviewAPI, ReviewFormDraft} from "../../typed/professor.ts";
 import {deleteReview, postReview, uploadImageAttachment} from "../../api/professor.ts";
-import {convertArabicNumeral} from "../../utils.tsx";
 import {LexicalComposer} from "@lexical/react/LexicalComposer";
 import {ContentEditable} from "@lexical/react/LexicalContentEditable";
 import {HistoryPlugin} from "@lexical/react/LexicalHistoryPlugin";
@@ -21,29 +20,70 @@ import EmojiSelector from "../lexical_editor/emoji_selector.tsx";
 import ReviewAttachment from "./review_attachment.tsx";
 import {useModal} from "../provider/modal.tsx";
 import FlaggedModal from "../modal/flagged_modal.tsx";
+import {Rating} from "react-simple-star-rating";
+import StudentVerifyModal from "../modal/student_verify_modal.tsx";
 
-export default function ReviewForm(props: { professorEmail: string; canReview: boolean }) {
+const getStarLabel = (r: number) => {
+    if (r === 0) return "";
+    if (r <= 2) return "Bad";
+    if (r <= 3) return "Okay";
+    if (r <= 4) return "Good";
+    return "Amazing";
+};
+
+export default function ReviewForm(props: { courses: string[], professorEmail: string; canReview: boolean }) {
     const [details, setDetails] = useState<ReviewFormDraft>({
         score: undefined,
         comment: "",
         positive: undefined,
         attachment: undefined,
+        course: "",
+        grade: "",
     });
 
     const [submitting, setSubmitting] = useState<boolean | null | "error">(
         !props.canReview ? null : false
     );
-
+    const [showCourseMenu, setShowCourseMenu] = useState(false);
+    const [mode, setMode] = useState<"GUEST" | "VERIFIED">(localStorage.getItem("is_verified_student") === "true" ? "VERIFIED" : "GUEST");
     const {executeRecaptcha} = useGoogleReCaptcha();
+    const [courseError, setCourseError] = useState(false);
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const dispatch = useDispatch();
-
+    const comboboxRef = useRef<HTMLDivElement>(null);
     const lineRef = useRef<Line | null>(null);
     const reviewRef = useRef<ReviewAPI | null>(null);
 
     const attachmentUploadRef = useRef<Promise<string | undefined> | null>(null);
 
     const modal = useModal();
+
+    const filteredCourses = props.courses.filter(c =>
+        c.toLowerCase().includes(details.course.toLowerCase())
+    );
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (comboboxRef.current && !comboboxRef.current.contains(event.target as Node)) {
+                setShowCourseMenu(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const isVerified = localStorage.getItem("is_verified_student") === "true";
+            if (isVerified && mode === 'GUEST') {
+                setMode('VERIFIED');
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
+    }, [mode]);
 
     useEffect(() => {
         if (submitting === true) {
@@ -101,10 +141,6 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
         );
     }
 
-    function invalidRadioSubmission(event: FormEvent<HTMLInputElement>) {
-        event.currentTarget.setCustomValidity("Please select one of these options.");
-    }
-
     async function ensureAttachmentUploaded(): Promise<string | undefined> {
         const att = details.attachment;
         if (!att) return undefined;
@@ -139,10 +175,13 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                 like_count: 0,
                 text: review.text ?? "",
                 score: review.score,
+                grade: review.grade,
+                course: review.course,
                 positive: review.positive,
                 id: review.id,
                 gif: details.gif ? details.gif.url : undefined,
-                flagged: true
+                flagged: true,
+                verified: review.verified
             })
         );
     }
@@ -160,6 +199,14 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
     }
 
     async function handleSubmit() {
+        if (props.professorEmail.endsWith('@uaeu.ac.ae')) {
+            if (!details.course || !props.courses.includes(details.course)) {
+                setCourseError(true);
+                comboboxRef.current?.scrollIntoView({behavior: 'smooth', block: 'center'});
+                return;
+            }
+        }
+
         setSubmitting(true);
 
         // @ts-expect-error Clarity is not defined
@@ -196,6 +243,8 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
             recaptcha_token: token,
             attachment: details.attachment?.id, // guaranteed uploaded if present
             gif: details.gif ? details.gif.url : undefined,
+            course: details.course,
+            grade: details.grade,
         });
 
         if (!review) {
@@ -256,6 +305,30 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                     event.preventDefault();
                 }}
             >
+
+
+                {!submitting && props.professorEmail.endsWith('@uaeu.ac.ae') && <>
+                    {
+
+                        mode === "GUEST" ?  <div className={styles.privacyNotice} onClick={(e) => {
+                            e.stopPropagation();
+                            modal.openModal(StudentVerifyModal, {
+                                mode,
+                                setMode
+                            })
+                        }}><svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                  d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8s8 3.59 8 8s-3.59 8-8 8"/>
+                        </svg>
+                            <span>Your student status isn't verified. <u>Click here to verify.</u></span>
+                        </div> : <div className={styles.verifiedBadge}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-8.29 13.29a.996.996 0 0 1-1.41 0L5.71 12.7a.996.996 0 1 1 1.41-1.41L10 14.17l6.88-6.88a.996.996 0 1 1 1.41 1.41z"/></svg>
+                            <span>Your student status is verified.</span>
+                        </div>
+
+                    }
+                </>}
+
                 <LexicalComposer
                     initialConfig={{
                         namespace: "lexical",
@@ -328,90 +401,110 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
 
                 {!submitting && <ReviewFormFooter details={details} setDetails={setDetails}/>}
 
-                <div className={submitting ? styles.disabledFormOptions : styles.formOptions}>
-                    <div
-                        onClick={event => {
-                            event.stopPropagation();
-                        }}
-                        className={styles.score}
-                    >
-                        <span className={styles.scoreTitle}>Score: </span>
-                        <div
-                            className={styles.reviewScoreContainer}
-                            onClick={e => {
-                                e.stopPropagation();
-                                const input = document.getElementById("score-field") as HTMLInputElement;
-                                input.focus();
-                            }}
-                        >
-                            <input
-                                required
-                                maxLength={1}
-                                id={"score-field"}
-                                inputMode={"numeric"}
-                                placeholder={"#"}
-                                onChange={event => {
-                                    event.target.value = convertArabicNumeral(event.target.value);
-                                    if (/[^1-5]/g.test(event.target.value)) {
-                                        event.target.setCustomValidity("Enter a number 1-5.");
-                                        event.target.value = event.target.value.replace(/[^1-5]/g, "");
-                                        details.score = undefined;
-                                        setDetails({...details});
-                                    } else {
-                                        event.target.setCustomValidity("");
-                                        details.score = parseInt(event.target.value);
-                                        setDetails({...details});
-                                    }
-                                    event.target.reportValidity();
-                                }}
-                                type={"text"}
-                                className={styles.reviewFormScore}
+
+                {!submitting &&
+                    <div className={styles.inputField}>
+                        <div className={styles.inputTitle}>
+                            Overall rating
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+                            <Rating
+                                onClick={(rate) => setDetails(prev => ({...prev, score: rate}))}
+                                size={32}
+                                transition={true}
+                                fillColor="#049AE5"
+                                emptyColor="#E5E5E5"
                             />
-                            <span> /5</span>
+                            <span style={{fontSize: '14px', fontWeight: 600, color: '#049AE5'}}>
+                                {getStarLabel(details.score || 0)}
+                            </span>
                         </div>
                     </div>
+                }
 
-                    <ul
-                        className={styles.reviewFormPositivityList}
-                        onClick={event => {
-                            event.stopPropagation();
-                        }}
-                    >
-                        <li>
-                            <label>
-                                <input
-                                    required
-                                    id={"main-rec-radio"}
-                                    onChange={() => {
-                                        details.positive = true;
-                                        setDetails({...details});
-                                    }}
-                                    onInvalid={invalidRadioSubmission}
-                                    type="radio"
-                                    className={styles.radioOne}
-                                    name="recommendation"
-                                    value="positive"
-                                />
-                                Recommend
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input
-                                    onChange={() => {
-                                        details.positive = false;
-                                        setDetails({...details});
-                                    }}
-                                    type="radio"
-                                    className={styles.radioTwo}
-                                    name="recommendation"
-                                    value="negative"
-                                />
-                                Do not recommend
-                            </label>
-                        </li>
-                    </ul>
+                {props.professorEmail.endsWith('@uaeu.ac.ae') && !submitting && <div className={styles.courseDetails}>
+                    <div ref={comboboxRef} className={styles.comboboxWrapper}>
+                        <label className={styles.inputTitle}>Course taken</label>
+                        <input
+                            type="text"
+                            className={styles.comboboxInput}
+                            placeholder="e.g. ACCT 1101"
+                            value={details.course}
+                            onChange={(e) => {
+                                setDetails(prev => ({...prev, course: e.target.value.toUpperCase()}));
+                                setShowCourseMenu(true);
+                            }}
+                            onFocus={() => setShowCourseMenu(true)}
+                        />
+
+                        {courseError && (
+                            <div className={styles.errorMessage}>Please select a course.</div>
+                        )}
+
+                        {showCourseMenu && (
+                            <div className={styles.comboboxMenu}>
+                                {filteredCourses.length > 0 ? (
+                                    filteredCourses.map((c) => (
+                                        <div
+                                            key={c}
+                                            className={styles.comboboxItem}
+                                            onClick={() => {
+                                                setDetails(prev => ({...prev, course: c}));
+                                                setShowCourseMenu(false);
+                                            }}
+                                        >
+                                            {c}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className={styles.noResults}>
+                                        No matches.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className={styles.inputField}>
+                        <label className={styles.inputTitle}>Grade received (optional)</label>
+                        <div className={styles.selectContainer}>
+                            <select className={styles.nativeSelect} value={details.grade}
+                                    onChange={(e) => {
+                                        setDetails(prev => ({...prev, grade: e.target.value}));
+                                    }}>
+                                <option value=""></option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="F">F</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>}
+
+                <div className={styles.inputField}>
+                    <label className={styles.inputTitle}>Would you recommend?</label>
+
+                    <div className={styles.recommendGroup}>
+                        <button
+                            type="button" // Prevent form submission
+                            onClick={() => setDetails(prev => ({...prev, positive: true}))}
+                            className={details.positive === true ? styles.btnYesActive : styles.recommendBtn}
+                        >
+                            <span>👍</span> Yes
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => setDetails(prev => ({...prev, positive: false}))}
+                            className={details.positive === false ? styles.btnNoActive : styles.recommendBtn}
+                        >
+                            <span>👎</span> No
+                        </button>
+                    </div>
                 </div>
+
 
                 <div className={styles.submitButtonWrapper}>
                     <div
@@ -426,23 +519,6 @@ export default function ReviewForm(props: { professorEmail: string; canReview: b
                         onClick={async event => {
                             event.stopPropagation();
                             if (submitting || !props.canReview) return;
-                            if (!formFilled()) {
-                                const invalidFields = Array.from(document.querySelectorAll("input:invalid"));
-                                const score = invalidFields.find(field => field.id === "score-field");
-
-                                if (score) {
-                                    // @ts-expect-error types are not up-to-date
-                                    score.reportValidity();
-                                    return;
-                                }
-
-                                if (invalidFields.length > 1) {
-                                    // @ts-expect-error types are not up-to-date
-                                    invalidFields[0].reportValidity();
-                                }
-
-                                return;
-                            }
                             await handleSubmit();
                         }}
                     >

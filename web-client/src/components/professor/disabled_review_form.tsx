@@ -78,52 +78,6 @@ export default function DisabledReviewForm() {
                     </div>
                 </div>
 
-                <div className={styles.disabledFormOptions}>
-                    <div
-                        onClick={event => {
-                            event.stopPropagation();
-                        }}
-                        className={styles.score}>
-                        <span style={{marginRight: "7.5px", fontWeight: 500}}>Score: </span>
-                        <div className={styles.reviewScoreContainer}>
-                            <input
-                                required maxLength={1}
-                                id={"score-field"}
-                                inputMode={"numeric"}
-                                placeholder={"#"}
-                                type={"text"}
-                                className={styles.reviewFormScore}/>
-                            <span> /5</span>
-                        </div>
-                    </div>
-
-                    <ul className={styles.reviewFormPositivityList}
-                        onClick={event => {
-                            event.stopPropagation();
-                        }}>
-                        <li>
-                            <label>
-                                <input required
-                                       id={"main-rec-radio"}
-                                       type="radio"
-                                       className={styles.radioOne}
-                                       name="recommendation"
-                                       value="positive"/>
-                                Recommend
-                            </label>
-                        </li>
-                        <li>
-                            <label>
-                                <input
-                                    type="radio"
-                                    className={styles.radioTwo}
-                                    name="recommendation"
-                                    value="negative"/>
-                                Do not recommend
-                            </label>
-                        </li>
-                    </ul>
-                </div>
 
                 <div className={styles.submitButtonWrapper}>
                     <div title={"Post"}
