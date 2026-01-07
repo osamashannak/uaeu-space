@@ -33,7 +33,7 @@ export default function ReviewAd(props: ReviewAdProps) {
         return `${domain}${path}${query}`;
     }
 
-    const advertisement = 'https://instagram.com/miza_3d_printing';
+    const advertisement = 'https://www.instagram.com/p/DQ995nDE4yW/';
 
 
     return (
