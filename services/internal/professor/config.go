@@ -2,6 +2,7 @@ package professor
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/vision"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
@@ -15,6 +16,7 @@ type Config struct {
 	Port        string `env:"PORT"`
 	Database    database.Config
 	Azure       blobstorage.Config
+	AWS         aws.Config
 	Vision      vision.Config
 	Recaptcha   recaptcha.Config
 	Perspective perspective.Config

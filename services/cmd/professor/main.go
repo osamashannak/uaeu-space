@@ -4,6 +4,7 @@ import (
 	recaptcha2 "cloud.google.com/go/recaptchaenterprise/v2/apiv1"
 	translate2 "cloud.google.com/go/translate"
 	"context"
+	"github.com/aws/aws-sdk-go-v2/service/sesv2"
 	"github.com/joho/godotenv"
 	"github.com/osamashannak/uaeu-space/services/internal/professor"
 	profDB "github.com/osamashannak/uaeu-space/services/internal/professor/database"
@@ -108,9 +109,11 @@ func realMain(ctx context.Context) error {
 		return fmt.Errorf("blobstorage.New: %w", err)
 	}
 
+	sesClient := sesv2.NewFromConfig(cfg.AWS)
+
 	logger.Info("setting up professor server")
 
-	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, visionClient, translateClient, blobStorage)
+	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, visionClient, translateClient, blobStorage, sesClient)
 	if err != nil {
 		return fmt.Errorf("publish.NewServer: %w", err)
 	}

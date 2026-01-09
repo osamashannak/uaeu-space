@@ -31,7 +31,7 @@ const getStarLabel = (r: number) => {
     return "Amazing";
 };
 
-export default function ReviewForm(props: { courses: string[], professorEmail: string; canReview: boolean }) {
+export default function ReviewForm(props: { courses: string[] | null, professorEmail: string; canReview: boolean }) {
     const [details, setDetails] = useState<ReviewFormDraft>({
         score: undefined,
         comment: "",
@@ -58,7 +58,9 @@ export default function ReviewForm(props: { courses: string[], professorEmail: s
 
     const modal = useModal();
 
-    const filteredCourses = props.courses.filter(c =>
+    const courses = props.courses || [];
+
+    const filteredCourses = courses.filter(c =>
         c.toLowerCase().includes(details.course.toLowerCase())
     );
 
@@ -200,7 +202,9 @@ export default function ReviewForm(props: { courses: string[], professorEmail: s
 
     async function handleSubmit() {
         if (props.professorEmail.endsWith('@uaeu.ac.ae')) {
-            if (!details.course || !props.courses.includes(details.course)) {
+            const courseRegex = /^[A-Z]{4}\s?\d{3}$/;
+
+            if (!details.course || !courseRegex.test(details.course.trim())) {
                 setCourseError(true);
                 comboboxRef.current?.scrollIntoView({behavior: 'smooth', block: 'center'});
                 return;
@@ -428,7 +432,7 @@ export default function ReviewForm(props: { courses: string[], professorEmail: s
                         <input
                             type="text"
                             className={styles.comboboxInput}
-                            placeholder="e.g. ACCT 1101"
+                            placeholder="e.g. MATH110"
                             value={details.course}
                             onChange={(e) => {
                                 setDetails(prev => ({...prev, course: e.target.value.toUpperCase()}));
