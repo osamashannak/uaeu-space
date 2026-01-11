@@ -379,3 +379,27 @@ export const verifyStudentEmail = async (email: string) => {
 
     return response.success as boolean;
 }
+
+export const submitOTP = async (email: string, otp: string) => {
+    let response;
+
+    try {
+        const request = await fetch(HOST + "/student/verify/submit", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email, otp}),
+            credentials: "include"
+        });
+        response = await request.json();
+    } catch (error) {
+        return undefined;
+    }
+
+    if (response.error) {
+        return  undefined;
+    }
+
+    return response.success as boolean;
+}

@@ -23,6 +23,7 @@ import FlaggedModal from "../modal/flagged_modal.tsx";
 import {Rating} from "react-simple-star-rating";
 import StudentVerifyModal from "../modal/student_verify_modal.tsx";
 
+// Helper to calculate star label
 const getStarLabel = (r: number) => {
     if (r === 0) return "";
     if (r <= 2) return "Bad";
@@ -47,7 +48,9 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
     const [showCourseMenu, setShowCourseMenu] = useState(false);
     const [mode, setMode] = useState<"GUEST" | "VERIFIED">(localStorage.getItem("is_verified_student") === "true" ? "VERIFIED" : "GUEST");
     const {executeRecaptcha} = useGoogleReCaptcha();
-    const [courseError, setCourseError] = useState(false);
+
+    const [activeError, setActiveError] = useState<string | null>(null);
+
     const commentRef = useRef<LexicalEditor | null | undefined>(null);
     const dispatch = useDispatch();
     const comboboxRef = useRef<HTMLDivElement>(null);
@@ -64,13 +67,16 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
         c.toLowerCase().includes(details.course.toLowerCase())
     );
 
+    const clearError = () => {
+        if (activeError) setActiveError(null);
+    };
+
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (comboboxRef.current && !comboboxRef.current.contains(event.target as Node)) {
                 setShowCourseMenu(false);
             }
         }
-
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
@@ -82,10 +88,15 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                 setMode('VERIFIED');
             }
         };
-
         window.addEventListener("storage", handleStorageChange);
         return () => window.removeEventListener("storage", handleStorageChange);
     }, [mode]);
+
+    useEffect(() => {
+        if (details.attachment && activeError === 'comment') {
+            setActiveError(null);
+        }
+    }, [details.attachment, activeError]);
 
     useEffect(() => {
         if (submitting === true) {
@@ -134,19 +145,10 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
         }
     }, [details.attachment?.src])
 
-    function formFilled() {
-        return (
-            ((details.comment && details.comment.trim() && details.comment.length <= 350) ||
-                details.attachment) &&
-            details.score &&
-            details.positive !== undefined
-        );
-    }
-
     async function ensureAttachmentUploaded(): Promise<string | undefined> {
         const att = details.attachment;
         if (!att) return undefined;
-        if (att.id && att.id !== "UPLOADING") return att.id; // already uploaded
+        if (att.id && att.id !== "UPLOADING") return att.id;
         const p = attachmentUploadRef.current;
         if (!p) return undefined;
         return await p;
@@ -154,14 +156,11 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
 
     function finalizeSubmission() {
         const review = reviewRef.current;
-
         if (!review) {
             setSubmitting("error");
             return;
         }
-
         setSubmitting(null);
-
         dispatch(
             addReview({
                 uaeu_origin: review.uaeu_origin,
@@ -191,31 +190,51 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
     function editReview() {
         const review = reviewRef.current;
         if (!review) return;
-
         (async () => {
             await deleteReview(review.id);
         })()
-
         reviewRef.current = null;
         setSubmitting(false);
     }
 
     async function handleSubmit() {
-        if (props.professorEmail.endsWith('@uaeu.ac.ae')) {
-            const courseRegex = /^[A-Z]{4}\s?\d{3}$/;
+        setActiveError(null);
+        let firstErrorField = null;
 
+        const hasText = details.comment && details.comment.trim().length > 0;
+        const hasAttachment = !!details.attachment;
+        if (!hasText && !hasAttachment) {
+            firstErrorField = 'comment';
+        }
+
+        if (!firstErrorField && !details.score) {
+            firstErrorField = 'score';
+        }
+
+        if (!firstErrorField && props.professorEmail.endsWith('@uaeu.ac.ae')) {
+            const courseRegex = /^[A-Z]{4}\d{3}$/;
             if (!details.course || !courseRegex.test(details.course.trim())) {
-                setCourseError(true);
-                comboboxRef.current?.scrollIntoView({behavior: 'smooth', block: 'center'});
-                return;
+                firstErrorField = 'course';
             }
+        }
+
+        if (!firstErrorField && details.positive === undefined) {
+            firstErrorField = 'positive';
+        }
+
+        if (firstErrorField) {
+            setActiveError(firstErrorField);
+
+            const element = document.getElementById(`field-${firstErrorField}`);
+            element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            return;
         }
 
         setSubmitting(true);
 
         // @ts-expect-error Clarity is not defined
         clarity("set", "ReviewSubmitted", "true");
-
         window.scrollTo(0, 0);
 
         if (details.attachment) {
@@ -245,7 +264,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
             positive: details.positive!,
             professor_email: props.professorEmail,
             recaptcha_token: token,
-            attachment: details.attachment?.id, // guaranteed uploaded if present
+            attachment: details.attachment?.id,
             gif: details.gif ? details.gif.url : undefined,
             course: details.course,
             grade: details.grade,
@@ -269,7 +288,6 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
         }
 
         finalizeSubmission();
-
     }
 
     if (submitting === null) {
@@ -309,11 +327,8 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                     event.preventDefault();
                 }}
             >
-
-
                 {!submitting && props.professorEmail.endsWith('@uaeu.ac.ae') && <>
                     {
-
                         mode === "GUEST" ?  <div className={styles.privacyNotice} onClick={(e) => {
                             e.stopPropagation();
                             modal.openModal(StudentVerifyModal, {
@@ -329,7 +344,6 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-8.29 13.29a.996.996 0 0 1-1.41 0L5.71 12.7a.996.996 0 1 1 1.41-1.41L10 14.17l6.88-6.88a.996.996 0 1 1 1.41 1.41z"/></svg>
                             <span>Your student status is verified.</span>
                         </div>
-
                     }
                 </>}
 
@@ -347,7 +361,10 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                         onError: error => console.log(error),
                     }}
                 >
-                    <div onClick={() => commentRef.current?.focus()}>
+                    <div style={{ position: 'relative' }} onClick={() => commentRef.current?.focus()}>
+
+                        {activeError === 'comment' && <div className={styles.errorTooltip}>Please write a review</div>}
+
                         <div className={styles.postEditor}>
                             <CustomPlainTextPlugin
                                 placeholder={<div className={styles.postPlaceholder}>What was your
@@ -382,38 +399,43 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                                         ...prevDetails,
                                         comment: f,
                                     }));
+
+                                    if(f.trim().length > 0) clearError();
                                 }}
                             />
                         </div>
 
                         <div className={lengthStyle}>
                             <div>
-                <span>
-                  {[...(details.comment ?? "").trim()].length > 0
-                      ? [...details.comment].length
-                      : 0}
-                </span>
+                                <span>
+                                {[...(details.comment ?? "").trim()].length > 0
+                                    ? [...details.comment].length
+                                    : 0}
+                                </span>
                                 <span>/350</span>
                             </div>
                         </div>
                     </div>
 
                     <ReviewAttachment details={details} setDetails={setDetails}/>
-
                     <EmojiSelector/>
                 </LexicalComposer>
 
                 {!submitting && <ReviewFormFooter details={details} setDetails={setDetails}/>}
 
-
                 {!submitting &&
-                    <div className={styles.inputField}>
+                    <div className={styles.inputField} style={{ position: 'relative' }}>
+                        {activeError === 'score' && <div className={styles.errorTooltip}>Rating required</div>}
+
                         <div className={styles.inputTitle}>
                             Overall rating
                         </div>
                         <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
                             <Rating
-                                onClick={(rate) => setDetails(prev => ({...prev, score: rate}))}
+                                onClick={(rate) => {
+                                    setDetails(prev => ({...prev, score: rate}));
+                                    clearError();
+                                }}
                                 size={32}
                                 transition={true}
                                 fillColor="#049AE5"
@@ -427,7 +449,14 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                 }
 
                 {props.professorEmail.endsWith('@uaeu.ac.ae') && !submitting && <div className={styles.courseDetails}>
-                    <div ref={comboboxRef} className={styles.comboboxWrapper}>
+                    <div ref={comboboxRef} className={styles.comboboxWrapper} style={{ position: 'relative' }}>
+
+                        {activeError === 'course' && (
+                            <div className={styles.errorTooltip}>
+                                Must be 4 letters & 3 numbers (e.g. MATH110)
+                            </div>
+                        )}
+
                         <label className={styles.inputTitle}>Course taken</label>
                         <input
                             type="text"
@@ -437,13 +466,10 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                             onChange={(e) => {
                                 setDetails(prev => ({...prev, course: e.target.value.toUpperCase()}));
                                 setShowCourseMenu(true);
+                                clearError();
                             }}
                             onFocus={() => setShowCourseMenu(true)}
                         />
-
-                        {courseError && (
-                            <div className={styles.errorMessage}>Please select a course.</div>
-                        )}
 
                         {showCourseMenu && (
                             <div className={styles.comboboxMenu}>
@@ -487,13 +513,18 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                     </div>
                 </div>}
 
-                <div className={styles.inputField}>
+                <div className={styles.inputField} style={{ position: 'relative' }}>
+
+                    {activeError === 'positive' && <div className={styles.errorTooltip}>Please select an option</div>}
+
                     <label className={styles.inputTitle}>Would you recommend?</label>
 
                     <div className={styles.recommendGroup}>
                         <button
-                            type="button" // Prevent form submission
-                            onClick={() => setDetails(prev => ({...prev, positive: true}))}
+                            type="button"
+                            onClick={() => {
+                                setDetails(prev => ({...prev, positive: true}));
+                            }}
                             className={details.positive === true ? styles.btnYesActive : styles.recommendBtn}
                         >
                             <span>👍</span> Yes
@@ -501,7 +532,9 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
 
                         <button
                             type="button"
-                            onClick={() => setDetails(prev => ({...prev, positive: false}))}
+                            onClick={() => {
+                                setDetails(prev => ({...prev, positive: false}));
+                            }}
                             className={details.positive === false ? styles.btnNoActive : styles.recommendBtn}
                         >
                             <span>👎</span> No
@@ -516,9 +549,8 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                         className={
                             submitting
                                 ? styles.veryDisabledFormSubmit
-                                : formFilled()
-                                    ? styles.enabledFormSubmit
-                                    : styles.disabledFormSubmit
+                                // Change: We allow the button to be clicked even if invalid, so we can show tooltips
+                                : styles.enabledFormSubmit
                         }
                         onClick={async event => {
                             event.stopPropagation();

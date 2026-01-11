@@ -1,42 +1,66 @@
 package ses
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
-	"encoding/hex"
+	"embed"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sesv2"
 	"github.com/aws/aws-sdk-go-v2/service/sesv2/types"
+	"html/template"
+	"math/big"
 )
+
+//go:embed templates/*.html
+var templateFS embed.FS
 
 type Client struct {
 	sesClient *sesv2.Client
 	fromEmail string
+	tmpl      *template.Template
 }
 
-func NewClient(ctx context.Context, region, fromEmail string) (*Client, error) {
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(region))
+func New(ctx context.Context, cfg *aws.Config, fromEmail string) (*Client, error) {
+	awsCfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(cfg.Region))
 	if err != nil {
-		return nil, fmt.Errorf("unable to load SDK config: %w", err)
+		return nil, err
+	}
+
+	t, err := template.ParseFS(templateFS, "templates/verification.html")
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse email template: %w", err)
 	}
 
 	return &Client{
-		sesClient: sesv2.NewFromConfig(cfg),
+		sesClient: sesv2.NewFromConfig(awsCfg),
 		fromEmail: fromEmail,
+		tmpl:      t,
 	}, nil
 }
 
-func (c *Client) GenerateSecureToken() (string, error) {
-	b := make([]byte, 32)
-	if _, err := rand.Read(b); err != nil {
+func (c *Client) GenerateOTP() (string, error) {
+	n, err := rand.Int(rand.Reader, big.NewInt(1000000))
+	if err != nil {
 		return "", err
 	}
-	return hex.EncodeToString(b), nil
+	return fmt.Sprintf("%04d", n), nil
 }
 
-func (c *Client) SendVerificationEmail(ctx context.Context, toEmail, link string) error {
+func (c *Client) SendVerificationEmail(ctx context.Context, toEmail, otp string) error {
+	data := struct {
+		OTP string
+	}{
+		OTP: otp,
+	}
+
+	var body bytes.Buffer
+	if err := c.tmpl.Execute(&body, data); err != nil {
+		return fmt.Errorf("failed to execute template: %w", err)
+	}
+
 	input := &sesv2.SendEmailInput{
 		FromEmailAddress: aws.String(c.fromEmail),
 		Destination: &types.Destination{
@@ -45,12 +69,11 @@ func (c *Client) SendVerificationEmail(ctx context.Context, toEmail, link string
 		Content: &types.EmailContent{
 			Simple: &types.Message{
 				Subject: &types.Content{
-					Data: aws.String("Verify your SpaceRead Account"),
+					Data: aws.String(fmt.Sprintf("%s is your SpaceRead verification code", otp)),
 				},
 				Body: &types.Body{
 					Html: &types.Content{
-						// todo email template
-						Data: aws.String(fmt.Sprintf(`%s`, link)),
+						Data: aws.String(body.String()),
 					},
 				},
 			},

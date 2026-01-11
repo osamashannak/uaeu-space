@@ -1,7 +1,6 @@
 package professor
 
 import (
-	"github.com/aws/aws-sdk-go-v2/service/sesv2"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/middleware"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/database"
@@ -11,6 +10,7 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/translate"
+	"github.com/osamashannak/uaeu-space/services/pkg/ses"
 	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
 	"net/http"
 	"time"
@@ -27,7 +27,7 @@ type Server struct {
 	similarProfCache *cache.Cache[[]v1.SimilarProfessor]
 	courseCache      *cache.Cache[[]string]
 	storage          *blobstorage.BlobStorage
-	sesClient        *sesv2.Client
+	sesClient        *ses.Client
 }
 
 func NewServer(db *database.ProfessorDB,
@@ -37,7 +37,7 @@ func NewServer(db *database.ProfessorDB,
 	vision *vision.AzureVision,
 	translate *translate.Translate,
 	storage *blobstorage.BlobStorage,
-	sesClient *sesv2.Client) (*Server, error) {
+	sesClient *ses.Client) (*Server, error) {
 	return &Server{
 		db:               db,
 		generator:        generator,
@@ -77,8 +77,8 @@ func (s *Server) Routes() http.Handler {
 	mux.Handle("GET /feedback/new", middleware.Gateway(s.NewFeedback(), *s.db.Db, *s.generator))
 	mux.Handle("POST /feedback", s.Feedback())
 
-	mux.Handle("POST /verify/request", s.RequestEmailVerification())
-	mux.Handle("POST /verify/token", s.VerifyToken())
+	mux.Handle("POST /student/verify", s.RequestEmailVerification())
+	mux.Handle("POST /student/confirm", s.VerifyOTP())
 
 	return middleware.CORS(mux)
 }

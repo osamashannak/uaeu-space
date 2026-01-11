@@ -131,3 +131,12 @@ type Reply struct {
 type GetRepliesResponse struct {
 	Replies []Reply `json:"replies"`
 }
+
+type StudentVerifyRequest struct {
+	Email string `json:"email"`
+}
+
+type StudentConfirmRequest struct {
+	OTP   string `json:"otp"`
+	Email string `json:"email"`
+}

@@ -18,6 +18,11 @@ type Profile struct {
 	SessionId int64
 }
 
+type Cache interface {
+	GetSession(ctx context.Context, token string) (*int64, error)
+	SetSession(ctx context.Context, token string, id int64) error
+}
+
 const (
 	cookieName   = "gid"
 	cookieDomain = ".spaceread.net"
