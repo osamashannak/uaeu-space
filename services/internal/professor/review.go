@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
-	"github.com/osamashannak/uaeu-space/services/internal/middleware"
 	"github.com/osamashannak/uaeu-space/services/internal/professor/model"
 	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
@@ -24,7 +23,7 @@ func (s *Server) PostReview() http.Handler {
 
 		logger.Debugf("received request to post review")
 
-		profile, ok := middleware.GetProfile(ctx)
+		profile, ok := s.gateway.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")
@@ -250,7 +249,7 @@ func (s *Server) DeleteReview() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := middleware.GetProfile(ctx)
+		profile, ok := s.gateway.GetProfile(ctx)
 
 		if !ok {
 			errorResponse := v1.ErrorResponse{
@@ -451,7 +450,7 @@ func (s *Server) ReportReview() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := middleware.GetProfile(ctx)
+		profile, ok := s.gateway.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")
@@ -679,7 +678,7 @@ func (s *Server) AddReviewRating() http.Handler {
 
 		logger.Debugf("received request to add review rating")
 
-		profile, ok := middleware.GetProfile(ctx)
+		profile, ok := s.gateway.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")
@@ -803,7 +802,7 @@ func (s *Server) DeleteReviewRating() http.Handler {
 
 		logger.Debugf("received request to delete review rating")
 
-		profile, ok := middleware.GetProfile(ctx)
+		profile, ok := s.gateway.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")

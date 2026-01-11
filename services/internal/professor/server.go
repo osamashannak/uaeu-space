@@ -7,6 +7,7 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/vision"
 	"github.com/osamashannak/uaeu-space/services/pkg/cache"
+	"github.com/osamashannak/uaeu-space/services/pkg/gateway"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/translate"
@@ -26,6 +27,7 @@ type Server struct {
 	similarProfCache *cache.Cache[[]v1.SimilarProfessor]
 	courseCache      *cache.Cache[[]string]
 	storage          *blobstorage.BlobStorage
+	gateway          *gateway.Gateway
 }
 
 func NewServer(db *database.ProfessorDB,
@@ -34,7 +36,8 @@ func NewServer(db *database.ProfessorDB,
 	perspective *perspective.Perspective,
 	vision *vision.AzureVision,
 	translate *translate.Translate,
-	storage *blobstorage.BlobStorage) (*Server, error) {
+	storage *blobstorage.BlobStorage,
+	gateway *gateway.Gateway) (*Server, error) {
 	return &Server{
 		db:               db,
 		generator:        generator,
@@ -46,31 +49,32 @@ func NewServer(db *database.ProfessorDB,
 		similarProfCache: cache.New[[]v1.SimilarProfessor](7 * 24 * time.Hour),
 		courseCache:      cache.New[[]string](7 * 24 * time.Hour),
 		storage:          storage,
+		gateway:          gateway,
 	}, nil
 }
 
 func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 
-	mux.Handle("GET /professor", middleware.Gateway(s.Get(), *s.db.Db, *s.generator))
+	mux.Handle("GET /professor", s.gateway.Middleware(s.Get()))
 	mux.Handle("GET /professor/all", s.GetAll())
 
-	mux.Handle("POST /comment", middleware.Gateway(s.PostReview(), *s.db.Db, *s.generator))
-	mux.Handle("DELETE /comment", middleware.Gateway(s.DeleteReview(), *s.db.Db, *s.generator))
+	mux.Handle("POST /comment", s.gateway.Middleware(s.PostReview()))
+	mux.Handle("DELETE /comment", s.gateway.Middleware(s.DeleteReview()))
 	mux.Handle("GET /comment/translate", s.TranslateReview())
-	mux.Handle("POST /comment/report", middleware.Gateway(s.ReportReview(), *s.db.Db, *s.generator))
+	mux.Handle("POST /comment/report", s.gateway.Middleware(s.ReportReview()))
 	mux.Handle("POST /comment/attachment", s.UploadReviewAttachment())
-	mux.Handle("POST /comment/rating", middleware.Gateway(s.AddReviewRating(), *s.db.Db, *s.generator))
-	mux.Handle("DELETE /comment/rating", middleware.Gateway(s.DeleteReviewRating(), *s.db.Db, *s.generator))
+	mux.Handle("POST /comment/rating", s.gateway.Middleware(s.AddReviewRating()))
+	mux.Handle("DELETE /comment/rating", s.gateway.Middleware(s.DeleteReviewRating()))
 
-	mux.Handle("GET /comment/reply", middleware.Gateway(s.GetReplies(), *s.db.Db, *s.generator))
-	mux.Handle("GET /comment/reply/name", middleware.Gateway(s.GetReplyName(), *s.db.Db, *s.generator))
-	mux.Handle("POST /comment/reply", middleware.Gateway(s.PostReply(), *s.db.Db, *s.generator))
-	mux.Handle("DELETE /comment/reply", middleware.Gateway(s.DeleteReply(), *s.db.Db, *s.generator))
-	mux.Handle("POST /comment/reply/like", middleware.Gateway(s.LikeReply(), *s.db.Db, *s.generator))
-	mux.Handle("DELETE /comment/reply/like", middleware.Gateway(s.UnlikeReply(), *s.db.Db, *s.generator))
+	mux.Handle("GET /comment/reply", s.gateway.Middleware(s.GetReplies()))
+	mux.Handle("GET /comment/reply/name", s.gateway.Middleware(s.GetReplyName()))
+	mux.Handle("POST /comment/reply", s.gateway.Middleware(s.PostReply()))
+	mux.Handle("DELETE /comment/reply", s.gateway.Middleware(s.DeleteReply()))
+	mux.Handle("POST /comment/reply/like", s.gateway.Middleware(s.LikeReply()))
+	mux.Handle("DELETE /comment/reply/like", s.gateway.Middleware(s.UnlikeReply()))
 
-	mux.Handle("GET /feedback/new", middleware.Gateway(s.NewFeedback(), *s.db.Db, *s.generator))
+	mux.Handle("GET /feedback/new", s.gateway.Middleware(s.NewFeedback()))
 	mux.Handle("POST /feedback", s.Feedback())
 
 	return middleware.CORS(mux)

@@ -10,6 +10,7 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/vision"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/gateway"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/translate"
@@ -108,9 +109,11 @@ func realMain(ctx context.Context) error {
 		return fmt.Errorf("blobstorage.New: %w", err)
 	}
 
+	gatewayClient := gateway.New(*db, *sfGenerator, cfg.Gateway)
+
 	logger.Info("setting up professor server")
 
-	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, visionClient, translateClient, blobStorage)
+	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, visionClient, translateClient, blobStorage, gatewayClient)
 	if err != nil {
 		return fmt.Errorf("publish.NewServer: %w", err)
 	}

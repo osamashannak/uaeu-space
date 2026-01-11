@@ -5,6 +5,7 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/vision"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/gateway"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
@@ -18,6 +19,7 @@ type Config struct {
 	Vision      vision.Config
 	Recaptcha   recaptcha.Config
 	Perspective perspective.Config
+	Gateway     gateway.Config
 }
 
 func Setup(ctx context.Context) (*Config, error) {

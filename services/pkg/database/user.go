@@ -24,3 +24,11 @@ func (db *DB) CreateSession(ctx context.Context, id int64, token, userAgent, ipA
 
 	return err
 }
+
+func (db *DB) UpdateSessionToken(ctx context.Context, id int64, token string) error {
+	_, err := db.Pool.Exec(ctx,
+		`UPDATE account.session SET token = $1 WHERE id = $2`,
+		token, id)
+
+	return err
+}

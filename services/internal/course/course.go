@@ -4,7 +4,6 @@ import (
 	"fmt"
 	v1 "github.com/osamashannak/uaeu-space/services/internal/api/v1"
 	"github.com/osamashannak/uaeu-space/services/internal/course/model"
-	"github.com/osamashannak/uaeu-space/services/internal/middleware"
 	"github.com/osamashannak/uaeu-space/services/pkg/jsonutil"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/utils"
@@ -118,7 +117,7 @@ func (s *Server) UploadCourseFile() http.Handler {
 
 		logger := logging.FromContext(ctx)
 
-		profile, ok := middleware.GetProfile(ctx)
+		profile, ok := s.gateway.GetProfile(ctx)
 
 		if !ok {
 			logger.Debugf("profile not found in context, session missing")

@@ -6,6 +6,7 @@ import (
 	courseDB "github.com/osamashannak/uaeu-space/services/internal/course/database"
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
+	"github.com/osamashannak/uaeu-space/services/pkg/gateway"
 	"github.com/osamashannak/uaeu-space/services/pkg/logging"
 	"github.com/osamashannak/uaeu-space/services/pkg/server"
 	"github.com/osamashannak/uaeu-space/services/pkg/snowflake"
@@ -70,7 +71,9 @@ func realMain(ctx context.Context) error {
 
 	logger.Info("setting up course server")
 
-	courseServer, err := course.NewServer(courseDb, sfGenerator, blobStorage)
+	gatewayClient := gateway.New(*db, *sfGenerator, cfg.Gateway)
+
+	courseServer, err := course.NewServer(courseDb, sfGenerator, blobStorage, gatewayClient)
 	if err != nil {
 		return fmt.Errorf("publish.NewServer: %w", err)
 	}
