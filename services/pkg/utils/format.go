@@ -22,7 +22,7 @@ func IsValidGrade(grade string) bool {
 }
 
 func IsValidCourseCode(code string) bool {
-	pattern := `^[A-Z]{4}\d{3}$`
+	pattern := `^[A-Z]{3,4}\d{3}$`
 
 	matched, _ := regexp.MatchString(pattern, code)
 
