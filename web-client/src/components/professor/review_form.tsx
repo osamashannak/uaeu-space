@@ -125,10 +125,6 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
         }
 
         if (att.id === "READY") {
-            setDetails(prev =>
-                prev.attachment ? {...prev, attachment: {...prev.attachment, id: "UPLOADING"}} : prev
-            );
-
             attachmentUploadRef.current = uploadImageAttachment(att.src)
                 .then((id) => {
                     if (!id) throw new Error("upload failed");
@@ -141,15 +137,33 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                     setDetails(prev => ({...prev, attachment: undefined}));
                     return undefined;
                 });
+
+            setDetails(prev =>
+                prev.attachment ? { ...prev, attachment: { ...prev.attachment, id: "UPLOADING" } } : prev
+            );
         }
     }, [details.attachment?.src])
 
     async function ensureAttachmentUploaded(): Promise<string | undefined> {
         const att = details.attachment;
         if (!att) return undefined;
-        if (att.id && att.id !== "UPLOADING") return att.id;
+
+        if (att.id && att.id !== "UPLOADING" && att.id !== "READY") {
+            return att.id;
+        }
+
+        let attempts = 0;
+        while (!attachmentUploadRef.current && attempts < 10) {
+            await new Promise(resolve => setTimeout(resolve, 100)); // wait 100ms
+            attempts++;
+        }
+
         const p = attachmentUploadRef.current;
-        if (!p) return undefined;
+        if (!p) {
+            console.error("Upload promise never initialized.");
+            return undefined;
+        }
+
         return await p;
     }
 
