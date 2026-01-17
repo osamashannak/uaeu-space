@@ -130,6 +130,7 @@ func (s *Server) PostReview() http.Handler {
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+			return
 		}
 
 		if *request.CourseTaken != "" || !utils.IsValidCourseCode(*request.CourseTaken) {
@@ -138,6 +139,7 @@ func (s *Server) PostReview() http.Handler {
 				Error:   http.StatusBadRequest,
 			}
 			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+			return
 		}
 
 		request.Text = utils.ReviewTextCleaner(request.Text)
