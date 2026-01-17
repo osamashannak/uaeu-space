@@ -7,7 +7,6 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/vision"
 	"github.com/osamashannak/uaeu-space/services/pkg/cache"
-	"github.com/osamashannak/uaeu-space/services/pkg/gateway"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/translate"
@@ -28,6 +27,7 @@ type Server struct {
 	courseCache      *cache.Cache[[]string]
 	storage          *blobstorage.BlobStorage
 	gateway          *gateway.Gateway
+	sesClient        *ses.Client
 }
 
 func NewServer(db *database.ProfessorDB,
@@ -37,7 +37,8 @@ func NewServer(db *database.ProfessorDB,
 	vision *vision.AzureVision,
 	translate *translate.Translate,
 	storage *blobstorage.BlobStorage,
-	gateway *gateway.Gateway) (*Server, error) {
+	gateway *gateway.Gateway,
+	sesClient *ses.Client) (*Server, error) {
 	return &Server{
 		db:               db,
 		generator:        generator,
@@ -50,6 +51,7 @@ func NewServer(db *database.ProfessorDB,
 		courseCache:      cache.New[[]string](7 * 24 * time.Hour),
 		storage:          storage,
 		gateway:          gateway,
+		sesClient:        sesClient,
 	}, nil
 }
 

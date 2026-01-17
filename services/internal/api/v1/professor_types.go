@@ -29,22 +29,24 @@ type SimilarProfessor struct {
 }
 
 type Review struct {
-	SortIndex    int64             `json:"sort_index,string"`
-	ID           int64             `json:"id,string"`
-	Score        int               `json:"score"`
-	Positive     bool              `json:"positive"`
-	Text         string            `json:"text"`
-	CreatedAt    time.Time         `json:"created_at"`
-	Author       string            `json:"author"`
-	Language     string            `json:"language"`
-	LikeCount    int               `json:"like_count"`
-	DislikeCount int               `json:"dislike_count"`
-	ReplyCount   int               `json:"reply_count"`
-	Attachment   *ReviewAttachment `json:"attachment,omitempty"`
-	Gif          *string           `json:"gif,omitempty"`
-	Self         bool              `json:"self"`
-	Rated        *string           `json:"rated,omitempty"`
-	UaeuOrigin   bool              `json:"uaeu_origin"`
+	SortIndex     int64             `json:"sort_index,string"`
+	ID            int64             `json:"id,string"`
+	Score         int               `json:"score"`
+	Positive      bool              `json:"positive"`
+	Text          string            `json:"text"`
+	CreatedAt     time.Time         `json:"created_at"`
+	Author        string            `json:"author"`
+	Language      string            `json:"language"`
+	LikeCount     int               `json:"like_count"`
+	DislikeCount  int               `json:"dislike_count"`
+	ReplyCount    int               `json:"reply_count"`
+	GradeReceived *string           `json:"grade_received,omitempty"`
+	CourseTaken   *string           `json:"course_taken,omitempty"`
+	Attachment    *ReviewAttachment `json:"attachment,omitempty"`
+	Gif           *string           `json:"gif,omitempty"`
+	Self          bool              `json:"self"`
+	Rated         *string           `json:"rated,omitempty"`
+	UaeuOrigin    bool              `json:"uaeu_origin"`
 }
 
 type ReviewAttachment struct {
@@ -62,6 +64,8 @@ type ReviewPostBody struct {
 	RecaptchaToken *string `json:"recaptcha_token" required:"true"`
 	Attachment     *int64  `json:"attachment,string"`
 	Gif            *string `json:"gif"`
+	GradeReceived  *string `json:"grade_received"`
+	CourseTaken    *string `json:"course_taken"`
 }
 
 type ReviewAttachmentResponse struct {
@@ -74,15 +78,17 @@ type ReviewRatingBody struct {
 }
 
 type ReviewPostResponse struct {
-	Text       string            `json:"text"`
-	Score      int               `json:"score"`
-	Positive   bool              `json:"positive"`
-	Attachment *ReviewAttachment `json:"attachment,omitempty"`
-	Gif        *string           `json:"gif,omitempty"`
-	ID         int64             `json:"id,string"`
-	Flagged    *bool             `json:"flagged,omitempty"`
-	CreatedAt  time.Time         `json:"created_at"`
-	Language   string            `json:"language"`
+	Text          string            `json:"text"`
+	Score         int               `json:"score"`
+	Positive      bool              `json:"positive"`
+	CourseTaken   *string           `json:"course_taken,omitempty"`
+	GradeReceived *string           `json:"grade_received,omitempty"`
+	Attachment    *ReviewAttachment `json:"attachment,omitempty"`
+	Gif           *string           `json:"gif,omitempty"`
+	ID            int64             `json:"id,string"`
+	Flagged       *bool             `json:"flagged,omitempty"`
+	CreatedAt     time.Time         `json:"created_at"`
+	Language      string            `json:"language"`
 }
 
 type ReviewReportBody struct {
@@ -130,4 +136,13 @@ type Reply struct {
 
 type GetRepliesResponse struct {
 	Replies []Reply `json:"replies"`
+}
+
+type StudentVerifyRequest struct {
+	Email string `json:"email"`
+}
+
+type StudentConfirmRequest struct {
+	OTP   string `json:"otp"`
+	Email string `json:"email"`
 }

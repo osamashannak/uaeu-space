@@ -6,6 +6,7 @@ export interface ProfessorAPI {
     reviews: ReviewAPI[];
     score: number;
     reviewed: boolean;
+    courses: string[];
     similar_professors: SimilarProfessors[]
 }
 
@@ -33,6 +34,9 @@ export interface ReviewAPI {
     rated: string | null;
     fadeIn: boolean;
     flagged: boolean;
+    verified: boolean;
+    course_taken: string;
+    grade_received: string;
     uaeu_origin: boolean;
     gif?: string;
     pinned?: boolean;
@@ -83,6 +87,8 @@ export interface ReviewFormDraft {
     comment: string;
     attachment?: ImageAttachment;
     gif?: GifPreview;
+    course_taken: string;
+    grade_received: string;
 }
 
 export interface ReviewFormAPI {
@@ -93,6 +99,8 @@ export interface ReviewFormAPI {
     text: string;
     attachment?: string;
     gif?: string;
+    course_taken: string;
+    grade_received: string;
 }
 
 export interface ProfessorHistory {

@@ -184,17 +184,21 @@ export default function ReviewFormFooter(props: {
     }
 
     useEffect(() => {
-        document.body.onclick = () => {
+        function handleClickOutside(event: MouseEvent) {
+            const emojiSelector = document.querySelector(`.${styles.emojiSelector}`) as HTMLDivElement;
+            const gifSelector = document.querySelector(`.${styles.gifSelector}`) as HTMLDivElement
+            if (!emojiSelector || !gifSelector) return;
+            if (emojiSelector.contains(event.target as Node)) return;
+            if (gifSelector.contains(event.target as Node)) return;
+
             hideEmojiSelector();
             hideGifSelector();
         }
-
-        return () => {
-            document.body.onclick = null;
-        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    let width ;
+    let width;
 
     if (window.innerWidth < 360) {
         width = "300px";

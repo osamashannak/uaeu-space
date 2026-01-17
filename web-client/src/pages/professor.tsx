@@ -179,7 +179,7 @@ export default function Professor() {
                 </section>
 
                 <Suspense fallback={<DisabledReviewForm/>}>
-                    <ReviewForm professorEmail={professor.email} canReview={!professor.reviewed}/>
+                    <ReviewForm courses={professor.courses} professorEmail={professor.email} canReview={!professor.reviewed}/>
                 </Suspense>
 
                 {professor.similar_professors.length > 0 && <RelatedReviews reviews={professor.similar_professors}/>}

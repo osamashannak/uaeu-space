@@ -10,7 +10,6 @@ import (
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/blobstorage"
 	"github.com/osamashannak/uaeu-space/services/pkg/azure/vision"
 	"github.com/osamashannak/uaeu-space/services/pkg/database"
-	"github.com/osamashannak/uaeu-space/services/pkg/gateway"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/perspective"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/recaptcha"
 	"github.com/osamashannak/uaeu-space/services/pkg/google/translate"
@@ -111,9 +110,15 @@ func realMain(ctx context.Context) error {
 
 	gatewayClient := gateway.New(*db, *sfGenerator, cfg.Gateway)
 
+	sesClient, err := ses.New(ctx, &cfg.AWS, "SpaceRead <noreply@auth.spaceread.net>")
+
+	if err != nil {
+		return fmt.Errorf("ses.New: %w", err)
+	}
+
 	logger.Info("setting up professor server")
 
-	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, visionClient, translateClient, blobStorage, gatewayClient)
+	professorServer, err := professor.NewServer(professorDb, sfGenerator, recaptchaClient, perspectiveClient, visionClient, translateClient, blobStorage, gatewayClient, sesClient)
 	if err != nil {
 		return fmt.Errorf("publish.NewServer: %w", err)
 	}

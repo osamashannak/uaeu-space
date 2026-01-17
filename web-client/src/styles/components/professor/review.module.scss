@@ -242,6 +242,13 @@
     }
   }
 
+  .verifiedBadge {
+    color: #0284C7;
+    margin-left: 2px;
+    display: flex;
+    align-items: center;
+  }
+
   .new {
     border: 1px solid rgba(0, 0, 0, 0.2);
     font-size: 10px;
@@ -256,15 +263,26 @@
 .recommendation {
   font-weight: 400;
   color: rgba(110, 112, 114, 1);
+  user-select: none;
+  font-size: 14px;
+  -webkit-user-select: none;
 }
 
 .time, .uaeuOrigin {
   color: rgb(139, 152, 165);
 }
 
-.reviewRight {
-
-
+.course {
+  user-select: none;
+    -webkit-user-select: none;
+  background-color: rgba(4, 154, 229, 0.2);
+  color: #049AE5;
+  font-size: 14px;
+  margin-left: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-weight: 500;
+  display: flex;
 }
 
 .reviewInfoRight {

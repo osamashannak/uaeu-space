@@ -20,6 +20,8 @@ type Review struct {
 	Attachment     *int64
 	Gif            *string
 	ProfessorEmail string
+	CourseTaken    *string
+	GradeReceived  *string
 	IpAddress      string
 	DeletedAt      *time.Time
 	Visible        bool
