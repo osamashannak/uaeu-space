@@ -133,7 +133,7 @@ func (s *Server) PostReview() http.Handler {
 			return
 		}
 
-		if *request.CourseTaken != "" || !utils.IsValidCourseCode(*request.CourseTaken) {
+		if *request.CourseTaken == "" || !utils.IsValidCourseCode(*request.CourseTaken) {
 			errorResponse := v1.ErrorResponse{
 				Message: "invalid course taken",
 				Error:   http.StatusBadRequest,
