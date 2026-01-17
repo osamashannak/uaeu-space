@@ -225,7 +225,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
         }
 
         if (!firstErrorField && props.professorEmail.endsWith('@uaeu.ac.ae')) {
-            const courseRegex = /^[A-Z]{4}\d{3}$/;
+            const courseRegex = /^[A-Z]{3,4}\d{3}$/;
             if (!details.course_taken || !courseRegex.test(details.course_taken.trim())) {
                 firstErrorField = 'course';
             }
