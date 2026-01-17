@@ -77,8 +77,5 @@ func (s *Server) Routes() http.Handler {
 	mux.Handle("GET /feedback/new", middleware.Gateway(s.NewFeedback(), *s.db.Db, *s.generator))
 	mux.Handle("POST /feedback", s.Feedback())
 
-	mux.Handle("POST /student/verify", s.RequestEmailVerification())
-	mux.Handle("POST /student/confirm", s.VerifyOTP())
-
 	return middleware.CORS(mux)
 }

@@ -38,8 +38,8 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
         comment: "",
         positive: undefined,
         attachment: undefined,
-        course: "",
-        grade: "",
+        course_taken: "",
+        grade_received: "",
     });
 
     const [submitting, setSubmitting] = useState<boolean | null | "error">(
@@ -64,7 +64,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
     const courses = props.courses || [];
 
     const filteredCourses = courses.filter(c =>
-        c.toLowerCase().includes(details.course.toLowerCase())
+        c.toLowerCase().includes(details.course_taken.toLowerCase())
     );
 
     const clearError = () => {
@@ -176,8 +176,8 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                 like_count: 0,
                 text: review.text ?? "",
                 score: review.score,
-                grade: review.grade,
-                course: review.course,
+                grade_received: review.grade_received,
+                course_taken: review.course_taken,
                 positive: review.positive,
                 id: review.id,
                 gif: details.gif ? details.gif.url : undefined,
@@ -213,7 +213,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
 
         if (!firstErrorField && props.professorEmail.endsWith('@uaeu.ac.ae')) {
             const courseRegex = /^[A-Z]{4}\d{3}$/;
-            if (!details.course || !courseRegex.test(details.course.trim())) {
+            if (!details.course_taken || !courseRegex.test(details.course_taken.trim())) {
                 firstErrorField = 'course';
             }
         }
@@ -266,8 +266,8 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
             recaptcha_token: token,
             attachment: details.attachment?.id,
             gif: details.gif ? details.gif.url : undefined,
-            course: details.course,
-            grade: details.grade,
+            course_taken: details.course_taken,
+            grade_received: details.grade_received,
         });
 
         if (!review) {
@@ -462,7 +462,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                             type="text"
                             className={styles.comboboxInput}
                             placeholder="e.g. MATH110"
-                            value={details.course}
+                            value={details.course_taken}
                             onChange={(e) => {
                                 setDetails(prev => ({...prev, course: e.target.value.toUpperCase()}));
                                 setShowCourseMenu(true);
@@ -498,7 +498,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                     <div className={styles.inputField}>
                         <label className={styles.inputTitle}>Grade received (optional)</label>
                         <div className={styles.selectContainer}>
-                            <select className={styles.nativeSelect} value={details.grade}
+                            <select className={styles.nativeSelect} value={details.grade_received}
                                     onChange={(e) => {
                                         setDetails(prev => ({...prev, grade: e.target.value}));
                                     }}>

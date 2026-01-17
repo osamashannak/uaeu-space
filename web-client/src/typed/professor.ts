@@ -35,8 +35,8 @@ export interface ReviewAPI {
     fadeIn: boolean;
     flagged: boolean;
     verified: boolean;
-    course: string;
-    grade: string;
+    course_taken: string;
+    grade_received: string;
     uaeu_origin: boolean;
     gif?: string;
     pinned?: boolean;
@@ -87,8 +87,8 @@ export interface ReviewFormDraft {
     comment: string;
     attachment?: ImageAttachment;
     gif?: GifPreview;
-    course: string;
-    grade: string;
+    course_taken: string;
+    grade_received: string;
 }
 
 export interface ReviewFormAPI {
@@ -99,8 +99,8 @@ export interface ReviewFormAPI {
     text: string;
     attachment?: string;
     gif?: string;
-    course: string;
-    grade: string;
+    course_taken: string;
+    grade_received: string;
 }
 
 export interface ProfessorHistory {

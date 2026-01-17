@@ -125,6 +125,22 @@ func (s *Server) PostReview() http.Handler {
 			return
 		}
 
+		if *request.GradeReceived != "" && !utils.IsValidGrade(*request.GradeReceived) {
+			errorResponse := v1.ErrorResponse{
+				Message: "invalid grade received",
+				Error:   http.StatusBadRequest,
+			}
+			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+		}
+
+		if *request.CourseTaken != "" || !utils.IsValidCourseCode(*request.CourseTaken) {
+			errorResponse := v1.ErrorResponse{
+				Message: "invalid course taken",
+				Error:   http.StatusBadRequest,
+			}
+			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+		}
+
 		request.Text = utils.ReviewTextCleaner(request.Text)
 
 		var attachmentInfo *v1.ReviewAttachment
@@ -192,6 +208,8 @@ func (s *Server) PostReview() http.Handler {
 			Score:          *request.Score,
 			Positive:       *request.Positive,
 			Content:        request.Text,
+			CourseTaken:    request.CourseTaken,
+			GradeReceived:  request.GradeReceived,
 			ProfessorEmail: *request.ProfessorEmail,
 			UaeuOrigin:     subnetchecker.CheckIP(ipAddress),
 			Visible:        !flags.Flagged(),
@@ -227,14 +245,16 @@ func (s *Server) PostReview() http.Handler {
 		}
 
 		var response = v1.ReviewPostResponse{
-			Text:       review.Content,
-			Score:      review.Score,
-			Positive:   review.Positive,
-			Attachment: attachmentInfo,
-			ID:         review.ID,
-			Flagged:    flagged,
-			Language:   review.Language,
-			CreatedAt:  review.CreatedAt,
+			Text:          review.Content,
+			Score:         review.Score,
+			Positive:      review.Positive,
+			Attachment:    attachmentInfo,
+			ID:            review.ID,
+			Flagged:       flagged,
+			Language:      review.Language,
+			CourseTaken:   review.CourseTaken,
+			GradeReceived: review.GradeReceived,
+			CreatedAt:     review.CreatedAt,
 		}
 
 		logger.Debugf("review posted successfully: %+v", response)
