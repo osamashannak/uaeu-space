@@ -327,7 +327,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                     event.preventDefault();
                 }}
             >
-                {!submitting && props.professorEmail.endsWith('@uaeu.ac.ae') && <>
+                {/*{!submitting && props.professorEmail.endsWith('@uaeu.ac.ae') && <>
                     {
                         mode === "GUEST" ?  <div className={styles.privacyNotice} onClick={(e) => {
                             e.stopPropagation();
@@ -345,7 +345,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                             <span>Your student status is verified.</span>
                         </div>
                     }
-                </>}
+                </>}*/}
 
                 <LexicalComposer
                     initialConfig={{
@@ -464,7 +464,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                             placeholder="e.g. MATH110"
                             value={details.course_taken}
                             onChange={(e) => {
-                                setDetails(prev => ({...prev, course: e.target.value.toUpperCase()}));
+                                setDetails(prev => ({...prev, course_taken: e.target.value.toUpperCase()}));
                                 setShowCourseMenu(true);
                                 clearError();
                             }}
@@ -479,7 +479,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                                             key={c}
                                             className={styles.comboboxItem}
                                             onClick={() => {
-                                                setDetails(prev => ({...prev, course: c}));
+                                                setDetails(prev => ({...prev, course_taken: c}));
                                                 setShowCourseMenu(false);
                                             }}
                                         >
@@ -500,7 +500,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                         <div className={styles.selectContainer}>
                             <select className={styles.nativeSelect} value={details.grade_received}
                                     onChange={(e) => {
-                                        setDetails(prev => ({...prev, grade: e.target.value}));
+                                        setDetails(prev => ({...prev, grade_received: e.target.value}));
                                     }}>
                                 <option value=""></option>
                                 <option value="A">A</option>
@@ -513,7 +513,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                     </div>
                 </div>}
 
-                <div className={styles.inputField} style={{ position: 'relative' }}>
+                {!submitting && <div className={styles.inputField} style={{position: 'relative'}}>
 
                     {activeError === 'positive' && <div className={styles.errorTooltip}>Please select an option</div>}
 
@@ -540,7 +540,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                             <span>👎</span> No
                         </button>
                     </div>
-                </div>
+                </div>}
 
 
                 <div className={styles.submitButtonWrapper}>
