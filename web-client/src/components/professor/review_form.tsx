@@ -250,15 +250,18 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
         clarity("set", "ReviewSubmitted", "true");
         window.scrollTo(0, 0);
 
+        let finalAttachmentId = details.attachment?.id;
+
         if (details.attachment) {
             lineRef.current?.pause();
             const uploadedId = await ensureAttachmentUploaded();
+
             if (!uploadedId) {
-                // @ts-expect-error Clarity is not defined
-                clarity("set", "ReviewFailed", "true");
                 setSubmitting("error");
                 return;
             }
+
+            finalAttachmentId = uploadedId;
             lineRef.current?.resume();
         }
 
@@ -277,7 +280,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
             positive: details.positive!,
             professor_email: props.professorEmail,
             recaptcha_token: token,
-            attachment: details.attachment?.id,
+            attachment: finalAttachmentId,
             gif: details.gif ? details.gif.url : undefined,
             course_taken: details.course_taken,
             grade_received: details.grade_received,
