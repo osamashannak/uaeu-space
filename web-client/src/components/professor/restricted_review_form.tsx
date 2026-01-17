@@ -24,8 +24,8 @@ export default function RestrictedReviewForm(props: { professorEmail: string; ca
     const [details, setDetails] = useState<ReviewFormDraft>({
         score: 5,
         comment: "",
-        positive: true,
-        attachment: undefined,
+        positive: true, course_taken: "", gif: undefined, grade_received: "",
+        attachment: undefined
     });
 
     const [submitting, setSubmitting] = useState<boolean | null | "error">(
@@ -121,6 +121,7 @@ export default function RestrictedReviewForm(props: { professorEmail: string; ca
 
         dispatch(
             addReview({
+                course_taken: "", grade_received: "", verified: false,
                 uaeu_origin: review.uaeu_origin,
                 fadeIn: true,
                 self: true,
@@ -184,13 +185,14 @@ export default function RestrictedReviewForm(props: { professorEmail: string; ca
         const token = await executeRecaptcha("new_review");
 
         const review = await postReview({
+            course_taken: "", grade_received: "",
             text: details.comment!,
             score: details.score!,
             positive: details.positive!,
             professor_email: props.professorEmail,
             recaptcha_token: token,
             attachment: details.attachment?.id, // guaranteed uploaded if present
-            gif: details.gif ? details.gif.url : undefined,
+            gif: details.gif ? details.gif.url : undefined
         });
 
         if (!review) {

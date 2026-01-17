@@ -21,7 +21,6 @@ import ReviewAttachment from "./review_attachment.tsx";
 import {useModal} from "../provider/modal.tsx";
 import FlaggedModal from "../modal/flagged_modal.tsx";
 import {Rating} from "react-simple-star-rating";
-import StudentVerifyModal from "../modal/student_verify_modal.tsx";
 
 // Helper to calculate star label
 const getStarLabel = (r: number) => {
