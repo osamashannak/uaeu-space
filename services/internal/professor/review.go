@@ -124,22 +124,27 @@ func (s *Server) PostReview() http.Handler {
 			return
 		}
 
-		if *request.GradeReceived != "" && !utils.IsValidGrade(*request.GradeReceived) {
-			errorResponse := v1.ErrorResponse{
-				Message: "invalid grade received",
-				Error:   http.StatusBadRequest,
+		if professor.University == "United Arab Emirates University" {
+			if *request.GradeReceived != "" && !utils.IsValidGrade(*request.GradeReceived) {
+				errorResponse := v1.ErrorResponse{
+					Message: "invalid grade received",
+					Error:   http.StatusBadRequest,
+				}
+				jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+				return
 			}
-			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
-			return
-		}
 
-		if *request.CourseTaken == "" || !utils.IsValidCourseCode(*request.CourseTaken) {
-			errorResponse := v1.ErrorResponse{
-				Message: "invalid course taken",
-				Error:   http.StatusBadRequest,
+			if *request.CourseTaken == "" || !utils.IsValidCourseCode(*request.CourseTaken) {
+				errorResponse := v1.ErrorResponse{
+					Message: "invalid course taken",
+					Error:   http.StatusBadRequest,
+				}
+				jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
+				return
 			}
-			jsonutil.MarshalResponse(w, http.StatusBadRequest, errorResponse)
-			return
+		} else {
+			request.GradeReceived = nil
+			request.CourseTaken = nil
 		}
 
 		request.Text = utils.ReviewTextCleaner(request.Text)
