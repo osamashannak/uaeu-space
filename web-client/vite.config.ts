@@ -47,6 +47,13 @@ export default defineConfig(({ mode}) => {
         },
       },
     },
+    esbuild: {
+      // Work around an esbuild/Vite chunk transpile issue during production builds.
+      // All configured modern targets already support destructuring syntax.
+      supported: {
+        destructuring: true,
+      },
+    },
     build: {
       emptyOutDir: true,
       cssCodeSplit: true,
