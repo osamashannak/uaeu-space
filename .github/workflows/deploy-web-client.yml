@@ -6,9 +6,6 @@ on:
       - 'main'
     paths:
       - 'web-client/**'
-  pull_request:
-    paths:
-      - 'web-client/**'
 
 jobs:
   build-and-deploy:
