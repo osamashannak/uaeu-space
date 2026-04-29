@@ -29,10 +29,6 @@ export default function ReviewSection(props: { professorReviews: ReviewAPI[] }) 
             <div className={reviewStyles.commentsList}>
 
                 {
-                    reviewCount > 1 && <ReviewAd adUrl={adUrl} imageHeight={2251} imageWidth={4000} text={'From wood to metal.. the most precise laser engraving you can see. Browse our work and book your order now: '} urlText={"https://instagram.com/miza_3d_printing"}/>
-                }
-
-                {
                     reviewCount > 0 ?
                         reviews.map(value =>
                             <Review key={value.id} {...value}/>
