@@ -10,7 +10,6 @@ Multipurpose web app for UAEU students to share course resources, discover profe
 - 📝 Share your experience with scores, course/grade context, and optional attachments or GIFs
 - 💬 Reply to reviews and add reactions (likes/dislikes)
 - 📚 Upload and download course materials
-- ✅ Verify your UAEU email with a one-time code to keep the community trusted
 
 ## Repository structure
 
@@ -26,7 +25,6 @@ Multipurpose web app for UAEU students to share course resources, discover profe
 - PostgreSQL (primary datastore)
 - Azure Blob Storage (attachments/materials)
 - Google ReCAPTCHA/Perspective/Translate (moderation & verification)
-- AWS SES (email verification)
 
 ## Safety & trust
 
