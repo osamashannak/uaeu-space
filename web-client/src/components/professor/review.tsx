@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import {GifPreview, ReviewAPI} from "../../typed/professor.ts";
 import styles from "../../styles/components/professor/review.module.scss";
-import {formatRelativeTime, parseText, ratingToIcon} from "../../utils.tsx";
+import {decodeHtmlEntities, formatRelativeTime, parseText, ratingToIcon} from "../../utils.tsx";
 import {useEffect, useState} from "react";
 import ReviewRating from "./review_rating.tsx";
 import ReplySection from "./reply_section.tsx";
@@ -15,9 +15,12 @@ import GoogleAttribution from "../google_attribution.tsx";
 export default function Review(review: ReviewAPI) {
 
     const [replyCompose, showReplyCompose] = useState(false);
-    const [showAttribution, setShowAttribution] = useState(false);
+    const [translatedText, setTranslatedText] = useState<string | null>(null);
+    const [showOriginalText, setShowOriginalText] = useState(false);
     const [gifPreview, setGifPreview] = useState<GifPreview | null>(null);
 
+    const originalText = review.text.trim();
+    const displayText = translatedText && !showOriginalText ? translatedText : originalText;
 
     useEffect(() => {
         const p = document.getElementById(`review_comment_${review.id}`);
@@ -26,7 +29,7 @@ export default function Review(review: ReviewAPI) {
 
         parseText(p);
 
-    }, [review.id]);
+    }, [review.id, displayText]);
 
     useEffect(() => {
         if (review.gif) {
@@ -103,29 +106,26 @@ export default function Review(review: ReviewAPI) {
 
                 </div>
 
-                {(review.language !== "en" && !showAttribution) && <div className={styles.translateText} onClick={() => {
+                {review.language !== "en" && <div className={styles.translateText} onClick={() => {
+                    if (translatedText) {
+                        setShowOriginalText(!showOriginalText);
+                        return;
+                    }
+
                     translateReview(review.id).then((response) => {
-                        if (!response) {
-                            return;
-                        }
+                        if (!response) return;
 
-                        const p = document.getElementById(`review_comment_${review.id}`);
-                        if (!p) return;
-
-                        p.innerHTML = response.content;
-
-                        parseText(p);
-
-                        setShowAttribution(true);
+                        setTranslatedText(decodeHtmlEntities(response.content));
+                        setShowOriginalText(false);
                     })
                 }}>
-                    <span>Translate text</span>
+                    <span>{translatedText ? (showOriginalText ? "Show translated text" : "Show original text") : "Translate text"}</span>
                 </div>}
 
                 <div className={styles.reviewBody}>
 
                     <p dir={"auto"} id={`review_comment_${review.id}`}>
-                        {review.text.trim()}
+                        {displayText}
                     </p>
 
                     {review.attachment && <div className={styles.imageList}>
@@ -160,7 +160,7 @@ export default function Review(review: ReviewAPI) {
                         </div>
                     </div>}
 
-                    {showAttribution && <GoogleAttribution/>}
+                    {translatedText && !showOriginalText && <GoogleAttribution/>}
 
                 </div>
 

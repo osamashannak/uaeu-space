@@ -146,6 +146,11 @@ export const convertArabicNumeral = (s: any) => s.replace(/[٠-٩]/g, (d: any) =
 
 export const pluralize = (count: number, noun: string) => `${noun}${count !== 1 ? "s" : ''}`;
 
+export const decodeHtmlEntities = (value: string) => {
+    const parser = new DOMParser();
+    return parser.parseFromString(value, "text/html").documentElement.textContent ?? value;
+}
+
 
 export const parseText = (text: HTMLElement | string) => {
     // @ts-expect-error Twemoji is loaded in the global scope
