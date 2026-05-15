@@ -2,7 +2,7 @@ import {deleteReview} from "../../api/professor.ts";
 import {useDispatch} from "react-redux";
 import {removeReview} from "../../redux/slice/professor_slice.ts";
 import styles from "../../styles/components/global/modal.module.scss";
-import {useRef} from "react";
+import {useState} from "react";
 
 
 export default function ReviewDeletionModal({reviewId, onClose}: {
@@ -11,7 +11,7 @@ export default function ReviewDeletionModal({reviewId, onClose}: {
 }) {
 
     const dispatch = useDispatch();
-    const responseDivRef = useRef<HTMLSpanElement>(null);
+    const [responseMessage, setResponseMessage] = useState("");
 
     return (
         <div className={styles.background}>
@@ -25,9 +25,10 @@ export default function ReviewDeletionModal({reviewId, onClose}: {
                         if (status?.success) {
                             dispatch(removeReview(reviewId));
                             onClose();
+                            return;
                         }
 
-                        responseDivRef.current!.innerHTML = "An error occurred while deleting the review.";
+                        setResponseMessage("An error occurred while deleting the review.");
 
                     }}>Delete
                     </div>
@@ -37,7 +38,7 @@ export default function ReviewDeletionModal({reviewId, onClose}: {
                     </div>
                 </div>
                 <div className={styles.responseMessage}>
-                    <span ref={responseDivRef}></span>
+                    <span>{responseMessage}</span>
                 </div>
             </div>
         </div>

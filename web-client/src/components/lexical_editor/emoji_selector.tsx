@@ -2,18 +2,27 @@ import styles from "../../styles/components/professor/review_form.module.scss";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$insertNodes, type LexicalEditor, TextNode} from "lexical";
 import {$createEmojiNode, EmojiNode} from "./emoji_node.ts";
-import {Twemoji} from "../../twemoji";
+import type {Twemoji} from "../../twemoji";
 import {useEffect} from "react";
 import EmojiPicker from "emoji-picker-react";
+import {getTwemojiSvgUrl} from "../../twemoji_config.ts";
+
+type TwemojiWindow = Window & typeof globalThis & {
+    twemoji?: Twemoji;
+};
+
+const getTwemoji = () => {
+    if (typeof window === "undefined") return undefined;
+
+    return (window as TwemojiWindow).twemoji;
+}
 
 function findAndTransformEmoji(node: TextNode): null | TextNode {
 
     const text = node.getTextContent();
+    const twemoji = getTwemoji();
 
-    // @ts-expect-error twemoji does not have types
-    const unparsedEmojiExists = ((window.twemoji as Twemoji)).test(text);
-
-    if (!unparsedEmojiExists) {
+    if (!twemoji?.test(text)) {
         return null;
     }
 
@@ -29,6 +38,11 @@ function findAndTransformEmoji(node: TextNode): null | TextNode {
         firstIndex: match.index,
         lastIndex: match.index + match[0].length
     }
+    const imageUrl = twemoji.parse(emoji.emoji).match(/src="([^"]*)"/)?.[1];
+
+    if (!imageUrl) {
+        return null;
+    }
 
     let targetNode;
 
@@ -40,8 +54,7 @@ function findAndTransformEmoji(node: TextNode): null | TextNode {
 
     const emojiNode = $createEmojiNode({
         emoji: emoji.emoji,
-        // @ts-expect-error twemoji does not have types
-        imageUrl: ((window.twemoji as Twemoji)).parse(emoji.emoji).match(/src="([^"]*)"/)![1]
+        imageUrl
     });
 
     targetNode.replace(emojiNode);
@@ -71,11 +84,6 @@ function useEmojis(editor: LexicalEditor): void {
     }, [editor]);
 }
 
-function unifiedToEmoji(unified: string) {
-    const codePoints = unified.split("-").map(u => parseInt(u, 16));
-    return String.fromCodePoint(...codePoints);
-}
-
 export default function EmojiSelector() {
     const [editor] = useLexicalComposerContext();
 
@@ -88,19 +96,15 @@ export default function EmojiSelector() {
             <EmojiPicker
                 onEmojiClick={(emoji) => {
                     editor.update(() => {
-                        $insertNodes([$createEmojiNode({emoji: emoji.emoji, imageUrl: emoji.imageUrl})]);
+                        $insertNodes([$createEmojiNode({
+                            emoji: emoji.emoji,
+                            imageUrl: getTwemojiSvgUrl(emoji.unified)
+                        })]);
 
                         editor.blur();
                     });
                 }}
-                getEmojiUrl={unified => {
-                    const emoji = unifiedToEmoji(unified)
-                    // @ts-expect-error twemoji does not have types
-                    return ((window.twemoji as Twemoji)).parse(emoji, {
-                        folder: 'svg',
-                        ext: '.svg',
-                    }).match(/src="([^"]*)"/)![1];
-                }}
+                getEmojiUrl={getTwemojiSvgUrl}
                 lazyLoadEmojis={true}
 
             />

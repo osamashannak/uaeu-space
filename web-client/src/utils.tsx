@@ -1,6 +1,7 @@
 import icons from "./icons";
 import styles from "./styles/components/professor/review.module.scss";
-import {Twemoji} from "./twemoji";
+import type {Twemoji} from "./twemoji";
+import {TWEMOJI_ASSET_BASE_URL} from "./twemoji_config.ts";
 import tlds from "tlds";
 import {JSX} from "react";
 
@@ -152,9 +153,23 @@ export const decodeHtmlEntities = (value: string) => {
 }
 
 
-export const parseText = (text: HTMLElement | string) => {
-    // @ts-expect-error Twemoji is loaded in the global scope
-    return (twemoji as Twemoji).parse(text, {
+type TwemojiWindow = Window & typeof globalThis & {
+    twemoji?: Twemoji;
+};
+
+const getTwemoji = () => {
+    if (typeof window === "undefined") return undefined;
+
+    return (window as TwemojiWindow).twemoji;
+}
+
+export const parseText = <T extends HTMLElement | string>(text: T): T => {
+    const twemoji = getTwemoji();
+
+    if (!twemoji) return text;
+
+    return twemoji.parse(text, {
+        base: TWEMOJI_ASSET_BASE_URL,
         folder: 'svg',
         ext: '.svg',
     });

@@ -145,9 +145,7 @@ export default function Review(review: ReviewAPI) {
                     </div>}
 
                     {gifPreview && <div className={styles.imageList}>
-                        <div className={styles.attachment} onClick={() => {
-                            window.open(review.attachment!.url, "_blank");
-                        }}>
+                        <div className={styles.attachment}>
                             <div
                                 style={{paddingBottom: `${gifPreview.height / gifPreview.width * 100}%`}}></div>
                             <div style={{backgroundImage: `url(${gifPreview.url})`}} className={styles.imageDiv}>
