@@ -1,8 +1,16 @@
-# SpaceRead
+# SpaceRead 🚀
 
-Multipurpose web app for UAEU students to share course resources and discover professors.
+Multipurpose web app for UAEU students to share course resources, discover professors, and trade insights across campus. Think of it as the study launchpad for the UAEU community.
 
 **Live site:** https://spaceread.net
+
+## What you can do
+
+- 🎓 Discover professors, explore ratings, and read reviews
+- 📝 Share your experience with scores, course/grade context, and optional attachments or GIFs
+- 💬 Reply to reviews and add reactions (likes/dislikes)
+- 📚 Upload and download course materials
+- ✅ Verify your UAEU email with a one-time code to keep the community trusted
 
 ## Repository structure
 
@@ -19,6 +27,10 @@ Multipurpose web app for UAEU students to share course resources and discover pr
 - Azure Blob Storage (attachments/materials)
 - Google ReCAPTCHA/Perspective/Translate (moderation & verification)
 - AWS SES (email verification)
+
+## Safety & trust
+
+SpaceRead integrates multiple safety services to keep submissions clean and authentic, including ReCAPTCHA, Perspective API, Azure Vision, and VirusTotal.
 
 ## Local development
 
