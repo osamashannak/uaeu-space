@@ -1,5 +1,5 @@
 import styles from "../../styles/components/professor/review_form.module.scss";
-import {ChangeEvent, Dispatch, SetStateAction, useEffect} from "react";
+import {ChangeEvent, Dispatch, SetStateAction, useEffect, useId, useState} from "react";
 import Compressor from "compressorjs";
 import {
     GifPreview,
@@ -15,6 +15,10 @@ export default function ReviewFormFooter(props: {
 }) {
 
     const {details, setDetails} = props;
+    const uploadInputId = useId();
+    const gifPickerId = useId();
+    const [emojiOpen, setEmojiOpen] = useState(false);
+    const [gifOpen, setGifOpen] = useState(false);
 
     const uploadImage = (event: ChangeEvent<HTMLInputElement>) => {
 
@@ -151,36 +155,38 @@ export default function ReviewFormFooter(props: {
         return !details.attachment;
     }
 
-    function hideEmojiSelector() {
+    function setEmojiSelectorVisibility(visible: boolean) {
         const emojiSelector = document.querySelector(`.${styles.emojiSelector}`) as HTMLDivElement;
         if (emojiSelector) {
-            emojiSelector.style.opacity = "0";
-            emojiSelector.style.pointerEvents = "none";
+            emojiSelector.style.opacity = visible ? "1" : "0";
+            emojiSelector.style.pointerEvents = visible ? "all" : "none";
         }
+        setEmojiOpen(visible);
+    }
+
+    function setGifSelectorVisibility(visible: boolean) {
+        const gifSelector = document.querySelector(`.${styles.gifSelector}`) as HTMLDivElement;
+        if (gifSelector) {
+            gifSelector.style.opacity = visible ? "1" : "0";
+            gifSelector.style.pointerEvents = visible ? "all" : "none";
+        }
+        setGifOpen(visible);
+    }
+
+    function hideEmojiSelector() {
+        setEmojiSelectorVisibility(false);
     }
 
     function hideGifSelector() {
-        const gifSelector = document.querySelector(`.${styles.gifSelector}`) as HTMLDivElement;
-        if (gifSelector) {
-            gifSelector.style.opacity = "0";
-            gifSelector.style.pointerEvents = "none";
-        }
+        setGifSelectorVisibility(false);
     }
 
     function toggleEmojiSelector() {
-        const emojiSelector = document.querySelector(`.${styles.emojiSelector}`) as HTMLDivElement;
-        if (emojiSelector) {
-            emojiSelector.style.opacity = emojiSelector.style.opacity === "0" ? "1" : "0";
-            emojiSelector.style.pointerEvents = emojiSelector.style.pointerEvents === "none" ? "all" : "none";
-        }
+        setEmojiSelectorVisibility(!emojiOpen);
     }
 
     function toggleGifSelector() {
-        const gifSelector = document.querySelector(`.${styles.gifSelector}`) as HTMLDivElement;
-        if (gifSelector) {
-            gifSelector.style.opacity = gifSelector.style.opacity === "0" ? "1" : "0";
-            gifSelector.style.pointerEvents = gifSelector.style.pointerEvents === "none" ? "all" : "none";
-        }
+        setGifSelectorVisibility(!gifOpen);
     }
 
     useEffect(() => {
@@ -212,7 +218,11 @@ export default function ReviewFormFooter(props: {
                     event.stopPropagation();
                 }}>
 
-                <div className={styles.gifSelector} onClick={e => e.stopPropagation()}>
+                <div
+                    id={gifPickerId}
+                    className={styles.gifSelector}
+                    onClick={e => e.stopPropagation()}
+                >
                     <div className={styles.container2}>
                         <GifPicker tenorApiKey={import.meta.env.VITE_GOOGLE_TENOR_API_KEY}
                                    contentFilter={ContentFilter.HIGH}
@@ -224,7 +234,21 @@ export default function ReviewFormFooter(props: {
                     </div>
                 </div>
                 <div className={canAddMoreAttachments() ? styles.buttonIconWrapper : styles.disabledButton}>
-                    <label className={styles.buttonLabel} htmlFor={"upload-images"}>
+                    <label
+                        className={styles.buttonLabel}
+                        htmlFor={uploadInputId}
+                        role="button"
+                        tabIndex={canAddMoreAttachments() ? 0 : -1}
+                        aria-label="Attach an image"
+                        aria-disabled={!canAddMoreAttachments()}
+                        title="Attach image"
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                document.getElementById(uploadInputId)?.click();
+                            }
+                        }}
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <path fill="currentColor"
                                   d="M5 21q-.825 0-1.413-.588T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21H5Zm0-2h14V5H5v14Zm1-2h12l-3.75-5l-3 4L9 13l-3 4Zm-1 2V5v14Z"/>
@@ -239,24 +263,40 @@ export default function ReviewFormFooter(props: {
                                uploadImage(event);
                            }}
                            accept={"image/jpeg,image/png,image/webp,image/gif"} multiple
-                           tabIndex={-1} type={"file"} id={"upload-images"}/>
+                           tabIndex={-1} type={"file"} id={uploadInputId}/>
                 </div>
                 <div className={canAddGif() ? styles.buttonIconWrapper : styles.disabledButton}>
-                    <div className={styles.buttonLabel} onClick={() => {
-                        hideEmojiSelector();
-                        toggleGifSelector();
-                    }}>
+                    <button
+                        type="button"
+                        className={styles.buttonLabel}
+                        aria-label="Add a GIF"
+                        aria-expanded={gifOpen}
+                        aria-controls={gifPickerId}
+                        disabled={!canAddGif()}
+                        title="Add GIF"
+                        onClick={() => {
+                            hideEmojiSelector();
+                            toggleGifSelector();
+                        }}
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <path fill="currentColor"
                                   d="M19 19H5V5h14zM5 3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm6.5 11h1v-4h-1zm2 0h1v-1.5H16v-1h-1.5V11h2v-1h-3zm-4-2v1h-1v-2h2c0-.55-.45-1-1-1h-1c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1z"/>
                         </svg>
-                    </div>
+                    </button>
                 </div>
                 <div className={styles.buttonIconWrapper}>
-                    <div className={styles.buttonLabel} onClick={() => {
-                        hideGifSelector();
-                        toggleEmojiSelector();
-                    }}>
+                    <button
+                        type="button"
+                        className={styles.buttonLabel}
+                        aria-label="Add an emoji"
+                        aria-expanded={emojiOpen}
+                        title="Add emoji"
+                        onClick={() => {
+                            hideGifSelector();
+                            toggleEmojiSelector();
+                        }}
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <g fill="none">
                                 <path
@@ -265,7 +305,7 @@ export default function ReviewFormFooter(props: {
                                       d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2Zm0 2a8 8 0 1 0 0 16a8 8 0 0 0 0-16Zm2.8 9.857a1 1 0 1 1 1.4 1.428A5.984 5.984 0 0 1 12 17a5.984 5.984 0 0 1-4.2-1.715a1 1 0 0 1 1.4-1.428A3.984 3.984 0 0 0 12 15c1.09 0 2.077-.435 2.8-1.143ZM8.5 8a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3Zm7 0a1.5 1.5 0 1 1 0 3a1.5 1.5 0 0 1 0-3Z"/>
                             </g>
                         </svg>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>

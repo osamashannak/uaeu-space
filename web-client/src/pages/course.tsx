@@ -45,10 +45,12 @@ export default function Course() {
                 </section>
 
                 <section className={styles.fileList}>
-                    <FileSkeleton/>
-                    <FileSkeleton/>
-                    <FileSkeleton/>
-                    <FileSkeleton/>
+                    <div className={styles.fileGrid}>
+                        <FileSkeleton/>
+                        <FileSkeleton/>
+                        <FileSkeleton/>
+                        <FileSkeleton/>
+                    </div>
                 </section>
 
             </div>
@@ -85,11 +87,17 @@ export default function Course() {
                 </section>
 
                 <section className={styles.fileList}>
-                    {
-                        fileCount > 0 ? course.files.map((value, index) => (
-                            <File key={index} {...value}/>
-                        )) : <p className={fileStyles.file}>{"There are no files."}</p>
-                    }
+                    <div className={styles.fileListHeader}>
+                        <h2>Files</h2>
+                        <span>{fileCount} {fileCount === 1 ? "file" : "files"}</span>
+                    </div>
+                    {fileCount > 0 ? (
+                        <div className={styles.fileGrid}>
+                            {course.files.map((value, index) => (
+                                <File key={index} {...value}/>
+                            ))}
+                        </div>
+                    ) : <p className={fileStyles.emptyState}>{"No files yet."}</p>}
                 </section>
 
             </div>

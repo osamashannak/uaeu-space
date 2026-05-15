@@ -40,7 +40,10 @@ function isSupportedSearchMode(type: SearchBoxProps["type"]): type is SearchMode
     return type === "professor" || type === "course";
 }
 
-type SearchBoxProps = { type: "professor" | "course" | "restaurant" };
+type SearchBoxProps = {
+    type: "professor" | "course" | "restaurant",
+    placeholder?: string,
+};
 
 export default function SearchBox(props: SearchBoxProps) {
     const {university} = useContext(UniversityContext);
@@ -172,13 +175,16 @@ export default function SearchBox(props: SearchBoxProps) {
         void runSearch(lastInputValue.current);
     }, [searchKey]);
 
+    const showMenu = Boolean(inputValue && items.length);
+
     return (
         <div className={styles.searchBox}>
             <input
                 {...getInputProps({
                     className: styles.searchBar,
-                    placeholder: `Search for a ${props.type}...`,
+                    placeholder: props.placeholder ?? `Search for a ${props.type}...`,
                     ref: inputRef,
+                    "aria-label": props.placeholder ?? `Search for a ${props.type}`,
                 })}
             />
             <svg className={styles.searchIcon} xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -189,7 +195,7 @@ export default function SearchBox(props: SearchBoxProps) {
 
 
             <div className={styles.parentDataList}>
-                <ul className={styles.datalist} {...getMenuProps()}>
+                <ul className={`${styles.datalist} ${showMenu ? "" : styles.hiddenDataList}`} {...getMenuProps()}>
                     {inputValue &&
                         items.map((element, index) => (
                             <li className={`${styles.datalistOption} ${highlightedIndex === index && ` ${styles.bgBlueOption}`}`}

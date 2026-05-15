@@ -5,46 +5,60 @@ import uos from "../../assets/images/university/uos.png";
 import uaeu from "../../assets/images/university/uaeu.png";
 import ku from "../../assets/images/university/ku.png";
 
+const universities = [
+    {
+        name: "United Arab Emirates University",
+        shortName: "UAEU",
+        image: uaeu,
+        accent: "uaeu",
+    },
+    {
+        name: "Khalifa University",
+        shortName: "KU",
+        image: ku,
+        accent: "ku",
+    },
+    {
+        name: "University of Sharjah",
+        shortName: "UOS",
+        image: uos,
+        accent: "uos",
+    },
+];
+
 export default function UniversitySelector() {
 
     const {university, setUniversity} = useContext(UniversityContext);
 
     return (
-        <div className={styles.pickUniversityParent}>
-            <div className={styles.pickUniversityText}>
-                <span>Select university</span>
+        <section className={styles.pickUniversityParent}>
+            <div className={styles.pickUniversityHeader}>
+                <span className={styles.stepBadge}>1</span>
+                <div>
+                    <span className={styles.pickUniversityText}>Choose your university</span>
+                    <p>Professor lists are filtered by campus.</p>
+                </div>
             </div>
             <div className={styles.pickUniversity}>
+                {universities.map((item) => {
+                    const selected = university === item.name;
 
-                <div
-                    onClick={() => setUniversity('United Arab Emirates University')}
-                    className={university === 'United Arab Emirates University' ? styles.selected : styles.university}>
-                    <img src={uaeu} alt="uaeu" width={64}/>
-                    <div className={styles.uniName}>
-                        <span>UAEU</span>
-                    </div>
-                </div>
-
-                <div
-                    onClick={() => setUniversity('Khalifa University')}
-                    className={university === 'Khalifa University' ? styles.selected : styles.university}>
-                    <img src={ku} alt="ku" width={64}/>
-                    <div className={styles.uniName}>
-                        <span>KU</span>
-                    </div>
-                </div>
-
-                <div
-                    onClick={() => setUniversity('University of Sharjah')}
-                    className={university === 'University of Sharjah' ? styles.selected : styles.university}>
-                    <img src={uos} alt="uos" width={64}/>
-                    <div className={styles.uniName}>
-                        <span>UOS</span>
-                    </div>
-                </div>
-
+                    return (
+                        <button
+                            type="button"
+                            key={item.name}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => setUniversity(item.name)}
+                            aria-pressed={selected}
+                            className={`${styles.university} ${selected ? styles.selected : ""} ${styles[item.accent]}`}>
+                            <img src={item.image} alt={item.shortName} width={64}/>
+                            <span className={styles.uniName}>{item.shortName}</span>
+                            <span className={styles.uniFullName}>{item.name}</span>
+                        </button>
+                    );
+                })}
             </div>
-        </div>
+        </section>
     )
 
 }

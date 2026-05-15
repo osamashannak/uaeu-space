@@ -5,24 +5,26 @@
 
 .searchBox {
   position: relative;
-  height: 32px;
+  height: 40px;
 
   * {
-    text-align: center;
+    text-align: left;
   }
 
   .searchBar {
-    font-size: 16px;
-    font-weight: 300;
+    font-size: 15px;
+    font-weight: 400;
     width: 100%;
     height: 100%;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    padding: 18px 20px 18px 40px;
-    background: transparent;
+    border-radius: 9999px;
+    border: 1px solid #d3dce5;
+    padding: 0 18px 0 42px;
+    background: #fff;
     outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
 
     &::placeholder {
+      color: rgb(139, 152, 165);
       user-select: none;
       -webkit-user-select: none;
     }
@@ -32,9 +34,9 @@
     position: absolute;
     width: 20px;
     height: 20px;
-    top: 9px;
-    left: 15px;
-    color: #aaa;
+    top: 10px;
+    left: 14px;
+    color: rgb(139, 152, 165);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -42,7 +44,8 @@
   }
 
   .searchBar:focus {
-    border: 1px solid #add8ff;
+    border: 1px solid #059AE5;
+    box-shadow: 0 0 0 2px rgba(5, 154, 229, 0.12);
 
     &::placeholder {
       color: transparent;
@@ -51,7 +54,7 @@
   }
 
   .searchBar:focus + .searchIcon {
-    color: #add8ff;
+    color: #059AE5;
   }
 }
 
@@ -63,15 +66,19 @@
     background-color: white;
     font-size: 14px;
     position: absolute;
-    margin-top: 0.2rem;
+    margin-top: 0.35rem;
     width: 100%;
     max-height: 270px;
     overflow-x: hidden;
     outline: 0;
     transition: opacity .1s ease;
-    border-radius: 0.3rem;
-    border-color: #96c8da;
-    box-shadow: rgba(136, 153, 166, 0.2) 0px 0px 15px;
+    border: 1px solid rgb(239, 243, 244);
+    border-radius: 8px;
+    box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px, rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+  }
+
+  .hiddenDataList {
+    display: none;
   }
 }
 
@@ -80,6 +87,10 @@
   text-align: left;
   padding: 12px 16px;
   transition: background-color 0.2s;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid rgb(239, 243, 244);
+  }
 }
 
 .dashboardSearchBox {

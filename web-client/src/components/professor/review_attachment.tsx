@@ -46,8 +46,10 @@ export default function ReviewAttachment(props: {
                     e.stopPropagation();
                 }}
             >
-                <div
+                <button
+                    type="button"
                     className={styles.deleteButton}
+                    aria-label={media.kind === "gif" ? "Remove GIF" : "Remove image"}
                     onClick={(e) => {
                         e.stopPropagation();
                         handleDelete();
@@ -59,7 +61,7 @@ export default function ReviewAttachment(props: {
                             d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128L50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"
                         />
                     </svg>
-                </div>
+                </button>
 
                 <div style={{ paddingBottom: `${aspectRatio * 100}%` }} />
                 <div style={{ backgroundImage: `url(${media.url})` }} className={styles.imageDiv} />

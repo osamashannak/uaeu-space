@@ -1,54 +1,24 @@
 .searchPage {
-
-  min-height: 110vh;
+  min-height: 100vh;
   max-width: 600px;
   margin: 0 auto;
-
-  .searchPageHead {
-    padding-left: 12px;
-    padding-right: 12px;
-
-  }
-
-  .title {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 8px;
-
-    @media (max-width: 768px) {
-      font-size: 18px;
-    }
-
-  }
-
-  .about {
-    font-weight: 500;
-    font-size: 16px;
-    color: rgb(92, 101, 110);
-
-
-    @media (max-width: 768px) {
-      font-size: 14px;
-    }
-  }
-
+  padding: 0 12px 260px;
+  color: #15202b;
 
   .searchBox {
-    margin-top: 64px;
-    margin-bottom: 18px;
-    padding-left: 12px;
-    padding-right: 12px;
+    margin-top: 24px;
+    margin-bottom: 0;
 
     .caution {
-      font-size: 11px;
+      font-size: 12px;
       color: #86868b;
-      margin-bottom: 12px;
+      margin-top: 12px;
 
       a {
         text-decoration: underline;
+        text-underline-offset: 2px;
       }
     }
-
   }
 
   .url {
@@ -57,18 +27,158 @@
 
   @media (max-width: 768px) {
     padding-top: 16px;
+    padding-bottom: 320px;
   }
+}
+
+.lookupHero {
+  padding-bottom: 8px;
+}
+
+.heroCopy {
+  .heroEyebrow {
+    color: #d45d3d;
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 7px;
+  }
+
+  p {
+    color: rgb(83, 100, 113);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.45;
+    max-width: 520px;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 22px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+  }
+}
+
+.heroSignals {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin-top: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.heroSignal {
+  align-items: baseline;
+  background-color: #f7f9f9;
+  border-radius: 9999px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 5px;
+  padding: 5px 9px;
+  white-space: nowrap;
+
+  strong,
+  span {
+    display: inline;
+  }
+
+  strong {
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  span {
+    color: rgb(83, 100, 113);
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+}
+
+.lookupPanel {
+  background-color: rgba(247, 249, 249, 0.55);
+  border-radius: 10px;
+  margin-top: 14px;
+  padding: 14px;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
+}
+
+.stepBadge {
+  align-items: center;
+  align-self: flex-start;
+  background-color: rgba(5, 154, 229, 0.08);
+  border-radius: 6px;
+  color: #0579b5;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 800;
+  height: 22px;
+  justify-content: center;
+  line-height: 1;
+  margin-top: 1px;
+  width: 22px;
+}
+
+.searchStepHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 9px;
+  margin-bottom: 14px;
+
+  > div > span {
+    display: block;
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  p {
+    color: rgb(83, 100, 113);
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+}
+
+.emptySearchState {
+  align-items: center;
+  border: 1px dashed #cbd5df;
+  border-radius: 8px;
+  color: rgb(83, 100, 113);
+  display: flex;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 46px;
+  padding: 0 14px;
 }
 
 .featureList {
   display: flex;
-
   font-size: 12px;
   text-align: center;
   justify-content: center;
-
   padding-top: 32px;
-
 
   .listItem {
     display: flex;
@@ -82,80 +192,181 @@
     svg {
       color: #059AE5;
     }
-
   }
 }
 
-
 .pickUniversityParent {
-  margin-top: 32px;
-  padding-left: 12px;
-  padding-right: 12px;
+  margin-top: 0;
+
+  .pickUniversityHeader {
+    align-items: flex-start;
+    display: flex;
+    gap: 9px;
+
+    p {
+      color: rgb(83, 100, 113);
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+  }
 
   .pickUniversityText {
-    display: flex;
-    gap: 8px;
-
-    margin-top: 32px;
-    font-weight: 600;
+    display: block;
+    font-weight: 800;
     font-size: 15px;
-    width: fit-content;
-
-
   }
 
   .pickUniversity {
-    display: flex;
-    column-gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 16px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+    margin-top: 14px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
 
     .university {
-      padding: 8px 16px;
+      align-items: flex-start;
+      background-color: #fff;
+      border: 1px solid #eef3f7;
       border-radius: 8px;
-      background-color: #f8f9fa;
-      color: #495057;
-      font-size: 13px;
-      font-weight: 600;
+      color: #15202b;
       cursor: pointer;
-      transition: background-color 0.3s;
-      user-select: none;
-      -webkit-user-select: none;
       display: flex;
       flex-direction: column;
-        justify-content: center;
+      font-family: inherit;
+      min-height: 124px;
+      outline: none;
+      padding: 12px 12px 13px;
+      text-align: left;
+      transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+      user-select: none;
+      -webkit-user-select: none;
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
 
-      img {
-        max-width: 64px;
+      @media (max-width: 768px) {
+        min-height: 92px;
+        padding: 8px;
       }
 
-      .uniName {
-        text-align: center;
-        // place self at the bottom of the parent
-        margin-top: auto;
+      img {
+        align-self: center;
+        height: 48px;
+        margin-bottom: 12px;
+        max-width: 62px;
+        object-fit: contain;
 
+        @media (max-width: 768px) {
+          height: 32px;
+          margin-bottom: 7px;
+          max-width: 44px;
+        }
       }
 
       @media (min-width: 768px) {
         &:hover {
-          background-color: #e9ecef;
+          background-color: #fff;
+          border-color: #d3dce5;
         }
 
         &:active {
-          background-color: #dee2e6;
+          border-color: #059ae5 !important;
+          box-shadow: 0 0 0 2px rgba(5, 154, 229, 0.12) !important;
         }
+      }
+
+      &:focus {
+        border-color: #059ae5 !important;
+        box-shadow: 0 0 0 2px rgba(5, 154, 229, 0.12) !important;
+        outline: 0 !important;
+      }
+
+      &:focus-visible {
+        border-color: #059ae5 !important;
+        box-shadow: 0 0 0 2px rgba(5, 154, 229, 0.12) !important;
+        outline: 0 !important;
       }
     }
 
-    @media (max-width: 768px) {
+    .uaeu {
+      border-color: #eef3f7;
+    }
+
+    .ku {
+      border-color: #eef3f7;
+    }
+
+    .uos {
+      border-color: #eef3f7;
+    }
+
+    .uniName {
+      font-size: 14px;
+      font-weight: 800;
+
+      @media (max-width: 768px) {
+        font-size: 12px;
+      }
+    }
+
+    .uniFullName {
+      color: rgb(83, 100, 113);
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-top: 4px;
+
+      @media (max-width: 768px) {
+        font-size: 9px;
+        line-height: 1.25;
+      }
     }
 
     .selected {
-      @extend .university;
-      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      background-color: #f7fbfe;
+      border-color: #059ae5;
+      box-shadow: 0 0 0 1px rgba(5, 154, 229, 0.08);
+      position: relative;
+
+      &:after {
+        background-color: #059ae5;
+        border-radius: 50%;
+        content: "";
+        height: 8px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        width: 8px;
+      }
+    }
+
+    .selected.ku {
+      border-color: #059ae5;
+      box-shadow: 0 0 0 1px rgba(5, 154, 229, 0.08);
+
+      &:focus,
+      &:focus-visible {
+        border-color: #059ae5 !important;
+        box-shadow: 0 0 0 2px rgba(5, 154, 229, 0.12) !important;
+      }
+    }
+
+    .selected.uos {
+      border-color: #059ae5;
+      box-shadow: 0 0 0 1px rgba(5, 154, 229, 0.08);
+
+      &:focus,
+      &:focus-visible {
+        border-color: #059ae5 !important;
+        box-shadow: 0 0 0 2px rgba(5, 154, 229, 0.12) !important;
+      }
     }
   }
-
 }
 
 
@@ -163,7 +374,7 @@
   padding-left: 12px;
   padding-right: 12px;
   max-width: 400px;
-  margin: 64px auto auto;
+  margin: 48px auto auto;
 
   .historyTitle {
     display: flex;

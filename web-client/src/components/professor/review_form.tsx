@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {type KeyboardEvent, useEffect, useRef, useState} from "react";
 import {useGoogleReCaptcha} from "react-google-recaptcha-v3";
 import styles from "../../styles/components/professor/review_form.module.scss";
 import {ReviewAPI, ReviewFormDraft} from "../../typed/professor.ts";
@@ -20,7 +20,6 @@ import EmojiSelector from "../lexical_editor/emoji_selector.tsx";
 import ReviewAttachment from "./review_attachment.tsx";
 import {useModal} from "../provider/modal.tsx";
 import FlaggedModal from "../modal/flagged_modal.tsx";
-import {Rating} from "react-simple-star-rating";
 
 // Helper to calculate star label
 const getStarLabel = (r: number) => {
@@ -30,6 +29,112 @@ const getStarLabel = (r: number) => {
     if (r <= 4) return "Good";
     return "Amazing";
 };
+
+const ratingOptions = [1, 2, 3, 4, 5];
+
+function StarIcon(props: { filled: boolean }) {
+    return (
+        <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <path
+                d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                fill={props.filled ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeLinejoin="round"
+                strokeWidth="1.5"
+            />
+        </svg>
+    );
+}
+
+function AccessibleRating(props: {
+    value: number | undefined;
+    onChange: (value: number) => void;
+    invalid: boolean;
+    errorId?: string;
+}) {
+    const moveRating = (currentValue: number | undefined, direction: 1 | -1) => {
+        const currentIndex = currentValue ? ratingOptions.indexOf(currentValue) : -1;
+        const nextIndex = (currentIndex + direction + ratingOptions.length) % ratingOptions.length;
+        const nextValue = ratingOptions[nextIndex];
+
+        props.onChange(nextValue);
+        window.requestAnimationFrame(() => {
+            document.getElementById(`review-rating-${nextValue}`)?.focus();
+        });
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>, option: number) => {
+        if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+            event.preventDefault();
+            moveRating(option, 1);
+        }
+
+        if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+            event.preventDefault();
+            moveRating(option, -1);
+        }
+
+        if (event.key === "Home") {
+            event.preventDefault();
+            props.onChange(1);
+            window.requestAnimationFrame(() => document.getElementById("review-rating-1")?.focus());
+        }
+
+        if (event.key === "End") {
+            event.preventDefault();
+            props.onChange(5);
+            window.requestAnimationFrame(() => document.getElementById("review-rating-5")?.focus());
+        }
+    };
+
+    const ratingLabel = props.value ? getStarLabel(props.value) : "Select a rating";
+
+    return (
+        <fieldset
+            className={styles.formFieldset}
+            id="field-score"
+            aria-invalid={props.invalid || undefined}
+            aria-describedby={props.errorId}
+        >
+            {props.invalid && (
+                <div id={props.errorId} className={styles.errorTooltip} role="alert">
+                    Rating required
+                </div>
+            )}
+
+            <legend className={styles.inputTitle}>Overall rating</legend>
+            <div className={styles.ratingControl}>
+                <div className={styles.starRatingGroup} role="radiogroup" aria-label="Overall rating">
+                    {ratingOptions.map(option => {
+                        const checked = props.value === option;
+                        const filled = props.value ? option <= props.value : false;
+                        const label = `${option} ${option === 1 ? "star" : "stars"}, ${getStarLabel(option)}`;
+
+                        return (
+                            <button
+                                key={option}
+                                id={`review-rating-${option}`}
+                                type="button"
+                                role="radio"
+                                aria-checked={checked}
+                                aria-label={label}
+                                tabIndex={checked || (!props.value && option === 1) ? 0 : -1}
+                                className={`${styles.starRatingButton} ${filled ? styles.starRatingButtonActive : ""}`}
+                                onClick={() => props.onChange(option)}
+                                onKeyDown={event => handleKeyDown(event, option)}
+                            >
+                                <StarIcon filled={filled}/>
+                            </button>
+                        );
+                    })}
+                </div>
+                <span className={styles.ratingLabel} aria-live="polite">
+                    {ratingLabel}
+                </span>
+            </div>
+        </fieldset>
+    );
+}
 
 export default function ReviewForm(props: { courses: string[] | null, professorEmail: string; canReview: boolean }) {
     const [details, setDetails] = useState<ReviewFormDraft>({
@@ -331,6 +436,10 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
         lengthStyle += ` ${styles.commentLengthGood}`;
     }
 
+    const commentErrorId = activeError === "comment" ? "review-comment-error" : undefined;
+    const scoreErrorId = activeError === "score" ? "review-score-error" : undefined;
+    const positiveErrorId = activeError === "positive" ? "review-positive-error" : undefined;
+
     return (
         <>
             <div className={styles.lineContainer}>
@@ -339,6 +448,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
 
             <section
                 className={styles.reviewForm}
+                aria-busy={submitting}
                 onClick={event => {
                     event.preventDefault();
                 }}
@@ -377,9 +487,13 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                         onError: error => console.log(error),
                     }}
                 >
-                    <div style={{ position: 'relative' }} onClick={() => commentRef.current?.focus()}>
+                    <div id="field-comment" style={{ position: 'relative' }} onClick={() => commentRef.current?.focus()}>
 
-                        {activeError === 'comment' && <div className={styles.errorTooltip}>Please write a review</div>}
+                        {activeError === 'comment' && (
+                            <div id={commentErrorId} className={styles.errorTooltip} role="alert">
+                                Please write a review
+                            </div>
+                        )}
 
                         <div className={styles.postEditor}>
                             <CustomPlainTextPlugin
@@ -390,6 +504,13 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                                         <ContentEditable
                                             style={{outline: "none"}}
                                             role={"textbox"}
+                                            aria-label="Review text"
+                                            aria-invalid={activeError === 'comment' || undefined}
+                                            aria-describedby={
+                                                commentErrorId
+                                                    ? `review-comment-length ${commentErrorId}`
+                                                    : "review-comment-length"
+                                            }
                                             spellCheck={"true"}
                                             className={styles.postContent}
                                         />
@@ -421,7 +542,7 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                             />
                         </div>
 
-                        <div className={lengthStyle}>
+                        <div id="review-comment-length" className={lengthStyle} aria-live="polite">
                             <div>
                                 <span>
                                 {[...(details.comment ?? "").trim()].length > 0
@@ -440,32 +561,19 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                 {!submitting && <ReviewFormFooter details={details} setDetails={setDetails}/>}
 
                 {!submitting &&
-                    <div className={styles.inputField} style={{ position: 'relative' }}>
-                        {activeError === 'score' && <div className={styles.errorTooltip}>Rating required</div>}
-
-                        <div className={styles.inputTitle}>
-                            Overall rating
-                        </div>
-                        <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-                            <Rating
-                                onClick={(rate) => {
-                                    setDetails(prev => ({...prev, score: rate}));
-                                    clearError();
-                                }}
-                                size={32}
-                                transition={true}
-                                fillColor="#049AE5"
-                                emptyColor="#E5E5E5"
-                            />
-                            <span style={{fontSize: '14px', fontWeight: 600, color: '#049AE5'}}>
-                                {getStarLabel(details.score || 0)}
-                            </span>
-                        </div>
-                    </div>
+                    <AccessibleRating
+                        value={details.score}
+                        invalid={activeError === 'score'}
+                        errorId={scoreErrorId}
+                        onChange={(score) => {
+                            setDetails(prev => ({...prev, score}));
+                            clearError();
+                        }}
+                    />
                 }
 
                 {props.professorEmail.endsWith('@uaeu.ac.ae') && !submitting && <div className={styles.courseDetails}>
-                    <div ref={comboboxRef} className={styles.comboboxWrapper} style={{ position: 'relative' }}>
+                    <div ref={comboboxRef} className={styles.comboboxWrapper} id="field-course" style={{ position: 'relative' }}>
 
                         {activeError === 'course' && (
                             <div className={styles.errorTooltip}>
@@ -512,9 +620,9 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                     </div>
 
                     <div className={styles.inputField}>
-                        <label className={styles.inputTitle}>Grade received (optional)</label>
+                        <label className={styles.inputTitle} htmlFor="review-grade-select">Grade received (optional)</label>
                         <div className={styles.selectContainer}>
-                            <select className={styles.nativeSelect} value={details.grade_received}
+                            <select id="review-grade-select" className={styles.nativeSelect} value={details.grade_received}
                                     onChange={(e) => {
                                         setDetails(prev => ({...prev, grade_received: e.target.value}));
                                     }}>
@@ -529,17 +637,23 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
                     </div>
                 </div>}
 
-                {!submitting && <div className={styles.inputField} style={{position: 'relative'}}>
+                {!submitting && <div className={styles.inputField} id="field-positive" style={{position: 'relative'}}>
 
-                    {activeError === 'positive' && <div className={styles.errorTooltip}>Please select an option</div>}
+                    {activeError === 'positive' && (
+                        <div id={positiveErrorId} className={styles.errorTooltip} role="alert">
+                            Please select an option
+                        </div>
+                    )}
 
                     <label className={styles.inputTitle}>Would you recommend?</label>
 
                     <div className={styles.recommendGroup}>
                         <button
                             type="button"
+                            aria-pressed={details.positive === true}
                             onClick={() => {
                                 setDetails(prev => ({...prev, positive: true}));
+                                clearError();
                             }}
                             className={details.positive === true ? styles.btnYesActive : styles.recommendBtn}
                         >
@@ -548,8 +662,10 @@ export default function ReviewForm(props: { courses: string[] | null, professorE
 
                         <button
                             type="button"
+                            aria-pressed={details.positive === false}
                             onClick={() => {
                                 setDetails(prev => ({...prev, positive: false}));
+                                clearError();
                             }}
                             className={details.positive === false ? styles.btnNoActive : styles.recommendBtn}
                         >

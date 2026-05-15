@@ -6,17 +6,17 @@ export default function BackArrow(props: {
 }) {
 
     const navigate = useNavigate();
+    const fallbackPath = props.text === "Course" ? "/course" : "/professor";
 
     return (
         <div className={styles.top}>
             <div className={styles.backArrow} onClick={() => {
-                const referrer = document.referrer;
-                const currentHost = window.location.host;
+                const historyIndex = window.history.state?.idx;
 
-                if (referrer && new URL(referrer).host === currentHost) {
+                if (typeof historyIndex === "number" && historyIndex > 0) {
                     navigate(-1);
                 } else {
-                    navigate(props.text === "Course" ? "/course" : "/");
+                    navigate(fallbackPath);
                 }
             }}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
