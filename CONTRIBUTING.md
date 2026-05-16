@@ -34,6 +34,25 @@ go mod download
 
 Environment files are required for most runtime flows. Do not commit real production secrets. Prefer local-only values for development and rotate any token that is accidentally shared.
 
+## Docker Compose Workflow
+
+The root `docker-compose.yaml` starts a disposable local stack:
+
+```powershell
+docker compose up --build
+```
+
+It exposes:
+
+- Web client: `http://localhost:5173`
+- Course API: `http://localhost:8081`
+- Professor API: `http://localhost:8082`
+- Postgres: `localhost:5432`
+
+Compose runs the database migrations before starting the APIs. The default database credentials are local-only: database `spaceread`, user `spaceread`, password `spaceread`.
+
+The professor service uses `RECAPTCHA_BYPASS=true` in Compose so it can boot without Google Cloud credentials. This is for local development only. Uploads, translation, email delivery, and other third-party integrations still need real provider credentials if you want to exercise those paths.
+
 ## Frontend Workflow
 
 Run the dev server:

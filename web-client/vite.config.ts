@@ -6,6 +6,8 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode}) => {
   const env = loadEnv(mode, process.cwd());
+  const professorProxyTarget = env.VITE_PROFESSOR_PROXY_TARGET || 'https://professor.api.spaceread.net';
+  const courseProxyTarget = env.VITE_COURSE_PROXY_TARGET || 'https://course.api.spaceread.net';
 
   return {
     plugins: [react(),
@@ -32,7 +34,7 @@ export default defineConfig(({ mode}) => {
       proxy: {
         // Proxy for the Professor API
         '/api/professor': {
-          target: 'https://professor.api.spaceread.net',
+          target: professorProxyTarget,
           changeOrigin: true,
           secure: false, // often needed for HTTPS targets
           rewrite: (path) => path.replace(/^\/api\/professor/, ''),
@@ -40,7 +42,7 @@ export default defineConfig(({ mode}) => {
 
         // Proxy for the Course API
         '/api/course': {
-          target: 'https://course.api.spaceread.net',
+          target: courseProxyTarget,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api\/course/, ''),

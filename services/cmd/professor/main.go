@@ -73,20 +73,24 @@ func realMain(ctx context.Context) error {
 
 	logger.Info("setting up recaptcha client")
 
-	client, err := recaptcha2.NewClient(ctx)
-
-	if err != nil {
-		return fmt.Errorf("failed to create recaptcha client: %w", err)
-	}
-
-	defer func(client *recaptcha2.Client) {
-		err := client.Close()
+	var recaptchaClient *recaptcha.Recaptcha
+	if cfg.Recaptcha.Bypass {
+		logger.Warn("recaptcha bypass is enabled")
+		recaptchaClient = recaptcha.New(nil, &cfg.Recaptcha)
+	} else {
+		client, err := recaptcha2.NewClient(ctx)
 		if err != nil {
-			logger.Errorw("failed to close recaptcha client", "error", err)
+			return fmt.Errorf("failed to create recaptcha client: %w", err)
 		}
-	}(client)
+		defer func(client *recaptcha2.Client) {
+			err := client.Close()
+			if err != nil {
+				logger.Errorw("failed to close recaptcha client", "error", err)
+			}
+		}(client)
 
-	recaptchaClient := recaptcha.New(client, &cfg.Recaptcha)
+		recaptchaClient = recaptcha.New(client, &cfg.Recaptcha)
+	}
 
 	logger.Info("setting up perspective client")
 

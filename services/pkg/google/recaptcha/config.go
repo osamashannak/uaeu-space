@@ -5,4 +5,5 @@ type Config struct {
 	ProjectID      string  `env:"RECAPTCHA_PROJECT_ID"`
 	ExpectedAction string  `env:"RECAPTCHA_EXPECTED_ACTION"`
 	Threshold      float32 `env:"RECAPTCHA_THRESHOLD"`
+	Bypass         bool    `env:"RECAPTCHA_BYPASS, default=false"`
 }

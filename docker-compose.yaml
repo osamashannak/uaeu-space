@@ -1,0 +1,119 @@
+name: spaceread
+
+x-api-environment: &api-environment
+  PORT: "8080"
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  DB_NAME: ${POSTGRES_DB:-spaceread}
+  DB_USER: ${POSTGRES_USER:-spaceread}
+  DB_PASSWORD: ${POSTGRES_PASSWORD:-spaceread}
+  DB_SSLMODE: disable
+  DB_POOL_MIN_CONNS: "1"
+  DB_POOL_MAX_CONNS: "5"
+  SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:-spaceread_dev}
+  JWT_SECRET: ${JWT_SECRET:-local-dev-secret}
+  AZURE_STORAGE_ACCOUNT: ${AZURE_STORAGE_ACCOUNT:-devstoreaccount1}
+  AZURE_STORAGE_ACCESS_KEY: ${AZURE_STORAGE_ACCESS_KEY:-Eby8vdM02xNOcqFeqCnf2eL9Hobn2YHLFyX5wJ1EMkGZxHDHvpT8k4NfSW6/0KxX6DfT3VU+1yY2cN6r7kYJ2w==}
+  MATERIALS_CONTAINER: ${MATERIALS_CONTAINER:-materials}
+  ATTACHMENTS_CONTAINER: ${ATTACHMENTS_CONTAINER:-attachments}
+  LOG_LEVEL: ${LOG_LEVEL:-DEBUG}
+  LOG_MODE: ${LOG_MODE:-development}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-spaceread}
+      POSTGRES_USER: ${POSTGRES_USER:-spaceread}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-spaceread}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build:
+      context: ./services
+      dockerfile: Dockerfile
+      args:
+        SERVICE: migrate
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-spaceread}:${POSTGRES_PASSWORD:-spaceread}@postgres:5432/${POSTGRES_DB:-spaceread}?sslmode=disable
+      MIGRATIONS_PATH: /app/migrations
+    command: ["up"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  course:
+    build:
+      context: ./services
+      dockerfile: Dockerfile
+      args:
+        SERVICE: course
+    environment:
+      <<: *api-environment
+    ports:
+      - "${COURSE_PORT:-8081}:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  professor:
+    build:
+      context: ./services
+      dockerfile: Dockerfile
+      args:
+        SERVICE: professor
+    environment:
+      <<: *api-environment
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-local}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-local}
+      AWS_EC2_METADATA_DISABLED: "true"
+      PERSPECTIVE_KEY: ${PERSPECTIVE_KEY:-local}
+      RECAPTCHA_BYPASS: ${RECAPTCHA_BYPASS:-true}
+      RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY:-local}
+      RECAPTCHA_PROJECT_ID: ${RECAPTCHA_PROJECT_ID:-local}
+      RECAPTCHA_EXPECTED_ACTION: ${RECAPTCHA_EXPECTED_ACTION:-submit}
+      RECAPTCHA_THRESHOLD: ${RECAPTCHA_THRESHOLD:-0}
+      VISION_SUBSCRIPTION_KEY: ${VISION_SUBSCRIPTION_KEY:-local}
+    ports:
+      - "${PROFESSOR_PORT:-8082}:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    image: node:22.18.0-alpine
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_PROFESSOR_ENDPOINT: ${VITE_PROFESSOR_ENDPOINT:-/api/professor}
+      VITE_COURSE_ENDPOINT: ${VITE_COURSE_ENDPOINT:-/api/course}
+      VITE_AUTH_SERVER_ENDPOINT: ${VITE_AUTH_SERVER_ENDPOINT:-}
+      VITE_GOOGLE_RECAPTCHA_SITE_KEY: ${VITE_GOOGLE_RECAPTCHA_SITE_KEY:-local}
+      VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-local}
+      VITE_GOOGLE_TENOR_API_KEY: ${VITE_GOOGLE_TENOR_API_KEY:-}
+      VITE_PROFESSOR_PROXY_TARGET: http://professor:8080
+      VITE_COURSE_PROXY_TARGET: http://course:8080
+    ports:
+      - "${WEB_PORT:-5173}:5173"
+    volumes:
+      - ./web-client:/app
+      - web-node-modules:/app/node_modules
+    depends_on:
+      course:
+        condition: service_started
+      professor:
+        condition: service_started
+
+volumes:
+  postgres-data:
+  web-node-modules:
