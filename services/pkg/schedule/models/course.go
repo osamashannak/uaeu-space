@@ -14,8 +14,9 @@ type Section struct {
 }
 
 type Faculty struct {
-	Email string `json:"email"`
-	Name  string `json:"name"`
+	Email       string  `json:"email"`
+	Name        string  `json:"name"`
+	SpaceReadID *string `json:"spaceread_id,omitempty"`
 }
 
 type Meeting struct {
